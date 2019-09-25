@@ -6,7 +6,7 @@ const { lighthouseCheck } = require('@foo-software/lighthouse-check');
   try {
     const urls = core.getInput('urls');
     const outputDirectory = core.getInput('outputDirectory');
-    console.log('outputDirectory', typeof outputDirectory);
+    console.log('outputDirectory', outputDirectory);
     console.log('github', github.context);
     await lighthouseCheck({
       urls: urls.split(',')
