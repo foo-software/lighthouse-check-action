@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Lighthouse Check
     steps:
-      - name: Run Lighthouse
-        id: lighthouse
-        uses: foo-software/lighthouse-check-action@master
-        with:
-          urls: 'https://www.foo.software,https://www.foo.software/contact'
+    - name: Run Lighthouse
+      id: lighthouse
+      uses: foo-software/lighthouse-check-action@master
+      with:
+        urls: 'https://www.foo.software,https://www.foo.software/contact'
