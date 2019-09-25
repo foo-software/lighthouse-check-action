@@ -7,7 +7,7 @@ const { lighthouseCheck } = require('@foo-software/lighthouse-check');
     const urls = core.getInput('urls');
     console.log('github', github.context);
     await lighthouseCheck({
-      urls: urls.join()
+      urls: urls.split(',')
     });
   } catch (error) {
     core.setFailed(error.message);
