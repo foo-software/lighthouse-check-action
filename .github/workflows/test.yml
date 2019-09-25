@@ -2,8 +2,8 @@ name: Test Lighthouse Check
 on: [push]
 
 jobs:
-  audit:
-    runs-on: ubuntu-latest
+  lighthouse-check:
+    runs-on: foosoftware/lighthouse-check:latest
     steps:
     - uses: actions/checkout@master
     - run: npm install
