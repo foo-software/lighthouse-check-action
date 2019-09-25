@@ -20,55 +20,33 @@ const normalizeInput = input => {
 
 (async () => {
   try {
-    // undefined values come back as empty strings
-    const author = normalizeInput(core.getInput('author'));
-    const apiToken = normalizeInput(core.getInput('apiToken'));
-    const awsAccessKeyId = normalizeInput(core.getInput('awsAccessKeyId'));
-    const awsBucket = normalizeInput(core.getInput('awsBucket'));
-    const awsRegion = normalizeInput(core.getInput('awsRegion'));
-    const awsSecretAccessKey = normalizeInput(core.getInput('awsSecretAccessKey'));
-    const branch = normalizeInput(core.getInput('branch'));
-    const configFile = normalizeInput(core.getInput('configFile'));
-    const emulatedFormFactor = normalizeInput(core.getInput('emulatedFormFactor'));
-    const locale = normalizeInput(core.getInput('locale'));
-    const help = normalizeInput(core.getInput('help'));
-    const outputDirectory = normalizeInput(core.getInput('outputDirectory'));
-    const pr = normalizeInput(core.getInput('pr'));
-    const sha = normalizeInput(core.getInput('sha'));
-    const slackWebhookUrl = normalizeInput(core.getInput('slackWebhookUrl'));
-    const tag = normalizeInput(core.getInput('tag'));
-    const timeout = normalizeInput(core.getInput('timeout'));
-    const throttling = normalizeInput(core.getInput('throttling'));
-    const throttlingMethod = normalizeInput(core.getInput('throttlingMethod'));
     const urls = normalizeInput(core.getInput('urls'));
-    const verbose = normalizeInput(core.getInput('verbose'));
-    const wait = normalizeInput(core.getInput('wait'));
 
     console.log('github', github.context);
 
     await lighthouseCheck({
-      author,
-      apiToken,
-      awsAccessKeyId,
-      awsBucket,
-      awsRegion,
-      awsSecretAccessKey,
-      branch,
-      configFile,
-      emulatedFormFactor,
-      locale,
-      help,
-      outputDirectory,
-      pr,
-      sha,
-      slackWebhookUrl,
-      tag,
-      timeout,
-      throttling,
-      throttlingMethod,
+      author: normalizeInput(core.getInput('author')),
+      apiToken: normalizeInput(core.getInput('apiToken')),
+      awsAccessKeyId: normalizeInput(core.getInput('awsAccessKeyId')),
+      awsBucket: normalizeInput(core.getInput('awsBucket')),
+      awsRegion: normalizeInput(core.getInput('awsRegion')),
+      awsSecretAccessKey: normalizeInput(core.getInput('awsSecretAccessKey')),
+      branch: normalizeInput(core.getInput('branch')),
+      configFile: normalizeInput(core.getInput('configFile')),
+      emulatedFormFactor: normalizeInput(core.getInput('emulatedFormFactor')),
+      locale: normalizeInput(core.getInput('locale')),
+      help: normalizeInput(core.getInput('help')),
+      outputDirectory: normalizeInput(core.getInput('outputDirectory')),
+      pr: normalizeInput(core.getInput('pr')),
+      sha: normalizeInput(core.getInput('sha')),
+      slackWebhookUrl: normalizeInput(core.getInput('slackWebhookUrl')),
+      tag: normalizeInput(core.getInput('tag')),
+      timeout: normalizeInput(core.getInput('timeout')),
+      throttling: normalizeInput(core.getInput('throttling')),
+      throttlingMethod: normalizeInput(core.getInput('throttlingMethod')),
       urls: !urls ? undefined : urls.split(','),
-      verbose,
-      wait
+      verbose: normalizeInput(core.getInput('verbose')),
+      wait: normalizeInput(core.getInput('wait'))
     });
   } catch (error) {
     core.setFailed(error.message);
