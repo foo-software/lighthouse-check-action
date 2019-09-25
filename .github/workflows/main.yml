@@ -9,6 +9,6 @@ jobs:
     steps:
       - name: Run Lighthouse
         id: lighthouse
-        uses: ./
+        uses: ../../
         with:
           urls: 'https://www.foo.software,https://www.foo.software/contact'
