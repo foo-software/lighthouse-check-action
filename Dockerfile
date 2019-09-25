@@ -1,4 +1,3 @@
-# FROM foosoftware/lighthouse-check:latest
-FROM alpine:3.10
+FROM foosoftware/lighthouse-check:latest
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
