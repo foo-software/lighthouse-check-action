@@ -5,6 +5,5 @@ inputs:
     description: 'A comma-separated list of URLs to run Lighthouse Audits against.'
     required: true
 runs:
-  using: 'docker'
   image: 'docker://foosoftware/lighthouse-check:latest'
   main: 'index.js'
