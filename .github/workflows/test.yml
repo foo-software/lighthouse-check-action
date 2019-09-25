@@ -5,8 +5,10 @@ jobs:
   lighthouse-check:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@master
     - run: npm install
-    - name: Run Lighthouse
+    - name: Run Lighthouse Audit
       uses: ./
       with:
+        outputDirectory: /tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/contact'
