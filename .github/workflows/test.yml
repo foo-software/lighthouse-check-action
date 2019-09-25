@@ -1,9 +1,8 @@
 name: Test Lighthouse Check
-
 on: [push]
 
 jobs:
-  lighthouse-audit:
+  audit:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
