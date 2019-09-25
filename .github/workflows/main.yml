@@ -7,6 +7,7 @@ jobs:
     runs-on: foosoftware/lighthouse-check:latest
     steps:
       - uses: actions/checkout@v1
-      - name: Run a multi-line script
+      - name: Run Lighthouse
         run: |
-          lighthouse-check --urls https://www.foo.software
+          # lighthouse-check --urls https://www.foo.software
+          echo "hi"
