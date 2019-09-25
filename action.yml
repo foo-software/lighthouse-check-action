@@ -9,25 +9,3 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.urls }}
-    - ${{ inputs.author }}
-    - ${{ inputs.apiToken }}
-    - ${{ inputs.awsAccessKeyId }}
-    - ${{ inputs.awsBucket }}
-    - ${{ inputs.awsRegion }}
-    - ${{ inputs.awsSecretAccessKey }}
-    - ${{ inputs.branch }}
-    - ${{ inputs.configFile }}
-    - ${{ inputs.emulatedFormFactor }}
-    - ${{ inputs.locale }}
-    - ${{ inputs.help }}
-    - ${{ inputs.outputDirectory }}
-    - ${{ inputs.pr }}
-    - ${{ inputs.sha }}
-    - ${{ inputs.slackWebhookUrl }}
-    - ${{ inputs.tag }}
-    - ${{ inputs.timeout }}
-    - ${{ inputs.throttling }}
-    - ${{ inputs.throttlingMethod }}
-    - ${{ inputs.urls }}
-    - ${{ inputs.verbose }}
-    - ${{ inputs.wait }}
