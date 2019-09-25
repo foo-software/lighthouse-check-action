@@ -11,3 +11,4 @@ jobs:
       uses: ./
       with:
         urls: 'https://www.foo.software,https://www.foo.software/contact'
+        verbose: yes
