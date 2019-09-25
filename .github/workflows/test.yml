@@ -22,7 +22,7 @@ jobs:
         outputDirectory: /tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/contact'
         sha: ${{ github.sha }}
-        slackWebhookUrl: ${{ }}
+        # slackWebhookUrl: ${{ }}
     - name: Upload artifacts
       uses: actions/upload-artifact@master
       with:
