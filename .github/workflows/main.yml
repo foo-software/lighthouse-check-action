@@ -3,11 +3,13 @@ name: Lighthouse Check
 on: [push]
 
 jobs:
-  build:
+  lighthouse-audit:
     runs-on: foosoftware/lighthouse-check:latest
+    name: Lighthouse Check
     steps:
       - uses: actions/checkout@v1
       - name: Run Lighthouse
-        run: |
-          # lighthouse-check --urls https://www.foo.software
-          echo "hi"
+        id: lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        with:
+          urls: 'https://www.foo.software,https://www.foo.software/contact'
