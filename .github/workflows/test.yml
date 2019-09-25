@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   audit:
-    runs-on: ubuntu-latest
+    runs-on: foosoftware/lighthouse-check:latest
     steps:
     - uses: actions/checkout@master
     - name: Run Lighthouse
