@@ -1,0 +1,13 @@
+name: Test Lighthouse Check
+
+on: [push]
+
+jobs:
+  lighthouse-audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Run Lighthouse
+      uses: ./
+      with:
+        urls: 'https://www.foo.software,https://www.foo.software/contact'
