@@ -8,6 +8,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.urls }}
     - ${{ inputs.author }}
     - ${{ inputs.apiToken }}
     - ${{ inputs.awsAccessKeyId }}
@@ -19,6 +20,7 @@ runs:
     - ${{ inputs.emulatedFormFactor }}
     - ${{ inputs.locale }}
     - ${{ inputs.help }}
+    - ${{ inputs.outputDirectory }}
     - ${{ inputs.pr }}
     - ${{ inputs.sha }}
     - ${{ inputs.slackWebhookUrl }}
