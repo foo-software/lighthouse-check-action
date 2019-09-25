@@ -20,6 +20,7 @@ const normalizeInput = input => {
 (async () => {
   try {
     const urls = normalizeInput(core.getInput('urls'));
+    console.log('hmmm', normalizeInput(core.getInput('author')));
 
     await lighthouseCheck({
       // author: normalizeInput(core.getInput('author')),
