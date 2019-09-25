@@ -1,5 +1,7 @@
 #!/bin/sh -l
 
+echo "11...$11"
+
 lighthouse-check \
   --author $1 \
   --apiToken $2 \
