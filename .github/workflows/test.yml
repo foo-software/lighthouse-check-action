@@ -13,5 +13,18 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
+        author: ${{ github.actor }}
+        # awsAccessKeyId: ${{ }}
+        # awsBucket: ${{ }}
+        # awsRegion: ${{ }}
+        # awsSecretAccessKey: ${{ }}
+        branch: ${{ github.ref }}
         outputDirectory: /tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/contact'
+        sha: ${{ github.sha }}
+        slackWebhookUrl: ${{ }}
+    - name: Upload artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: Lighthouse reports
+        path: /tmp/artifacts
