@@ -21,7 +21,7 @@ const normalizeInput = input => {
   try {
     const urls = normalizeInput(core.getInput('urls'));
 
-    await lighthouseCheck({
+    console.log({
       author: normalizeInput(core.getInput('author')),
       apiToken: normalizeInput(core.getInput('apiToken')),
       awsAccessKeyId: normalizeInput(core.getInput('awsAccessKeyId')),
@@ -44,7 +44,32 @@ const normalizeInput = input => {
       urls: !urls ? undefined : urls.split(','),
       verbose: normalizeInput(core.getInput('verbose')),
       wait: normalizeInput(core.getInput('wait'))
-    });
+    })
+
+    // await lighthouseCheck({
+    //   author: normalizeInput(core.getInput('author')),
+    //   apiToken: normalizeInput(core.getInput('apiToken')),
+    //   awsAccessKeyId: normalizeInput(core.getInput('awsAccessKeyId')),
+    //   awsBucket: normalizeInput(core.getInput('awsBucket')),
+    //   awsRegion: normalizeInput(core.getInput('awsRegion')),
+    //   awsSecretAccessKey: normalizeInput(core.getInput('awsSecretAccessKey')),
+    //   branch: normalizeInput(core.getInput('branch')),
+    //   configFile: normalizeInput(core.getInput('configFile')),
+    //   emulatedFormFactor: normalizeInput(core.getInput('emulatedFormFactor')),
+    //   locale: normalizeInput(core.getInput('locale')),
+    //   help: normalizeInput(core.getInput('help')),
+    //   outputDirectory: normalizeInput(core.getInput('outputDirectory')),
+    //   pr: normalizeInput(core.getInput('pr')),
+    //   sha: normalizeInput(core.getInput('sha')),
+    //   slackWebhookUrl: normalizeInput(core.getInput('slackWebhookUrl')),
+    //   tag: normalizeInput(core.getInput('tag')),
+    //   timeout: normalizeInput(core.getInput('timeout')),
+    //   throttling: normalizeInput(core.getInput('throttling')),
+    //   throttlingMethod: normalizeInput(core.getInput('throttlingMethod')),
+    urls: !urls ? undefined : urls.split(','),
+    //   verbose: normalizeInput(core.getInput('verbose')),
+    //   wait: normalizeInput(core.getInput('wait'))
+    // });
   } catch (error) {
     core.setFailed(error.message);
   }
