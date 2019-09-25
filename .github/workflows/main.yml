@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   lighthouse-audit:
-    runs-on: foosoftware/lighthouse-check:latest
+    runs-on: ubuntu-latest
     name: Lighthouse Check
     steps:
       - uses: actions/checkout@v1
