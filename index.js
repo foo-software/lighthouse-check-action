@@ -46,7 +46,7 @@ const normalizeInput = input => {
       wait: normalizeInput(core.getInput('wait'))
     })
 
-    // await lighthouseCheck({
+    await lighthouseCheck({
     //   author: normalizeInput(core.getInput('author')),
     //   apiToken: normalizeInput(core.getInput('apiToken')),
     //   awsAccessKeyId: normalizeInput(core.getInput('awsAccessKeyId')),
@@ -69,7 +69,7 @@ const normalizeInput = input => {
     urls: !urls ? undefined : urls.split(','),
     //   verbose: normalizeInput(core.getInput('verbose')),
     //   wait: normalizeInput(core.getInput('wait'))
-    // });
+    });
   } catch (error) {
     core.setFailed(error.message);
   }
