@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Lighthouse Check
     steps:
-      - uses: actions/checkout@v1
       - name: Run Lighthouse
         id: lighthouse
         uses: foo-software/lighthouse-check-action@master
