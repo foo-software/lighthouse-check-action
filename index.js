@@ -1,5 +1,4 @@
 const core = require('@actions/core');
-const github = require('@actions/github');
 const { lighthouseCheck } = require('@foo-software/lighthouse-check');
 
 const normalizeInput = input => {
@@ -21,8 +20,6 @@ const normalizeInput = input => {
 (async () => {
   try {
     const urls = normalizeInput(core.getInput('urls'));
-
-    console.log('github', github.context);
 
     await lighthouseCheck({
       author: normalizeInput(core.getInput('author')),
