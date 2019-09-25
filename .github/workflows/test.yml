@@ -8,3 +8,5 @@ jobs:
     - uses: actions/checkout@master
     - name: Run Lighthouse
       uses: ./
+      with:
+        urls: 'https://www.foo.software,https://www.foo.software/contact'
