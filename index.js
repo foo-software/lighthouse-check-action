@@ -45,8 +45,30 @@ const normalizeInput = input => {
     const wait = normalizeInput(core.getInput('wait'));
 
     console.log('github', github.context);
+
     await lighthouseCheck({
-      urls: !urls ? undefined : urls.split(',')
+      author,
+      apiToken,
+      awsAccessKeyId,
+      awsBucket,
+      awsRegion,
+      awsSecretAccessKey,
+      branch,
+      configFile,
+      emulatedFormFactor,
+      locale,
+      help,
+      outputDirectory,
+      pr,
+      sha,
+      slackWebhookUrl,
+      tag,
+      timeout,
+      throttling,
+      throttlingMethod,
+      urls: !urls ? undefined : urls.split(','),
+      verbose,
+      wait
     });
   } catch (error) {
     core.setFailed(error.message);
