@@ -7,9 +7,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - run: npm install
-    - name: Create output directory
-      run: |
-        mkdir /tmp/artifacts
+    - run: mkdir /tmp/artifacts
     - name: Run Lighthouse
       uses: ./
       with:
@@ -22,7 +20,7 @@ jobs:
         outputDirectory: /tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/contact'
         sha: ${{ github.sha }}
-        # slackWebhookUrl: ${{ }}
+        slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
     - name: Upload artifacts
       uses: actions/upload-artifact@master
       with:
