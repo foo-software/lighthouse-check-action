@@ -6,6 +6,5 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.urls }}
+  image: 'docker://foosoftware/lighthouse-check:latest'
+  main: 'index.js'
