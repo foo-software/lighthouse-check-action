@@ -3,6 +3,7 @@ on: [push]
 
 jobs:
   lighthouse-check:
+    # runs-on: foosoftware/lighthouse-check:latest
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master

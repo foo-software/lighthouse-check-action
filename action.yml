@@ -5,7 +5,5 @@ inputs:
     description: 'A comma-separated list of URLs to run Lighthouse Audits against.'
     required: true
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.urls }}
+  using: 'node12'
+  main: 'index.js'
