@@ -44,7 +44,9 @@ const getFailureMessages = ({
   minSeoScore,
   results
 }) => {
+  console.log('results.data', results.data);
   return results.data.reduce((accumulator, current) => ([
+    ...accumulator,
     ...(getScoreFailMessage({
       name: 'Accessibility',
       minScore: minAccessibilityScore,
