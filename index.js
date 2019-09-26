@@ -17,67 +17,6 @@ const normalizeInput = input => {
   return input;
 };
 
-const getScoreFailMessage = ({
-  name,
-  url,
-  minScore,
-  score
-}) => {
-  // if inputs are not specified - assume we shouldn't fail
-  if (!minScore || !score) {
-    return [];
-  }
-
-  if (Number(score) < Number(minScore)) {
-    return [`${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`];
-  }
-
-  return [];
-};
-
-const getFailureMessages = ({
-  minAccessibilityScore,
-  minBestPracticesScore,
-  minPerformanceScore,
-  minProgressiveWebAppScore,
-  minSeoScore,
-  results
-}) => {
-  return results.data.reduce((accumulator, current) => ([
-    ...accumulator,
-    ...(getScoreFailMessage({
-      name: 'Accessibility',
-      minScore: minAccessibilityScore,
-      score: current.scores.accessibility,
-      ...current
-    })),
-    ...(getScoreFailMessage({
-      name: 'Best Practices',
-      minScore: minBestPracticesScore,
-      score: current.scores.bestPractices,
-      ...current
-    })),
-    ...(getScoreFailMessage({
-      name: 'Performance',
-      minScore: minPerformanceScore,
-      score: current.scores.performance,
-      ...current
-    })),
-    ...(getScoreFailMessage({
-      name: 'Progressive Web App',
-      minScore: minProgressiveWebAppScore,
-      score: current.scores.progressiveWebApp,
-      ...current
-    })),
-    ...(getScoreFailMessage({
-      name: 'SEO',
-      minScore: minSeoScore,
-      score: current.scores.seo,
-      ...current
-    }))
-  ]), []);
-}
-
 (async () => {
   try {
     const urls = normalizeInput(core.getInput('urls'));
