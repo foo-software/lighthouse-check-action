@@ -1,0 +1,8 @@
+{
+  "additionalRttByOrigin": {
+    "http://localhost:10200": 500
+  },
+  "serverResponseTimeByOrigin": {
+    "http://localhost:10200": 1000
+  }
+}
