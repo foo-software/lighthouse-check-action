@@ -113,6 +113,8 @@ const getFailureMessages = ({
       wait: normalizeInput(core.getInput('wait'))
     });
 
+    console.log('results', results);
+
     // if we need to fail when scores are too low...
     if (minAccessibilityScore || minBestPracticesScore
       || minPerformanceScore || minProgressiveWebAppScore || minSeoScore) {
