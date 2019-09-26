@@ -128,7 +128,7 @@ A GitHub Action for running multiple Lighthouse audits automatically in a workfl
 
 ## Outputs
 
-### `lighthouse-check-results`
+### `lighthouseCheckResults`
 
 An object of the below shape.
 

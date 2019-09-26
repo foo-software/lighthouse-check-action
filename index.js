@@ -46,7 +46,7 @@ const normalizeInput = input => {
       wait: normalizeInput(core.getInput('wait'))
     });
 
-    core.setOutput('lighthouse-check-results', results);
+    core.setOutput('lighthouseCheckResults', results);
   } catch (error) {
     core.setFailed(error.message);
   }

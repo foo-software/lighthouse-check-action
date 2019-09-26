@@ -8,8 +8,8 @@ inputs:
     description: 'A comma-separated list of URLs to run Lighthouse audits against.'
     required: true
 outputs:
-  lighthouse-check-results:
-    description: 'A results object representing results of Lighthouse audits'
+  lighthouseCheckResults:
+    description: 'A results object representing results of Lighthouse audits.'
 runs:
   using: 'node12'
   main: 'index.js'
