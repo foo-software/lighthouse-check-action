@@ -1,7 +1,7 @@
 {
   "name": "lighthouse-check-action",
   "version": "1.0.0",
-  "description": "This action runs Lighthouse audits on specified URLs.",
+  "description": "A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
