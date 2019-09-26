@@ -4,7 +4,6 @@
   "description": "A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build index.js -o dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,7 +19,6 @@
   "homepage": "https://github.com/foo-software/lighthouse-check-action#readme",
   "dependencies": {
     "@actions/core": "^1.1.1",
-    "@foo-software/lighthouse-check": "0.0.30",
-    "@zeit/ncc": "^0.20.5"
+    "@foo-software/lighthouse-check": "0.0.30"
   }
 }

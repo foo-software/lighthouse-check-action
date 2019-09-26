@@ -12,4 +12,4 @@ outputs:
     description: 'A results object representing results of Lighthouse audits.'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
+  main: 'index.js'
