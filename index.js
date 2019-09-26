@@ -21,6 +21,9 @@ const normalizeInput = input => {
   try {
     const urls = normalizeInput(core.getInput('urls'));
 
+    const minAccessibilityScore = normalizeInput(core.getInput('minAccessibilityScore'));
+    console.log('type', typeof minAccessibilityScore);
+
     const results = await lighthouseCheck({
       author: normalizeInput(core.getInput('author')),
       apiToken: normalizeInput(core.getInput('apiToken')),
@@ -33,7 +36,6 @@ const normalizeInput = input => {
       emulatedFormFactor: normalizeInput(core.getInput('emulatedFormFactor')),
       locale: normalizeInput(core.getInput('locale')),
       help: normalizeInput(core.getInput('help')),
-      minAccessibilityScore: normalizeInput(core.getInput('minAccessibilityScore')),
       outputDirectory: normalizeInput(core.getInput('outputDirectory')),
       pr: normalizeInput(core.getInput('pr')),
       sha: normalizeInput(core.getInput('sha')),
@@ -46,8 +48,6 @@ const normalizeInput = input => {
       verbose: normalizeInput(core.getInput('verbose')),
       wait: normalizeInput(core.getInput('wait'))
     });
-
-    console.log('results', normalizeInput(core.getInput('minAccessibilityScore')));
   } catch (error) {
     core.setFailed(error.message);
   }
