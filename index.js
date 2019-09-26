@@ -129,7 +129,7 @@ const getFailureMessages = ({
       if (failures.length) {
         // comma-separate error messages and remove the last comma
         const failureMessage = failures.join('\n');
-        throw new Error(`\nMinimum score requirements failed:\n${failureMessage}\n`);
+        throw new Error(`Minimum score requirements failed:\n${failureMessage}`);
       }
     }
   } catch (error) {
