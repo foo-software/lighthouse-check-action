@@ -24,6 +24,7 @@ const getScoreFailMessage = ({
   score
 }) => {
   // if inputs are not specified - assume we shouldn't fail
+  console.log(typeof score);
   if (!minScore || !score) {
     return [];
   }

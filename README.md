@@ -126,6 +126,82 @@ This action runs Lighthouse audits on specified URLs.
   </tr>
 </table>
 
+## Outputs
+
+### `lighthouse-check-results`
+
+An object of the below shape.
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Type</th>
+  </tr>
+  <tr>
+    <td><code>code</code></td>
+    <td>A code set by <code>lighthouse-check</code> to represent success or failure. Success will be <code>SUCCESS</code> while errors will look something line <code>ERROR_${reason}</code></td>
+    <td><code>string</code></td>
+  </tr>
+  <tr>
+    <td><code>data</code></td>
+    <td>An array of results with the payload illustrated below.</td>
+    <td><code>array</code></td>
+  </tr>
+</table>
+
+#### `data`
+
+An array of objects with the below shape. Only applicable data will be populated (based on inputs).
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Type</th>
+  </tr>
+  <tr>
+    <td><code>url</code></td>
+    <td>The corresponding URL of the Lighthouse audit.</td>
+    <td><code>string</code></td>
+  </tr>
+  <tr>
+    <td><code>report</code></td>
+    <td>An AWS S3 URL of the report if S3 inputs were specified and upload succeeded.</td>
+    <td><code>string</code></td>
+  </tr>
+  <tr>
+    <td><code>scores</code></td>
+    <td>An object of Lighthouse scores. See details below.</td>
+    <td><code>object</code></td>
+  </tr>
+</table>
+
+#### `scores`
+
+An object of scores. Each value is a `number`. Names should be self-explanatory - representing the score of each Lighthouse audit type.
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+  <tr>
+    <td><code>accessibility</code></td>
+  </tr>
+  <tr>
+    <td><code>bestPractices</code></td>
+  </tr>
+  <tr>
+    <td><code>performance</code></td>
+  </tr>
+  <tr>
+    <td><code>progressiveWebApp</code></td>
+  </tr>
+  <tr>
+    <td><code>seo</code></td>
+  </tr>
+</table>
+
 ## Example usage
 
 In the below example we run Lighthouse on two URLs which logs scores, saves the HTML reports as artifacts, uploads them to AWS S3, and notifies via Slack with details about the change in Git.
