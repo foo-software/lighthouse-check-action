@@ -1,6 +1,6 @@
 # Lighthouse Check Action
 
-This action runs Lighthouse audits on specified URLs.
+A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.
 
 ## Inputs
 
