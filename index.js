@@ -43,7 +43,7 @@ const getFailureMessages = ({
   minSeoScore,
   results
 }) => {
-  return results.data.reduce((accumulator, current => ([
+  return results.data.reduce((accumulator, current) => ([
     ...(getScoreFailMessage({
       name: 'Accessibility',
       minScore: minAccessibilityScore,
@@ -74,7 +74,7 @@ const getFailureMessages = ({
       score: current.scores.seo,
       ...current
     }))
-  ]), []));
+  ]), []);
 }
 
 (async () => {
