@@ -113,7 +113,7 @@ This action runs Lighthouse audits on specified URLs.
   <tr>
     <td><code>urls</code></td>
     <td>A comma-separated list of URLs to be audited.</td>
-    <td><code>array</code></td>
+    <td><code>string</code></td>
     <td><code>undefined</code></td>
     <td>yes</td>
   </tr>
