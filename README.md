@@ -56,7 +56,7 @@ This action runs Lighthouse audits on specified URLs.
   </tr>
   <tr>
     <td><code>emulatedFormFactor</code></td>
-    <td>Lighthouse setting only used for local audits. See <a href="src/https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</a> comments for details.</td>
+    <td>Lighthouse setting only used for local audits. See <a href="https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</code></a> comments for details.</td>
     <td><code>oneOf(['mobile', 'desktop']</code></td>
     <td><code>mobile</code></td>
     <td>no</td>
@@ -98,14 +98,14 @@ This action runs Lighthouse audits on specified URLs.
   </tr>
   <tr>
     <td><code>throttlingMethod</code></td>
-    <td>Lighthouse setting only used for local audits. See <a href="src/lighthouseConfig.js">src/lighthouseConfig.js</a> comments for details.</td>
+    <td>Lighthouse setting only used for local audits. See <a href="https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</code></a> comments for details.</td>
     <td><code>oneOf(['simulate', 'devtools', 'provided'])</code></td>
     <td><code>simulate</code></td>
     <td>no</td>
   </tr>
   <tr>
     <td><code>throttling</code></td>
-    <td>Lighthouse setting only used for local audits. See <a href="src/lighthouseConfig.js">src/lighthouseConfig.js</a> comments for details.</td>
+    <td>Lighthouse setting only used for local audits. See <a href="https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</code></a> comments for details.</td>
     <td><code>oneOf(['mobileSlow4G', 'mobileRegluar3G'])</code></td>
     <td><code>mobileSlow4G</code></td>
     <td>no</td>
