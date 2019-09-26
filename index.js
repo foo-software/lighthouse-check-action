@@ -47,7 +47,7 @@ const normalizeInput = input => {
       wait: normalizeInput(core.getInput('wait'))
     });
 
-    console.log('results', results.data[0].scores);
+    console.log('results', normalizeInput(core.getInput('minAccessibilityScore')));
   } catch (error) {
     core.setFailed(error.message);
   }
