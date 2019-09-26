@@ -24,12 +24,12 @@ const getScoreFailMessage = ({
   score
 }) => {
   // if inputs are not specified - assume we shouldn't fail
-  if (typeof minScore !== 'number' || typeof score !== 'number') {
+  if (!minScore || !score) {
     return [];
   }
 
   console.log(`${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`);
-  if (score < minScore) {
+  if (Number(score) < Number(minScore)) {
     return [`${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`];
   }
 
