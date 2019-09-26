@@ -56,7 +56,7 @@ This action runs Lighthouse audits on specified URLs.
   </tr>
   <tr>
     <td><code>emulatedFormFactor</code></td>
-    <td>Lighthouse setting only used for local audits. See <a href="src/lighthouseConfig.js">src/lighthouseConfig.js</a> comments for details.</td>
+    <td>Lighthouse setting only used for local audits. See <a href="src/https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</a> comments for details.</td>
     <td><code>oneOf(['mobile', 'desktop']</code></td>
     <td><code>mobile</code></td>
     <td>no</td>
