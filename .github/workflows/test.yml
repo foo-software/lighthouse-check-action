@@ -17,11 +17,6 @@ jobs:
         awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
         awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
         branch: ${{ github.ref }}
-        minAccessibilityScore: 90
-        minBestPracticesScore: 50
-        minPerformanceScore: 50
-        minProgressiveWebAppScore: 50
-        minSeoScore: 50
         outputDirectory: /tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/contact'
         sha: ${{ github.sha }}
