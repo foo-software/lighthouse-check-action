@@ -128,8 +128,36 @@ This action runs Lighthouse audits on specified URLs.
 
 ## Example usage
 
+In the below example we run Lighthouse on two URLs which logs scores, saves the HTML reports as artifacts, uploads them to AWS S3, and notifies via Slack with details about the change in Git.
+
 ```yaml
-uses: foo-software/lighthouse-check-action@master
-with:
-  urls: 'https://www.foo.software,https://www.foo.software/contact'
+name: Test Lighthouse Check
+on: [push]
+
+jobs:
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/bin/debug@master
+    - run: npm install
+    - run: mkdir /tmp/artifacts
+    - name: Run Lighthouse
+      uses: ./
+      with:
+        author: ${{ github.actor }}
+        awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
+        awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
+        awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
+        awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
+        branch: ${{ github.ref }}
+        outputDirectory: /tmp/artifacts
+        urls: 'https://www.foo.software,https://www.foo.software/contact'
+        sha: ${{ github.sha }}
+        slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
+    - name: Upload artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: Lighthouse reports
+        path: /tmp/artifacts
 ```
