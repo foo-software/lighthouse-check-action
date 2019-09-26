@@ -6,7 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - uses: actions/bin/debug@master
     - run: npm install
     - run: mkdir /tmp/artifacts
     - name: Run Lighthouse
@@ -27,5 +26,3 @@ jobs:
       with:
         name: Lighthouse reports
         path: /tmp/artifacts
-
-
