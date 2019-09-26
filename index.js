@@ -21,7 +21,7 @@ const normalizeInput = input => {
   try {
     const urls = normalizeInput(core.getInput('urls'));
 
-    await lighthouseCheck({
+    const results = await lighthouseCheck({
       author: normalizeInput(core.getInput('author')),
       apiToken: normalizeInput(core.getInput('apiToken')),
       awsAccessKeyId: normalizeInput(core.getInput('awsAccessKeyId')),
@@ -45,6 +45,8 @@ const normalizeInput = input => {
       verbose: normalizeInput(core.getInput('verbose')),
       wait: normalizeInput(core.getInput('wait'))
     });
+
+    console.log('results', results);
   } catch (error) {
     core.setFailed(error.message);
   }
