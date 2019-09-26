@@ -46,7 +46,9 @@ const normalizeInput = input => {
       wait: normalizeInput(core.getInput('wait'))
     });
 
-    core.setOutput('lighthouseCheckResults', results);
+    // yikesers - only strings :(
+    // https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions#steps-context
+    core.setOutput('lighthouseCheckResults', JSON.stringify(results));
   } catch (error) {
     core.setFailed(error.message);
   }
