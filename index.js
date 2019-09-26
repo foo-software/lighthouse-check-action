@@ -33,6 +33,7 @@ const normalizeInput = input => {
       emulatedFormFactor: normalizeInput(core.getInput('emulatedFormFactor')),
       locale: normalizeInput(core.getInput('locale')),
       help: normalizeInput(core.getInput('help')),
+      minAccessibilityScore: normalizeInput(core.getInput('minAccessibilityScore')),
       outputDirectory: normalizeInput(core.getInput('outputDirectory')),
       pr: normalizeInput(core.getInput('pr')),
       sha: normalizeInput(core.getInput('sha')),
