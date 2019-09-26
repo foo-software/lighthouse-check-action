@@ -46,7 +46,7 @@ const normalizeInput = input => {
       wait: normalizeInput(core.getInput('wait'))
     });
 
-    console.log('results', results);
+    console.log('results', results[0].scores);
   } catch (error) {
     core.setFailed(error.message);
   }
