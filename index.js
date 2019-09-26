@@ -28,6 +28,7 @@ const getScoreFailMessage = ({
     return [];
   }
 
+  console.log(`${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`);
   if (score < minScore) {
     return [`${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`];
   }
@@ -123,6 +124,8 @@ const getFailureMessages = ({
         minSeoScore,
         results
       });
+
+      console.log('failures', failures);
 
       // if we have scores that were below the minimum requirement
       if (failures.length) {
