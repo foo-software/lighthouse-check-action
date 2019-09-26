@@ -28,7 +28,6 @@ const getScoreFailMessage = ({
     return [];
   }
 
-  console.log(`${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`);
   if (Number(score) < Number(minScore)) {
     return [`${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`];
   }
@@ -44,7 +43,6 @@ const getFailureMessages = ({
   minSeoScore,
   results
 }) => {
-  console.log('results.data', results.data);
   return results.data.reduce((accumulator, current) => ([
     ...accumulator,
     ...(getScoreFailMessage({
@@ -127,13 +125,12 @@ const getFailureMessages = ({
         results
       });
 
-      console.log('failures', failures);
-
       // if we have scores that were below the minimum requirement
       if (failures.length) {
         // comma-separate error messages and remove the last comma
-        const failureMessage = failures.join().slice(0, -1);
-        throw new Error(`Minimum score requirements failed. ${failureMessage}`);
+        const failureMessage = failures.join('\n');
+        console.log(failureMessage);
+        throw new Error(`Minimum score requirements failed:\n${failureMessage}`);
       }
     }
   } catch (error) {
