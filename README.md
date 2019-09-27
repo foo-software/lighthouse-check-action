@@ -2,9 +2,34 @@
 
 A GitHub Action for running **multiple** Lighthouse audits automatically in a workflow with a rich set of bonus features.
 
-## How is this Project Different
+## How is this Project Different than Similar Ones
+
+Simple implementation with just the `urls` input populated or choose from a variety of features below to utilize. See the [example utilizing features](#example-usage).
 
 - Lighthouse audits on **multiple** URLs is supported.
+- Save HTML reports locally.
+- Upload HTML reports as artifacts.
+- Upload HTML reports to AWS S3.
+- **Slack** notifications.
+- Slack notifications **with Git info** (author, branch, PR, etc).
+- Fail a workflow when minimum scores aren't met. [Example at the bottom](example-usage-failing-workflows-by-enforcing-minimum-scores).
+
+## Screenshots
+
+#### Output
+<img alt="Lighthouse Check GitHub action output" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-output.png" />
+
+#### Save HTML Reports as Artifacts
+<img alt="Lighthouse Check GitHub action save artifacts" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-artifact.png" />
+
+#### Save HTML Reports as Artifacts
+<img alt="Lighthouse Check GitHub action HTML report" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png" />
+
+#### Slack Notifications
+<img alt="Lighthouse Check GitHub action Slack notification" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-slack.png" />
+
+#### Fail Workflow when Minimum Scores Aren't Met
+<img alt="Lighthouse Check GitHub action fail if scores don't meet minimum requirement" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action.png" />
 
 ## Inputs
 
