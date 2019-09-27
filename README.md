@@ -28,21 +28,19 @@ Simple implementation with just the `urls` input populated or choose from a vari
 - Slack notifications **with Git info** (author, branch, PR, etc).
 - Fail a workflow when minimum scores aren't met. [Example at the bottom](#user-content-example-usage-failing-workflows-by-enforcing-minimum-scores).
 
-## Screenshots
-
-#### Output
+## Screenshot: Output
 <img alt="Lighthouse Check GitHub action output" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-output.png" />
 
-#### Save HTML Reports as Artifacts
+## Screenshot: Save HTML Reports as Artifacts
 <img alt="Lighthouse Check GitHub action save artifacts" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-artifacts.png" />
 
-#### HTML Reports
+## Screenshot: HTML Reports
 <img alt="Lighthouse Check GitHub action HTML report" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png" />
 
-#### Slack Notifications
+## Screenshot: Slack Notifications
 <img alt="Lighthouse Check GitHub action Slack notification" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-slack.png" />
 
-#### Fail Workflow when Minimum Scores Aren't Met
+## Screenshot: Fail Workflow when Minimum Scores Aren't Met
 <img alt="Lighthouse Check GitHub action fail if scores don't meet minimum requirement" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action.png" />
 
 ## Inputs
