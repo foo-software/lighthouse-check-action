@@ -2,6 +2,10 @@
 
 A GitHub Action for running **multiple** Lighthouse audits automatically in a workflow with a rich set of bonus features.
 
+## How is this Project Different
+
+- Lighthouse audits on **multiple** URLs is supported.
+
 ## Inputs
 
 All fields are optional with the exception of either `urls` or `configFile`.
