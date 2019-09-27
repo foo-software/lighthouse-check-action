@@ -10,8 +10,8 @@
     "type": "git",
     "url": "git+https://github.com/foo-software/lighthouse-check-action.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Adam Henson <adamhenson1979@gmail.com> (https://github.com/adamhenson)",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/foo-software/lighthouse-check-action/issues"
   },
