@@ -2,6 +2,20 @@
 
 A GitHub Action for running **multiple** Lighthouse audits automatically in a workflow with a rich set of bonus features.
 
+<table>
+  <tr>
+    <td>
+      <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/lighthouse-logo.png" />
+    </td>
+    <td>
+      <img alt="AWS S3" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/s3-logo.png" />
+    </td>
+    <td>
+      <img alt="Slack" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/slack-logo.png" />
+    </td>
+  </tr>
+</table>
+
 ## How is this Project Differs from Similar
 
 Simple implementation with just the `urls` input populated or choose from a variety of features below to utilize. See the [example utilizing features](#example-usage).
