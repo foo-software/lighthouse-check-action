@@ -1,8 +1,5 @@
 name: 'Lighthouse Check'
 description: 'GitHub Action for running @GoogleChromeLabs Lighthouse audits with all the bells and whistles 🔔 Multiple audits, Slack notifications, and more!'
-branding:
-  icon: 'zap'  
-  color: 'green'
 inputs:
   author:
     description: 'For Slack notifications: A user handle, typically from GitHub.'
@@ -41,3 +38,6 @@ inputs:
 runs:
   using: 'node12'
   main: 'index.js'
+branding:
+  icon: 'zap'  
+  color: 'green'
