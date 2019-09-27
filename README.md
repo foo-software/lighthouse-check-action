@@ -41,6 +41,9 @@ Simple implementation with just the `urls` input populated or choose from a vari
 <img alt="Lighthouse Check GitHub action Slack notification" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-slack.png" />
 
 ## Screenshot: Fail Workflow when Minimum Scores Aren't Met
+
+<img alt="Lighthouse Check GitHub action fail if scores don't meet minimum requirement on a PR" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action-pr-fail.png" />
+
 <img alt="Lighthouse Check GitHub action fail if scores don't meet minimum requirement" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action.png" />
 
 ## Inputs
