@@ -1,8 +1,10 @@
 # Lighthouse Check Action
 
-A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.
+A GitHub Action for running **multiple** Lighthouse audits automatically in a workflow with a rich set of bonus features.
 
 ## Inputs
+
+All fields are optional with the exception of either `urls` or `configFile`.
 
 <table>
   <tr>
@@ -10,119 +12,108 @@ A GitHub Action for running multiple Lighthouse audits automatically in a workfl
     <th>Description</th>
     <th>Type</th>
     <th>Default</th>
-    <th>Required</th>
   </tr>
   <tr>
     <td><code>author</code></td>
     <td>For Slack notifications: A user handle, typically from GitHub.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>branch</code></td>
     <td>For Slack notifications: A version control branch, typically from GitHub.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>awsAccessKeyId</code></td>
     <td>The AWS <code>accessKeyId</code> for an S3 bucket.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>awsBucket</code></td>
     <td>The AWS <code>Bucket</code> for an S3 bucket.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>awsRegion</code></td>
     <td>The AWS <code>region</code> for an S3 bucket.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>awsSecretAccessKey</code></td>
     <td>The AWS <code>secretAccessKey</code> for an S3 bucket.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
+  </tr>
+  <tr>
+    <td><code>configFile</code></td>
+    <td>A configuration file path in JSON format which holds all options defined here. This file should be relative to the file being interpretted. In this case it will most likely be the root of the repo ("./")</td>
+    <td><code>string</code></td>
+    <td><code>undefined</code></td>
   </tr>
   <tr>
     <td><code>emulatedFormFactor</code></td>
     <td>Lighthouse setting only used for local audits. See <a href="https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</code></a> comments for details.</td>
     <td><code>oneOf(['mobile', 'desktop']</code></td>
     <td><code>mobile</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>locale</code></td>
     <td>A locale for Lighthouse reports. Example: <code>ja</code></td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>outputDirectory</code></td>
     <td>An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>pr</code></td>
     <td>For Slack notifications: A version control pull request URL, typically from GitHub.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>slackWebhookUrl</code></td>
     <td>A Slack Incoming Webhook URL to send notifications to.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>sha</code></td>
     <td>For Slack notifications: A version control <code>sha</code>, typically from GitHub.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>throttlingMethod</code></td>
     <td>Lighthouse setting only used for local audits. See <a href="https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</code></a> comments for details.</td>
     <td><code>oneOf(['simulate', 'devtools', 'provided'])</code></td>
     <td><code>simulate</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>throttling</code></td>
     <td>Lighthouse setting only used for local audits. See <a href="https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</code></a> comments for details.</td>
     <td><code>oneOf(['mobileSlow4G', 'mobileRegluar3G'])</code></td>
     <td><code>mobileSlow4G</code></td>
-    <td>no</td>
   </tr>
   <tr>
     <td><code>urls</code></td>
     <td>A comma-separated list of URLs to be audited.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
-    <td>yes</td>
   </tr>
   <tr>
     <td><code>verbose</code></td>
     <td>If <code>true</code>, print out steps and results to the console.</td>
     <td><code>boolean</code></td>
     <td><code>true</code></td>
-    <td>no</td>
   </tr>
 </table>
 
@@ -202,9 +193,9 @@ An object of scores. Each value is a `number`. Names should be self-explanatory 
   </tr>
 </table>
 
-## Example usage
+## Example Usage
 
-In the below example we run Lighthouse on two URLs which logs scores, saves the HTML reports as artifacts, uploads them to AWS S3, and notifies via Slack with details about the change in Git.
+In the below example we run Lighthouse on two URLs, log scores, save the HTML reports as artifacts, upload reports to AWS S3, notify via Slack with details about the change from Git data.
 
 ```yaml
 name: Test Lighthouse Check
@@ -215,11 +206,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - uses: actions/bin/debug@master
-    - run: npm install
     - run: mkdir /tmp/artifacts
     - name: Run Lighthouse
-      uses: ./
+      uses: foo-software/lighthouse-check-action@master
       with:
         author: ${{ github.actor }}
         awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
@@ -236,4 +225,35 @@ jobs:
       with:
         name: Lighthouse reports
         path: /tmp/artifacts
+```
+
+## Example Usage: Failing Workflows by Enforcing Minimum Scores
+
+We can expand on the example above by optionally failing a workflow if minimum scores aren't met. We do this using
+
+```yaml
+name: Test Lighthouse Check with Minimum Score Enforcement
+on: [push]
+
+jobs:
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - run: npm install
+    - name: Run Lighthouse
+      uses: foo-software/lighthouse-check-action@master
+      id: lighthouseCheck
+      with:
+        urls: 'https://www.foo.software,https://www.foo.software/contact'
+        # ... all your other inputs
+    - name: Handle Lighthouse Check results
+      uses: foo-software/lighthouse-check-status-action
+      with:
+        lighthouseCheckResults: ${{ steps.lighthouseCheck.outputs.lighthouseCheckResults }}
+        minAccessibilityScore: 90
+        minBestPracticesScore: 50
+        minPerformanceScore: 50
+        minProgressiveWebAppScore: 50
+        minSeoScore: 50
 ```
