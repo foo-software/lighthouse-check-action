@@ -1,6 +1,6 @@
 # Lighthouse Check Action
 
-A GitHub Action for running **multiple** Lighthouse audits automatically in a workflow with a rich set of bonus features.
+A GitHub Action for running **multiple** Lighthouse audits automatically in a workflow with a rich set of bonus features. Run with one simple input or advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!
 
 <table>
   <tr>
