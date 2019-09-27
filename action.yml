@@ -1,7 +1,7 @@
 name: 'Lighthouse Check'
 description: 'GitHub Action for running @GoogleChromeLabs Lighthouse audits with all the bells and whistles 🔔 Multiple audits, Slack notifications, and more!'
 branding:
-  icon: 'activity'  
+  icon: 'zap'  
   color: 'green'
 inputs:
   urls:
