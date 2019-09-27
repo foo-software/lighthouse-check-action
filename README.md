@@ -22,7 +22,7 @@ Simple implementation with just the `urls` input populated or choose from a vari
 #### Save HTML Reports as Artifacts
 <img alt="Lighthouse Check GitHub action save artifacts" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-artifact.png" />
 
-#### Save HTML Reports as Artifacts
+#### HTML Reports
 <img alt="Lighthouse Check GitHub action HTML report" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png" />
 
 #### Slack Notifications
