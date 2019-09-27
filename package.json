@@ -10,13 +10,28 @@
     "type": "git",
     "url": "git+https://github.com/foo-software/lighthouse-check-action.git"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/foo-software/lighthouse-check-action/issues"
   },
   "homepage": "https://github.com/foo-software/lighthouse-check-action#readme",
+  "keywords": [
+    "github actions",
+    "actions",
+    "github",
+    "lighthouse",
+    "google",
+    "cli",
+    "performance",
+    "accessibility",
+    "seo",
+    "progressive web app",
+    "best practices",
+    "website performance monitoring",
+    "foo",
+    "foo.software"
+  ],
   "jest": {
     "modulePathIgnorePatterns": [
       "<rootDir>/dist/"
