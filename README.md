@@ -8,7 +8,7 @@ A GitHub Action for running **multiple** Lighthouse audits automatically in a wo
       <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/lighthouse-logo.png" />
     </td>
     <td>
-      <img alt="AWS S3" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/s3-logo.png" />
+      <img alt="AWS S3" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/aws-s3-logo.png" />
     </td>
     <td>
       <img alt="Slack" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/slack-logo.png" />
@@ -34,7 +34,7 @@ Simple implementation with just the `urls` input populated or choose from a vari
 <img alt="Lighthouse Check GitHub action output" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-output.png" />
 
 #### Save HTML Reports as Artifacts
-<img alt="Lighthouse Check GitHub action save artifacts" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-artifact.png" />
+<img alt="Lighthouse Check GitHub action save artifacts" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-artifacts.png" />
 
 #### HTML Reports
 <img alt="Lighthouse Check GitHub action HTML report" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png" />
