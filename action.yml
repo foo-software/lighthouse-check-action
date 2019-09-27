@@ -38,3 +38,6 @@ inputs:
     description: 'A comma-separated list of URLs to run Lighthouse audits against.'
   verbose:
     description: 'If yes, logs output along each step.'
+runs:
+  using: 'node12'
+  main: 'index.js'
