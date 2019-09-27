@@ -53,4 +53,3 @@ const normalizeInput = input => {
     core.setFailed(error.message);
   }
 })();
-

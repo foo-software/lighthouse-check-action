@@ -205,26 +205,26 @@ jobs:
   lighthouse-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - run: mkdir /tmp/artifacts
-    - name: Run Lighthouse
-      uses: foo-software/lighthouse-check-action@master
-      with:
-        author: ${{ github.actor }}
-        awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
-        awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
-        awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
-        awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
-        branch: ${{ github.ref }}
-        outputDirectory: /tmp/artifacts
-        urls: 'https://www.foo.software,https://www.foo.software/contact'
-        sha: ${{ github.sha }}
-        slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
-    - name: Upload artifacts
-      uses: actions/upload-artifact@master
-      with:
-        name: Lighthouse reports
-        path: /tmp/artifacts
+      - uses: actions/checkout@master
+      - run: mkdir /tmp/artifacts
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        with:
+          author: ${{ github.actor }}
+          awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
+          awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
+          awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
+          awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
+          branch: ${{ github.ref }}
+          outputDirectory: /tmp/artifacts
+          urls: 'https://www.foo.software,https://www.foo.software/contact'
+          sha: ${{ github.sha }}
+          slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: Lighthouse reports
+          path: /tmp/artifacts
 ```
 
 ## Example Usage: Failing Workflows by Enforcing Minimum Scores
@@ -239,21 +239,21 @@ jobs:
   lighthouse-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - run: npm install
-    - name: Run Lighthouse
-      uses: foo-software/lighthouse-check-action@master
-      id: lighthouseCheck
-      with:
-        urls: 'https://www.foo.software,https://www.foo.software/contact'
-        # ... all your other inputs
-    - name: Handle Lighthouse Check results
-      uses: foo-software/lighthouse-check-status-action
-      with:
-        lighthouseCheckResults: ${{ steps.lighthouseCheck.outputs.lighthouseCheckResults }}
-        minAccessibilityScore: 90
-        minBestPracticesScore: 50
-        minPerformanceScore: 50
-        minProgressiveWebAppScore: 50
-        minSeoScore: 50
+      - uses: actions/checkout@master
+      - run: npm install
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        id: lighthouseCheck
+        with:
+          urls: 'https://www.foo.software,https://www.foo.software/contact'
+          # ... all your other inputs
+      - name: Handle Lighthouse Check results
+        uses: foo-software/lighthouse-check-status-action
+        with:
+          lighthouseCheckResults: ${{ steps.lighthouseCheck.outputs.lighthouseCheckResults }}
+          minAccessibilityScore: 90
+          minBestPracticesScore: 50
+          minPerformanceScore: 50
+          minProgressiveWebAppScore: 50
+          minSeoScore: 50
 ```

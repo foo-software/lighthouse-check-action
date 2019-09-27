@@ -17,8 +17,30 @@
     "url": "https://github.com/foo-software/lighthouse-check-action/issues"
   },
   "homepage": "https://github.com/foo-software/lighthouse-check-action#readme",
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "<rootDir>/dist/"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
   "dependencies": {
     "@actions/core": "^1.1.1",
     "@foo-software/lighthouse-check": "0.0.30"
+  },
+  "devDependencies": {
+    "husky": "^3.0.1",
+    "jest": "^24.8.0",
+    "lint-staged": "^9.2.0",
+    "prettier": "^1.18.2"
   }
 }
