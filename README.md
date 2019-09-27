@@ -2,7 +2,7 @@
 
 A GitHub Action for running **multiple** Lighthouse audits automatically in a workflow with a rich set of bonus features.
 
-## How is this Project Different than Similar Ones
+## How is this Project Differs from Similar
 
 Simple implementation with just the `urls` input populated or choose from a variety of features below to utilize. See the [example utilizing features](#example-usage).
 
