@@ -12,7 +12,7 @@ Simple implementation with just the `urls` input populated or choose from a vari
 - Upload HTML reports to AWS S3.
 - **Slack** notifications.
 - Slack notifications **with Git info** (author, branch, PR, etc).
-- Fail a workflow when minimum scores aren't met. [Example at the bottom](example-usage-failing-workflows-by-enforcing-minimum-scores).
+- Fail a workflow when minimum scores aren't met. [Example at the bottom](#user-content-example-usage-failing-workflows-by-enforcing-minimum-scores).
 
 ## Screenshots
 
