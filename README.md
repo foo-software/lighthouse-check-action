@@ -21,7 +21,7 @@ A GitHub Action for running Lighthouse audits automatically in a workflow with a
 Simple configuration or choose from a variety of features below. See the [example Lighthouse Check action implementation](#example-usage).
 
 - 💛 Lighthouse audit **multiple** URLs or just one.
-- 🧡 Save HTML reports locally.
+- 💗 Save HTML reports locally.
 - 💚 Upload HTML reports as artifacts.
 - 💙 Upload HTML reports to AWS S3.
 - ❤️ Fail a workflow when minimum scores aren't met. [Example at the bottom](#user-content-example-usage-failing-workflows-by-enforcing-minimum-scores).
