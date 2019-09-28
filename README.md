@@ -20,7 +20,7 @@ A GitHub Action for running Lighthouse audits automatically in a workflow with a
 
 Simple configuration or choose from a variety of features below. See the [example Lighthouse Check action implementation](#example-usage).
 
-- 💛 Lighthouse audit **multiple** URLs or just one .
+- 💛 Lighthouse audit **multiple** URLs or just one.
 - 🧡 Save HTML reports locally.
 - 💚 Upload HTML reports as artifacts.
 - 💙 Upload HTML reports to AWS S3.
