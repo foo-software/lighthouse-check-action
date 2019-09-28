@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const { lighthouseCheck } = require('@foo-software/lighthouse-check');
 
-const normalizeInput = input => {
+const formatInput = input => {
   if (input === 'true') {
     return true;
   }
@@ -19,31 +19,31 @@ const normalizeInput = input => {
 
 (async () => {
   try {
-    const urls = normalizeInput(core.getInput('urls'));
+    const urls = formatInput(core.getInput('urls'));
 
     const results = await lighthouseCheck({
-      author: normalizeInput(core.getInput('author')),
-      apiToken: normalizeInput(core.getInput('apiToken')),
-      awsAccessKeyId: normalizeInput(core.getInput('awsAccessKeyId')),
-      awsBucket: normalizeInput(core.getInput('awsBucket')),
-      awsRegion: normalizeInput(core.getInput('awsRegion')),
-      awsSecretAccessKey: normalizeInput(core.getInput('awsSecretAccessKey')),
-      branch: normalizeInput(core.getInput('branch')),
-      configFile: normalizeInput(core.getInput('configFile')),
-      emulatedFormFactor: normalizeInput(core.getInput('emulatedFormFactor')),
-      locale: normalizeInput(core.getInput('locale')),
-      help: normalizeInput(core.getInput('help')),
-      outputDirectory: normalizeInput(core.getInput('outputDirectory')),
-      pr: normalizeInput(core.getInput('pr')),
-      sha: normalizeInput(core.getInput('sha')),
-      slackWebhookUrl: normalizeInput(core.getInput('slackWebhookUrl')),
-      tag: normalizeInput(core.getInput('tag')),
-      timeout: normalizeInput(core.getInput('timeout')),
-      throttling: normalizeInput(core.getInput('throttling')),
-      throttlingMethod: normalizeInput(core.getInput('throttlingMethod')),
+      author: formatInput(core.getInput('author')),
+      apiToken: formatInput(core.getInput('apiToken')),
+      awsAccessKeyId: formatInput(core.getInput('awsAccessKeyId')),
+      awsBucket: formatInput(core.getInput('awsBucket')),
+      awsRegion: formatInput(core.getInput('awsRegion')),
+      awsSecretAccessKey: formatInput(core.getInput('awsSecretAccessKey')),
+      branch: formatInput(core.getInput('branch')),
+      configFile: formatInput(core.getInput('configFile')),
+      emulatedFormFactor: formatInput(core.getInput('emulatedFormFactor')),
+      locale: formatInput(core.getInput('locale')),
+      help: formatInput(core.getInput('help')),
+      outputDirectory: formatInput(core.getInput('outputDirectory')),
+      pr: formatInput(core.getInput('pr')),
+      sha: formatInput(core.getInput('sha')),
+      slackWebhookUrl: formatInput(core.getInput('slackWebhookUrl')),
+      tag: formatInput(core.getInput('tag')),
+      timeout: formatInput(core.getInput('timeout')),
+      throttling: formatInput(core.getInput('throttling')),
+      throttlingMethod: formatInput(core.getInput('throttlingMethod')),
       urls: !urls ? undefined : urls.split(','),
-      verbose: normalizeInput(core.getInput('verbose')),
-      wait: normalizeInput(core.getInput('wait'))
+      verbose: formatInput(core.getInput('verbose')),
+      wait: formatInput(core.getInput('wait'))
     });
 
     // yikesers - only strings :(
