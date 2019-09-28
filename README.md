@@ -1,6 +1,6 @@
 # Lighthouse Check Action
 
-A GitHub Action for running **multiple** Lighthouse audits automatically in a workflow with a rich set of bonus features. Run with one simple input or advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!
+A GitHub Action for running Lighthouse audits automatically in a workflow with a rich set of extra features. Simple implementation or advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!
 
 <table>
   <tr>
@@ -16,17 +16,17 @@ A GitHub Action for running **multiple** Lighthouse audits automatically in a wo
   </tr>
 </table>
 
-## How this Project Differs from Similar
+## How this Project Differs from Others
 
-Simple implementation with just the `urls` input populated or choose from a variety of features below to utilize. See the [example utilizing features](#example-usage).
+Simple configuration or choose from a variety of features below. See the [example Lighthouse Check action implementation](#example-usage).
 
-- Lighthouse audits on **multiple** URLs is supported.
-- Save HTML reports locally.
-- Upload HTML reports as artifacts.
-- Upload HTML reports to AWS S3.
-- **Slack** notifications.
-- Slack notifications **with Git info** (author, branch, PR, etc).
-- Fail a workflow when minimum scores aren't met. [Example at the bottom](#user-content-example-usage-failing-workflows-by-enforcing-minimum-scores).
+- 💛 Lighthouse audit **multiple** URLs or just one .
+- 🧡 Save HTML reports locally.
+- 💚 Upload HTML reports as artifacts.
+- 💙 Upload HTML reports to AWS S3.
+- ❤️ Fail a workflow when minimum scores aren't met. [Example at the bottom](#user-content-example-usage-failing-workflows-by-enforcing-minimum-scores).
+- 💜 **Slack** notifications.
+- 💖 Slack notifications **with Git info** (author, branch, PR, etc).
 
 ## Screenshot: Output
 <img alt="Lighthouse Check GitHub action output" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-output.png" />
