@@ -16,7 +16,7 @@ A GitHub Action for running **multiple** Lighthouse audits automatically in a wo
   </tr>
 </table>
 
-## How is this Project Differs from Similar
+## How this Project Differs from Similar
 
 Simple implementation with just the `urls` input populated or choose from a variety of features below to utilize. See the [example utilizing features](#example-usage).
 
