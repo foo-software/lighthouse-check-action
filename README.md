@@ -273,7 +273,7 @@ jobs:
 
 ## Example Usage: Failing Workflows by Enforcing Minimum Scores
 
-We can expand on the example above by optionally failing a workflow if minimum scores aren't met. We do this using
+We can expand on the example above by optionally failing a workflow if minimum scores aren't met. We do this using [`foo-software/lighthouse-check-status-action`](https://github.com/foo-software/lighthouse-check-status-action).
 
 ```yaml
 name: Test Lighthouse Check with Minimum Score Enforcement
