@@ -64,12 +64,6 @@ All fields are optional with the exception of either `urls` or `configFile`.
     <td><code>undefined</code></td>
   </tr>
   <tr>
-    <td><code>branch</code></td>
-    <td>For Slack notifications: A version control branch, typically from GitHub.</td>
-    <td><code>string</code></td>
-    <td><code>undefined</code></td>
-  </tr>
-  <tr>
     <td><code>awsAccessKeyId</code></td>
     <td>The AWS <code>accessKeyId</code> for an S3 bucket.</td>
     <td><code>string</code></td>
@@ -90,6 +84,12 @@ All fields are optional with the exception of either `urls` or `configFile`.
   <tr>
     <td><code>awsSecretAccessKey</code></td>
     <td>The AWS <code>secretAccessKey</code> for an S3 bucket.</td>
+    <td><code>string</code></td>
+    <td><code>undefined</code></td>
+  </tr>
+  <tr>
+    <td><code>branch</code></td>
+    <td>For Slack notifications: A version control branch, typically from GitHub.</td>
     <td><code>string</code></td>
     <td><code>undefined</code></td>
   </tr>
