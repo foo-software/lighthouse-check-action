@@ -42,7 +42,7 @@ Simple configuration or choose from a variety of features below. See the [exampl
 
 ## Screenshot: Fail Workflow when Minimum Scores Aren't Met
 
-<img alt="Lighthouse Check GitHub action fail if scores don't meet minimum requirement on a PR" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action-pr-fail.png" />
+<img alt="Lighthouse Check GitHub action fail if scores don't meet minimum requirement on a PR" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action-pr-fail.png" width="600" />
 
 <img alt="Lighthouse Check GitHub action fail if scores don't meet minimum requirement" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action.png" />
 
@@ -295,11 +295,11 @@ jobs:
         uses: foo-software/lighthouse-check-status-action
         with:
           lighthouseCheckResults: ${{ steps.lighthouseCheck.outputs.lighthouseCheckResults }}
-          minAccessibilityScore: 90
-          minBestPracticesScore: 50
-          minPerformanceScore: 50
-          minProgressiveWebAppScore: 50
-          minSeoScore: 50
+          minAccessibilityScore: "90"
+          minBestPracticesScore: "50"
+          minPerformanceScore: "50"
+          minProgressiveWebAppScore: "50"
+          minSeoScore: "50"
 ```
 
 ## Credits
