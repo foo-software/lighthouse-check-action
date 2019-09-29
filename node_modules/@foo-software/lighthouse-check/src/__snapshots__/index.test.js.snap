@@ -7,5 +7,6 @@ Object {
   "lighthouseCheck": [Function],
   "localLighthouse": [Function],
   "triggerLighthouse": [Function],
+  "validateStatus": [Function],
 }
 `;

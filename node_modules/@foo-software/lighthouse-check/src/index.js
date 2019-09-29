@@ -1,3 +1,4 @@
+export { default as validateStatus } from './validateStatus';
 export {
   default as fetchAndWaitForLighthouseAudits
 } from './fetchAndWaitForLighthouseAudits';

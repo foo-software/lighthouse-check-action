@@ -1,7 +1,7 @@
 /**!
 
  @license
- handlebars v4.3.3
+ handlebars v4.3.4
 
 Copyright (C) 2011-2017 by Yehuda Katz
 
@@ -275,7 +275,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _logger2 = _interopRequireDefault(_logger);
 
-	var VERSION = '4.3.3';
+	var VERSION = '4.3.4';
 	exports.VERSION = VERSION;
 	var COMPILER_REVISION = 8;
 	exports.COMPILER_REVISION = COMPILER_REVISION;
@@ -3806,14 +3806,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // PUBLIC API: You can override these methods in a subclass to provide
 	  // alternative compiled forms for name lookup and buffering semantics
 	  nameLookup: function nameLookup(parent, name /* , type*/) {
+	    var isEnumerable = [this.aliasable('container.propertyIsEnumerable'), '.call(', parent, ',"constructor")'];
+
 	    if (name === 'constructor') {
-	      return ['(', _isEnumerable(), '?', _actualLookup(), ' : undefined)'];
+	      return ['(', isEnumerable, '?', _actualLookup(), ' : undefined)'];
 	    }
 	    return _actualLookup();
-
-	    function _isEnumerable() {
-	      return 'Object.prototype.propertyIsEnumerable.call(' + parent + ',\'constructor\')';
-	    }
 
 	    function _actualLookup() {
 	      if (JavaScriptCompiler.isValidJavaScriptVariableName(name)) {
@@ -4019,7 +4017,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var alias in this.aliases) {
 	      // eslint-disable-line guard-for-in
 	      var node = this.aliases[alias];
-
 	      if (this.aliases.hasOwnProperty(alias) && node.children && node.referenceCount > 1) {
 	        varDeclarations += ', alias' + ++aliasCount + '=' + alias;
 	        node.children[0] = 'alias' + aliasCount;

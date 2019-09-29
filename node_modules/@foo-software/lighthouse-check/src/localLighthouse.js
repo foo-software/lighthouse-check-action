@@ -1,8 +1,9 @@
 import get from 'lodash.get';
+import fs from 'fs';
 import path from 'path';
 import lighthousePersist from '@foo-software/lighthouse-persist';
 import lighthouseDefaultConfig, { throttling } from './lighthouseConfig';
-import { NAME } from './constants';
+import { NAME, NAME_RESULTS_JSON_FILE } from './constants';
 
 const getScoresFromFloat = scores =>
   Object.keys(scores).reduce(
@@ -74,9 +75,7 @@ export const localLighthouse = async ({
     awsSecretAccessKey,
     config: fullConfig,
     options,
-    outputDirectory: !outputDirectory
-      ? outputDirectory
-      : path.resolve(outputDirectory),
+    outputDirectory,
     url
   });
 
@@ -110,6 +109,10 @@ export default async ({
   verbose
 }) => {
   const auditResults = [];
+  const outputDirectoryPath = !outputDirectory
+    ? outputDirectory
+    : path.resolve(outputDirectory);
+
   let index = 1;
 
   for (const url of urls) {
@@ -124,7 +127,7 @@ export default async ({
       awsSecretAccessKey,
       emulatedFormFactor,
       locale,
-      outputDirectory,
+      outputDirectory: outputDirectoryPath,
       throttling,
       throttlingMethod,
       url
@@ -133,5 +136,12 @@ export default async ({
     auditResults.push(lighthouseAuditResult);
     index++;
   }
+
+  // if outputDirectory is specified write the results to disk
+  if (outputDirectoryPath) {
+    const resultsJsonFile = `${outputDirectoryPath}/${NAME_RESULTS_JSON_FILE}`;
+    fs.writeFileSync(resultsJsonFile, JSON.stringify(auditResults));
+  }
+
   return auditResults;
 };
