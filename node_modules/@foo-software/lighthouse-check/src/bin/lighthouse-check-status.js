@@ -60,7 +60,7 @@ const init = async () => {
     }
 
     if (error && error.code && error.code === ERROR_INVALID) {
-      console.log('❌  Fail...', error);
+      console.log('❌  ', `${error}`);
     } else {
       console.log(
         '❌  Something went wrong while attempting to enqueue URLs for Lighthouse. See the error below.\n\n',
