@@ -1,4 +1,5 @@
 export const ERROR_GENERIC = 'ERROR_GENERIC';
+export const ERROR_INVALID = 'ERROR_INVALID';
 export const ERROR_NO_RESULTS = 'ERROR_NO_RESULTS';
 export const ERROR_NO_URLS = 'ERROR_NO_URLS';
 export const ERROR_TIMEOUT = 'ERROR_TIMEOUT';

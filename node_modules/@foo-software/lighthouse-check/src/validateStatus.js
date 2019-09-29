@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
+import LighthouseCheckError from './LighthouseCheckError';
 import { NAME, NAME_RESULTS_JSON_FILE } from './constants';
+import { ERROR_INVALID } from './errorCodes';
 
 const getScoreFailMessage = ({ name, url, minScore, score }) => {
   // if inputs are not specified - assume we shouldn't fail
@@ -94,7 +96,12 @@ export default async ({
   if (failures.length) {
     // comma-separate error messages and remove the last comma
     const failureMessage = failures.join('\n');
-    throw new Error(`Minimum score requirements failed:\n${failureMessage}`);
+    throw new LighthouseCheckError(
+      `Minimum score requirements failed:\n${failureMessage}`,
+      {
+        code: ERROR_INVALID
+      }
+    );
   }
 
   if (verbose) {

@@ -4,6 +4,7 @@ import getHelpText from '../helpers/getHelpText';
 import validateStatus from '../validateStatus';
 import { NAME, NAME_STATUS } from '../constants';
 import { convertOptionsFromArguments } from '../helpers/arguments';
+import { ERROR_INVALID } from '../errorCodes';
 
 const defaultOptions = {
   minAccessibilityScore: {
@@ -58,10 +59,15 @@ const init = async () => {
       console.log('\n');
     }
 
-    console.log(
-      '❌  Scores did not meet requirement or something else went wrong. See below.\n\n',
-      error
-    );
+    if (error && error.code && error.code === ERROR_INVALID) {
+      console.log('❌  Fail...', error);
+    } else {
+      console.log(
+        '❌  Something went wrong while attempting to enqueue URLs for Lighthouse. See the error below.\n\n',
+        error
+      );
+    }
+
     console.log('\n');
     process.exit(1);
   }
