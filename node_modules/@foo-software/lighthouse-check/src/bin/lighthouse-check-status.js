@@ -34,6 +34,10 @@ const defaultOptions = {
   outputDirectory: {
     type: 'string',
     value: undefined
+  },
+  verbose: {
+    type: 'boolean',
+    value: false
   }
 };
 
