@@ -23,10 +23,10 @@ inputs:
     description: 'An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.'
   pr:
     description: 'For Slack notifications: A version control pull request URL, typically from GitHub.'
-  slackWebhookUrl:
-    description: 'A Slack Incoming Webhook URL to send notifications to.'
   sha:
     description: 'For Slack notifications: A version control sha, typically from GitHub.'
+  slackWebhookUrl:
+    description: 'A Slack Incoming Webhook URL to send notifications to.'
   throttlingMethod:
     description: 'Lighthouse setting only used for local audits. See lighthouse-check NPM module comments for details.'
   throttling:
