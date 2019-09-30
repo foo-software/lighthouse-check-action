@@ -118,12 +118,6 @@ All fields are optional with the exception of either `urls` or `configFile`.
     <td><code>undefined</code></td>
   </tr>
   <tr>
-    <td><code>pr</code></td>
-    <td>For Slack notifications: A version control pull request URL, typically from GitHub.</td>
-    <td><code>string</code></td>
-    <td><code>undefined</code></td>
-  </tr>
-  <tr>
     <td><code>sha</code></td>
     <td>For Slack notifications: A version control <code>sha</code>, typically from GitHub.</td>
     <td><code>string</code></td>
