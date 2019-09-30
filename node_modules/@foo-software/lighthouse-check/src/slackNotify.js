@@ -22,13 +22,13 @@ export default async ({
     for (const result of results) {
       // link the report if we have it
       let text = !result.report
-        ? 'Lighthouse Audit'
-        : `<${result.report}|Lighthouse Audit>`;
+        ? 'Lighthouse audit'
+        : `<${result.report}|Lighthouse audit>`;
 
       // if we have a branch
       if (branch) {
         const branchText = !pr ? branch : `<${pr}|${branch}>`;
-        text = `${text} Change made in \`${branchText}\`.`;
+        text = `${text} change made in \`${branchText}\`.`;
       }
 
       let footer;
