@@ -7,7 +7,6 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - run: mkdir /tmp/artifacts
-    - run: echo "branch ${{ github.ref }}"
     - name: Run Lighthouse
       uses: ./
       with:

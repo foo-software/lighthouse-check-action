@@ -20,9 +20,6 @@ const formatInput = input => {
 (async () => {
   try {
     const urls = formatInput(core.getInput('urls'));
-    console.log('author', core.getInput('author'));
-    console.log('sha', core.getInput('sha'));
-    console.log('branch', core.getInput('branch'));
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
