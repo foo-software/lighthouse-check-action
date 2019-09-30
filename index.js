@@ -20,6 +20,7 @@ const formatInput = input => {
 (async () => {
   try {
     const urls = formatInput(core.getInput('urls'));
+    console.log('hmmm', formatInput(core.getInput('author')));
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
