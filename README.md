@@ -262,7 +262,6 @@ jobs:
           awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref }}
           outputDirectory: /tmp/artifacts
-          prCommentOauthToken: ${{ github.LIGHTHOUSE_CHECK_OAUTH_TOKEN }}
           urls: 'https://www.foo.software,https://www.foo.software/contact'
           sha: ${{ github.sha }}
           slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
