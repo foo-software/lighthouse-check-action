@@ -29,7 +29,8 @@ const formatInput = input => {
 
     if (accessToken) {
       const githubData = new github.GitHub(accessToken);
-      console.log('githubData', githubData);
+      const foo = await githubData.pulls.get();
+      console.log('foo', foo);
     }
 
     const results = await lighthouseCheck({
