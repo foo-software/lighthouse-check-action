@@ -1,5 +1,5 @@
 name: 'Lighthouse Check'
-description: 'GitHub Action for running Lighthouse audits with all the bells and whistles 🔔 Multiple audits, Slack notifications and more!'
+description: 'GitHub Action for running one or multiple Lighthouse audits featuring PR comments, Slack notifications and more!'
 inputs:
   author:
     description: 'For Slack notifications: A user handle, typically from GitHub.'
