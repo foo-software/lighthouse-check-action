@@ -1,5 +1,5 @@
 name: 'Lighthouse Check'
-description: 'GitHub Action for running Lighthouse audits with all the bells and whistles 🔔 Multiple audits, Slack notifications and more!'
+description: 'GitHub Action for running one or multiple Lighthouse audits featuring PR comments, Slack notifications and more!'
 inputs:
   author:
     description: 'For Slack notifications: A user handle, typically from GitHub.'
@@ -23,6 +23,8 @@ inputs:
     description: 'An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.'
   pr:
     description: 'For Slack notifications: A version control pull request URL, typically from GitHub.'
+  accessToken:
+    description: 'Access token of a user to post PR comments.'
   sha:
     description: 'For Slack notifications: A version control sha, typically from GitHub.'
   slackWebhookUrl:

@@ -1,5 +1,5 @@
 name: Test Lighthouse Check
-on: [push]
+on: [pull_request]
 
 jobs:
   lighthouse-check:
@@ -10,6 +10,7 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
+        accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
         author: ${{ github.actor }}
         awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
         awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}

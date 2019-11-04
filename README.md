@@ -118,6 +118,12 @@ All fields are optional with the exception of either `urls` or `configFile`.
     <td><code>undefined</code></td>
   </tr>
   <tr>
+    <td><code>accessToken</code></td>
+    <td><a href="https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line">Access token</a> of a user (to do things like post PR comments for example).</td>
+    <td><code>string</code></td>
+    <td><code>undefined</code></td>
+  </tr>
+  <tr>
     <td><code>sha</code></td>
     <td>For Slack notifications: A version control <code>sha</code>, typically from GitHub.</td>
     <td><code>string</code></td>
@@ -233,11 +239,11 @@ An object of scores. Each value is a `number`. Names should be self-explanatory 
 
 ## Example Usage
 
-In the below example we run Lighthouse on two URLs, log scores, save the HTML reports as artifacts, upload reports to AWS S3, notify via Slack with details about the change from Git data.
+In the below example we run Lighthouse on two URLs, log scores, save the HTML reports as artifacts, upload reports to AWS S3, notify via Slack with details about the change from Git data. By specifying the `pull_request` trigger and `accessToken` - we allow automatic comments of audits on the corresponding PR from the token user.
 
 ```yaml
 name: Test Lighthouse Check
-on: [push]
+on: [pull_request]
 
 jobs:
   lighthouse-check:
@@ -248,6 +254,7 @@ jobs:
       - name: Run Lighthouse
         uses: foo-software/lighthouse-check-action@master
         with:
+          accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
           author: ${{ github.actor }}
           awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
@@ -255,6 +262,7 @@ jobs:
           awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref }}
           outputDirectory: /tmp/artifacts
+          prCommentOauthToken: ${{ github.LIGHTHOUSE_CHECK_OAUTH_TOKEN }}
           urls: 'https://www.foo.software,https://www.foo.software/contact'
           sha: ${{ github.sha }}
           slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}

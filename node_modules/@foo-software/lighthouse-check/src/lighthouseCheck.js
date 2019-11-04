@@ -2,6 +2,7 @@ import fetchAndWaitForLighthouseAudits from './fetchAndWaitForLighthouseAudits';
 import LighthouseCheckError from './LighthouseCheckError';
 import triggerLighthouse from './triggerLighthouse';
 import localLighthouse from './localLighthouse';
+import postPrComment from './postPrComment';
 import slackNotify from './slackNotify';
 import { NAME, SUCCESS_CODE_GENERIC } from './constants';
 import { ERROR_NO_RESULTS } from './errorCodes';
@@ -19,6 +20,8 @@ export default ({
   locale,
   outputDirectory,
   pr,
+  prCommentAccessToken,
+  prCommentUrl,
   sha,
   tag,
   throttling,
@@ -144,6 +147,15 @@ export default ({
               results: lighthouseAudits,
               sha,
               slackWebhookUrl,
+              verbose
+            });
+          }
+
+          if (prCommentUrl && prCommentAccessToken) {
+            await postPrComment({
+              prCommentAccessToken,
+              prCommentUrl,
+              results: lighthouseAudits,
               verbose
             });
           }

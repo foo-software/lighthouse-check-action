@@ -6,12 +6,11 @@ var inspect = require('object-inspect');
 
 var ES2018 = require('./es2018');
 var assign = require('./helpers/assign');
+var MAX_SAFE_INTEGER = require('./helpers/maxSafeInteger');
 
 var GetIntrinsic = require('./GetIntrinsic');
 
 var $TypeError = GetIntrinsic('%TypeError%');
-var $Number = GetIntrinsic('%Number%');
-var MAX_SAFE_INTEGER = $Number.MAX_SAFE_INTEGER || Math.pow(2, 53) - 1;
 
 var ES2019 = assign(assign({}, ES2018), {
 	// https://tc39.es/ecma262/#sec-add-entries-from-iterable

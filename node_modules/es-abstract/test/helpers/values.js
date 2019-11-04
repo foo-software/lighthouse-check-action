@@ -19,7 +19,9 @@ var uncoercibleFnObject = {
 var objects = [{}, coercibleObject, coercibleFnObject, toStringOnlyObject, valueOfOnlyObject];
 var nullPrimitives = [undefined, null];
 var nonIntegerNumbers = [-1.3, 0.2, 1.8, 1 / 3];
-var numbers = [0, -0, Infinity, -Infinity, 42].concat(nonIntegerNumbers);
+var zeroes = [0, -0];
+var infinities = [Infinity, -Infinity];
+var numbers = zeroes.concat([42], infinities, nonIntegerNumbers);
 var strings = ['', 'foo', 'a\uD83D\uDCA9c'];
 var booleans = [true, false];
 var symbols = hasSymbols ? [Symbol.iterator, Symbol('foo')] : [];
@@ -71,6 +73,8 @@ module.exports = {
 	nonArrays: nonArrays,
 	nullPrimitives: nullPrimitives,
 	numbers: numbers,
+	zeroes: zeroes,
+	infinities: infinities,
 	strings: strings,
 	booleans: booleans,
 	symbols: symbols,
