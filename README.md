@@ -118,6 +118,12 @@ All fields are optional with the exception of either `urls` or `configFile`.
     <td><code>undefined</code></td>
   </tr>
   <tr>
+    <td><code>prCommentAccessToken</code></td>
+    <td><a href="https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line">Access token</a> of a user to post PR comments.</td>
+    <td><code>string</code></td>
+    <td><code>undefined</code></td>
+  </tr>
+  <tr>
     <td><code>sha</code></td>
     <td>For Slack notifications: A version control <code>sha</code>, typically from GitHub.</td>
     <td><code>string</code></td>
@@ -255,6 +261,7 @@ jobs:
           awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref }}
           outputDirectory: /tmp/artifacts
+          prCommentOauthToken: ${{ github.LIGHTHOUSE_CHECK_OAUTH_TOKEN }}
           urls: 'https://www.foo.software,https://www.foo.software/contact'
           sha: ${{ github.sha }}
           slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}

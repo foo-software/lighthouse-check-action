@@ -528,3 +528,255 @@ test('FromPropertyDescriptor', function (t) {
 
 	t.end();
 });
+
+test('SecFromTime', function (t) {
+	var now = new Date();
+	t.equal(ES.SecFromTime(now.getTime()), now.getUTCSeconds(), 'second from Date timestamp matches getUTCSeconds');
+	t.end();
+});
+
+test('MinFromTime', function (t) {
+	var now = new Date();
+	t.equal(ES.MinFromTime(now.getTime()), now.getUTCMinutes(), 'minute from Date timestamp matches getUTCMinutes');
+	t.end();
+});
+
+test('HourFromTime', function (t) {
+	var now = new Date();
+	t.equal(ES.HourFromTime(now.getTime()), now.getUTCHours(), 'hour from Date timestamp matches getUTCHours');
+	t.end();
+});
+
+test('msFromTime', function (t) {
+	var now = new Date();
+	t.equal(ES.msFromTime(now.getTime()), now.getUTCMilliseconds(), 'ms from Date timestamp matches getUTCMilliseconds');
+	t.end();
+});
+
+var msPerSecond = 1e3;
+var msPerMinute = 60 * msPerSecond;
+var msPerHour = 60 * msPerMinute;
+var msPerDay = 24 * msPerHour;
+
+test('Day', function (t) {
+	var time = Date.UTC(2019, 8, 10, 2, 3, 4, 5);
+	var add = 2.5;
+	var later = new Date(time + (add * msPerDay));
+
+	t.equal(ES.Day(later.getTime()), ES.Day(time) + Math.floor(add), 'adding 2.5 days worth of ms, gives a Day delta of 2');
+	t.end();
+});
+
+test('TimeWithinDay', function (t) {
+	var time = Date.UTC(2019, 8, 10, 2, 3, 4, 5);
+	var add = 2.5;
+	var later = new Date(time + (add * msPerDay));
+
+	t.equal(ES.TimeWithinDay(later.getTime()), ES.TimeWithinDay(time) + (0.5 * msPerDay), 'adding 2.5 days worth of ms, gives a TimeWithinDay delta of +0.5');
+	t.end();
+});
+
+test('DayFromYear', function (t) {
+	t.equal(ES.DayFromYear(2021) - ES.DayFromYear(2020), 366, '2021 is a leap year, has 366 days');
+	t.equal(ES.DayFromYear(2020) - ES.DayFromYear(2019), 365, '2020 is not a leap year, has 365 days');
+	t.equal(ES.DayFromYear(2019) - ES.DayFromYear(2018), 365, '2019 is not a leap year, has 365 days');
+	t.equal(ES.DayFromYear(2018) - ES.DayFromYear(2017), 365, '2018 is not a leap year, has 365 days');
+	t.equal(ES.DayFromYear(2017) - ES.DayFromYear(2016), 366, '2017 is a leap year, has 366 days');
+
+	t.end();
+});
+
+test('TimeFromYear', function (t) {
+	for (var i = 1900; i < 2100; i += 1) {
+		t.equal(ES.TimeFromYear(i), Date.UTC(i, 0, 1), 'TimeFromYear matches a Date object’s year: ' + i);
+	}
+	t.end();
+});
+
+test('YearFromTime', function (t) {
+	for (var i = 1900; i < 2100; i += 1) {
+		t.equal(ES.YearFromTime(Date.UTC(i, 0, 1)), i, 'YearFromTime matches a Date object’s year on 1/1: ' + i);
+		t.equal(ES.YearFromTime(Date.UTC(i, 10, 1)), i, 'YearFromTime matches a Date object’s year on 10/1: ' + i);
+	}
+	t.end();
+});
+
+test('WeekDay', function (t) {
+	var now = new Date();
+	var today = now.getUTCDay();
+	for (var i = 0; i < 7; i += 1) {
+		var weekDay = ES.WeekDay(now.getTime() + (i * msPerDay));
+		t.equal(weekDay, (today + i) % 7, i + ' days after today (' + today + '), WeekDay is ' + weekDay);
+	}
+	t.end();
+});
+
+test('DaysInYear', function (t) {
+	t.equal(ES.DaysInYear(2021), 365, '2021 is not a leap year');
+	t.equal(ES.DaysInYear(2020), 366, '2020 is a leap year');
+	t.equal(ES.DaysInYear(2019), 365, '2019 is not a leap year');
+	t.equal(ES.DaysInYear(2018), 365, '2018 is not a leap year');
+	t.equal(ES.DaysInYear(2017), 365, '2017 is not a leap year');
+	t.equal(ES.DaysInYear(2016), 366, '2016 is a leap year');
+
+	t.end();
+});
+
+test('InLeapYear', function (t) {
+	t.equal(ES.InLeapYear(Date.UTC(2021, 0, 1)), 0, '2021 is not a leap year');
+	t.equal(ES.InLeapYear(Date.UTC(2020, 0, 1)), 1, '2020 is a leap year');
+	t.equal(ES.InLeapYear(Date.UTC(2019, 0, 1)), 0, '2019 is not a leap year');
+	t.equal(ES.InLeapYear(Date.UTC(2018, 0, 1)), 0, '2018 is not a leap year');
+	t.equal(ES.InLeapYear(Date.UTC(2017, 0, 1)), 0, '2017 is not a leap year');
+	t.equal(ES.InLeapYear(Date.UTC(2016, 0, 1)), 1, '2016 is a leap year');
+
+	t.end();
+});
+
+test('DayWithinYear', function (t) {
+	t.equal(ES.DayWithinYear(Date.UTC(2019, 0, 1)), 0, '1/1 is the 1st day');
+	t.equal(ES.DayWithinYear(Date.UTC(2019, 11, 31)), 364, '12/31 is the 365th day in a non leap year');
+	t.equal(ES.DayWithinYear(Date.UTC(2016, 11, 31)), 365, '12/31 is the 366th day in a leap year');
+
+	t.end();
+});
+
+test('MonthFromTime', function (t) {
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 0, 1)), 0, 'non-leap: 1/1 gives January');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 0, 31)), 0, 'non-leap: 1/31 gives January');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 1, 1)), 1, 'non-leap: 2/1 gives February');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 1, 28)), 1, 'non-leap: 2/28 gives February');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 1, 29)), 2, 'non-leap: 2/29 gives March');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 2, 1)), 2, 'non-leap: 3/1 gives March');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 2, 31)), 2, 'non-leap: 3/31 gives March');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 3, 1)), 3, 'non-leap: 4/1 gives April');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 3, 30)), 3, 'non-leap: 4/30 gives April');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 4, 1)), 4, 'non-leap: 5/1 gives May');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 4, 31)), 4, 'non-leap: 5/31 gives May');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 5, 1)), 5, 'non-leap: 6/1 gives June');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 5, 30)), 5, 'non-leap: 6/30 gives June');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 6, 1)), 6, 'non-leap: 7/1 gives July');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 6, 31)), 6, 'non-leap: 7/31 gives July');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 7, 1)), 7, 'non-leap: 8/1 gives August');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 7, 30)), 7, 'non-leap: 8/30 gives August');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 8, 1)), 8, 'non-leap: 9/1 gives September');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 8, 30)), 8, 'non-leap: 9/30 gives September');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 9, 1)), 9, 'non-leap: 10/1 gives October');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 9, 31)), 9, 'non-leap: 10/31 gives October');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 10, 1)), 10, 'non-leap: 11/1 gives November');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 10, 30)), 10, 'non-leap: 11/30 gives November');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 11, 1)), 11, 'non-leap: 12/1 gives December');
+	t.equal(ES.MonthFromTime(Date.UTC(2019, 11, 31)), 11, 'non-leap: 12/31 gives December');
+
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 0, 1)), 0, 'leap: 1/1 gives January');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 0, 31)), 0, 'leap: 1/31 gives January');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 1, 1)), 1, 'leap: 2/1 gives February');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 1, 28)), 1, 'leap: 2/28 gives February');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 1, 29)), 1, 'leap: 2/29 gives February');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 2, 1)), 2, 'leap: 3/1 gives March');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 2, 31)), 2, 'leap: 3/31 gives March');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 3, 1)), 3, 'leap: 4/1 gives April');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 3, 30)), 3, 'leap: 4/30 gives April');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 4, 1)), 4, 'leap: 5/1 gives May');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 4, 31)), 4, 'leap: 5/31 gives May');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 5, 1)), 5, 'leap: 6/1 gives June');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 5, 30)), 5, 'leap: 6/30 gives June');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 6, 1)), 6, 'leap: 7/1 gives July');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 6, 31)), 6, 'leap: 7/31 gives July');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 7, 1)), 7, 'leap: 8/1 gives August');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 7, 30)), 7, 'leap: 8/30 gives August');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 8, 1)), 8, 'leap: 9/1 gives September');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 8, 30)), 8, 'leap: 9/30 gives September');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 9, 1)), 9, 'leap: 10/1 gives October');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 9, 31)), 9, 'leap: 10/31 gives October');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 10, 1)), 10, 'leap: 11/1 gives November');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 10, 30)), 10, 'leap: 11/30 gives November');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 11, 1)), 11, 'leap: 12/1 gives December');
+	t.equal(ES.MonthFromTime(Date.UTC(2016, 11, 31)), 11, 'leap: 12/31 gives December');
+	t.end();
+});
+
+test('DateFromTime', function (t) {
+	var i;
+	for (i = 1; i <= 28; i += 1) {
+		t.equal(ES.DateFromTime(Date.UTC(2019, 1, i)), i, '2019.02.' + i + ' is date ' + i);
+	}
+	for (i = 1; i <= 29; i += 1) {
+		t.equal(ES.DateFromTime(Date.UTC(2016, 1, i)), i, '2016.02.' + i + ' is date ' + i);
+	}
+	for (i = 1; i <= 30; i += 1) {
+		t.equal(ES.DateFromTime(Date.UTC(2019, 8, i)), i, '2019.09.' + i + ' is date ' + i);
+	}
+	for (i = 1; i <= 31; i += 1) {
+		t.equal(ES.DateFromTime(Date.UTC(2019, 9, i)), i, '2019.10.' + i + ' is date ' + i);
+	}
+	t.end();
+});
+
+test('MakeDay', function (t) {
+	var day2015 = 16687;
+	t.equal(ES.MakeDay(2015, 8, 9), day2015, '2015.09.09 is day 16687');
+	var day2016 = day2015 + 366; // 2016 is a leap year
+	t.equal(ES.MakeDay(2016, 8, 9), day2016, '2015.09.09 is day 17053');
+	var day2017 = day2016 + 365;
+	t.equal(ES.MakeDay(2017, 8, 9), day2017, '2017.09.09 is day 17418');
+	var day2018 = day2017 + 365;
+	t.equal(ES.MakeDay(2018, 8, 9), day2018, '2018.09.09 is day 17783');
+	var day2019 = day2018 + 365;
+	t.equal(ES.MakeDay(2019, 8, 9), day2019, '2019.09.09 is day 18148');
+	t.end();
+});
+
+test('MakeDate', function (t) {
+	forEach(v.infinities.concat(NaN), function (nonFiniteNumber) {
+		t.ok(is(ES.MakeDate(nonFiniteNumber, 0), NaN), debug(nonFiniteNumber) + ' is not a finite `day`');
+		t.ok(is(ES.MakeDate(0, nonFiniteNumber), NaN), debug(nonFiniteNumber) + ' is not a finite `time`');
+	});
+	t.equal(ES.MakeDate(0, 0), 0, 'zero day and zero time is zero date');
+	t.equal(ES.MakeDate(0, 123), 123, 'zero day and nonzero time is a date of the "time"');
+	t.equal(ES.MakeDate(1, 0), msPerDay, 'day of 1 and zero time is a date of "ms per day"');
+	t.equal(ES.MakeDate(3, 0), 3 * msPerDay, 'day of 3 and zero time is a date of thrice "ms per day"');
+	t.equal(ES.MakeDate(1, 123), msPerDay + 123, 'day of 1 and nonzero time is a date of "ms per day" plus the "time"');
+	t.equal(ES.MakeDate(3, 123), (3 * msPerDay) + 123, 'day of 3 and nonzero time is a date of thrice "ms per day" plus the "time"');
+
+	t.end();
+});
+
+test('MakeTime', function (t) {
+	forEach(v.infinities.concat(NaN), function (nonFiniteNumber) {
+		t.ok(is(ES.MakeTime(nonFiniteNumber, 0, 0, 0), NaN), debug(nonFiniteNumber) + ' is not a finite `hour`');
+		t.ok(is(ES.MakeTime(0, nonFiniteNumber, 0, 0), NaN), debug(nonFiniteNumber) + ' is not a finite `min`');
+		t.ok(is(ES.MakeTime(0, 0, nonFiniteNumber, 0), NaN), debug(nonFiniteNumber) + ' is not a finite `sec`');
+		t.ok(is(ES.MakeTime(0, 0, 0, nonFiniteNumber), NaN), debug(nonFiniteNumber) + ' is not a finite `ms`');
+	});
+
+	t.equal(
+		ES.MakeTime(1.2, 2.3, 3.4, 4.5),
+		(1 * msPerHour) + (2 * msPerMinute) + (3 * msPerSecond) + 4,
+		'all numbers are converted to integer, multiplied by the right number of ms, and summed'
+	);
+	t.end();
+});
+
+test('TimeClip', function (t) {
+	forEach(v.infinities.concat(NaN), function (nonFiniteNumber) {
+		t.ok(is(ES.TimeClip(nonFiniteNumber), NaN), debug(nonFiniteNumber) + ' is not a finite `time`');
+	});
+	t.ok(is(ES.TimeClip(8.64e15 + 1), NaN), '8.64e15 is the largest magnitude considered "finite"');
+	t.ok(is(ES.TimeClip(-8.64e15 - 1), NaN), '-8.64e15 is the largest magnitude considered "finite"');
+
+	forEach(v.zeroes.concat([-10, 10, Date.now()]), function (time) {
+		t.equal(ES.TimeClip(time), time, debug(time) + ' is a time of ' + debug(time));
+	});
+
+	t.end();
+});
+
+test('modulo', function (t) {
+	t.equal(3 % 2, 1, '+3 % 2 is +1');
+	t.equal(ES.modulo(3, 2), 1, '+3 mod 2 is +1');
+
+	t.equal(-3 % 2, -1, '-3 % 2 is -1');
+	t.equal(ES.modulo(-3, 2), 1, '-3 mod 2 is +1');
+	t.end();
+});

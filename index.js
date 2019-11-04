@@ -1,4 +1,6 @@
 const core = require('@actions/core');
+const get = require('lodash.get');
+const github = require('@actions/github');
 const { lighthouseCheck } = require('@foo-software/lighthouse-check');
 
 const formatInput = input => {
@@ -35,6 +37,8 @@ const formatInput = input => {
       help: formatInput(core.getInput('help')),
       outputDirectory: formatInput(core.getInput('outputDirectory')),
       pr: formatInput(core.getInput('pr')),
+      prCommentAccessToken: formatInput(core.getInput('prCommentAccessToken')),
+      prCommentUrl: get(github, 'context.payload.pull_request.comments_url'),
       sha: formatInput(core.getInput('sha')),
       slackWebhookUrl: formatInput(core.getInput('slackWebhookUrl')),
       tag: formatInput(core.getInput('tag')),

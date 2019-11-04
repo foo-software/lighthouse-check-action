@@ -1,5 +1,5 @@
-import fetch from 'node-fetch';
 import get from 'lodash.get';
+import fetch from './fetch';
 import LighthouseCheckError from './LighthouseCheckError';
 import {
   API_PAGES_PATH,

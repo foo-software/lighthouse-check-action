@@ -50,7 +50,9 @@
   },
   "dependencies": {
     "@actions/core": "^1.1.1",
-    "@foo-software/lighthouse-check": "0.0.57"
+    "@actions/github": "^1.1.0",
+    "@foo-software/lighthouse-check": "0.0.58",
+    "lodash.get": "^4.4.2"
   },
   "devDependencies": {
     "husky": "^3.0.1",

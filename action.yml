@@ -23,6 +23,8 @@ inputs:
     description: 'An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.'
   pr:
     description: 'For Slack notifications: A version control pull request URL, typically from GitHub.'
+  prCommentAccessToken:
+    description: 'Access token of a user to post PR comments.'
   sha:
     description: 'For Slack notifications: A version control sha, typically from GitHub.'
   slackWebhookUrl:
