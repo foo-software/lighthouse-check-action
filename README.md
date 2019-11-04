@@ -239,11 +239,11 @@ An object of scores. Each value is a `number`. Names should be self-explanatory 
 
 ## Example Usage
 
-In the below example we run Lighthouse on two URLs, log scores, save the HTML reports as artifacts, upload reports to AWS S3, notify via Slack with details about the change from Git data.
+In the below example we run Lighthouse on two URLs, log scores, save the HTML reports as artifacts, upload reports to AWS S3, notify via Slack with details about the change from Git data. By specifying the `pull_request` trigger and `accessToken` - we allow automatic comments of audits on the corresponding PR from the token user.
 
 ```yaml
 name: Test Lighthouse Check
-on: [push]
+on: [pull_request]
 
 jobs:
   lighthouse-check:
@@ -254,6 +254,7 @@ jobs:
       - name: Run Lighthouse
         uses: foo-software/lighthouse-check-action@master
         with:
+          accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
           author: ${{ github.actor }}
           awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
