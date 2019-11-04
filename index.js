@@ -24,7 +24,7 @@ const formatInput = input => {
     const urls = formatInput(core.getInput('urls'));
     const apiPrUrl = get(github, 'context.payload.repository.pulls_url');
 
-    console.log('github', github.context.payload.repository);
+    console.log('hmmm', formatInput(core.getInput('prCommentAccessToken'));
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
