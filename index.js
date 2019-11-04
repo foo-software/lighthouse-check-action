@@ -22,6 +22,7 @@ const formatInput = input => {
 (async () => {
   try {
     const urls = formatInput(core.getInput('urls'));
+    console.log('comments_url', get(github, 'context.payload.pull_request.comments_url'));
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
