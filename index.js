@@ -23,6 +23,10 @@ const formatInput = input => {
   try {
     const urls = formatInput(core.getInput('urls'));
     const apiPrUrl = get(github, 'context.payload.repository.pulls_url');
+    console.log({
+      prCommentAccessToken: formatInput(core.getInput('prCommentAccessToken')),
+      prCommentUrl: !apiPrUrl ? undefined : `${apiPrUrl}/reviews`
+    });
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
