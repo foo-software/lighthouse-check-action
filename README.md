@@ -21,6 +21,7 @@ A GitHub Action for running Lighthouse audits automatically in a workflow with a
 Simple configuration or choose from a variety of features below. See the [example Lighthouse Check action implementation](#example-usage).
 
 - 💛 Lighthouse audit **multiple** URLs or just one.
+- 💗 PR comments of audit scores.
 - 💗 Save HTML reports locally.
 - 💚 Upload HTML reports as artifacts.
 - 💙 Upload HTML reports to AWS S3.
@@ -36,6 +37,9 @@ Simple configuration or choose from a variety of features below. See the [exampl
 
 ## Screenshot: HTML Reports
 <img alt="Lighthouse Check GitHub action HTML report" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png" />
+
+## Screenshot: PR Comments
+<img alt="Lighthouse Check PR comments" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-check-pr-comment.png" width="400">
 
 ## Screenshot: Slack Notifications
 <img alt="Lighthouse Check GitHub action Slack notification" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-slack.png" width="520" />
