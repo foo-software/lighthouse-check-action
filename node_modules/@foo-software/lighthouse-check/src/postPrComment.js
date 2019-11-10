@@ -18,22 +18,28 @@ export default async ({
   try {
     let markdown = `## Lighthouse Audits`;
 
-    for (const result of results) {
+    results.forEach((result, index) => {
       // the url
       markdown += `\n\n${result.url}`;
-
-      // if we have a URL for the full report
-      if (result.report) {
-        markdown += `\n\nReport: ${result.report}`;
-      }
 
       // the table header
       markdown += `\n\n${resultTableHeader}`;
 
+      // populate the table
       Object.keys(result.scores).forEach(current => {
         markdown += `| ${lighthouseAuditTitles[current]} | ${result.scores[current]} |\n`;
       });
-    }
+
+      // if we have a URL for the full report
+      if (result.report) {
+        markdown += `\n\n${result.report}`;
+      }
+
+      // add a horizontal line
+      if (index + 1 < results.length) {
+        markdown += `\n\n<hr />`;
+      }
+    });
 
     const result = await fetch(prCommentUrl, {
       method: 'post',
