@@ -19,7 +19,16 @@ export default async ({
     let markdown = `## Lighthouse Audits`;
 
     for (const result of results) {
-      markdown += `\n\n${result.url}\n\n${resultTableHeader}`;
+      // the url
+      markdown += `\n\n${result.url}`;
+
+      // if we have a URL for the full report
+      if (result.report) {
+        markdown += `\n\nReport: ${result.report}`;
+      }
+
+      // the table header
+      markdown += `\n\n${resultTableHeader}`;
 
       Object.keys(result.scores).forEach(current => {
         markdown += `| ${lighthouseAuditTitles[current]} | ${result.scores[current]} |\n`;
