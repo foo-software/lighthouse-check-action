@@ -91,7 +91,7 @@ function stringifyReplacer(key, value) {
 }
 
 /**
- * Save artifacts object mostly to single file located at basePath/artifacts.log.
+ * Save artifacts object mostly to single file located at basePath/artifacts.json.
  * Also save the traces & devtoolsLogs to their own files
  * @param {LH.Artifacts} artifacts
  * @param {string} basePath

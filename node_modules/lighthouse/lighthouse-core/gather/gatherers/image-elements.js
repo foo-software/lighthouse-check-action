@@ -130,6 +130,12 @@ function determineNaturalSize(url) {
 }
 
 class ImageElements extends Gatherer {
+  constructor() {
+    super();
+    /** @type {Map<string, {naturalWidth: number, naturalHeight: number}>} */
+    this._naturalSizeCache = new Map();
+  }
+
   /**
    * @param {Driver} driver
    * @param {LH.Artifacts.ImageElement} element
@@ -137,11 +143,16 @@ class ImageElements extends Gatherer {
    */
   async fetchElementWithSizeInformation(driver, element) {
     const url = JSON.stringify(element.src);
+    if (this._naturalSizeCache.has(url)) {
+      return Object.assign(element, this._naturalSizeCache.get(url));
+    }
+
     try {
       // We don't want this to take forever, 250ms should be enough for images that are cached
       driver.setNextProtocolTimeout(250);
       /** @type {{naturalWidth: number, naturalHeight: number}} */
       const size = await driver.evaluateAsync(`(${determineNaturalSize.toString()})(${url})`);
+      this._naturalSizeCache.set(url, size);
       return Object.assign(element, size);
     } catch (_) {
       // determineNaturalSize fails on invalid images, which we treat as non-visible

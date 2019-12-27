@@ -18,7 +18,7 @@
 
 <!-- AMP-style stylesheet script -->
 <!-- based on https://github.com/ampproject/amphtml/blob/38f1bdf4cc385f9a25cf2979abf215952880b876/src/font-stylesheet-timeout.js#L87-L103 -->
-<script type="text/javascript">
+<script type="text/javascript" id="amp-style-styling-script">
   setTimeout(() => {
     const stylesheet = document.getElementById('amp-style-link');
     stylesheet.media = 'not-matching';
@@ -48,13 +48,16 @@
 <link rel="alternate stylesheet" href="./empty.css">
 
 <!-- FAIL: block rendering -->
-<script src="./dbw_tester.js"></script>
+<script src="./dbw_tester.js" id="dbw-tester-script"></script>
 
 <!-- PASS: 'modules' are deferred by default and don't block rendering -->
 <script type="module" src="./empty_module.js?delay=500"></script>
 
 <!-- FAIL(errors-in-console): exception thrown -->
-<script type="text/javascript">throw new Error('An error');</script>
+<script type="text/javascript" id="error-time">throw new Error('A distinctive error');</script>
+
+<!-- PASS(errors-in-console): exception thrown but ignoredPatterns removes it -->
+<script type="text/javascript">throw new Error('An ignored error');</script>
 
 <!-- Add non-functional script to appear to be a Wordpress page for Stack Packs. -->
 <script type="example" src="fake-script-wp-includes"></script>
@@ -149,6 +152,13 @@
 <div>
   <h2>Do better web tester page</h2>
   <span>Hi there!</span>
+
+  <!-- Invalid SVG with a link just to ensure the `LinkElements` gatherer can handle it. -->
+  <svg role="img" class="social-facebook" aria-labelledby="social-facebook-5">
+    <title id="social-facebook-5">Facebook</title>
+    <link rel="preload" href="https://fonts.googleapis.com/made-up-url"></link>
+    <use xlink:href=""></use>
+  </svg>
 </div>
 
 <section id="touchmove-section">touchmove section</section>

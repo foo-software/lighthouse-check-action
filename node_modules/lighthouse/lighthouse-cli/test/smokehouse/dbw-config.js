@@ -10,15 +10,8 @@
  */
 module.exports = {
   extends: 'lighthouse:default',
-  settings: {
-    onlyCategories: [
-      'best-practices',
-    ],
-    onlyAudits: [
-      'dom-size',
-      'render-blocking-resources',
-      'errors-in-console',
-      'efficient-animated-content',
-    ],
-  },
+  audits: [
+    // Test the `ignoredPatterns` audit option.
+    {path: 'errors-in-console', options: {ignoredPatterns: ['An ignored error']}},
+  ],
 };

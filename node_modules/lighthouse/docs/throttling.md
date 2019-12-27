@@ -20,6 +20,8 @@ Within web performance testing, there are four typical styles of throttling:
 
 Lighthouse, by default, uses simulated throttling as it provides both quick evaluation and minimized variance. However, some may want to experiment with more accurate throttling...
 
+[Learn more about these throttling types and how they behave in in different scenarios](https://www.debugbear.com/blog/network-throttling-methods).
+
 ## How do I get packet-level throttling?
 
 This Performance Calendar article, [Testing with Realistic Networking Conditions](https://calendar.perfplanet.com/2016/testing-with-realistic-networking-conditions/), has a good explanation of packet-level traffic shaping (which applies across TCP/UDP/ICMP) and recommendations.
@@ -36,7 +38,7 @@ go get github.com/tylertreat/comcast
 # Ensure your $GOPATH/bin is in your $PATH (https://github.com/golang/go/wiki/GOPATH)
 
 # To use the recommended throttling values:
-comcast --latency=150 --target-bw=1600 --dry-run
+comcast --latency=150 --target-bw=1638 --dry-run
 
 # To disable throttling
 # comcast --stop

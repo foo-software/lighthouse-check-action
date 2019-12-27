@@ -11,13 +11,13 @@ const ComputedChains = require('../computed/critical-request-chains.js');
 
 const UIStrings = {
   /** Imperative title of a Lighthouse audit that tells the user to reduce the depth of critical network requests to enhance initial load of a page. Critical request chains are series of dependent network requests that are important for page rendering. For example, here's a 4-request-deep chain: The biglogo.jpg image is required, but is requested via the styles.css style code, which is requested by the initialize.js javascript, which is requested by the page's HTML. This is displayed in a list of audit titles that Lighthouse generates. */
-  title: 'Minimize Critical Requests Depth',
+  title: 'Avoid chaining critical requests',
   /** Description of a Lighthouse audit that tells the user *why* they should reduce the depth of critical network requests to enhance initial load of a page . This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. */
   description: 'The Critical Request Chains below show you what resources are ' +
       'loaded with a high priority. Consider reducing ' +
       'the length of chains, reducing the download size of resources, or ' +
       'deferring the download of unnecessary resources to improve page load. ' +
-      '[Learn more](https://developers.google.com/web/tools/lighthouse/audits/critical-request-chains).',
+      '[Learn more](https://web.dev/critical-request-chains).',
   /** [ICU Syntax] Label for an audit identifying the number of sequences of dependent network requests used to load the page. */
   displayValue: `{itemCount, plural,
     =1 {1 chain found}

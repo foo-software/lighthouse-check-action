@@ -5,12 +5,13 @@
  */
 'use strict';
 
-/**
- * Expected Lighthouse audit values for redirects tests
- */
 const cacheBuster = Number(new Date());
 
-module.exports = [
+/**
+ * @type {Array<Smokehouse.ExpectedRunnerResult>}
+ * Expected Lighthouse audit values for redirects tests
+ */
+const expectations = [
   {
     lhr: {
       requestedUrl: `http://localhost:10200/online-only.html?delay=500&redirect=%2Foffline-only.html%3Fcb=${cacheBuster}%26delay=500%26redirect%3D%2Fredirects-final.html`,
@@ -46,3 +47,5 @@ module.exports = [
     },
   },
 ];
+
+module.exports = expectations;

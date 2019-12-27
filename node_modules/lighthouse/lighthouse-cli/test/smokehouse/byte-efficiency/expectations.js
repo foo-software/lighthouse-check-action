@@ -6,9 +6,10 @@
 'use strict';
 
 /**
+ * @type {Array<Smokehouse.ExpectedRunnerResult>}
  * Expected Lighthouse audit values for byte efficiency tests
  */
-module.exports = [
+const expectations = [
   {
     lhr: {
       requestedUrl: 'http://localhost:10200/byte-efficiency/tester.html',
@@ -150,3 +151,5 @@ module.exports = [
     },
   },
 ];
+
+module.exports = expectations;

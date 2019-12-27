@@ -38,8 +38,8 @@ export default ({
       // running a lighthouse audit locally.
       const isLocalAudit = !apiToken;
 
-      // if we're auditing through the lighthouse-check.com API,
-      // otherwise we're using Lighthouse directly, locally
+      // if we're auditing through the automated-lighthouse-check.com
+      // API, otherwise we're using Lighthouse directly, locally
       if (!isLocalAudit) {
         const triggerResult = await triggerLighthouse({
           apiToken,
@@ -73,7 +73,7 @@ export default ({
 
           // if this condition doesn't pass - we got a problem
           if (queueIds.length) {
-            if (!params.verbose) {
+            if (!verbose) {
               console.log('\n');
             }
 
@@ -96,7 +96,16 @@ export default ({
               });
             }
 
-            logResults({ results: auditResults });
+            if (prCommentUrl && prCommentAccessToken) {
+              await postPrComment({
+                prCommentAccessToken,
+                prCommentUrl,
+                results: auditResults,
+                verbose
+              });
+            }
+
+            logResults({ isLocalAudit, results: auditResults });
 
             // success
             resolve({
@@ -160,7 +169,7 @@ export default ({
             });
           }
 
-          logResults({ results: lighthouseAudits });
+          logResults({ isLocalAudit, results: lighthouseAudits });
 
           // success
           resolve({

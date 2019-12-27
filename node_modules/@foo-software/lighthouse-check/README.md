@@ -6,10 +6,13 @@
 
 <img src="https://s3.amazonaws.com/foo.software/images/marketing/screenshots/lighthouse-audit-report.png" />
 
+This project provides **two ways of running audits** - locally in your own environment or remotely via [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) API. For basic usage, running locally will suffice, but if you'd like to maintain a historical record of Lighthouse audits and utilize other features, you can run audits remotely by following the [steps and examples](#automated-lighthouse-check-api-usage).
+
 # Features
 
 - [Simple usage](#basic-usage) - only one parameter required.
-- Run **multiple** Lighthouse audits with one command. 
+- Run **multiple** Lighthouse audits with one command.
+- Optionally run Lighthouse remotely and save audits with the [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) API.
 - Optionally [save an HTML report locally](#saving-reports-locally).
 - Optionally [save an HTML report in an AWS S3 bucket](#saving-reports-to-s3).
 - [Easy setup with Slack Webhooks](#implementing-with-slack). Just add your Webhook URL and `lighthouse-check` will send results and optionally include versioning data like branch, author, PR, etc (typically from GitHub).
@@ -18,6 +21,23 @@
 - CLI - see [CLI Usage](#cli-usage).
 - Docker - see [Docker Usage](#docker-usage).
 - Support for implementations like [CircleCI](#implementing-with-circleci).
+
+# Table of Contents
+
+- [Install](#install)
+- [Usage](#usage)
+  - [Basic Usage](#basic-usage)
+  - [Automated Lighthouse Check API Usage](#automated-lighthouse-check-api-usage)
+  - [Saving Reports Locally](#saving-reports-locally)
+  - [Saving Reports to S3](#saving-reports-to-s3)
+  - [Implementing with Slack](#implementing-with-slack)
+  - [Enabling PR Comments](#enabling-pr-comments)
+  - [Enforcing Minimum Scores](#enforcing-minimum-scores)
+  - [Implementing with CircleCI](#implementing-with-circleci)
+  - [Implementing with GitHub Actions](#implementing-with-gitHub-actions)
+- [CLI](#cli)
+- [Docker](#docker)
+- [Options](#options)
 
 # Install
 
@@ -57,6 +77,45 @@ $ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/con
 The CLI will log the results.
 
 <img alt="lighthouse-check CLI output" src="https://s3.amazonaws.com/foo.software/images/marketing/screenshots/lighthouse-check-cli-output.jpg" width="600" />
+
+## Automated Lighthouse Check API Usage
+
+[Automated Lighthouse Check](https://www.automated-lighthouse-check.com) can monitor your website's quality by running audits automatically! It can provide a historical record of audits over time to track progression and degradation of website quality. [Create a free account](https://www.automated-lighthouse-check.com/register) to get started. With this, not only will you have automatic audits, but also any that you trigger additionally. Below are steps to trigger audits on URLs that you've created in your account.
+
+#### Trigger Audits on All Pages in an Account
+
+- Navigate to [your account details](https://www.automated-lighthouse-check.com/account), click into "Account Management" and make note of the "API Token".
+- Use the account token as the [`apiToken` option](#options).
+
+> Basic example with the CLI
+
+```bash
+$ lighthouse-check --apiToken "abcdefg"
+```
+
+#### Trigger Audits on Only Certain Pages in an Account
+
+- Navigate to [your account details](https://www.automated-lighthouse-check.com/account), click into "Account Management" and make note of the "API Token".
+- Navigate to [your dashboard](https://www.automated-lighthouse-check.com/dashboard) and once you've created URLs to monitor, click on the "More" link of the URL you'd like to use. From the URL details screen, click the "Edit" link at the top of the page. You should see an "API Token" on this page. It represents the token for this specific page (not to be confused with an **account** API token).
+- Use the account token as the [`apiToken` option](#options) and page token (or group of page tokens) as [`urls` option](#options).
+
+> Basic example with the CLI
+
+```bash
+$ lighthouse-check --apiToken "abcdefg" \
+  --urls "hijklmnop,qrstuv"
+```
+
+You can combine usage with other options for a more advanced setup. Example below.
+
+> Runs audits remotely and posts results as comments in a PR
+
+```bash
+$ lighthouse-check --apiToken "abcdefg" \
+  --urls "hijklmnop,qrstuv" \
+  --prCommentAccessToken "abcpersonaltoken" \
+  --prCommentUrl "https://api.github.com/repos/foo-software/lighthouse-check/pulls/3/reviews"
+```
 
 ## Saving Reports Locally
 
@@ -294,33 +353,73 @@ jobs:
           path: /tmp/artifacts
 ```
 
+## CLI
+
+Running `lighthouse-check` in the example below will run Lighthouse audits against `https://www.foo.software` and `https://www.foo.software/contact` and output a report in the '/tmp/artifacts' directory.
+
+Format is `--option <argument>`. Example below.
+
+```bash
+$ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/contact" \
+  --outputDirectory /tmp/artifacts
+```
+
+> `lighthouse-check-status` example
+
+```bash
+$ lighthouse-check-status --outputDirectory /tmp/artifacts \
+  --minAccessibilityScore 90 \
+  --minBestPracticesScore 90 \
+  --minPerformanceScore 70 \
+  --minProgressiveWebAppScore 70 \
+  --minSeoScore 80
+```
+
+## CLI Options
+
+All options mirror [the NPM module](#options). The only difference is that array options like `urls` are passed in as a comma-separated string as an argument using the CLI.
+
+## Docker
+
+```bash
+$ docker pull foosoftware/lighthouse-check:latest
+$ docker run foosoftware/lighthouse-check:latest \
+  lighthouse-check --verbose \
+  --urls "https://www.foo.software,https://www.foo.software/contact"
+```
+
 ## Options
 
 `lighthouse-check` functions accept a single configuration object.
 
 #### `lighthouseCheck`
 
+You can choose from two ways of running audits - locally in your own environment or remotely via Automated Lighthouse Check API. You can think of local runs as the default implementation. For directions about how to run remotely see the [Automated Lighthouse Check API Usage](#automated-lighthouse-check-api-usage) section. We denote which options are available to a run type with the `Run Type` values of either `local`, `remote`, or `both`.
+
+Below are options for the exported `lighthouseCheck` function or `lighthouse-check` command with CLI.
+
 <table>
   <tr>
     <th>Name</th>
     <th>Description</th>
     <th>Type</th>
+    <th>Run Type</th>
     <th>Default</th>
     <th>Required</th>
   </tr>
-  <!--
-    <tr>
-      <td><code>apiToken</code></td>
-      <td>The lighthouse-check account API token found in the dashboard.</td>
-      <td><code>string</code></td>
-      <td><code>undefined</code></td>
-      <td>no</td>
-    </tr>
-  -->
+  <tr>
+    <td><code>apiToken</code></td>
+    <td>The automated-lighthouse-check.com account API token found in the dashboard.</td>
+    <td><code>string</code></td>
+    <td><code>remote</code></td>
+    <td><code>undefined</code></td>
+    <td>no</td>
+  </tr>
   <tr>
     <td><code>author</code></td>
     <td>For Slack notifications: A user handle, typically from GitHub.</td>
     <td><code>string</code></td>
+    <td><code>both</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -328,6 +427,7 @@ jobs:
     <td><code>awsAccessKeyId</code></td>
     <td>The AWS <code>accessKeyId</code> for an S3 bucket.</td>
     <td><code>string</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -335,6 +435,7 @@ jobs:
     <td><code>awsBucket</code></td>
     <td>The AWS <code>Bucket</code> for an S3 bucket.</td>
     <td><code>string</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -342,6 +443,7 @@ jobs:
     <td><code>awsRegion</code></td>
     <td>The AWS <code>region</code> for an S3 bucket.</td>
     <td><code>string</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -349,6 +451,7 @@ jobs:
     <td><code>awsSecretAccessKey</code></td>
     <td>The AWS <code>secretAccessKey</code> for an S3 bucket.</td>
     <td><code>string</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -356,6 +459,7 @@ jobs:
     <td><code>branch</code></td>
     <td>For Slack notifications: A version control branch, typically from GitHub.</td>
     <td><code>string</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -363,6 +467,7 @@ jobs:
     <td><code>configFile</code></td>
     <td>A configuration file path in JSON format which holds all options defined here. This file should be relative to the file being interpretted.</td>
     <td><code>string</code></td>
+    <td><code>both</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -370,6 +475,7 @@ jobs:
     <td><code>emulatedFormFactor</code></td>
     <td>Lighthouse setting only used for local audits. See <a href="src/lighthouseConfig.js">src/lighthouseConfig.js</a> comments for details.</td>
     <td><code>oneOf(['mobile', 'desktop']</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -377,6 +483,7 @@ jobs:
     <td><code>locale</code></td>
     <td>A locale for Lighthouse reports. Example: <code>ja</code></td>
     <td><code>string</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -384,6 +491,7 @@ jobs:
     <td><code>outputDirectory</code></td>
     <td>An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.</td>
     <td><code>string</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -391,6 +499,7 @@ jobs:
     <td><code>pr</code></td>
     <td>For Slack notifications: A version control pull request URL, typically from GitHub.</td>
     <td><code>string</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -398,6 +507,7 @@ jobs:
     <td><code>prCommentAccessToken</code></td>
     <td><a href="https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line">Access token</a> of a user to post PR comments.</td>
     <td><code>string</code></td>
+    <td><code>both</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -405,6 +515,7 @@ jobs:
     <td><code>prCommentUrl</code></td>
     <td>An endpoint to post comments to. Typically this will from <a href="https://developer.github.com/v3/pulls/reviews/#create-a-pull-request-review">GitHub's API</a>. Example: <code>https://api.github.com/repos/:owner/:repo/pulls/:pull_number/reviews</code></td>
     <td><code>string</code></td>
+    <td><code>both</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -412,6 +523,7 @@ jobs:
     <td><code>slackWebhookUrl</code></td>
     <td>A Slack Incoming Webhook URL to send notifications to.</td>
     <td><code>string</code></td>
+    <td><code>both</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -419,22 +531,23 @@ jobs:
     <td><code>sha</code></td>
     <td>For Slack notifications: A version control <code>sha</code>, typically from GitHub.</td>
     <td><code>string</code></td>
+    <td><code>both</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
-  <!--
   <tr>
     <td><code>tag</code></td>
     <td>An optional tag or name (example: <code>build #2</code> or <code>v0.0.2</code>).</td>
     <td><code>string</code></td>
+    <td><code>remote</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
-  -->
   <tr>
     <td><code>throttlingMethod</code></td>
     <td>Lighthouse setting only used for local audits. See <a href="src/lighthouseConfig.js">src/lighthouseConfig.js</a> comments for details.</td>
     <td><code>oneOf(['simulate', 'devtools', 'provided'])</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
@@ -442,22 +555,23 @@ jobs:
     <td><code>throttling</code></td>
     <td>Lighthouse setting only used for local audits. See <a href="src/lighthouseConfig.js">src/lighthouseConfig.js</a> comments for details.</td>
     <td><code>oneOf(['mobileSlow4G', 'mobileRegluar3G'])</code></td>
+    <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
-  <!--
   <tr>
     <td><code>timeout</code></td>
     <td>Minutes to timeout. If <code>wait</code> is <code>true</code> (it is by default), we wait for results. If this timeout is reached before results are received an error is thrown.</td>
     <td><code>number</code></td>
+    <td><code>local</code></td>
     <td><code>10</code></td>
     <td>no</td>
   </tr>
-  -->
   <tr>
     <td><code>urls</code></td>
-    <td>An array of URLs. NOTE: in the CLI this value should be a comma-separated list.</td>
+    <td>An array of URLs (or page API tokens if running remotely). In the CLI this value should be a comma-separated list.</td>
     <td><code>array</code></td>
+    <td><code>both</code></td>
     <td><code>undefined</code></td>
     <td>yes</td>
   </tr>
@@ -465,18 +579,18 @@ jobs:
     <td><code>verbose</code></td>
     <td>If <code>true</code>, print out steps and results to the console.</td>
     <td><code>boolean</code></td>
+    <td><code>both</code></td>
     <td><code>true</code></td>
     <td>no</td>
   </tr>
-  <!--
   <tr>
     <td><code>wait</code></td>
     <td>If <code>true</code>, waits for all audit results to be returned, otherwise URLs are only enqueued.</td>
     <td><code>boolean</code></td>
+    <td><code>remote</code></td>
     <td><code>true</code></td>
     <td>no</td>
   </tr>
-  -->
 </table>
 
 #### `validateStatus`
@@ -569,41 +683,6 @@ jobs:
   </tr>
 </table>
 
-## CLI Usage
-
-Running `lighthouse-check` in the example below will run Lighthouse audits against `https://www.foo.software` and `https://www.foo.software/contact` and output a report in the '/tmp/artifacts' directory.
-
-Format is `--option <argument>`. Example below.
-
-```bash
-$ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/contact" \
-  --outputDirectory /tmp/artifacts
-```
-
-> `lighthouse-check-status` example
-
-```bash
-$ lighthouse-check-status --outputDirectory /tmp/artifacts \
-  --minAccessibilityScore 90 \
-  --minBestPracticesScore 90 \
-  --minPerformanceScore 70 \
-  --minProgressiveWebAppScore 70 \
-  --minSeoScore 80
-```
-
-## CLI Options
-
-All options mirror [the NPM module](#options). The only difference is that array options like `urls` are passed in as a comma-separated string as an argument using the CLI.
-
-## Docker Usage
-
-```bash
-$ docker pull foosoftware/lighthouse-check:latest
-$ docker run foosoftware/lighthouse-check:latest \
-  lighthouse-check --verbose \
-  --urls "https://www.foo.software,https://www.foo.software/contact"
-```
-
 ## Credits
 
-> <img src="https://s3.amazonaws.com/foo.software/images/logo-200x200.png" width="100" height="100" align="left" /> This package was brought to you by [Foo - a website performance monitoring tool](https://www.foo.software). Create a **free account** with standard performance testing. Automatic website performance testing, uptime checks, charts showing performance metrics by day, month, and year. Foo also provides real time notifications when performance and uptime notifications when changes are detected. Users can integrate email, Slack and PagerDuty notifications.
+> <img src="https://lighthouse-check.s3.amazonaws.com/images/logo-simple-blue-light-512.png" width="100" height="100" align="left" /> This package was brought to you by [Foo - a website performance monitoring tool](https://www.foo.software). Create a **free account** with standard performance testing. Automatic website performance testing, uptime checks, charts showing performance metrics by day, month, and year. Foo also provides real time notifications when performance and uptime notifications when changes are detected. Users can integrate email, Slack and PagerDuty notifications.

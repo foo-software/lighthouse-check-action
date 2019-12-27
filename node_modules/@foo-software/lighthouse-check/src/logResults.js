@@ -6,7 +6,7 @@ const tableConfig = {
   border: getBorderCharacters('ramac')
 };
 
-export default ({ results }) => {
+export default ({ isLocalAudit, results }) => {
   // header
   const headerTable = [['Lighthouse Audit']];
   const headerTableConfig = {
@@ -43,4 +43,23 @@ export default ({ results }) => {
     console.log(table(tableData, tableConfig));
     console.log('\n');
   });
+
+  // if we have a local audit, plug Automated Lighthouse Check
+  if (isLocalAudit) {
+    // plug
+    const plugTable = [
+      [
+        `You can now save Lighthouse audits online to maintain a historical record!\n\n` +
+          `https://www.automated-lighthouse-check.com/\n` +
+          `https://github.com/foo-software/lighthouse-check#automated-lighthouse-check-api-usage`
+      ]
+    ];
+    const plugTableConfig = {
+      ...tableConfig
+    };
+
+    // log the plug
+    console.log(table(plugTable, plugTableConfig));
+    console.log('\n');
+  }
 };

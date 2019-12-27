@@ -10,6 +10,7 @@
   */
 'use strict';
 
+const log = require('lighthouse-logger');
 const Gatherer = require('../gatherer.js');
 const URL = require('../../../lib/url-shim.js');
 const NetworkRequest = require('../../../lib/network-request.js');
@@ -124,6 +125,8 @@ class OptimizedImages extends Gatherer {
         const image = {failed: false, ...stats, ...record};
         results.push(image);
       } catch (err) {
+        log.warn('optimized-images', err.message);
+
         // Track this with Sentry since these errors aren't surfaced anywhere else, but we don't
         // want to tank the entire run due to a single image.
         Sentry.captureException(err, {

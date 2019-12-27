@@ -6,6 +6,7 @@
 'use strict';
 
 /**
+ * @type {Array<Smokehouse.ExpectedRunnerResult>}
  * Expected Lighthouse audit values for tricky metrics tests
  */
 module.exports = [

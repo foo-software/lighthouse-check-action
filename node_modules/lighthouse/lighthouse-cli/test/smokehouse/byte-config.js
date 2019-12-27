@@ -6,9 +6,10 @@
 'use strict';
 
 /**
+ * @type {LH.Config.Json}
  * Config file for running byte efficiency smokehouse audits.
  */
-module.exports = {
+const config = {
   extends: 'lighthouse:full',
   settings: {
     onlyAudits: [
@@ -27,3 +28,5 @@ module.exports = {
     throttlingMethod: 'devtools',
   },
 };
+
+module.exports = config;

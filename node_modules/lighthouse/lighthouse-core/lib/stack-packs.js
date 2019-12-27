@@ -13,10 +13,28 @@ const log = require('lighthouse-logger');
  * detected in a page to display that pack's advice.
  * @type {Array<{packId: string, requiredStacks: Array<string>}>}
  */
-const stackPacksToInclude = [{
-  packId: 'wordpress',
-  requiredStacks: ['js:wordpress'],
-}];
+const stackPacksToInclude = [
+  {
+    packId: 'wordpress',
+    requiredStacks: ['js:wordpress'],
+  },
+  {
+    packId: 'react',
+    requiredStacks: ['js:react'],
+  },
+  {
+    packId: 'angular',
+    requiredStacks: ['js:@angular/core'],
+  },
+  {
+    packId: 'amp',
+    requiredStacks: ['js:amp'],
+  },
+  {
+    packId: 'magento',
+    requiredStacks: ['js:magento'],
+  },
+];
 
 /**
  * Returns all packs that match the stacks found in the page.

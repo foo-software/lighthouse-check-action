@@ -262,13 +262,27 @@
     return Stream.prototype.on.call(me, ev, handler)
   }
 
+  // character classes and tokens
+  var whitespace = '\r\n\t '
+
   // this really needs to be replaced with character classes.
   // XML allows all manner of ridiculous numbers and digits.
+  var number = '0124356789'
+  var letter = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+  // (Letter | "_" | ":")
+  var quote = '\'"'
+  var attribEnd = whitespace + '>'
   var CDATA = '[CDATA['
   var DOCTYPE = 'DOCTYPE'
   var XML_NAMESPACE = 'http://www.w3.org/XML/1998/namespace'
   var XMLNS_NAMESPACE = 'http://www.w3.org/2000/xmlns/'
   var rootNS = { xml: XML_NAMESPACE, xmlns: XMLNS_NAMESPACE }
+
+  // turn all the string character sets into character class objects.
+  whitespace = charClass(whitespace)
+  number = charClass(number)
+  letter = charClass(letter)
 
   // http://www.w3.org/TR/REC-xml/#NT-NameStartChar
   // This implementation works on strings, a single character at a time
@@ -278,29 +292,31 @@
   // is left as an exercise for the reader.
   var nameStart = /[:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
 
-  var nameBody = /[:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u00B7\u0300-\u036F\u203F-\u2040.\d-]/
+  var nameBody = /[:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u00B7\u0300-\u036F\u203F-\u2040\.\d-]/
 
   var entityStart = /[#:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
-  var entityBody = /[#:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u00B7\u0300-\u036F\u203F-\u2040.\d-]/
+  var entityBody = /[#:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u00B7\u0300-\u036F\u203F-\u2040\.\d-]/
 
-  function isWhitespace (c) {
-    return c === ' ' || c === '\n' || c === '\r' || c === '\t'
+  quote = charClass(quote)
+  attribEnd = charClass(attribEnd)
+
+  function charClass (str) {
+    return str.split('').reduce(function (s, c) {
+      s[c] = true
+      return s
+    }, {})
   }
 
-  function isQuote (c) {
-    return c === '"' || c === '\''
+  function isRegExp (c) {
+    return Object.prototype.toString.call(c) === '[object RegExp]'
   }
 
-  function isAttribEnd (c) {
-    return c === '>' || isWhitespace(c)
+  function is (charclass, c) {
+    return isRegExp(charclass) ? !!c.match(charclass) : charclass[c]
   }
 
-  function isMatch (regex, c) {
-    return regex.test(c)
-  }
-
-  function notMatch (regex, c) {
-    return !isMatch(regex, c)
+  function not (charclass, c) {
+    return !is(charclass, c)
   }
 
   var S = 0
@@ -933,7 +949,7 @@
       }
     }
     entity = entity.replace(/^0+/, '')
-    if (isNaN(num) || numStr.toLowerCase() !== entity) {
+    if (numStr.toLowerCase() !== entity) {
       strictFail(parser, 'Invalid character entity')
       return '&' + parser.entity + ';'
     }
@@ -945,7 +961,7 @@
     if (c === '<') {
       parser.state = S.OPEN_WAKA
       parser.startTagPosition = parser.position
-    } else if (!isWhitespace(c)) {
+    } else if (not(whitespace, c)) {
       // have to process this as a text node.
       // weird, but happens.
       strictFail(parser, 'Non-whitespace before first tag.')
@@ -982,11 +998,9 @@
     while (true) {
       c = charAt(chunk, i++)
       parser.c = c
-
       if (!c) {
         break
       }
-
       if (parser.trackPosition) {
         parser.position++
         if (c === '\n') {
@@ -996,7 +1010,6 @@
           parser.column++
         }
       }
-
       switch (parser.state) {
         case S.BEGIN:
           parser.state = S.BEGIN_WHITESPACE
@@ -1031,7 +1044,7 @@
             parser.state = S.OPEN_WAKA
             parser.startTagPosition = parser.position
           } else {
-            if (!isWhitespace(c) && (!parser.sawRoot || parser.closedRoot)) {
+            if (not(whitespace, c) && (!parser.sawRoot || parser.closedRoot)) {
               strictFail(parser, 'Text data outside of root node.')
             }
             if (c === '&') {
@@ -1065,9 +1078,9 @@
           if (c === '!') {
             parser.state = S.SGML_DECL
             parser.sgmlDecl = ''
-          } else if (isWhitespace(c)) {
+          } else if (is(whitespace, c)) {
             // wait for it...
-          } else if (isMatch(nameStart, c)) {
+          } else if (is(nameStart, c)) {
             parser.state = S.OPEN_TAG
             parser.tagName = c
           } else if (c === '/') {
@@ -1110,7 +1123,7 @@
             emitNode(parser, 'onsgmldeclaration', parser.sgmlDecl)
             parser.sgmlDecl = ''
             parser.state = S.TEXT
-          } else if (isQuote(c)) {
+          } else if (is(quote, c)) {
             parser.state = S.SGML_DECL_QUOTED
             parser.sgmlDecl += c
           } else {
@@ -1135,7 +1148,7 @@
             parser.doctype += c
             if (c === '[') {
               parser.state = S.DOCTYPE_DTD
-            } else if (isQuote(c)) {
+            } else if (is(quote, c)) {
               parser.state = S.DOCTYPE_QUOTED
               parser.q = c
             }
@@ -1154,7 +1167,7 @@
           parser.doctype += c
           if (c === ']') {
             parser.state = S.DOCTYPE
-          } else if (isQuote(c)) {
+          } else if (is(quote, c)) {
             parser.state = S.DOCTYPE_DTD_QUOTED
             parser.q = c
           }
@@ -1238,7 +1251,7 @@
         case S.PROC_INST:
           if (c === '?') {
             parser.state = S.PROC_INST_ENDING
-          } else if (isWhitespace(c)) {
+          } else if (is(whitespace, c)) {
             parser.state = S.PROC_INST_BODY
           } else {
             parser.procInstName += c
@@ -1246,7 +1259,7 @@
           continue
 
         case S.PROC_INST_BODY:
-          if (!parser.procInstBody && isWhitespace(c)) {
+          if (!parser.procInstBody && is(whitespace, c)) {
             continue
           } else if (c === '?') {
             parser.state = S.PROC_INST_ENDING
@@ -1270,7 +1283,7 @@
           continue
 
         case S.OPEN_TAG:
-          if (isMatch(nameBody, c)) {
+          if (is(nameBody, c)) {
             parser.tagName += c
           } else {
             newTag(parser)
@@ -1279,7 +1292,7 @@
             } else if (c === '/') {
               parser.state = S.OPEN_TAG_SLASH
             } else {
-              if (!isWhitespace(c)) {
+              if (not(whitespace, c)) {
                 strictFail(parser, 'Invalid character in tag name')
               }
               parser.state = S.ATTRIB
@@ -1299,13 +1312,13 @@
 
         case S.ATTRIB:
           // haven't read the attribute name yet.
-          if (isWhitespace(c)) {
+          if (is(whitespace, c)) {
             continue
           } else if (c === '>') {
             openTag(parser)
           } else if (c === '/') {
             parser.state = S.OPEN_TAG_SLASH
-          } else if (isMatch(nameStart, c)) {
+          } else if (is(nameStart, c)) {
             parser.attribName = c
             parser.attribValue = ''
             parser.state = S.ATTRIB_NAME
@@ -1322,9 +1335,9 @@
             parser.attribValue = parser.attribName
             attrib(parser)
             openTag(parser)
-          } else if (isWhitespace(c)) {
+          } else if (is(whitespace, c)) {
             parser.state = S.ATTRIB_NAME_SAW_WHITE
-          } else if (isMatch(nameBody, c)) {
+          } else if (is(nameBody, c)) {
             parser.attribName += c
           } else {
             strictFail(parser, 'Invalid attribute name')
@@ -1334,7 +1347,7 @@
         case S.ATTRIB_NAME_SAW_WHITE:
           if (c === '=') {
             parser.state = S.ATTRIB_VALUE
-          } else if (isWhitespace(c)) {
+          } else if (is(whitespace, c)) {
             continue
           } else {
             strictFail(parser, 'Attribute without value')
@@ -1347,7 +1360,7 @@
             parser.attribName = ''
             if (c === '>') {
               openTag(parser)
-            } else if (isMatch(nameStart, c)) {
+            } else if (is(nameStart, c)) {
               parser.attribName = c
               parser.state = S.ATTRIB_NAME
             } else {
@@ -1358,9 +1371,9 @@
           continue
 
         case S.ATTRIB_VALUE:
-          if (isWhitespace(c)) {
+          if (is(whitespace, c)) {
             continue
-          } else if (isQuote(c)) {
+          } else if (is(quote, c)) {
             parser.q = c
             parser.state = S.ATTRIB_VALUE_QUOTED
           } else {
@@ -1385,13 +1398,13 @@
           continue
 
         case S.ATTRIB_VALUE_CLOSED:
-          if (isWhitespace(c)) {
+          if (is(whitespace, c)) {
             parser.state = S.ATTRIB
           } else if (c === '>') {
             openTag(parser)
           } else if (c === '/') {
             parser.state = S.OPEN_TAG_SLASH
-          } else if (isMatch(nameStart, c)) {
+          } else if (is(nameStart, c)) {
             strictFail(parser, 'No whitespace between attributes')
             parser.attribName = c
             parser.attribValue = ''
@@ -1402,7 +1415,7 @@
           continue
 
         case S.ATTRIB_VALUE_UNQUOTED:
-          if (!isAttribEnd(c)) {
+          if (not(attribEnd, c)) {
             if (c === '&') {
               parser.state = S.ATTRIB_VALUE_ENTITY_U
             } else {
@@ -1420,9 +1433,9 @@
 
         case S.CLOSE_TAG:
           if (!parser.tagName) {
-            if (isWhitespace(c)) {
+            if (is(whitespace, c)) {
               continue
-            } else if (notMatch(nameStart, c)) {
+            } else if (not(nameStart, c)) {
               if (parser.script) {
                 parser.script += '</' + c
                 parser.state = S.SCRIPT
@@ -1434,14 +1447,14 @@
             }
           } else if (c === '>') {
             closeTag(parser)
-          } else if (isMatch(nameBody, c)) {
+          } else if (is(nameBody, c)) {
             parser.tagName += c
           } else if (parser.script) {
             parser.script += '</' + parser.tagName
             parser.tagName = ''
             parser.state = S.SCRIPT
           } else {
-            if (!isWhitespace(c)) {
+            if (not(whitespace, c)) {
               strictFail(parser, 'Invalid tagname in closing tag')
             }
             parser.state = S.CLOSE_TAG_SAW_WHITE
@@ -1449,7 +1462,7 @@
           continue
 
         case S.CLOSE_TAG_SAW_WHITE:
-          if (isWhitespace(c)) {
+          if (is(whitespace, c)) {
             continue
           }
           if (c === '>') {
@@ -1485,7 +1498,7 @@
             parser[buffer] += parseEntity(parser)
             parser.entity = ''
             parser.state = returnState
-          } else if (isMatch(parser.entity.length ? entityBody : entityStart, c)) {
+          } else if (is(parser.entity.length ? entityBody : entityStart, c)) {
             parser.entity += c
           } else {
             strictFail(parser, 'Invalid character in entity name')
@@ -1508,7 +1521,6 @@
   }
 
   /*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
-  /* istanbul ignore next */
   if (!String.fromCodePoint) {
     (function () {
       var stringFromCharCode = String.fromCharCode
@@ -1550,7 +1562,6 @@
         }
         return result
       }
-      /* istanbul ignore next */
       if (Object.defineProperty) {
         Object.defineProperty(String, 'fromCodePoint', {
           value: fromCodePoint,

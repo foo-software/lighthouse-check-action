@@ -22,6 +22,7 @@ export default async ({ apiToken, tag, urls = [], verbose = true }) => {
   try {
     let apiTokens = urls;
 
+    // if urls was not provided - run on all pages
     if (!Array.isArray(urls) || !urls.length) {
       if (verbose) {
         console.log(`${NAME}:`, 'Fetching URLs from account.');
