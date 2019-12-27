@@ -5,7 +5,7 @@ A GitHub Action for running Lighthouse audits automatically in a workflow with a
 <table>
   <tr>
     <td>
-      <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="260" />
+      <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="320" />
     </td>
     <td>
       <img alt="AWS S3" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/aws-s3-logo.png" />
