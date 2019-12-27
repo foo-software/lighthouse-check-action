@@ -353,7 +353,7 @@ jobs:
           minSeoScore: "50"
 ```
 
-## Example Usage: Automated Lighthouse Check API Usage
+## Example Usage: Automated Lighthouse Check API
 
 [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) can monitor your website's quality by running audits automatically! It can provide a historical record of audits over time to track progression and degradation of website quality. [Create a free account](https://www.automated-lighthouse-check.com/register) to get started. With this, not only will you have automatic audits, but also any that you trigger additionally. Below are steps to trigger audits on URLs that you've created in your account.
 
