@@ -1,6 +1,8 @@
 name: 'Lighthouse Check'
 description: 'GitHub Action for running one or multiple Lighthouse audits featuring PR comments, Slack notifications and more!'
 inputs:
+  apiToken:
+    description: 'The automated-lighthouse-check.com account API token found in the dashboard.'
   author:
     description: 'For Slack notifications: A user handle, typically from GitHub.'
   awsAccessKeyId:
@@ -29,14 +31,20 @@ inputs:
     description: 'For Slack notifications: A version control sha, typically from GitHub.'
   slackWebhookUrl:
     description: 'A Slack Incoming Webhook URL to send notifications to.'
+  tag:
+    description: 'An optional tag or name (example: "build #2" or "v0.0.2").'
   throttlingMethod:
     description: 'Lighthouse setting only used for local audits. See lighthouse-check NPM module comments for details.'
   throttling:
     description: 'Lighthouse setting only used for local audits. See lighthouse-check NPM module comments for details.'
+  timeout:
+    description: 'Minutes to timeout for remote runs. If "wait" option is "true" (it is by default), we wait for results. If this timeout is met before results are received an error is thrown.'
   urls:
-    description: 'A comma-separated list of URLs to run Lighthouse audits against.'
+    description: 'A comma-separated list of URLs (or page API tokens if running remotely).'
   verbose:
     description: 'If yes, logs output along each step.'
+  wait:
+    description: 'If "true", for remote runs, waits for all audit results to be returned, otherwise URLs are only enqueued.'
 runs:
   using: 'node12'
   main: 'index.js'
