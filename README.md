@@ -353,6 +353,86 @@ jobs:
           minSeoScore: "50"
 ```
 
+## Example Usage: Automated Lighthouse Check API Usage
+
+[Automated Lighthouse Check](https://www.automated-lighthouse-check.com) can monitor your website's quality by running audits automatically! It can provide a historical record of audits over time to track progression and degradation of website quality. [Create a free account](https://www.automated-lighthouse-check.com/register) to get started. With this, not only will you have automatic audits, but also any that you trigger additionally. Below are steps to trigger audits on URLs that you've created in your account.
+
+#### Trigger Audits on All Pages in an Account
+
+- Navigate to [your account details](https://www.automated-lighthouse-check.com/account), click into "Account Management" and make note of the "API Token".
+- Use the account token as the [`apiToken` input](#inputs).
+
+> Basic example
+
+```yaml
+name: Lighthouse Check
+on: [push]
+
+jobs:
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: npm install
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        id: lighthouseCheck
+        with:
+          apiToken: 'myaccountapitoken'
+          # ... all your other inputs
+```
+
+#### Trigger Audits on Only Certain Pages in an Account
+
+- Navigate to [your account details](https://www.automated-lighthouse-check.com/account), click into "Account Management" and make note of the "API Token".
+- Navigate to [your dashboard](https://www.automated-lighthouse-check.com/dashboard) and once you've created URLs to monitor, click on the "More" link of the URL you'd like to use. From the URL details screen, click the "Edit" link at the top of the page. You should see an "API Token" on this page. It represents the token for this specific page (not to be confused with an **account** API token).
+- Use the account token as the [`apiToken` input](#inputs) and page token (or group of page tokens) as [`urls` input](#inputs).
+
+> Basic example
+
+```yaml
+name: Lighthouse Check
+on: [push]
+
+jobs:
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: npm install
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        id: lighthouseCheck
+        with:
+          apiToken: 'myaccountapitoken'
+          urls: 'mypagetoken1,mypagetoken2'
+          # ... all your other inputs
+```
+
+You can combine usage with other options for a more advanced setup. Example below.
+
+> Runs audits remotely and posts results as comments in a PR
+
+```yaml
+name: Lighthouse Check
+on: [pull_request]
+
+jobs:
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: npm install
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        id: lighthouseCheck
+        with:
+          accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+          apiToken: 'myaccountapitoken'
+          urls: 'mypagetoken1,mypagetoken2'
+          # ... all your other inputs
+```
+
 ## Credits
 
 > <img src="https://lighthouse-check.s3.amazonaws.com/images/logo-simple-blue-light-512.png" width="100" height="100" align="left" /> This package was brought to you by [Foo - a website performance monitoring tool](https://www.foo.software). Create a **free account** with standard performance testing. Automatic website performance testing, uptime checks, charts showing performance metrics by day, month, and year. Foo also provides real time notifications. Users can integrate email, Slack and PagerDuty notifications.
