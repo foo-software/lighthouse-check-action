@@ -297,7 +297,7 @@ jobs:
           urls: 'https://www.foo.software,https://www.foo.software/contact'
           # ... all your other inputs
       - name: Handle Lighthouse Check results
-        uses: foo-software/lighthouse-check-status-action
+        uses: foo-software/lighthouse-check-status-action@master
         with:
           lighthouseCheckResults: ${{ steps.lighthouseCheck.outputs.lighthouseCheckResults }}
           minAccessibilityScore: "90"
