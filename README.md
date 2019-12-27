@@ -2,7 +2,7 @@
 
 > A GitHub Action for running Lighthouse audits automatically in a workflow with a rich set of extra features. Simple implementation or advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!
 
-This project provides **two ways of running audits** - "locally" in a dockerized GitHub environment or remotely via [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) API. For basic usage, running locally will suffice, but if you'd like to maintain a historical record of Lighthouse audits and utilize other features, you can run audits remotely by following the [steps and examples](#usage-automated-lighthouse-check-api).
+This project provides **two ways of running audits** - "locally" by default in a dockerized GitHub environment or remotely via [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) API. For basic usage, running locally will suffice, but if you'd like to maintain a historical record of Lighthouse audits and utilize other features, you can follow the [steps and examples](#usage-automated-lighthouse-check-api).
 
 <table>
   <tr>
@@ -75,7 +75,7 @@ A visual look at the things you can do.
 
 ## Inputs
 
-All fields are optional with the exception of either `urls` or `configFile`.
+You can choose from two ways of running audits - "locally" in a dockerized GitHub environment (by default) or remotely via the [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) API. For directions about how to run remotely see the [Automated Lighthouse Check API Usage](#usage-automated-lighthouse-check-api) section. We denote which options are available to a run type with the `Run Type` values of either `local`, `remote`, or `both` respectively.
 
 <table>
   <tr>
