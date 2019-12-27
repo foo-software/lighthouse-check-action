@@ -1,6 +1,6 @@
 # Terminology
 
-* **CTC format**: The [Chrome extension & Chrome app i18n format](https://developer.chrome.com/extensions/i18n-messages). JSON with their specified model for declaring placeholders, examples, etc. Used as an interchange data format.
+* **CTC format**: The [Chrome extension & Chrome app i18n format](https://developer.chrome.com/extensions/i18n-messages) with some minor changes. JSON with their specified model for declaring placeholders, examples, etc. Used as an interchange data format.
 * **LHL syntax** (Lighthouse Localizable syntax): The ICU-friendly string syntax that is used to author `UIStrings` and is seen in the locale files in `i18n/locales/*.json`. Lighthouse has a custom syntax these strings combines many ICU message features along with some markdown.
 * **ICU**: ICU (International Components for Unicode) is a localization project and standard defined by the Unicode consortium. In general, we refer to "ICU" as the [ICU message formatting](http://userguide.icu-project.org/formatparse/messages) syntax.
 
@@ -195,13 +195,12 @@ CTC is a name that is distinct and identifies this as the Chrome translation for
 
 ### Parts of a CTC message
 
-(From the Chrome Docs)
-
 ```json
 {
   "name": {
     "message": "Message text, with optional placeholders.",
     "description": "Translator-aimed description of the message.",
+    "meaning": "Description given when a message is duplicated, in order to give context to the message. Lighthouse uses a copy of the description for this.",
     "placeholders": {
       "placeholder_name": {
         "content": "A string to be placed within the message.",

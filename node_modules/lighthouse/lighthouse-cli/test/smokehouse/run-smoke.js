@@ -14,7 +14,7 @@ const log = require('lighthouse-logger');
 
 /** @param {string} str */
 const purpleify = str => `${log.purple}${str}${log.reset}`;
-const SMOKETESTS = require('./smoke-test-dfns.js').SMOKE_TEST_DFNS;
+const smokeTests = require('./smoke-test-dfns.js');
 
 /**
  * Display smokehouse output from child process
@@ -33,20 +33,19 @@ function displaySmokehouseOutput(result) {
 }
 
 /**
- * Run smokehouse in child processes for selected smoketests
+ * Run smokehouse in child processes for the selected smoke tests
  * Display output from each as soon as they finish, but resolve function when ALL are complete
- * @param {Array<Smokehouse.TestDfn>} smokes
+ * @param {Array<Smokehouse.TestDfn>} smokeTests
  * @return {Promise<Array<{id: string, error?: Error}>>}
  */
-async function runSmokehouse(smokes) {
+async function runSmokehouse(smokeTests) {
   const cmdPromises = [];
-  for (const {id, expectations, config} of smokes) {
+  for (const {id} of smokeTests) {
     console.log(`${purpleify(id)} smoketest starting…`);
     console.time(`smoketest-${id}`);
     const cmd = [
       'node lighthouse-cli/test/smokehouse/smokehouse.js',
-      `--config-path=${config}`,
-      `--expectations-path=${expectations}`,
+      `--smoke-id=${id}`,
     ].join(' ');
 
     // The promise ensures we output immediately, even if the process errors
@@ -72,18 +71,18 @@ async function runSmokehouse(smokes) {
  */
 function getSmoketestBatches(argv) {
   let smokes = [];
-  const usage = `    ${log.dim}yarn smoke ${SMOKETESTS.map(t => t.id).join(' ')}${log.reset}\n`;
+  const usage = `    ${log.dim}yarn smoke ${smokeTests.map(t => t.id).join(' ')}${log.reset}\n`;
 
   if (argv.length === 0) {
-    smokes = SMOKETESTS;
+    smokes = smokeTests;
     console.log('Running ALL smoketests. Equivalent to:');
     console.log(usage);
   } else {
-    smokes = SMOKETESTS.filter(test => argv.includes(test.id));
+    smokes = smokeTests.filter(test => argv.includes(test.id));
     console.log(`Running ONLY smoketests for: ${smokes.map(t => t.id).join(' ')}\n`);
   }
 
-  const unmatchedIds = argv.filter(requestedId => !SMOKETESTS.map(t => t.id).includes(requestedId));
+  const unmatchedIds = argv.filter(requestedId => !smokeTests.map(t => t.id).includes(requestedId));
   if (unmatchedIds.length) {
     console.log(log.redify(`Smoketests not found for: ${unmatchedIds.join(' ')}`));
     console.log(usage);

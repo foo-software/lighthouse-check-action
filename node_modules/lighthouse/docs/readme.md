@@ -92,10 +92,9 @@ In order to extend the Lighthouse configuration programmatically, you need to pa
   settings: {
     onlyAudits: [
       'first-meaningful-paint',
-      'speed-index-metric',
-      'estimated-input-latency',
-      'first-interactive',
-      'consistently-interactive',
+      'speed-index',
+      'first-cpu-idle',
+      'interactive',
     ],
   },
 }

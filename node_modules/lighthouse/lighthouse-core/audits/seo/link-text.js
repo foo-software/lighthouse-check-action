@@ -53,6 +53,16 @@ const BLOCKLIST = new Set([
   'mais informações',
   'mais',
   'veja mais',
+  // Korean
+  '여기',
+  '여기를 클릭',
+  '클릭',
+  '링크',
+  '자세히',
+  '자세히 보기',
+  '계속',
+  '이동',
+  '전체 보기',
 ]);
 const i18n = require('../../lib/i18n/i18n.js');
 

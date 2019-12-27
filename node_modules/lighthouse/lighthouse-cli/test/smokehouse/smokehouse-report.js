@@ -143,6 +143,10 @@ function collateResults(actual, expected) {
   const runtimeErrorAssertion = makeComparison('runtimeError', actual.lhr.runtimeError,
       expected.lhr.runtimeError);
 
+  // Same for warnings.
+  const runWarningsAssertion = makeComparison('runWarnings', actual.lhr.runWarnings,
+      expected.lhr.runWarnings || []);
+
   /** @type {Smokehouse.Comparison[]} */
   let artifactAssertions = [];
   if (expected.artifacts) {
@@ -179,6 +183,7 @@ function collateResults(actual, expected) {
       equal: actual.lhr.finalUrl === expected.lhr.finalUrl,
     },
     runtimeErrorAssertion,
+    runWarningsAssertion,
     ...artifactAssertions,
     ...auditAssertions,
   ];

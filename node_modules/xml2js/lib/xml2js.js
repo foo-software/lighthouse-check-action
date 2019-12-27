@@ -34,6 +34,4 @@
 
   exports.parseString = parser.parseString;
 
-  exports.parseStringPromise = parser.parseStringPromise;
-
 }).call(this);

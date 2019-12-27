@@ -19,17 +19,33 @@
     diff?: Difference | null;
   }
 
-  export type ExpectedLHR = Pick<LH.Result, 'audits' | 'finalUrl' | 'requestedUrl' | 'runtimeError'>
+  interface ExpectedLHR {
+    audits: Record<string, any>;
+    requestedUrl: string;
+    finalUrl: string;
+    runWarnings?: Array<string>;
+    runtimeError?: {
+      code?: any;
+      message?: any;
+    };
+  }
 
   export type ExpectedRunnerResult = {
     lhr: ExpectedLHR,
-    artifacts?: Partial<LH.Artifacts>
+    artifacts?: Partial<Record<keyof LH.Artifacts, any>>
   }
 
   export interface TestDfn {
     id: string;
-    expectations: string;
-    config: string;
+    expectations: ExpectedRunnerResult[];
+    config: LH.Config.Json;
     batch: string;
+  }
+
+  export interface FirehouseOptions {
+    runLighthouse: (url: string, config: LH.Config.Json) => Promise<Omit<LH.RunnerResult, 'report'>>;
+    urlFilterRegex?: RegExp;
+    skip?: (test: TestDfn, expectation: ExpectedRunnerResult) => string | false;
+    modify?: (test: TestDfn, expectation: ExpectedRunnerResult) => void;
   }
 }

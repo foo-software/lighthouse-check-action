@@ -47,7 +47,10 @@ const formatInput = input => {
       throttlingMethod: formatInput(core.getInput('throttlingMethod')),
       urls: !urls ? undefined : urls.split(','),
       verbose: formatInput(core.getInput('verbose')),
-      wait: formatInput(core.getInput('wait'))
+      wait: formatInput(core.getInput('wait')),
+
+      // static
+      isGitHubAction: true,
     });
 
     // yikesers - only strings :(
