@@ -52,6 +52,14 @@ const defaultOptions = {
     type: 'boolean',
     value: undefined
   },
+  isGitHubAction: {
+    type: 'boolean',
+    value: undefined
+  },
+  isOrb: {
+    type: 'boolean',
+    value: undefined
+  },
   outputDirectory: {
     type: 'string',
     value: undefined

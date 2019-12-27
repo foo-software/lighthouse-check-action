@@ -6,7 +6,7 @@ const tableConfig = {
   border: getBorderCharacters('ramac')
 };
 
-export default ({ isLocalAudit, results }) => {
+export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
   // header
   const headerTable = [['Lighthouse Audit']];
   const headerTableConfig = {
@@ -46,14 +46,24 @@ export default ({ isLocalAudit, results }) => {
 
   // if we have a local audit, plug Automated Lighthouse Check
   if (isLocalAudit) {
+    let message =
+      'You can now save Lighthouse audits online to maintain a historical record!\n\n';
+
+    // depending on how the user is running this module - provide a respective link
+    if (isGitHubAction) {
+      message +=
+        'https://github.com/foo-software/lighthouse-check-action#usage-automated-lighthouse-check-api';
+    } else if (isOrb) {
+      message +=
+        'https://github.com/foo-software/lighthouse-check-orb#usage-automated-lighthouse-check-api';
+    } else {
+      message +=
+        'https://www.automated-lighthouse-check.com/\n' +
+        'https://github.com/foo-software/lighthouse-check#automated-lighthouse-check-api-usage';
+    }
+
     // plug
-    const plugTable = [
-      [
-        `You can now save Lighthouse audits online to maintain a historical record!\n\n` +
-          `https://www.automated-lighthouse-check.com/\n` +
-          `https://github.com/foo-software/lighthouse-check#automated-lighthouse-check-api-usage`
-      ]
-    ];
+    const plugTable = [[message]];
     const plugTableConfig = {
       ...tableConfig
     };

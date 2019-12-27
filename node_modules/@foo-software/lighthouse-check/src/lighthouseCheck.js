@@ -17,6 +17,8 @@ export default ({
   awsSecretAccessKey,
   emulatedFormFactor,
   branch,
+  isGitHubAction,
+  isOrb,
   locale,
   outputDirectory,
   pr,
@@ -105,7 +107,12 @@ export default ({
               });
             }
 
-            logResults({ isLocalAudit, results: auditResults });
+            logResults({
+              isGitHubAction,
+              isLocalAudit,
+              isOrb,
+              results: auditResults
+            });
 
             // success
             resolve({
@@ -169,7 +176,12 @@ export default ({
             });
           }
 
-          logResults({ isLocalAudit, results: lighthouseAudits });
+          logResults({
+            isGitHubAction,
+            isLocalAudit,
+            isOrb,
+            results: lighthouseAudits
+          });
 
           // success
           resolve({

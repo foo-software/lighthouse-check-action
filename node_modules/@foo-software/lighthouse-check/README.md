@@ -459,7 +459,7 @@ Below are options for the exported `lighthouseCheck` function or `lighthouse-che
     <td><code>branch</code></td>
     <td>For Slack notifications: A version control branch, typically from GitHub.</td>
     <td><code>string</code></td>
-    <td><code>local</code></td>
+    <td><code>both</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
   </tr>
