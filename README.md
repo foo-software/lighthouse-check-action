@@ -1,6 +1,8 @@
 # Lighthouse Check Action
 
-A GitHub Action for running Lighthouse audits automatically in a workflow with a rich set of extra features. Simple implementation or advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!
+> A GitHub Action for running Lighthouse audits automatically in a workflow with a rich set of extra features. Simple implementation or advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!
+
+This project provides **two ways of running audits** - "locally" in a dockerized GitHub environment or remotely via [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) API. For basic usage, running locally will suffice, but if you'd like to maintain a historical record of Lighthouse audits and utilize other features, you can run audits remotely by following the [steps and examples](#usage-automated-lighthouse-check-api).
 
 <table>
   <tr>
@@ -21,6 +23,7 @@ A GitHub Action for running Lighthouse audits automatically in a workflow with a
 Simple configuration or choose from a variety of features below. See the [example Lighthouse Check action implementation](#example-usage).
 
 - 💛 Lighthouse audit **multiple** URLs or just one.
+- 💛 Save a record of all your audits via [Automated Lighthouse Check](#usage-automated-lighthouse-check-api).
 - 💗 PR comments of audit scores.
 - 💗 Save HTML reports locally.
 - 💚 Upload HTML reports as artifacts.
@@ -28,6 +31,26 @@ Simple configuration or choose from a variety of features below. See the [exampl
 - ❤️ Fail a workflow when minimum scores aren't met. [Example at the bottom](#user-content-example-usage-failing-workflows-by-enforcing-minimum-scores).
 - 💜 **Slack** notifications.
 - 💖 Slack notifications **with Git info** (author, branch, PR, etc).
+
+# Table of Contents
+
+- [Screenshots](#screenshots)
+  - [Output](#screenshot-output)
+  - [Save HTML Reports as Artifacts](#screenshot-save-html-reports-as-artifacts)
+  - [HTML Reports](#screenshot-html-reports)
+  - [PR Comments](#screenshot-pr-comments)
+  - [Slack Notifications](#screenshot-slack-notifications)
+  - [Fail Workflow when Minimum Scores Aren't Met](#screenshot-fail-workflow-when-minimum-scores-arent-met)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Usage](#usage)
+  - [Standard Example](#usage-standard-example)
+  - [Failing Workflows by Enforcing Minimum Scores](#usage-failing-workflows-by-enforcing-minimum-scores)
+  - [Automated Lighthouse Check API](#usage-automated-lighthouse-check-api)
+
+# Screenshots
+
+A visual look at the things you can do.
 
 ## Screenshot: Output
 <img alt="Lighthouse Check GitHub action output" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-output.png" />
@@ -287,7 +310,11 @@ An object of scores. Each value is a `number`. Names should be self-explanatory 
   </tr>
 </table>
 
-## Example Usage
+## Usage
+
+Below are example combinations of ways to use this GitHub Action.
+
+## Usage: Standard Example
 
 In the below example we run Lighthouse on two URLs, log scores, save the HTML reports as artifacts, upload reports to AWS S3, notify via Slack with details about the change from Git data. By specifying the `pull_request` trigger and `accessToken` - we allow automatic comments of audits on the corresponding PR from the token user.
 
@@ -322,7 +349,7 @@ jobs:
           path: /tmp/artifacts
 ```
 
-## Example Usage: Failing Workflows by Enforcing Minimum Scores
+## Usage: Failing Workflows by Enforcing Minimum Scores
 
 We can expand on the example above by optionally failing a workflow if minimum scores aren't met. We do this using [`foo-software/lighthouse-check-status-action`](https://github.com/foo-software/lighthouse-check-status-action).
 
@@ -353,7 +380,7 @@ jobs:
           minSeoScore: "50"
 ```
 
-## Example Usage: Automated Lighthouse Check API
+## Usage: Automated Lighthouse Check API
 
 [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) can monitor your website's quality by running audits automatically! It can provide a historical record of audits over time to track progression and degradation of website quality. [Create a free account](https://www.automated-lighthouse-check.com/register) to get started. With this, not only will you have automatic audits, but also any that you trigger additionally. Below are steps to trigger audits on URLs that you've created in your account.
 
