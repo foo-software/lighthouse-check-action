@@ -86,6 +86,13 @@ You can choose from two ways of running audits - "locally" in a dockerized GitHu
     <th>Default</th>
   </tr>
   <tr>
+    <td><code>accessToken</code></td>
+    <td><a href="https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line">Access token</a> of a user (to do things like post PR comments for example).</td>
+    <td><code>string</code></td>
+    <td><code>both</code></td>
+    <td><code>undefined</code></td>
+  </tr>
+  <tr>
     <td><code>apiToken</code></td>
     <td>The automated-lighthouse-check.com account API token found in the dashboard.</td>
     <td><code>string</code></td>
@@ -160,13 +167,6 @@ You can choose from two ways of running audits - "locally" in a dockerized GitHu
     <td>An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.</td>
     <td><code>string</code></td>
     <td><code>local</code></td>
-    <td><code>undefined</code></td>
-  </tr>
-  <tr>
-    <td><code>accessToken</code></td>
-    <td><a href="https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line">Access token</a> of a user (to do things like post PR comments for example).</td>
-    <td><code>string</code></td>
-    <td><code>both</code></td>
     <td><code>undefined</code></td>
   </tr>
   <tr>
