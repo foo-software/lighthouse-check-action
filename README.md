@@ -50,7 +50,7 @@ Simple configuration or choose from a variety of features below. See the [exampl
 
 # Screenshots
 
-A visual look at the things you can do.
+Screenshots below for visual look at the things you can do.
 
 ## Screenshot: Output
 <img alt="Lighthouse Check GitHub action output" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-output.png" />
