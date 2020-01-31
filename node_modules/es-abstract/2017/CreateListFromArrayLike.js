@@ -5,7 +5,7 @@ var GetIntrinsic = require('../GetIntrinsic');
 var callBound = require('../helpers/callBound');
 
 var $TypeError = GetIntrinsic('%TypeError%');
-var $indexOf = callBound('Array.prototype.indexOf');
+var $indexOf = callBound('Array.prototype.indexOf', true) || callBound('String.prototype.indexOf');
 var $push = callBound('Array.prototype.push');
 
 var Get = require('./Get');

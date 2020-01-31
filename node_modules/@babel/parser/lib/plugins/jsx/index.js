@@ -445,7 +445,7 @@ var _default = superClass => class extends superClass {
     return this.jsxParseElementAt(startPos, startLoc);
   }
 
-  parseExprAtom(refShortHandDefaultPos) {
+  parseExprAtom(refExpressionErrors) {
     if (this.match(_types.types.jsxText)) {
       return this.parseLiteral(this.state.value, "JSXText");
     } else if (this.match(_types.types.jsxTagStart)) {
@@ -454,7 +454,7 @@ var _default = superClass => class extends superClass {
       this.finishToken(_types.types.jsxTagStart);
       return this.jsxParseElement();
     } else {
-      return super.parseExprAtom(refShortHandDefaultPos);
+      return super.parseExprAtom(refExpressionErrors);
     }
   }
 

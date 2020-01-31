@@ -11,7 +11,7 @@ var IsInteger = require('./IsInteger');
 
 var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1;
 
-var $setProto = GetIntrinsic('%Object.setPrototypeOf%') || (
+var $setProto = GetIntrinsic('%Object.setPrototypeOf%', true) || (
 	// eslint-disable-next-line no-proto, no-negated-condition
 	[].__proto__ !== $ArrayPrototype
 		? null

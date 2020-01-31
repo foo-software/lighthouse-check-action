@@ -45,6 +45,8 @@ export default ({
       if (!isLocalAudit) {
         const triggerResult = await triggerLighthouse({
           apiToken,
+          isGitHubAction,
+          isOrb,
           tag,
           timeout,
           urls,

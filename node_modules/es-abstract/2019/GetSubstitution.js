@@ -8,7 +8,8 @@ var callBound = require('../helpers/callBound');
 var regexTester = require('../helpers/regexTester');
 var every = require('../helpers/every');
 
-var strSlice = callBound('String.prototype.slice');
+var $charAt = callBound('String.prototype.charAt');
+var $strSlice = callBound('String.prototype.slice');
 var $indexOf = callBound('String.prototype.indexOf');
 var $parseInt = parseInt;
 
@@ -22,6 +23,12 @@ var IsInteger = require('./IsInteger');
 var ToObject = require('./ToObject');
 var ToString = require('./ToString');
 var Type = require('./Type');
+
+var canDistinguishSparseFromUndefined = 0 in [undefined]; // IE 6 - 8 have a bug where this returns false
+
+var isStringOrHole = function (capture, index, arr) {
+	return Type(capture) === 'String' || (canDistinguishSparseFromUndefined ? !(index in arr) : Type(capture) === 'Undefined');
+};
 
 // http://www.ecma-international.org/ecma-262/9.0/#sec-getsubstitution
 
@@ -41,8 +48,6 @@ module.exports = function GetSubstitution(matched, str, position, captures, name
 		throw new $TypeError('Assertion failed: `position` must be a nonnegative integer, and less than or equal to the length of `string`, got ' + inspect(position));
 	}
 
-	var ES = this;
-	var isStringOrHole = function (capture, index, arr) { return ES.Type(capture) === 'String' || !(index in arr); };
 	if (!IsArray(captures) || !every(captures, isStringOrHole)) {
 		throw new $TypeError('Assertion failed: `captures` must be a List of Strings, got ' + inspect(captures));
 	}
@@ -60,11 +65,11 @@ module.exports = function GetSubstitution(matched, str, position, captures, name
 	var result = '';
 	for (var i = 0; i < replacement.length; i += 1) {
 		// if this is a $, and it's not the end of the replacement
-		var current = replacement[i];
+		var current = $charAt(replacement, i);
 		var isLast = (i + 1) >= replacement.length;
 		var nextIsLast = (i + 2) >= replacement.length;
 		if (current === '$' && !isLast) {
-			var next = replacement[i + 1];
+			var next = $charAt(replacement, i + 1);
 			if (next === '$') {
 				result += '$';
 				i += 1;
@@ -72,13 +77,13 @@ module.exports = function GetSubstitution(matched, str, position, captures, name
 				result += matched;
 				i += 1;
 			} else if (next === '`') {
-				result += position === 0 ? '' : strSlice(str, 0, position - 1);
+				result += position === 0 ? '' : $strSlice(str, 0, position - 1);
 				i += 1;
 			} else if (next === "'") {
-				result += tailPos >= stringLength ? '' : strSlice(str, tailPos);
+				result += tailPos >= stringLength ? '' : $strSlice(str, tailPos);
 				i += 1;
 			} else {
-				var nextNext = nextIsLast ? null : replacement[i + 2];
+				var nextNext = nextIsLast ? null : $charAt(replacement, i + 2);
 				if (isDigit(next) && next !== '0' && (nextIsLast || !isDigit(nextNext))) {
 					// $1 through $9, and not followed by a digit
 					var n = $parseInt(next, 10);
@@ -101,7 +106,7 @@ module.exports = function GetSubstitution(matched, str, position, captures, name
 						var endIndex = $indexOf(replacement, '>', i);
 						// eslint-disable-next-line max-depth
 						if (endIndex > -1) {
-							var groupName = strSlice(replacement, i, endIndex);
+							var groupName = $strSlice(replacement, i, endIndex);
 							var capture = Get(namedCaptures, groupName);
 							// eslint-disable-next-line max-depth
 							if (Type(capture) !== 'Undefined') {
@@ -116,7 +121,7 @@ module.exports = function GetSubstitution(matched, str, position, captures, name
 			}
 		} else {
 			// the final $, or else not a $
-			result += replacement[i];
+			result += $charAt(replacement, i);
 		}
 	}
 	return result;

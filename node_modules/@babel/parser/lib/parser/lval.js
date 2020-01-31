@@ -13,103 +13,100 @@ var _node = require("./node");
 
 var _scopeflags = require("../util/scopeflags");
 
+var _util = require("./util");
+
 const unwrapParenthesizedExpression = node => {
   return node.type === "ParenthesizedExpression" ? unwrapParenthesizedExpression(node.expression) : node;
 };
 
 class LValParser extends _node.NodeUtils {
-  toAssignable(node, isBinding, contextDescription) {
-    var _node$extra3;
+  toAssignable(node) {
+    var _node$extra, _node$extra3;
 
-    if (node) {
-      var _node$extra;
+    let parenthesized = undefined;
 
-      if (this.options.createParenthesizedExpressions && node.type === "ParenthesizedExpression" || ((_node$extra = node.extra) == null ? void 0 : _node$extra.parenthesized)) {
-        const parenthesized = unwrapParenthesizedExpression(node);
+    if (node.type === "ParenthesizedExpression" || ((_node$extra = node.extra) == null ? void 0 : _node$extra.parenthesized)) {
+      parenthesized = unwrapParenthesizedExpression(node);
 
-        if (parenthesized.type !== "Identifier" && parenthesized.type !== "MemberExpression") {
-          this.raise(node.start, "Invalid parenthesized assignment pattern");
+      if (parenthesized.type !== "Identifier" && parenthesized.type !== "MemberExpression") {
+        this.raise(node.start, "Invalid parenthesized assignment pattern");
+      }
+    }
+
+    switch (node.type) {
+      case "Identifier":
+      case "ObjectPattern":
+      case "ArrayPattern":
+      case "AssignmentPattern":
+        break;
+
+      case "ObjectExpression":
+        node.type = "ObjectPattern";
+
+        for (let i = 0, length = node.properties.length, last = length - 1; i < length; i++) {
+          var _node$extra2;
+
+          const prop = node.properties[i];
+          const isLast = i === last;
+          this.toAssignableObjectExpressionProp(prop, isLast);
+
+          if (isLast && prop.type === "RestElement" && ((_node$extra2 = node.extra) == null ? void 0 : _node$extra2.trailingComma)) {
+            this.raiseRestNotLast(node.extra.trailingComma);
+          }
         }
-      }
 
-      switch (node.type) {
-        case "Identifier":
-        case "ObjectPattern":
-        case "ArrayPattern":
-        case "AssignmentPattern":
+        break;
+
+      case "ObjectProperty":
+        this.toAssignable(node.value);
+        break;
+
+      case "SpreadElement":
+        {
+          this.checkToRestConversion(node);
+          node.type = "RestElement";
+          const arg = node.argument;
+          this.toAssignable(arg);
           break;
+        }
 
-        case "ObjectExpression":
-          node.type = "ObjectPattern";
+      case "ArrayExpression":
+        node.type = "ArrayPattern";
+        this.toAssignableList(node.elements, (_node$extra3 = node.extra) == null ? void 0 : _node$extra3.trailingComma);
+        break;
 
-          for (let i = 0, length = node.properties.length, last = length - 1; i < length; i++) {
-            var _node$extra2;
+      case "AssignmentExpression":
+        if (node.operator !== "=") {
+          this.raise(node.left.end, "Only '=' operator can be used for specifying default value.");
+        }
 
-            const prop = node.properties[i];
-            const isLast = i === last;
-            this.toAssignableObjectExpressionProp(prop, isBinding, isLast);
+        node.type = "AssignmentPattern";
+        delete node.operator;
+        this.toAssignable(node.left);
+        break;
 
-            if (isLast && prop.type === "RestElement" && ((_node$extra2 = node.extra) == null ? void 0 : _node$extra2.trailingComma)) {
-              this.raiseRestNotLast(node.extra.trailingComma);
-            }
-          }
+      case "ParenthesizedExpression":
+        this.toAssignable(parenthesized);
+        break;
 
-          break;
-
-        case "ObjectProperty":
-          this.toAssignable(node.value, isBinding, contextDescription);
-          break;
-
-        case "SpreadElement":
-          {
-            this.checkToRestConversion(node);
-            node.type = "RestElement";
-            const arg = node.argument;
-            this.toAssignable(arg, isBinding, contextDescription);
-            break;
-          }
-
-        case "ArrayExpression":
-          node.type = "ArrayPattern";
-          this.toAssignableList(node.elements, isBinding, contextDescription, (_node$extra3 = node.extra) == null ? void 0 : _node$extra3.trailingComma);
-          break;
-
-        case "AssignmentExpression":
-          if (node.operator !== "=") {
-            this.raise(node.left.end, "Only '=' operator can be used for specifying default value.");
-          }
-
-          node.type = "AssignmentPattern";
-          delete node.operator;
-          this.toAssignable(node.left, isBinding, contextDescription);
-          break;
-
-        case "ParenthesizedExpression":
-          node.expression = this.toAssignable(node.expression, isBinding, contextDescription);
-          break;
-
-        case "MemberExpression":
-          if (!isBinding) break;
-
-        default:
-      }
+      default:
     }
 
     return node;
   }
 
-  toAssignableObjectExpressionProp(prop, isBinding, isLast) {
+  toAssignableObjectExpressionProp(prop, isLast) {
     if (prop.type === "ObjectMethod") {
       const error = prop.kind === "get" || prop.kind === "set" ? "Object pattern can't contain getter or setter" : "Object pattern can't contain methods";
       this.raise(prop.key.start, error);
     } else if (prop.type === "SpreadElement" && !isLast) {
       this.raiseRestNotLast(prop.start);
     } else {
-      this.toAssignable(prop, isBinding, "object destructuring pattern");
+      this.toAssignable(prop);
     }
   }
 
-  toAssignableList(exprList, isBinding, contextDescription, trailingCommaPos) {
+  toAssignableList(exprList, trailingCommaPos) {
     let end = exprList.length;
 
     if (end) {
@@ -120,7 +117,7 @@ class LValParser extends _node.NodeUtils {
       } else if (last && last.type === "SpreadElement") {
         last.type = "RestElement";
         const arg = last.argument;
-        this.toAssignable(arg, isBinding, contextDescription);
+        this.toAssignable(arg);
 
         if (arg.type !== "Identifier" && arg.type !== "MemberExpression" && arg.type !== "ArrayPattern" && arg.type !== "ObjectPattern") {
           this.unexpected(arg.start);
@@ -138,7 +135,7 @@ class LValParser extends _node.NodeUtils {
       const elt = exprList[i];
 
       if (elt) {
-        this.toAssignable(elt, isBinding, contextDescription);
+        this.toAssignable(elt);
 
         if (elt.type === "RestElement") {
           this.raiseRestNotLast(elt.start);
@@ -165,10 +162,10 @@ class LValParser extends _node.NodeUtils {
     }
   }
 
-  parseSpread(refShorthandDefaultPos, refNeedsArrowPos) {
+  parseSpread(refExpressionErrors, refNeedsArrowPos) {
     const node = this.startNode();
     this.next();
-    node.argument = this.parseMaybeAssign(false, refShorthandDefaultPos, undefined, refNeedsArrowPos);
+    node.argument = this.parseMaybeAssign(false, refExpressionErrors, undefined, refNeedsArrowPos);
     return this.finishNode(node, "SpreadElement");
   }
 

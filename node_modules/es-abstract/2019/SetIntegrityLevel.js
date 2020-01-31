@@ -5,7 +5,7 @@ var GetIntrinsic = require('../GetIntrinsic');
 var $SyntaxError = GetIntrinsic('%SyntaxError%');
 var $TypeError = GetIntrinsic('%TypeError%');
 var $preventExtensions = GetIntrinsic('%Object.preventExtensions%');
-var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
+var $gOPD = require('../helpers/getOwnPropertyDescriptor');
 var $gOPN = GetIntrinsic('%Object.getOwnPropertyNames%');
 
 var forEach = require('../helpers/forEach');

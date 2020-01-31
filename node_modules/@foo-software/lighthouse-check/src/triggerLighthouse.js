@@ -7,6 +7,8 @@ import {
   API_URL,
   DEFAULT_TAG,
   NAME,
+  SOURCE_GITHUB_ACTION,
+  SOURCE_CIRCLECI_ORB,
   SUCCESS_CODE_GENERIC,
   TRIGGER_TYPE
 } from './constants';
@@ -18,7 +20,14 @@ import {
   ERROR_QUEUE_MAX_USED_DAY
 } from './errorCodes';
 
-export default async ({ apiToken, tag, urls = [], verbose = true }) => {
+export default async ({
+  apiToken,
+  isGitHubAction,
+  isOrb,
+  tag,
+  urls = [],
+  verbose = true
+}) => {
   try {
     let apiTokens = urls;
 
@@ -68,6 +77,14 @@ export default async ({ apiToken, tag, urls = [], verbose = true }) => {
       console.log(`${NAME}:`, 'Enqueueing Lighthouse audits.');
     }
 
+    // pass in the source of the queued item for tracking
+    let source = 'api';
+    if (isGitHubAction) {
+      source = SOURCE_GITHUB_ACTION;
+    } else if (isOrb) {
+      source = SOURCE_CIRCLECI_ORB;
+    }
+
     // enqueue urls for Lighthouse audits
     const queueItemsResponse = await fetch(
       `${API_URL}${API_QUEUE_ITEMS_PATH}`,
@@ -80,6 +97,7 @@ export default async ({ apiToken, tag, urls = [], verbose = true }) => {
         body: JSON.stringify({
           tag: tag || DEFAULT_TAG,
           pages: apiTokens.join(),
+          source,
           type: TRIGGER_TYPE
         })
       }

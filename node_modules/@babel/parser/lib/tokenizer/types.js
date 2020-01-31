@@ -144,30 +144,30 @@ const types = {
   }),
   pipeline: createBinop("|>", 0),
   nullishCoalescing: createBinop("??", 1),
-  logicalOR: createBinop("||", 2),
-  logicalAND: createBinop("&&", 3),
-  bitwiseOR: createBinop("|", 4),
-  bitwiseXOR: createBinop("^", 5),
-  bitwiseAND: createBinop("&", 6),
-  equality: createBinop("==/!=/===/!==", 7),
-  relational: createBinop("</>/<=/>=", 8),
-  bitShift: createBinop("<</>>/>>>", 9),
+  logicalOR: createBinop("||", 1),
+  logicalAND: createBinop("&&", 2),
+  bitwiseOR: createBinop("|", 3),
+  bitwiseXOR: createBinop("^", 4),
+  bitwiseAND: createBinop("&", 5),
+  equality: createBinop("==/!=/===/!==", 6),
+  relational: createBinop("</>/<=/>=", 7),
+  bitShift: createBinop("<</>>/>>>", 8),
   plusMin: new TokenType("+/-", {
     beforeExpr,
-    binop: 10,
+    binop: 9,
     prefix,
     startsExpr
   }),
   modulo: new TokenType("%", {
     beforeExpr,
-    binop: 11,
+    binop: 10,
     startsExpr
   }),
-  star: createBinop("*", 11),
-  slash: createBinop("/", 11),
+  star: createBinop("*", 10),
+  slash: createBinop("/", 10),
   exponent: new TokenType("**", {
     beforeExpr,
-    binop: 12,
+    binop: 11,
     rightAssociative: true
   }),
   _break: createKeyword("break"),
@@ -242,11 +242,11 @@ const types = {
   }),
   _in: createKeyword("in", {
     beforeExpr,
-    binop: 8
+    binop: 7
   }),
   _instanceof: createKeyword("instanceof", {
     beforeExpr,
-    binop: 8
+    binop: 7
   }),
   _typeof: createKeyword("typeof", {
     beforeExpr,

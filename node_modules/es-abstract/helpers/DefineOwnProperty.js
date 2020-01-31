@@ -2,7 +2,16 @@
 
 var GetIntrinsic = require('../GetIntrinsic');
 
-var $defineProperty = GetIntrinsic('%Object.defineProperty%');
+var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
+
+if ($defineProperty) {
+	try {
+		$defineProperty({}, 'a', { value: 1 });
+	} catch (e) {
+		// IE 8 has a broken defineProperty
+		$defineProperty = null;
+	}
+}
 
 var callBound = require('../helpers/callBound');
 

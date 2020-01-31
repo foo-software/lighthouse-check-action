@@ -2,7 +2,7 @@
 
 var GetIntrinsic = require('../GetIntrinsic');
 
-var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
+var $gOPD = require('../helpers/getOwnPropertyDescriptor');
 var $TypeError = GetIntrinsic('%TypeError%');
 
 var callBound = require('../helpers/callBound');
@@ -30,7 +30,7 @@ module.exports = function OrdinaryGetOwnProperty(O, P) {
 		return void 0;
 	}
 	if (!$gOPD) {
-		// ES3 fallback
+		// ES3 / IE 8 fallback
 		var arrayLength = IsArray(O) && P === 'length';
 		var regexLastIndex = IsRegExp(O) && P === 'lastIndex';
 		return {

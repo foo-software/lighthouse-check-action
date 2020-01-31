@@ -2,7 +2,7 @@
 
 var GetIntrinsic = require('../GetIntrinsic');
 
-var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
+var $gOPD = require('../helpers/getOwnPropertyDescriptor');
 var $gOPN = GetIntrinsic('%Object.getOwnPropertyNames%');
 var $TypeError = GetIntrinsic('%TypeError%');
 

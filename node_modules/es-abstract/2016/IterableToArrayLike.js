@@ -6,9 +6,10 @@ var $iterator = GetIntrinsic('%Symbol.iterator%', true);
 
 var callBound = require('../helpers/callBound');
 
-var $arrayPush = callBound('Array.prototype.push');
-var $arraySlice = callBound('Array.prototype.slice');
 var $arrayJoin = callBound('Array.prototype.join');
+var $arrayPush = callBound('Array.prototype.push');
+var $stringSlice = callBound('String.prototype.slice');
+var $stringSplit = callBound('String.prototype.split');
 
 var AdvanceStringIndex = require('./AdvanceStringIndex');
 var GetIterator = require('./GetIterator');
@@ -45,7 +46,7 @@ module.exports = function IterableToArrayLike(items) {
 			return {
 				next: function () {
 					var nextIndex = AdvanceStringIndex(items, i, true);
-					var value = $arrayJoin($arraySlice(items, i, nextIndex), '');
+					var value = $arrayJoin($stringSplit($stringSlice(items, i, nextIndex), ''), '');
 					i = nextIndex;
 					return {
 						done: nextIndex > items.length,

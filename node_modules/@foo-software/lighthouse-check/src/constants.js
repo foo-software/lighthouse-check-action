@@ -15,5 +15,7 @@ export const NAME = 'lighthouse-check';
 export const NAME_RESULTS_JSON_FILE = 'results.json';
 export const NAME_STATUS = 'lighthouse-check-status';
 export const DEFAULT_TAG = NAME;
+export const SOURCE_GITHUB_ACTION = 'GitHub Action';
+export const SOURCE_CIRCLECI_ORB = 'CircleCI Orb';
 export const SUCCESS_CODE_GENERIC = 'SUCCESS';
 export const TRIGGER_TYPE = 'lighthouseAudit';

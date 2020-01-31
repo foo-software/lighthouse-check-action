@@ -15,6 +15,6 @@ module.exports = $preventExtensions
 	? function IsExtensible(obj) {
 		return !isPrimitive(obj) && $isExtensible(obj);
 	}
-	: function IsExtensible(obj) { // eslint-disable-line no-unused-vars
-		return true;
+	: function IsExtensible(obj) {
+		return !isPrimitive(obj);
 	};

@@ -2,12 +2,12 @@
 
 var GetIntrinsic = require('../GetIntrinsic');
 
-var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
 var $TypeError = GetIntrinsic('%TypeError%');
 
 var DefineOwnProperty = require('../helpers/DefineOwnProperty');
 
 var FromPropertyDescriptor = require('./FromPropertyDescriptor');
+var OrdinaryGetOwnProperty = require('./OrdinaryGetOwnProperty');
 var IsDataDescriptor = require('./IsDataDescriptor');
 var IsExtensible = require('./IsExtensible');
 var IsPropertyKey = require('./IsPropertyKey');
@@ -23,7 +23,7 @@ module.exports = function CreateDataProperty(O, P, V) {
 	if (!IsPropertyKey(P)) {
 		throw new $TypeError('Assertion failed: IsPropertyKey(P) is not true');
 	}
-	var oldDesc = $gOPD(O, P);
+	var oldDesc = OrdinaryGetOwnProperty(O, P);
 	var extensible = oldDesc || IsExtensible(O);
 	var immutable = oldDesc && (!oldDesc.writable || !oldDesc.configurable);
 	if (immutable || !extensible) {
