@@ -51,7 +51,7 @@ _types.types.name.updateContext = function (prevType) {
   let allowed = false;
 
   if (prevType !== _types.types.dot) {
-    if (this.state.value === "of" && !this.state.exprAllowed || this.state.value === "yield" && this.scope.inGenerator) {
+    if (this.state.value === "of" && !this.state.exprAllowed || this.state.value === "yield" && this.prodParam.hasYield) {
       allowed = true;
     }
   }
