@@ -55,10 +55,7 @@ export default async ({
                 })
           },
           ...Object.keys(result.scores).map(current => ({
-            color: getLighthouseScoreColor({
-              isHex: true,
-              score: result.scores[current]
-            }),
+            color: getLighthouseScoreColor(result.scores[current]),
             text: `*${lighthouseAuditTitles[current]}*: ${result.scores[current]}`,
             short: true
           }))
