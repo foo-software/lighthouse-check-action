@@ -20,6 +20,8 @@ export default async ({
   verbose
 }) => {
   try {
+    let markdown = '';
+
     results.forEach((result, index) => {
       // badges
       Object.keys(result.scores).forEach(current => {
