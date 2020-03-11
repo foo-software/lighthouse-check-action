@@ -1,19 +1,19 @@
 // https://developers.google.com/web/tools/lighthouse/v3/scoring
-export default score => {
+export default ({ isHex, score }) => {
   if (typeof score !== 'number') {
-    return '#e0e0e0';
+    return !isHex ? 'lightgrey' : '#e0e0e0';
   }
 
-  let scoreColor = '#0cce6b';
+  let scoreColor = !isHex ? 'green' : '#0cce6b';
 
   // medium range
-  if (score < 75) {
-    scoreColor = '#ffa400';
+  if (score < 90) {
+    scoreColor = !isHex ? 'orange' : '#ffa400';
   }
 
   // bad
-  if (score < 45) {
-    scoreColor = '#f74531';
+  if (score < 50) {
+    scoreColor = !isHex ? 'red' : '#f74531';
   }
 
   return scoreColor;
