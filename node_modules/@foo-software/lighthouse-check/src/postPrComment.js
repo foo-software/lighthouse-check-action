@@ -26,7 +26,7 @@ export default async ({
       // badges
       Object.keys(result.scores).forEach(current => {
         markdown += getBadge({
-          title: lighthouseAuditTitles[current].replace(/-/g, '%20'),
+          title: lighthouseAuditTitles[current].replace(/ /g, '%20'),
           score: result.scores[current]
         });
       });
