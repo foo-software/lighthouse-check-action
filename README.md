@@ -463,7 +463,7 @@ jobs:
 
 ## Usage: ZEIT Now
 
-> Runs audits on a ZEIT Now ephemeral instance, posts results as comments in a PR and [saves results on Automated Lighthouse Check](https://www.automated-lighthouse-check.com). The example would trigger on pushes to `master` and pull request changes when `master` is the base.
+Runs audits on a ZEIT Now ephemeral instance, posts results as comments in a PR and [saves results on Automated Lighthouse Check](https://www.automated-lighthouse-check.com). The example would trigger on pushes to `master` and pull request changes when `master` is the base. Note the `urls` input can be used as explained in the [Trigger Audits on Only Certain Pages in an Account](trigger-audits-on-only-certain-pages-in-an-account) section, but extended with two colons like so to denote the page token and custom URL (which can be different than the one specified in the account): `{page token}::{custom url}`.
 
 ```yaml
 name: Lighthouse
