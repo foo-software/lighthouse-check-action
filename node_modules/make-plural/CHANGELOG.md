@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/eemeli/make-plural/compare/make-plural@6.0.1...make-plural@6.1.0) (2020-03-08)
+
+
+### Bug Fixes
+
+* Always set __esModule in UMD builds (eemeli/intl-pluralrules[#15](https://github.com/eemeli/make-plural/issues/15)) ([57d90bc](https://github.com/eemeli/make-plural/commit/57d90bcab45ad6439509a144aaeb493e5e0ef7dd))
+
+
+### Features
+
+* **compiler:** Drop line folding & unnecessary (wrapping) ([c5d31f6](https://github.com/eemeli/make-plural/commit/c5d31f69d6f1032e291cb911cae8cc34b20099ed))
+
+
+
+
+
 ## [6.0.1](https://github.com/eemeli/make-plural/compare/make-plural@6.0.0...make-plural@6.0.1) (2019-10-18)
 
 
