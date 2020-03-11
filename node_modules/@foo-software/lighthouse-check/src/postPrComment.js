@@ -1,13 +1,17 @@
 import fetch from './fetch';
+import getLighthouseScoreColor from './helpers/getLighthouseScoreColor';
 import lighthouseAuditTitles from './lighthouseAuditTitles';
 import LighthouseCheckError from './LighthouseCheckError';
 import { ERROR_UNEXPECTED_RESPONSE } from './errorCodes';
 import { NAME } from './constants';
 
-const resultTableHeader = `
-| Audit | Score |
-| ----- | ----- |
-`;
+const getBadge = ({ title, score }) =>
+  `![](https://img.shields.io/badge/${title}-${score}-${getLighthouseScoreColor(
+    {
+      isHex: false,
+      score
+    }
+  )}?style=flat-square) `;
 
 export default async ({
   prCommentAccessToken,
@@ -16,23 +20,21 @@ export default async ({
   verbose
 }) => {
   try {
-    let markdown = `## Lighthouse Audits`;
-
     results.forEach((result, index) => {
+      // badges
+      Object.keys(result.scores).forEach(current => {
+        markdown += getBadge({
+          title: lighthouseAuditTitles[current].replace(/-/g, '%20'),
+          score: result.scores[current]
+        });
+      });
+
       // the url
       markdown += `\n\n${result.url}`;
 
-      // the table header
-      markdown += `\n\n${resultTableHeader}`;
-
-      // populate the table
-      Object.keys(result.scores).forEach(current => {
-        markdown += `| ${lighthouseAuditTitles[current]} | ${result.scores[current]} |\n`;
-      });
-
       // if we have a URL for the full report
       if (result.report) {
-        markdown += `\n\n${result.report}`;
+        markdown += `\n\n[Full report](${result.report})`;
       }
 
       // add a horizontal line
