@@ -47,6 +47,7 @@ Simple configuration or choose from a variety of features below. See the [exampl
   - [Standard Example](#usage-standard-example)
   - [Failing Workflows by Enforcing Minimum Scores](#usage-failing-workflows-by-enforcing-minimum-scores)
   - [Automated Lighthouse Check API](#usage-automated-lighthouse-check-api)
+  - [Example with ZEIT Now](#usage-zeit-now)
 
 # Screenshots
 
@@ -458,6 +459,40 @@ jobs:
           apiToken: 'myaccountapitoken'
           urls: 'mypagetoken1,mypagetoken2'
           # ... all your other inputs
+```
+
+## Usage: ZEIT Now
+
+> Runs audits on a ZEIT Now ephemeral instance, posts results as comments in a PR and [saves results on Automated Lighthouse Check](https://www.automated-lighthouse-check.com). The example would trigger on pushes to `master` and pull request changes when `master` is the base.
+
+```yaml
+name: Lighthouse
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: amondnet/now-deployment@master
+        id: now
+        with:
+          zeit-token: ${{ secrets.ZEIT_NOW_TOKEN }}
+          now-org-id: ${{ secrets.ZEIT_NOW_ORG_ID }}
+          now-project-id: ${{ secrets.ZEIT_NOW_PROJECT_ID }}
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        with:
+          accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+          apiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
+          tag: GitHub Action
+          urls: ${{ secrets.LIGHTHOUSE_CHECK_URL_TOKEN }}::${{ steps.now.outputs.preview-url }}
 ```
 
 ## Credits
