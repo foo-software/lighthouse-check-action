@@ -41,7 +41,7 @@ export default async ({
 
       // add a horizontal line
       if (index + 1 < results.length) {
-        markdown += `\n\n<hr />`;
+        markdown += `\n\n<hr />\n\n`;
       }
     });
 
