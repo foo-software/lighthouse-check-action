@@ -21,7 +21,13 @@ const formatInput = input => {
 
 (async () => {
   try {
-    const urls = formatInput(core.getInput('urls'));
+    let urls = formatInput(core.getInput('urls'));
+    console.log('typeof urls', typeof urls);
+    if (urls) {
+      urls = typeof urls !== string ? urls : urls.split(',')
+    } else {
+      urls = undefined;
+    }
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
@@ -45,9 +51,9 @@ const formatInput = input => {
       timeout: formatInput(core.getInput('timeout')),
       throttling: formatInput(core.getInput('throttling')),
       throttlingMethod: formatInput(core.getInput('throttlingMethod')),
-      urls: !urls ? undefined : urls.split(','),
       verbose: formatInput(core.getInput('verbose')),
       wait: formatInput(core.getInput('wait')),
+      urls,
 
       // static
       isGitHubAction: true,
