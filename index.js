@@ -23,8 +23,9 @@ const formatInput = input => {
   try {
     let urls = formatInput(core.getInput('urls'));
     console.log('typeof urls', typeof urls);
+    console.log('urls', urls);
     if (urls) {
-      urls = typeof urls !== string ? urls : urls.split(',')
+      urls = typeof urls !== 'string' ? urls : urls.split(',')
     } else {
       urls = undefined;
     }
