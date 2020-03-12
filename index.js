@@ -23,12 +23,13 @@ const formatInput = input => {
   try {
     let urls = formatInput(core.getInput('urls'));
     console.log('typeof urls', typeof urls);
-    console.log('urls', urls);
+    console.log('urls', `${urls}`);
     if (urls) {
       urls = typeof urls !== 'string' ? urls : urls.split(',')
     } else {
       urls = undefined;
     }
+    urls = 'https://www.foo.software';
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
