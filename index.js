@@ -29,7 +29,7 @@ const formatInput = input => {
     } else {
       urls = undefined;
     }
-    urls = 'https://www.foo.software';
+    urls = ['https://www.foo.software'];
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
