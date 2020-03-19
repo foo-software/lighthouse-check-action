@@ -19,6 +19,8 @@ inputs:
     description: 'A configuration file path in JSON format which holds all options defined here. This file should be relative to the file being interpretted. In this case it will most likely be the root of the repo ("./")'
   emulatedFormFactor:
     description: 'Lighthouse setting only used for local audits. See lighthouse-check NPM module for details.'
+  extraHeaders:
+    description: 'Stringify´d JSON HTTP Header key/value pairs to send in requests. Example: "{\\"Cookie\\":\\"monster=blue\\", \\"x-men\\":\\"wolverine\\"}"'
   locale:
     description: 'A locale for Lighthouse reports. Example: ja'
   outputDirectory:
