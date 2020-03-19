@@ -38,9 +38,7 @@ function _prompt() {
     questions = [].concat(questions);
     let answer, question, quit, name, type, lastPrompt;
 
-    const getFormattedAnswer =
-    /*#__PURE__*/
-    function () {
+    const getFormattedAnswer = /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(function* (question, answer, skipValidation = false) {
         if (!skipValidation && question.validate && question.validate(answer) !== true) {
           return;

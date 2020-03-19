@@ -52,7 +52,7 @@
   "dependencies": {
     "@actions/core": "^1.1.1",
     "@actions/github": "^1.1.0",
-    "@foo-software/lighthouse-check": "0.0.74",
+    "@foo-software/lighthouse-check": "0.0.78",
     "express": "^4.17.1",
     "forever": "^2.0.0",
     "lodash.get": "^4.4.2"

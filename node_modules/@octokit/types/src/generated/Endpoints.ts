@@ -536,12 +536,10 @@ export interface Endpoints {
   "GET /marketplace_listing/accounts/:account_id": [
 
       | AppsGetSubscriptionPlanForAccountEndpoint
-      | AppsCheckAccountIsAssociatedWithAnyEndpoint
-      | AppsCheckAccountSubscribesToPlanEndpoint,
+      | AppsCheckAccountIsAssociatedWithAnyEndpoint,
 
       | AppsGetSubscriptionPlanForAccountRequestOptions
       | AppsCheckAccountIsAssociatedWithAnyRequestOptions
-      | AppsCheckAccountSubscribesToPlanRequestOptions
   ];
   "GET /marketplace_listing/plans": [
     AppsListPlansEndpoint,
@@ -556,10 +554,10 @@ export interface Endpoints {
   "GET /marketplace_listing/stubbed/accounts/:account_id": [
 
       | AppsGetSubscriptionPlanForAccountStubbedEndpoint
-      | AppsCheckAccountSubscribesToPlanStubbedEndpoint,
+      | AppsCheckAccountIsAssociatedWithAnyStubbedEndpoint,
 
       | AppsGetSubscriptionPlanForAccountStubbedRequestOptions
-      | AppsCheckAccountSubscribesToPlanStubbedRequestOptions
+      | AppsCheckAccountIsAssociatedWithAnyStubbedRequestOptions
   ];
   "GET /marketplace_listing/stubbed/plans": [
     AppsListPlansStubbedEndpoint,
@@ -1545,12 +1543,20 @@ export interface Endpoints {
     UsersGetPublicKeyRequestOptions
   ];
   "GET /user/marketplace_purchases": [
-    AppsListSubscriptionsForAuthenticatedUserEndpoint,
-    AppsListSubscriptionsForAuthenticatedUserRequestOptions
+
+      | AppsListSubscriptionsForAuthenticatedUserEndpoint
+      | AppsListMarketplacePurchasesForAuthenticatedUserEndpoint,
+
+      | AppsListSubscriptionsForAuthenticatedUserRequestOptions
+      | AppsListMarketplacePurchasesForAuthenticatedUserRequestOptions
   ];
   "GET /user/marketplace_purchases/stubbed": [
-    AppsListSubscriptionsForAuthenticatedUserStubbedEndpoint,
-    AppsListSubscriptionsForAuthenticatedUserStubbedRequestOptions
+
+      | AppsListSubscriptionsForAuthenticatedUserStubbedEndpoint
+      | AppsListMarketplacePurchasesForAuthenticatedUserStubbedEndpoint,
+
+      | AppsListSubscriptionsForAuthenticatedUserStubbedRequestOptions
+      | AppsListMarketplacePurchasesForAuthenticatedUserStubbedRequestOptions
   ];
   "GET /user/memberships/orgs": [
     OrgsListMembershipsEndpoint,
@@ -3601,18 +3607,6 @@ type AppsCheckAccountIsAssociatedWithAnyRequestOptions = {
   headers: RequestHeaders;
   request: RequestRequestOptions;
 };
-type AppsCheckAccountSubscribesToPlanEndpoint = {
-  /**
-   * account_id parameter
-   */
-  account_id: number;
-};
-type AppsCheckAccountSubscribesToPlanRequestOptions = {
-  method: "GET";
-  url: Url;
-  headers: RequestHeaders;
-  request: RequestRequestOptions;
-};
 type AppsListPlansEndpoint = {
   /**
    * Results per page (max 100)
@@ -3697,13 +3691,13 @@ type AppsGetSubscriptionPlanForAccountStubbedRequestOptions = {
   headers: RequestHeaders;
   request: RequestRequestOptions;
 };
-type AppsCheckAccountSubscribesToPlanStubbedEndpoint = {
+type AppsCheckAccountIsAssociatedWithAnyStubbedEndpoint = {
   /**
    * account_id parameter
    */
   account_id: number;
 };
-type AppsCheckAccountSubscribesToPlanStubbedRequestOptions = {
+type AppsCheckAccountIsAssociatedWithAnyStubbedRequestOptions = {
   method: "GET";
   url: Url;
   headers: RequestHeaders;
@@ -16399,6 +16393,22 @@ type AppsListSubscriptionsForAuthenticatedUserRequestOptions = {
   headers: RequestHeaders;
   request: RequestRequestOptions;
 };
+type AppsListMarketplacePurchasesForAuthenticatedUserEndpoint = {
+  /**
+   * Results per page (max 100)
+   */
+  per_page?: number;
+  /**
+   * Page number of the results to fetch.
+   */
+  page?: number;
+};
+type AppsListMarketplacePurchasesForAuthenticatedUserRequestOptions = {
+  method: "GET";
+  url: Url;
+  headers: RequestHeaders;
+  request: RequestRequestOptions;
+};
 type AppsListSubscriptionsForAuthenticatedUserStubbedEndpoint = {
   /**
    * Results per page (max 100)
@@ -16410,6 +16420,22 @@ type AppsListSubscriptionsForAuthenticatedUserStubbedEndpoint = {
   page?: number;
 };
 type AppsListSubscriptionsForAuthenticatedUserStubbedRequestOptions = {
+  method: "GET";
+  url: Url;
+  headers: RequestHeaders;
+  request: RequestRequestOptions;
+};
+type AppsListMarketplacePurchasesForAuthenticatedUserStubbedEndpoint = {
+  /**
+   * Results per page (max 100)
+   */
+  per_page?: number;
+  /**
+   * Page number of the results to fetch.
+   */
+  page?: number;
+};
+type AppsListMarketplacePurchasesForAuthenticatedUserStubbedRequestOptions = {
   method: "GET";
   url: Url;
   headers: RequestHeaders;
