@@ -22,6 +22,7 @@ const formatInput = input => {
 (async () => {
   try {
     const urls = formatInput(core.getInput('urls'));
+    console.log('extra headers', core.getInput('extraHeaders'));
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),

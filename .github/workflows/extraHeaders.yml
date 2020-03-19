@@ -22,5 +22,5 @@ jobs:
       - name: Run Lighthouse
         uses: ./
         with:
-          # extraHeaders: '{"x-hello-world": "foo"}'
+          extraHeaders: '{"x-hello-world": "foo"}'
           urls: ${{ steps.now.outputs.preview-url }}
