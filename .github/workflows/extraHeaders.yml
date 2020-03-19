@@ -1,4 +1,4 @@
-name: Lighthouse
+name: Test Extra Headers
 on:
   push:
     branches:
@@ -12,15 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: amondnet/now-deployment@master
-        id: now
-        with:
-          github-comment: false
-          zeit-token: ${{ secrets.ZEIT_NOW_TOKEN }}
-          now-org-id: ${{ secrets.ZEIT_NOW_ORG_ID }}
-          now-project-id: ${{ secrets.ZEIT_NOW_PROJECT_ID }}
+      - name: Start Header App
+        run: |
+          npm run start:example:headers
       - name: Run Lighthouse
         uses: foo-software/lighthouse-check-action@feat/support-extra-headers
         with:
           extraHeaders: '{"x-hello-world": "foo"}'
-          urls: ${{ steps.now.outputs.preview-url }}
+          urls: http://127.0.0.1
