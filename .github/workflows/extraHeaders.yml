@@ -19,4 +19,4 @@ jobs:
         uses: ./
         with:
           # extraHeaders: '{"x-hello-world": "foo"}'
-          urls: http://127.0.0.1
+          urls: "https://www.foo.software"
