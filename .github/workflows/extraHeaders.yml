@@ -22,5 +22,5 @@ jobs:
       - name: Run Lighthouse
         uses: foo-software/lighthouse-check-action@feat/support-extra-headers
         with:
-          extraHeaders: "{\\"x-hello-world\\":\\"foo\\"}"
+          extraHeaders: '{"x-hello-world": "foo"}'
           urls: ${{ steps.now.outputs.preview-url }}
