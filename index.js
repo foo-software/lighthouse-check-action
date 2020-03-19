@@ -22,7 +22,6 @@ const formatInput = input => {
 (async () => {
   try {
     const urls = formatInput(core.getInput('urls'));
-    console.log('extra headers', core.getInput('extraHeaders'));
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
@@ -34,7 +33,7 @@ const formatInput = input => {
       branch: formatInput(core.getInput('branch')),
       configFile: formatInput(core.getInput('configFile')),
       emulatedFormFactor: formatInput(core.getInput('emulatedFormFactor')),
-      // extraHeaders: formatInput(core.getInput('extraHeaders')),
+      extraHeaders: formatInput(JSON.stringify(JSON.parse(core.getInput('extraHeaders')))),
       locale: formatInput(core.getInput('locale')),
       help: formatInput(core.getInput('help')),
       outputDirectory: formatInput(core.getInput('outputDirectory')),
