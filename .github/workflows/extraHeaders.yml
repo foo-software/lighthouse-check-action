@@ -12,11 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Start Header App
-        run: |
-          npm run start:example:headers
+      - uses: amondnet/now-deployment@master
+        id: now
+        with:
+          github-comment: false
+          zeit-token: ${{ secrets.ZEIT_NOW_TOKEN }}
+          now-org-id: ${{ secrets.ZEIT_NOW_ORG_ID }}
+          now-project-id: ${{ secrets.ZEIT_NOW_PROJECT_ID }}
       - name: Run Lighthouse
         uses: ./
         with:
-          # extraHeaders: '{"x-hello-world": "foo"}'
-          urls: "https://www.foo.software"
+          extraHeaders: '{"x-hello-world": "foo"}'
+          urls: ${{ steps.now.outputs.preview-url }}
