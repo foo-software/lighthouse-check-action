@@ -1,0 +1,22 @@
+name: Lighthouse
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Start Header App
+        run: |
+          npm run start:example:headers
+      - name: Run Lighthouse
+        uses: foo-software/lighthouse-check-action@feat/support-extra-headers
+        with:
+          extraHeaders: '{"x-hello-world": "foo"}'
+          urls: http://127.0.0.1
