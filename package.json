@@ -4,7 +4,8 @@
   "description": "A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:example:headers": "node test/headerServer.js"
   },
   "repository": {
     "type": "git",
@@ -52,6 +53,7 @@
     "@actions/core": "^1.1.1",
     "@actions/github": "^1.1.0",
     "@foo-software/lighthouse-check": "0.0.74",
+    "express": "^4.17.1",
     "lodash.get": "^4.4.2"
   },
   "devDependencies": {
