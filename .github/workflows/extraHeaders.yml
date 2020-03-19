@@ -1,4 +1,4 @@
-name: Lighthouse
+name: Test Extra Headers
 on:
   push:
     branches:
