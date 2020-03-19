@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:example:headers": "node test/headerServer.js"
+    "start:example:headers": "forever start test/headerServer.js"
   },
   "repository": {
     "type": "git",
@@ -54,6 +54,7 @@
     "@actions/github": "^1.1.0",
     "@foo-software/lighthouse-check": "0.0.74",
     "express": "^4.17.1",
+    "forever": "^2.0.0",
     "lodash.get": "^4.4.2"
   },
   "devDependencies": {
