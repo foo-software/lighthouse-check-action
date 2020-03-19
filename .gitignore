@@ -1,3 +1,5 @@
 # we're committing intentially for now
 # node_modules
 .vscode
+
+.now
