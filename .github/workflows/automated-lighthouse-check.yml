@@ -10,7 +10,8 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
-        accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+        # uncomment for PR comments
+        # accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
         apiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
         tag: GitHub Action
         urls: ${{ secrets.LIGHTHOUSE_CHECK_URLS }}
