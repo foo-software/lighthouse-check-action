@@ -16,7 +16,7 @@ jobs:
         run: |
           npm run start:example:headers
       - name: Run Lighthouse
-        uses: foo-software/lighthouse-check-action@feat/support-extra-headers
+        uses: ./
         with:
-          extraHeaders: '{"x-hello-world": "foo"}'
+          # extraHeaders: '{"x-hello-world": "foo"}'
           urls: http://127.0.0.1
