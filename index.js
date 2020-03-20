@@ -33,7 +33,7 @@ const formatInput = input => {
       branch: formatInput(core.getInput('branch')),
       configFile: formatInput(core.getInput('configFile')),
       emulatedFormFactor: formatInput(core.getInput('emulatedFormFactor')),
-      extraHeaders: formatInput(core.getInput('extraHeaders')),
+      extraHeaders: JSON.parse(formatInput(core.getInput('extraHeaders'))),
       locale: formatInput(core.getInput('locale')),
       help: formatInput(core.getInput('help')),
       outputDirectory: formatInput(core.getInput('outputDirectory')),
