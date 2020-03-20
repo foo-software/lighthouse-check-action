@@ -20,7 +20,7 @@ inputs:
   emulatedFormFactor:
     description: 'Lighthouse setting only used for local audits. See lighthouse-check NPM module for details.'
   extraHeaders:
-    description: "'{ "x-hello-world": "foobar", "x-hello-fooo": "hiii" }'"
+    description: 'Stringified HTTP Header object key/value pairs to send in requests.'
   locale:
     description: 'A locale for Lighthouse reports. Example: ja'
   outputDirectory:
