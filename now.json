@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [{ "src": "/test/headerServer.js", "use": "@now/node-server" }],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/test/headerServer.js",
+      "methods": ["GET"]
+    }
+  ]
+}

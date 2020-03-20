@@ -1,0 +1,33 @@
+name: Test Extra Headers
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: amondnet/now-deployment@master
+        id: now
+        with:
+          github-comment: false
+          zeit-token: ${{ secrets.ZEIT_NOW_TOKEN }}
+          now-org-id: ${{ secrets.ZEIT_NOW_ORG_ID }}
+          now-project-id: ${{ secrets.ZEIT_NOW_PROJECT_ID }}
+      - run: mkdir /tmp/artifacts
+      - name: Run Lighthouse
+        uses: ./
+        with:
+          extraHeaders: '{ "x-hello-world": "foobar", "x-hello-fooo": "hiii" }'
+          urls: ${{ steps.now.outputs.preview-url }}
+          outputDirectory: /tmp/artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: Lighthouse reports
+          path: /tmp/artifacts
