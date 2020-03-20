@@ -19,8 +19,15 @@ jobs:
           zeit-token: ${{ secrets.ZEIT_NOW_TOKEN }}
           now-org-id: ${{ secrets.ZEIT_NOW_ORG_ID }}
           now-project-id: ${{ secrets.ZEIT_NOW_PROJECT_ID }}
+      - run: mkdir /tmp/artifacts
       - name: Run Lighthouse
         uses: ./
         with:
           # extraHeaders: '{"x-hello-world": "foo"}'
           urls: ${{ steps.now.outputs.preview-url }}
+          outputDirectory: /tmp/artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: Lighthouse reports
+          path: /tmp/artifacts
