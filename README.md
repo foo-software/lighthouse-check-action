@@ -157,6 +157,13 @@ You can choose from two ways of running audits - "locally" in a dockerized GitHu
     <td><code>mobile</code></td>
   </tr>
   <tr>
+    <td><code>extraHeaders</code></td>
+    <td>Stringified HTTP Header object key/value pairs to send in requests. example: <code>"{\"Cookie\":\"monster=blue\", \"x-men\":\"wolverine\"}"</code></td>
+    <td><code>string</code></td>
+    <td><code>local</code></td>
+    <td><code>undefined</code></td>
+  </tr>
+  <tr>
     <td><code>locale</code></td>
     <td>A locale for Lighthouse reports. Example: <code>ja</code></td>
     <td><code>string</code></td>
