@@ -55,6 +55,11 @@ export const convertOptionsFromArguments = options =>
       value = value.split(',');
     }
 
+    // format object
+    if (option.type === 'object' && value) {
+      value = JSON.parse(value);
+    }
+
     if (option.type === 'string' && !value) {
       value = undefined;
     }
