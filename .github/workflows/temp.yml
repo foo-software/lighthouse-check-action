@@ -1,4 +1,4 @@
-name: Test Lighthouse Check
+name: Temp Lighthouse Check
 on: [pull_request]
 
 jobs:

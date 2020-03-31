@@ -120,7 +120,7 @@ export default async ({
     // if the API responded with error/s, set a message to be used later
     let apiErrorMessage;
     if (queue.errors) {
-      apiErrorMessage = `${NAME}: Below is the API response for attempted URLs as an array. Examine the "data" property for error details.`;
+      apiErrorMessage = `${NAME}: Below is the API response for attempted URLs as an array.`;
     }
 
     // if all urls failed to be enqueued...
