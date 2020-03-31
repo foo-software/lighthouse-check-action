@@ -117,6 +117,12 @@ export default async ({
       });
     }
 
+    // if the API responded with error/s, set a message to be used later
+    let apiErrorMessage;
+    if (queue.errors) {
+      apiErrorMessage = `${NAME}: Below is the API response for attempted URLs as an array. Examine the "data" property for error details.`;
+    }
+
     // if all urls failed to be enqueued...
     if (queue.errors === queue.results.length) {
       const errorCode = queue.results[0].code;
@@ -127,6 +133,10 @@ export default async ({
 
       if (verbose) {
         console.log(`${NAME}:`, errorMessage);
+
+        if (apiErrorMessage) {
+          console.log(apiErrorMessage, queue.results);
+        }
       }
 
       throw new LighthouseCheckError(errorMessage, {
@@ -150,11 +160,8 @@ export default async ({
     if (verbose) {
       console.log(`${NAME}:`, message);
 
-      if (queue.errors) {
-        console.log(
-          `${NAME}: Below is the API response for attempted URLs as an array. Examine the "data" property for error details.`,
-          queue.results
-        );
+      if (apiErrorMessage) {
+        console.log(apiErrorMessage, queue.results);
       }
     }
 
