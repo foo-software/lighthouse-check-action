@@ -84,7 +84,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
       default: false
     },
     optional: {
-      validate: (0, _utils.assertValueType)("boolean")
+      validate: !process.env.BABEL_TYPES_8_BREAKING ? (0, _utils.assertValueType)("boolean") : (0, _utils.chain)((0, _utils.assertValueType)("boolean"), (0, _utils.assertOptionalChainStart)())
     }
   }
 });
@@ -121,7 +121,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
       validate: (0, _utils.chain)((0, _utils.assertValueType)("array"), (0, _utils.assertEach)((0, _utils.assertNodeType)("Expression", "SpreadElement", "JSXNamespacedName")))
     },
     optional: {
-      validate: (0, _utils.assertValueType)("boolean")
+      validate: !process.env.BABEL_TYPES_8_BREAKING ? (0, _utils.assertValueType)("boolean") : (0, _utils.chain)((0, _utils.assertValueType)("boolean"), (0, _utils.assertOptionalChainStart)())
     },
     typeArguments: {
       validate: (0, _utils.assertNodeType)("TypeParameterInstantiation"),
@@ -219,4 +219,23 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     }
   },
   aliases: ["Expression", "Pureish", "Literal", "Immutable"]
+});
+(0, _utils.default)("RecordExpression", {
+  visitor: ["properties"],
+  aliases: ["Expression"],
+  fields: {
+    properties: {
+      validate: (0, _utils.chain)((0, _utils.assertValueType)("array"), (0, _utils.assertEach)((0, _utils.assertNodeType)("ObjectProperty", "ObjectMethod", "SpreadElement")))
+    }
+  }
+});
+(0, _utils.default)("TupleExpression", {
+  fields: {
+    elements: {
+      validate: (0, _utils.chain)((0, _utils.assertValueType)("array"), (0, _utils.assertEach)((0, _utils.assertNodeOrValueType)("null", "Expression", "SpreadElement"))),
+      default: []
+    }
+  },
+  visitor: ["elements"],
+  aliases: ["Expression"]
 });
