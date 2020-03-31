@@ -1,0 +1,15 @@
+name: Test Lighthouse Check
+on: [pull_request]
+
+jobs:
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - run: mkdir /tmp/artifacts
+    - name: Run Lighthouse
+      uses: ./
+      with:
+        accessToken: ${{ secrets.GITHUB_TOKEN }}
+        apiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
+        urls: 'https://18.pr.timeline.schoen.world'
