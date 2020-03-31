@@ -72,7 +72,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 (0, _utils.default)("ClassExpression", {
   builder: ["id", "superClass", "body", "decorators"],
   visitor: ["id", "body", "superClass", "mixins", "typeParameters", "superTypeParameters", "implements", "decorators"],
-  aliases: ["Scopable", "Class", "Expression", "Pureish"],
+  aliases: ["Scopable", "Class", "Expression"],
   fields: {
     id: {
       validate: (0, _utils.assertNodeType)("Identifier"),
@@ -105,7 +105,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 });
 (0, _utils.default)("ClassDeclaration", {
   inherits: "ClassExpression",
-  aliases: ["Scopable", "Class", "Statement", "Declaration", "Pureish"],
+  aliases: ["Scopable", "Class", "Statement", "Declaration"],
   fields: {
     declare: {
       validate: (0, _utils.assertValueType)("boolean"),

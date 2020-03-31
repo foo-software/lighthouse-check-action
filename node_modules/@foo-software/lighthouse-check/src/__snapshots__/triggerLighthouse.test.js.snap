@@ -15,7 +15,7 @@ Object {
       "status": 401,
     },
   ],
-  "error": [Error: All URLs failed to be enqueued. Examine the "data" property of this error for details.],
+  "error": [Error: All URLs failed to be enqueued.],
 }
 `;
 

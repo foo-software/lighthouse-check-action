@@ -119,6 +119,7 @@ exports.opaqueType = exports.OpaqueType = OpaqueType;
 exports.qualifiedTypeIdentifier = exports.QualifiedTypeIdentifier = QualifiedTypeIdentifier;
 exports.stringLiteralTypeAnnotation = exports.StringLiteralTypeAnnotation = StringLiteralTypeAnnotation;
 exports.stringTypeAnnotation = exports.StringTypeAnnotation = StringTypeAnnotation;
+exports.symbolTypeAnnotation = exports.SymbolTypeAnnotation = SymbolTypeAnnotation;
 exports.thisTypeAnnotation = exports.ThisTypeAnnotation = ThisTypeAnnotation;
 exports.tupleTypeAnnotation = exports.TupleTypeAnnotation = TupleTypeAnnotation;
 exports.typeofTypeAnnotation = exports.TypeofTypeAnnotation = TypeofTypeAnnotation;
@@ -176,6 +177,8 @@ exports.exportDefaultSpecifier = exports.ExportDefaultSpecifier = ExportDefaultS
 exports.exportNamespaceSpecifier = exports.ExportNamespaceSpecifier = ExportNamespaceSpecifier;
 exports.privateName = exports.PrivateName = PrivateName;
 exports.bigIntLiteral = exports.BigIntLiteral = BigIntLiteral;
+exports.recordExpression = exports.RecordExpression = RecordExpression;
+exports.tupleExpression = exports.TupleExpression = TupleExpression;
 exports.tSParameterProperty = exports.tsParameterProperty = exports.TSParameterProperty = TSParameterProperty;
 exports.tSDeclareFunction = exports.tsDeclareFunction = exports.TSDeclareFunction = TSDeclareFunction;
 exports.tSDeclareMethod = exports.tsDeclareMethod = exports.TSDeclareMethod = TSDeclareMethod;
@@ -710,6 +713,10 @@ function StringTypeAnnotation(...args) {
   return (0, _builder.default)("StringTypeAnnotation", ...args);
 }
 
+function SymbolTypeAnnotation(...args) {
+  return (0, _builder.default)("SymbolTypeAnnotation", ...args);
+}
+
 function ThisTypeAnnotation(...args) {
   return (0, _builder.default)("ThisTypeAnnotation", ...args);
 }
@@ -936,6 +943,14 @@ function PrivateName(...args) {
 
 function BigIntLiteral(...args) {
   return (0, _builder.default)("BigIntLiteral", ...args);
+}
+
+function RecordExpression(...args) {
+  return (0, _builder.default)("RecordExpression", ...args);
+}
+
+function TupleExpression(...args) {
+  return (0, _builder.default)("TupleExpression", ...args);
 }
 
 function TSParameterProperty(...args) {

@@ -5,9 +5,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.patternLikeCommon = exports.functionDeclarationCommon = exports.functionTypeAnnotationCommon = exports.functionCommon = void 0;
 
-var _esutils = _interopRequireDefault(require("esutils"));
-
 var _is = _interopRequireDefault(require("../validators/is"));
+
+var _isValidIdentifier = _interopRequireDefault(require("../validators/isValidIdentifier"));
+
+var _helperValidatorIdentifier = require("@babel/helper-validator-identifier");
 
 var _constants = require("../constants");
 
@@ -342,7 +344,7 @@ exports.patternLikeCommon = patternLikeCommon;
       validate: (0, _utils.chain)((0, _utils.assertValueType)("string"), function (node, key, val) {
         if (!process.env.BABEL_TYPES_8_BREAKING) return;
 
-        if (!_esutils.default.keyword.isIdentifierNameES6(val)) {
+        if (!(0, _isValidIdentifier.default)(val, false)) {
           throw new TypeError(`"${val}" is not a valid identifier name`);
         }
       })
@@ -380,8 +382,8 @@ exports.patternLikeCommon = patternLikeCommon;
       })) return;
     }
 
-    if (_esutils.default.keyword.isReservedWordES6(node.name, false) && node.name !== "this") {
-      throw new TypeError(`"${node.name}" is not a valid identifer`);
+    if (((0, _helperValidatorIdentifier.isKeyword)(node.name) || (0, _helperValidatorIdentifier.isReservedWord)(node.name)) && node.name !== "this") {
+      throw new TypeError(`"${node.name}" is not a valid identifier`);
     }
   }
 
@@ -448,7 +450,7 @@ exports.patternLikeCommon = patternLikeCommon;
 (0, _utils.default)("RegExpLiteral", {
   builder: ["pattern", "flags"],
   deprecatedAlias: "RegexLiteral",
-  aliases: ["Expression", "Literal"],
+  aliases: ["Expression", "Pureish", "Literal"],
   fields: {
     pattern: {
       validate: (0, _utils.assertValueType)("string")
