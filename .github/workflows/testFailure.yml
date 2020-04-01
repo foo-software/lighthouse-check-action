@@ -10,7 +10,6 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
-        outputDirectory: /tmp/artifacts
         urls: 'https://www.foo.software/nonexistent'
     - name: Handle Lighthouse Check results
       uses: foo-software/lighthouse-check-status-action@master
