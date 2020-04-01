@@ -11,7 +11,7 @@ jobs:
         uses: ./
         id: lighthouseCheck
         with:
-          urls: 'https://www.foo.software/nonexistent'
+          urls: 'https://www.foo.software/nonexistent-tryagain'
       - name: Handle Lighthouse Check results
         uses: foo-software/lighthouse-check-status-action@master
         with:
