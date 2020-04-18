@@ -353,6 +353,27 @@ jobs:
           path: /tmp/artifacts
 ```
 
+## Overriding Config and Option Defaults
+
+You can override default config and options by specifying `overridesJsonFile` option. Contents of this overrides JSON file can have two possible fields; `options` and `config`. These two fields are eventually used by Lighthouse to populate `opts` and `config` arguments respectively as illustrated in [Using programmatically](https://github.com/GoogleChrome/lighthouse/blob/master/docs/readme.md#using-programmatically). The two objects populating this JSON file are merged shallowly with the default [config](https://github.com/foo-software/lighthouse-check/blob/master/src/__snapshots__/lighthouseConfig.test.js.snap) and [options](https://github.com/foo-software/lighthouse-check/blob/master/src/__snapshots__/lighthouseOptions.test.js.snap).
+
+> Example content of `overridesJsonFile`
+
+```json
+{
+  "config": {
+    "settings": {
+      "onlyCategories": ["performance"]
+    }
+  },
+  "options": {
+    "chromeFlags": [
+      "--disable-dev-shm-usage"
+    ]
+  }
+}
+```
+
 ## CLI
 
 Running `lighthouse-check` in the example below will run Lighthouse audits against `https://www.foo.software` and `https://www.foo.software/contact` and output a report in the '/tmp/artifacts' directory.
@@ -499,6 +520,14 @@ Below are options for the exported `lighthouseCheck` function or `lighthouse-che
     <td><code>maxWaitForLoad</code></td>
     <td>The maximum amount of time to wait for a page to load in ms.</td>
     <td><code>number</code></td>
+    <td><code>local</code></td>
+    <td><code>undefined</code></td>
+    <td>no</td>
+  </tr>
+  <tr>
+    <td><code>overridesJsonFile</code></td>
+    <td>A JSON file with config and option fields to overrides defaults. <a href="#overriding-config-and-option-defaults">Read more here</a>.</td>
+    <td><code>string</code></td>
     <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>

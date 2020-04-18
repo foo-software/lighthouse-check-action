@@ -25,6 +25,7 @@ export default ({
   locale,
   maxWaitForLoad,
   outputDirectory,
+  overridesJsonFile,
   pr,
   prCommentAccessToken,
   prCommentEnabled = true,
@@ -164,6 +165,8 @@ export default ({
           extraHeaders,
           locale,
           outputDirectory: outputDirectoryPath,
+          overridesJsonFile:
+            overridesJsonFile && path.resolve(overridesJsonFile),
           maxWaitForLoad,
           throttling,
           throttlingMethod,

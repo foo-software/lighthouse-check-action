@@ -8,7 +8,7 @@
 const DEVTOOLS_RTT_ADJUSTMENT_FACTOR = 3.75;
 const DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR = 0.9;
 
-const throttling = {
+export const throttling = {
   DEVTOOLS_RTT_ADJUSTMENT_FACTOR,
   DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR,
   // These values align with WebPageTest's definition of "Fast 3G"
