@@ -9,5 +9,5 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
-        overridesJsonFile: './overrides.json'
+        overridesJsonFile: '.github/workflows/overrides.json'
         urls: 'https://www.foo.software'
