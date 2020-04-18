@@ -6,7 +6,10 @@
   },
   "options": {
     "chromeFlags": [
-      "--disable-dev-shm-usage"
+      "--disable-dev-shm-usage",
+      "--headless",
+      "--no-sandbox",
+      "--ignore-certificate-errors"
     ]
   }
 }
