@@ -178,6 +178,13 @@ You can choose from two ways of running audits - "locally" in a dockerized GitHu
     <td><code>undefined</code></td>
   </tr>
   <tr>
+    <td><code>overridesJsonFile</code></td>
+    <td>A JSON file with config and option fields to overrides defaults. <a href="#overriding-config-and-option-defaults">Read more here</a>.</td>
+    <td><code>string</code></td>
+    <td><code>local</code></td>
+    <td><code>undefined</code></td>
+  </tr>
+  <tr>
     <td><code>prCommentEnabled</code></td>
     <td>If <code>true</code> and <code>accessToken</code> is set scores will be posted as comments.</td>
     <td><code>boolean</code></td>
@@ -514,6 +521,27 @@ jobs:
           apiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
           tag: GitHub Action
           urls: ${{ secrets.LIGHTHOUSE_CHECK_URL_TOKEN }}::${{ steps.now.outputs.preview-url }}
+```
+
+## Overriding Config and Option Defaults
+
+You can override default config and options by specifying `overridesJsonFile` option. Contents of this overrides JSON file can have two possible fields; `options` and `config`. These two fields are eventually used by Lighthouse to populate `opts` and `config` arguments respectively as illustrated in [Using programmatically](https://github.com/GoogleChrome/lighthouse/blob/master/docs/readme.md#using-programmatically). The two objects populating this JSON file are merged shallowly with the default [config](https://github.com/foo-software/lighthouse-check/blob/master/src/__snapshots__/lighthouseConfig.test.js.snap) and [options](https://github.com/foo-software/lighthouse-check/blob/master/src/__snapshots__/lighthouseOptions.test.js.snap).
+
+> Example content of `overridesJsonFile`
+
+```json
+{
+  "config": {
+    "settings": {
+      "onlyCategories": ["performance"]
+    }
+  },
+  "options": {
+    "chromeFlags": [
+      "--disable-dev-shm-usage"
+    ]
+  }
+}
 ```
 
 ## Credits
