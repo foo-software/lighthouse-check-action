@@ -10,8 +10,7 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
-        # uncomment for PR comments
-        # accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+        accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
         author: ${{ github.actor }}
         awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
         awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
@@ -19,6 +18,7 @@ jobs:
         awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
         branch: ${{ github.ref }}
         outputDirectory: /tmp/artifacts
+        prCommentEnabled: false
         urls: 'https://www.foo.software,https://www.foo.software/tag/articles/'
         sha: ${{ github.sha }}
         slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
