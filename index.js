@@ -23,7 +23,6 @@ const formatInput = input => {
   try {
     const urls = formatInput(core.getInput('urls'));
     const extraHeaders = core.getInput('extraHeaders');
-    console.log('prCommentEnabled', formatInput(core.getInput('prCommentEnabled')))
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
