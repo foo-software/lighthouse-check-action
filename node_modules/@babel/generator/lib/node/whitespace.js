@@ -12,13 +12,13 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function crawl(node, state = {}) {
-  if (t.isMemberExpression(node)) {
+  if (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) {
     crawl(node.object, state);
     if (node.computed) crawl(node.property, state);
   } else if (t.isBinary(node) || t.isAssignmentExpression(node)) {
     crawl(node.left, state);
     crawl(node.right, state);
-  } else if (t.isCallExpression(node)) {
+  } else if (t.isCallExpression(node) || t.isOptionalCallExpression(node)) {
     state.hasCall = true;
     crawl(node.callee, state);
   } else if (t.isFunction(node)) {
@@ -85,6 +85,15 @@ const nodes = {
 
   CallExpression(node) {
     if (t.isFunction(node.callee) || isHelper(node)) {
+      return {
+        before: true,
+        after: true
+      };
+    }
+  },
+
+  OptionalCallExpression(node) {
+    if (t.isFunction(node.callee)) {
       return {
         before: true,
         after: true

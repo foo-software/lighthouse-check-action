@@ -80,6 +80,14 @@ const defaultOptions = {
     type: 'string',
     value: undefined
   },
+  prCommentEnabled: {
+    type: 'boolean',
+    value: true
+  },
+  prCommentSaveOld: {
+    type: 'boolean',
+    value: false
+  },
   prCommentUrl: {
     type: 'string',
     value: undefined

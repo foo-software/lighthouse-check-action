@@ -6,7 +6,7 @@ import { ERROR_INVALID } from './errorCodes';
 
 const getScoreFailMessage = ({ name, url, minScore, score }) => {
   // if inputs are not specified - assume we shouldn't fail
-  if (!minScore || !score) {
+  if (typeof minScore === 'undefined' || typeof score === 'undefined') {
     return [];
   }
 
