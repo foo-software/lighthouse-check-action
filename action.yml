@@ -25,6 +25,8 @@ inputs:
     description: 'A locale for Lighthouse reports. Example: ja'
   outputDirectory:
     description: 'An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.'
+  overridesJsonFile:
+    description: 'A JSON file with config and option fields to overrides defaults.'
   pr:
     description: 'For Slack notifications: A version control pull request URL, typically from GitHub.'
   prCommentEnabled:

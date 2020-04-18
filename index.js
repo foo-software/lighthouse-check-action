@@ -41,6 +41,7 @@ const formatInput = input => {
       locale: formatInput(core.getInput('locale')),
       help: formatInput(core.getInput('help')),
       outputDirectory: formatInput(core.getInput('outputDirectory')),
+      overridesJsonFile: formatInput(core.getInput('overridesJsonFile')),
       pr: formatInput(core.getInput('pr')),
       prCommentAccessToken: formatInput(core.getInput('accessToken')),
       prCommentEnabled: formatInput(core.getInput('prCommentEnabled')),

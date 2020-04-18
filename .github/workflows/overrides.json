@@ -1,0 +1,12 @@
+{
+  "config": {
+    "settings": {
+      "onlyCategories": ["performance"]
+    }
+  },
+  "options": {
+    "chromeFlags": [
+      "--disable-dev-shm-usage"
+    ]
+  }
+}
