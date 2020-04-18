@@ -532,7 +532,7 @@ Below are options for the exported `lighthouseCheck` function or `lighthouse-che
     <td>If <code>true</code> and <code>prCommentAccessToken</code> is set along with <code>prCommentUrl</code>, scores will be posted as comments.</td>
     <td><code>boolean</code></td>
     <td><code>both</code></td>
-    <td><code>false</code></td>
+    <td><code>true</code></td>
     <td>no</td>
   </tr>
   <tr>
