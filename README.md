@@ -178,6 +178,20 @@ You can choose from two ways of running audits - "locally" in a dockerized GitHu
     <td><code>undefined</code></td>
   </tr>
   <tr>
+    <td><code>prCommentEnabled</code></td>
+    <td>If <code>true</code> and <code>accessToken</code> is set scores will be posted as comments.</td>
+    <td><code>boolean</code></td>
+    <td><code>both</code></td>
+    <td><code>true</code></td>
+  </tr>
+  <tr>
+    <td><code>prCommentSaveOld</code></td>
+    <td>If <code>true</code> and PR comment options are set, new comments will be posted on every change vs only updating once comment with most recent scores.</td>
+    <td><code>boolean</code></td>
+    <td><code>both</code></td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
     <td><code>sha</code></td>
     <td>For Slack notifications: A version control <code>sha</code>, typically from GitHub.</td>
     <td><code>string</code></td>

@@ -27,6 +27,10 @@ inputs:
     description: 'An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.'
   pr:
     description: 'For Slack notifications: A version control pull request URL, typically from GitHub.'
+  prCommentEnabled:
+    description: 'If true and accessToken is set scores will be posted as comments.'
+  prCommentSaveOld:
+    description: 'If true and PR comment options are set, new comments will be posted on every change vs only updating once comment with most recent scores.'
   accessToken:
     description: 'Access token of a user to post PR comments.'
   sha:

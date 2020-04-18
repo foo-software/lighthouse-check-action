@@ -41,6 +41,8 @@ const formatInput = input => {
       help: formatInput(core.getInput('help')),
       outputDirectory: formatInput(core.getInput('outputDirectory')),
       pr: formatInput(core.getInput('pr')),
+      prCommentEnabled: formatInput(core.getInput('prCommentEnabled')),
+      prCommentSaveOld: formatInput(core.getInput('prCommentSaveOld')),
       prCommentAccessToken: formatInput(core.getInput('accessToken')),
       prCommentUrl: get(github, 'context.payload.pull_request.comments_url'),
       sha: formatInput(core.getInput('sha')),
