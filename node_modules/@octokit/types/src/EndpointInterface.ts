@@ -23,9 +23,9 @@ export interface EndpointInterface {
   <R extends Route>(
     route: keyof Endpoints | R,
     options?: R extends keyof Endpoints
-      ? Endpoints[R][0] & RequestParameters
+      ? Endpoints[R]["parameters"] & RequestParameters
       : RequestParameters
-  ): R extends keyof Endpoints ? Endpoints[R][1] : RequestOptions;
+  ): R extends keyof Endpoints ? Endpoints[R]["request"] : RequestOptions;
 
   /**
    * Object with current default route and parameters

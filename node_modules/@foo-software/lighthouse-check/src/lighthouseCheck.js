@@ -27,6 +27,8 @@ export default ({
   outputDirectory,
   pr,
   prCommentAccessToken,
+  prCommentEnabled,
+  prCommentSaveOld,
   prCommentUrl,
   sha,
   tag,
@@ -116,9 +118,10 @@ export default ({
               });
             }
 
-            if (prCommentUrl && prCommentAccessToken) {
+            if (prCommentEnabled && prCommentUrl && prCommentAccessToken) {
               await postPrComment({
                 prCommentAccessToken,
+                prCommentSaveOld,
                 prCommentUrl,
                 results: auditResults,
                 verbose
@@ -187,9 +190,10 @@ export default ({
             });
           }
 
-          if (prCommentUrl && prCommentAccessToken) {
+          if (prCommentEnabled && prCommentUrl && prCommentAccessToken) {
             await postPrComment({
               prCommentAccessToken,
+              prCommentSaveOld,
               prCommentUrl,
               results: lighthouseAudits,
               verbose
