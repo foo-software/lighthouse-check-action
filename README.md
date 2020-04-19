@@ -527,7 +527,7 @@ jobs:
 
 > **Note:** this approach is only available when running "locally" (not using the REST API)
 
-You can override default config and options by specifying `overridesJsonFile` option. Contents of this overrides JSON file can have two possible fields; `options` and `config`. These two fields are eventually used by Lighthouse to populate `opts` and `config` arguments respectively as illustrated in [Using programmatically](https://github.com/GoogleChrome/lighthouse/blob/master/docs/readme.md#using-programmatically). The two objects populating this JSON file are merged shallowly with the default [config](https://github.com/foo-software/lighthouse-check/blob/master/src/__snapshots__/lighthouseConfig.test.js.snap) and [options](https://github.com/foo-software/lighthouse-check/blob/master/src/__snapshots__/lighthouseOptions.test.js.snap).
+You can override default config and options by specifying `overridesJsonFile` option which is consumed by [`path.resolve(overridesJsonFile)`](https://nodejs.org/api/path.html#path_path_resolve_paths). Contents of this overrides JSON file can have two possible fields; `options` and `config`. These two fields are eventually used by Lighthouse to populate `opts` and `config` arguments respectively as illustrated in [Using programmatically](https://github.com/GoogleChrome/lighthouse/blob/master/docs/readme.md#using-programmatically). The two objects populating this JSON file are merged shallowly with the default [config](https://github.com/foo-software/lighthouse-check/blob/master/src/__snapshots__/lighthouseConfig.test.js.snap) and [options](https://github.com/foo-software/lighthouse-check/blob/master/src/__snapshots__/lighthouseOptions.test.js.snap).
 
 > Example content of `overridesJsonFile`
 
@@ -539,9 +539,7 @@ You can override default config and options by specifying `overridesJsonFile` op
     }
   },
   "options": {
-    "chromeFlags": [
-      "--disable-dev-shm-usage"
-    ]
+    "disableStorageReset": true
   }
 }
 ```
