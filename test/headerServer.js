@@ -12,8 +12,8 @@ app.get('/', (req, res) => res.send(`
     ${Object.keys(req.headers).reduce((accumulator, current) => ([
       ...accumulator,
 
-      // if header begins with "x"
-      ...(current[0] !== 'x' ? [] : [
+      // if header includes with "x-test"
+      ...(!current.includes('x-test') ? [] : [
         `
           <p style="font-size: 4rem">
             ${current} = ${req.headers[current]}
