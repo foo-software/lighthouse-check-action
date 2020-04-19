@@ -9,9 +9,18 @@ app.get('/', (req, res) => res.send(`
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
   </head>
   <body>
-    <h1 style="font-size: 4rem">
-      x-hello-world = ${req.headers['x-hello-world'] || 'undefined'}
-    </h1>
+    ${Object.keys(req.headers).reduce((accumulator, current) => ([
+      ...accumulator,
+
+      // if header begins with "x"
+      ...(current[0] !== 'x' ? [] : [
+        `
+          <p style="font-size: 4rem">
+            ${current} = ${req.headers[current]}
+          </p>
+        `,
+      ]),
+    ]), []).join('')}
   </body>
 </html>
 `));
