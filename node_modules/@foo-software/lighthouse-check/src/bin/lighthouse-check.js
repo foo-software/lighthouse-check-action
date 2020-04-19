@@ -72,6 +72,10 @@ const defaultOptions = {
     type: 'string',
     value: undefined
   },
+  overridesJsonFile: {
+    type: 'string',
+    value: undefined
+  },
   pr: {
     type: 'string',
     value: undefined
