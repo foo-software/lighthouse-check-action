@@ -1,0 +1,14 @@
+name: Test Lighthouse Check with Bad Directory
+on: [pull_request]
+
+jobs:
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - run: mkdir /tmp/artifacts
+    - name: Run Lighthouse
+      uses: ./
+      with:
+        outputDirectory: /foo
+        urls: 'https://www.foo.software'
