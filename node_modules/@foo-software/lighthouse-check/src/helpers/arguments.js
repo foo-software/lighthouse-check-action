@@ -1,29 +1,13 @@
-// if the value is assigned as an argument get that... otherwise `undefined`
-export const getArgument = name => {
-  const index = process.argv.indexOf(`--${name}`);
-
-  if (index < 0) {
-    return undefined;
-  }
-
-  // if our flag is the last `argv` or the one after has a flag
-  // assume the value as an empty string
-  if (
-    index === process.argv.length - 1 ||
-    process.argv[index + 1].includes('--')
-  ) {
-    return '';
-  }
-
-  return process.argv[index + 1];
-};
+import meow from 'meow';
 
 // we should note that these values are expected from the command
 // line and that they're always strings.
-export const convertOptionsFromArguments = options =>
-  Object.keys(options).reduce((accumulator, current) => {
+export const convertOptionsFromArguments = options => {
+  const cli = meow();
+
+  return Object.keys(options).reduce((accumulator, current) => {
     // get the argument value
-    const argumentValue = getArgument(current);
+    const argumentValue = cli.flags[current];
     const option = options[current];
 
     // if the value doesn't exist from an argument, use the existing option / value
@@ -69,3 +53,4 @@ export const convertOptionsFromArguments = options =>
       [current]: value
     };
   }, {});
+};
