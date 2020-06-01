@@ -1,6 +1,6 @@
 {
   "name": "lighthouse-check-action",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.",
   "main": "index.js",
   "scripts": {
