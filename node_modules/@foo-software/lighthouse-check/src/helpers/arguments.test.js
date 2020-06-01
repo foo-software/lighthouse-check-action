@@ -9,12 +9,14 @@ describe('convertOptionsFromArguments', () => {
     process.argv = [
       '/usr/local/bin/node',
       'lighthouse-check',
+      '--verbose',
       '--ipsum',
       'lorem',
       '--hello',
       'world',
       '--foo',
-      'bar'
+      'bar',
+      '--some-string'
     ];
   });
 
@@ -61,6 +63,24 @@ describe('convertOptionsFromArguments', () => {
       }
     });
     expect(actual).toEqual(expected);
+  });
+
+  it('should treat explicitly defined boolean types as "true" when a value is empty', () => {
+    const actual = convertOptionsFromArguments({
+      verbose: {
+        type: 'boolean'
+      }
+    });
+    expect(actual.verbose).toEqual(true);
+  });
+
+  it('should ignore empty flag values that are not explicitly defined as boolean types', () => {
+    const actual = convertOptionsFromArguments({
+      'some-string': {
+        type: 'string'
+      }
+    });
+    expect(actual['some-string']).toBeUndefined();
   });
 
   it('should create correct types from CLI string argument', () => {

@@ -44,7 +44,10 @@ export const convertOptionsFromArguments = options => {
       value = JSON.parse(value);
     }
 
-    if (option.type === 'string' && !value) {
+    if (
+      (option.type === 'string' && !value) ||
+      (option.type !== 'boolean' && typeof value === 'boolean')
+    ) {
       value = undefined;
     }
 
