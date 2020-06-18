@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2017 Google Inc. All Rights Reserved.
+ * @license Copyright 2017 The Lighthouse Authors. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
@@ -40,7 +40,7 @@ const {taskGroups, taskNameToGroup} = require('./task-groups.js');
  * @prop {TaskGroup} group
  */
 
-/** @typedef {{timers: Map<string, TaskNode>}} PriorTaskData */
+/** @typedef {{timers: Map<string, TaskNode>, xhrs: Map<string, TaskNode>, frameURLsById: Map<string, string>, lastTaskURLs: string[]}} PriorTaskData */
 
 class MainThreadTasks {
   /**
@@ -229,6 +229,13 @@ class MainThreadTasks {
     for (let i = 0; i < sortedTasks.length; i++) {
       let nextTask = sortedTasks[i];
 
+      // Do bookkeeping on XHR requester data.
+      if (nextTask.event.name === 'XHRReadyStateChange') {
+        const data = nextTask.event.args.data;
+        const url = data && data.url;
+        if (data && url && data.readyState === 1) priorTaskData.xhrs.set(url, nextTask);
+      }
+
       // This inner loop updates what our `currentTask` is at `nextTask.startTime - ε`.
       // While `nextTask` starts after our `currentTask`, close out the task, popup to the parent, and repeat.
       // If at the end `currentTask` is undefined, then `nextTask` is a toplevel task.
@@ -409,11 +416,22 @@ class MainThreadTasks {
   /**
    * @param {TaskNode} task
    * @param {string[]} parentURLs
+   * @param {string[]} allURLsInTree
    * @param {PriorTaskData} priorTaskData
    */
-  static _computeRecursiveAttributableURLs(task, parentURLs, priorTaskData) {
-    const argsData = task.event.args.data || {};
+  static _computeRecursiveAttributableURLs(task, parentURLs, allURLsInTree, priorTaskData) {
+    const args = task.event.args;
+    const argsData = {...(args.beginData || {}), ...(args.data || {})};
+    const frame = argsData.frame || '';
+    let frameURL = priorTaskData.frameURLsById.get(frame);
     const stackFrameURLs = (argsData.stackTrace || []).map(entry => entry.url);
+
+    // If the frame was an `about:blank` style ad frame, the first real URL will be more relevant to the frame's URL.
+    const potentialFrameURL = stackFrameURLs[0];
+    if (frame && frameURL && frameURL.startsWith('about:') && potentialFrameURL) {
+      priorTaskData.frameURLsById.set(frame, potentialFrameURL);
+      frameURL = potentialFrameURL;
+    }
 
     /** @type {Array<string|undefined>} */
     let taskURLs = [];
@@ -426,10 +444,10 @@ class MainThreadTasks {
       case 'v8.compile':
       case 'EvaluateScript':
       case 'FunctionCall':
-        taskURLs = [argsData.url].concat(stackFrameURLs);
+        taskURLs = [argsData.url, frameURL];
         break;
       case 'v8.compileModule':
-        taskURLs = [task.event.args.fileName].concat(stackFrameURLs);
+        taskURLs = [task.event.args.fileName];
         break;
       case 'TimerFire': {
         /** @type {string} */
@@ -437,19 +455,53 @@ class MainThreadTasks {
         const timerId = task.event.args.data.timerId;
         const timerInstallerTaskNode = priorTaskData.timers.get(timerId);
         if (!timerInstallerTaskNode) break;
-        taskURLs = timerInstallerTaskNode.attributableURLs.concat(stackFrameURLs);
+        taskURLs = timerInstallerTaskNode.attributableURLs;
+        break;
+      }
+      case 'ParseHTML':
+        taskURLs = [argsData.url, frameURL];
+        break;
+      case 'ParseAuthorStyleSheet':
+        taskURLs = [argsData.styleSheetUrl, frameURL];
+        break;
+      case 'UpdateLayoutTree':
+      case 'Layout':
+      case 'Paint':
+        // If we had a specific frame we were updating, just attribute it to that frame.
+        if (frameURL) {
+          taskURLs = [frameURL];
+          break;
+        }
+
+        // Otherwise, sometimes Chrome will split layout into separate toplevel task after things have settled.
+        // In this case we want to attribute the work to the prior task.
+        // Inherit from previous task only if we don't have any task data set already.
+        if (allURLsInTree.length) break;
+        taskURLs = priorTaskData.lastTaskURLs;
+        break;
+      case 'XHRReadyStateChange':
+      case 'XHRLoad': {
+        // Inherit from task that issued the XHR
+        const xhrUrl = argsData.url;
+        const readyState = argsData.readyState;
+        if (!xhrUrl || (typeof readyState === 'number' && readyState !== 4)) break;
+        const xhrRequesterTaskNode = priorTaskData.xhrs.get(xhrUrl);
+        if (!xhrRequesterTaskNode) break;
+        taskURLs = xhrRequesterTaskNode.attributableURLs;
         break;
       }
       default:
-        taskURLs = stackFrameURLs;
+        taskURLs = [];
         break;
     }
 
     /** @type {string[]} */
     const attributableURLs = Array.from(parentURLs);
-    for (const url of taskURLs) {
+    for (const url of [...taskURLs, ...stackFrameURLs]) {
       // Don't add empty URLs
       if (!url) continue;
+      // Add unique URLs to our overall tree.
+      if (!allURLsInTree.includes(url)) allURLsInTree.push(url);
       // Don't add consecutive, duplicate URLs
       if (attributableURLs[attributableURLs.length - 1] === url) continue;
       attributableURLs.push(url);
@@ -457,7 +509,36 @@ class MainThreadTasks {
 
     task.attributableURLs = attributableURLs;
     task.children.forEach(child =>
-      MainThreadTasks._computeRecursiveAttributableURLs(child, attributableURLs, priorTaskData)
+      MainThreadTasks._computeRecursiveAttributableURLs(
+        child,
+        attributableURLs,
+        allURLsInTree,
+        priorTaskData
+      )
+    );
+
+    // After we've traversed the entire tree, set all the empty URLs to the set that we found in the task.
+    // This attributes the overhead of browser task management to the scripts that created the work rather than
+    // have it fall into the blackhole of "Other".
+    if (!attributableURLs.length && !task.parent && allURLsInTree.length) {
+      MainThreadTasks._setRecursiveEmptyAttributableURLs(task, allURLsInTree);
+    }
+  }
+
+  /**
+   * @param {TaskNode} task
+   * @param {Array<string>} urls
+   */
+  static _setRecursiveEmptyAttributableURLs(task, urls) {
+    // If this task had any attributableURLs, its children will too, so we can stop here.
+    if (task.attributableURLs.length) return;
+
+    task.attributableURLs = urls.slice();
+    task.children.forEach(child =>
+      MainThreadTasks._setRecursiveEmptyAttributableURLs(
+        child,
+        urls
+      )
     );
   }
 
@@ -473,12 +554,18 @@ class MainThreadTasks {
 
   /**
    * @param {LH.TraceEvent[]} mainThreadEvents
+   * @param {Array<{frame: string, url: string}>} frames
    * @param {number} traceEndTs
    * @return {TaskNode[]}
    */
-  static getMainThreadTasks(mainThreadEvents, traceEndTs) {
+  static getMainThreadTasks(mainThreadEvents, frames, traceEndTs) {
     const timers = new Map();
-    const priorTaskData = {timers};
+    const xhrs = new Map();
+    const frameURLsById = new Map();
+    frames.forEach(({frame, url}) => frameURLsById.set(frame, url));
+    /** @type {Array<string>} */
+    const lastTaskURLs = [];
+    const priorTaskData = {timers, xhrs, frameURLsById, lastTaskURLs};
     const tasks = MainThreadTasks._createTasksFromEvents(
       mainThreadEvents,
       priorTaskData,
@@ -490,8 +577,9 @@ class MainThreadTasks {
       if (task.parent) continue;
 
       MainThreadTasks._computeRecursiveSelfTime(task, undefined);
-      MainThreadTasks._computeRecursiveAttributableURLs(task, [], priorTaskData);
+      MainThreadTasks._computeRecursiveAttributableURLs(task, [], [], priorTaskData);
       MainThreadTasks._computeRecursiveTaskGroup(task);
+      priorTaskData.lastTaskURLs = task.attributableURLs;
     }
 
     // Rebase all the times to be relative to start of trace in ms

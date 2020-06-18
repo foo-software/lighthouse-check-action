@@ -341,6 +341,8 @@ An object of scores. Each value is a `number`. Names should be self-explanatory 
 
 ## Usage
 
+> **DISCLAIMER**: We aim to always use the latest version of Lighthouse. If you are concerned about score impact from version changes, it is recommended to use a strict version of this project vs `@master`. When a major Lighthouse is bumped in this project, the version of this project will also have a major version change.
+
 Below are example combinations of ways to use this GitHub Action.
 
 ## Usage: Standard Example

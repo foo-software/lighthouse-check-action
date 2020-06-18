@@ -37,7 +37,6 @@ Release manager follows the below _Release Process_.
 Note: actively undergoing changes by @exterkamp and @egsweeny.
 
 1. Release mgr copies changelog to a new [Releases](https://github.com/GoogleChrome/lighthouse/releases). Tags and ships it.
-   * Include a line of `We expect this release to ship in the DevTools of Chrome XX`.
 1. Release mgr tells the _LH public_ Hangout chat about the new version.
 1. V & Kayce write and publish the [/updates](https://developers.google.com/web/updates/) blog post
 1. Paul writes the tweet (linking the /updates post) and sends it on [@____lighthouse](https://twitter.com/____lighthouse).
@@ -132,13 +131,16 @@ cd ../lighthouse-pristine
 git status
 git log
 
+# Publish tag.
+git push --follow-tags
+
 # Publish to npm.
 npm publish
 
 # Publish viewer.
 yarn deploy-viewer
 
-# Publish the extension.
+# Publish the extensions (if it changed).
 open https://chrome.google.com/webstore/developer/edit/blipmdconlkpinefehnmjammfjpmpbjk
 cd dist/extension-package/
 echo "Upload the package zip to CWS dev dashboard..."
@@ -146,8 +148,10 @@ echo "Upload the package zip to CWS dev dashboard..."
 # Open <https://chrome.google.com/webstore/developer/dashboard>
 # Click _Edit_ on lighthouse
 # _Upload Updated Package_
-# Select `lighthouse-X.X.X.zip`
+# Select `lighthouse-X.X.X.X.zip`
 # _Publish_ at the bottom
+
+# For Firefox: https://addons.mozilla.org/en-US/developers/addon/google-lighthouse/versions/submit/
 
 # * Tell the world!!! *
 echo "Complete the _Release publicity_ tasks documented above"

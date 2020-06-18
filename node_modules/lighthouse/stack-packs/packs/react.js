@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2019 Google Inc. All Rights Reserved.
+ * @license Copyright 2019 The Lighthouse Authors. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
@@ -18,8 +18,8 @@ const UIStrings = {
   unminified_javascript: 'If your build system minifies your JS files automatically, ensure that you are deploying the production build of your application. You can check this with the React Developer Tools extension. [Learn more](https://reactjs.org/docs/optimizing-performance.html#use-the-production-build).',
   /** Additional description of a Lighthouse audit that tells the user how they can improve performance by removing unused Javascript files in the context of the React library. This is displayed after a user expands the section to see more. No character length limits. Links in (parenthesis) become link texts to additional documentation. */
   unused_javascript: 'If you are not server-side rendering, [split your JavaScript bundles](https://web.dev/code-splitting-suspense/) with `React.lazy()`. Otherwise, code-split using a third-party library such as [loadable-components](https://www.smooth-code.com/open-source/loadable-components/docs/getting-started/).',
-  /** Additional description of a Lighthouse audit that tells the user how they can improve the time to first byte speed metric, in the context of the React library. This is displayed after a user expands the section to see more. No character length limits. Links in (parenthesis) become link texts to additional documentation. */
-  time_to_first_byte: 'If you are server-side rendering any React components, consider using `renderToNodeStream()` or `renderToStaticNodeStream()` to allow the client to receive and hydrate different parts of the markup instead of all at once. [Learn more](https://reactjs.org/docs/react-dom-server.html#rendertonodestream).',
+  /** Additional description of a Lighthouse audit that tells the user how they can improve the server-response-time speed metric, in the context of the React library. This is displayed after a user expands the section to see more. No character length limits. Links in (parenthesis) become link texts to additional documentation. */
+  server_response_time: 'If you are server-side rendering any React components, consider using `renderToNodeStream()` or `renderToStaticNodeStream()` to allow the client to receive and hydrate different parts of the markup instead of all at once. [Learn more](https://reactjs.org/docs/react-dom-server.html#rendertonodestream).',
   /** Additional description of a Lighthouse audit that tells the user how they can minimize redirects, in the context of the React library. This is displayed after a user expands the section to see more. No character length limits. Links in (parenthesis) become link texts to additional documentation. */
   redirects: 'If you are using React Router, minimize usage of the `<Redirect>` component for [route navigations](https://reacttraining.com/react-router/web/api/Redirect).',
   /** Additional description of a Lighthouse audit that tells the user how they can use the Profiler to help measure performance. This is displayed after a user expands the section to see more. No character length limits. Links in (parenthesis) become link texts to additional documentation. */
@@ -38,7 +38,7 @@ module.exports = {
     'unminified-css': str_(UIStrings.unminified_css),
     'unminified-javascript': str_(UIStrings.unminified_javascript),
     'unused-javascript': str_(UIStrings.unused_javascript),
-    'time-to-first-byte': str_(UIStrings.time_to_first_byte),
+    'server-response-time': str_(UIStrings.server_response_time),
     'redirects': str_(UIStrings.redirects),
     'user-timings': str_(UIStrings.user_timings),
     'dom-size': str_(UIStrings.dom_size),

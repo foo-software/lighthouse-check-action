@@ -64,6 +64,20 @@ Below is a table containing several common sources of metric variability, the ty
 
 ## Strategies for Dealing With Variance
 
+### Run on Adequate Hardware
+
+Loading modern webpages on a modern browser is not an easy task. Using appropriately powerful hardware can make a world of difference when it comes to variability.
+
+- Minimum 2 dedicated cores (4 recommended)
+- Minimum 2GB RAM (4-8GB recommended)
+- Avoid non-standard Chromium flags (`--single-process` is not supported, `--no-sandbox` and `--headless` should be OK, though educate yourself about [sandbox tradeoffs](https://github.com/GoogleChrome/lighthouse-ci/tree/fbb540507c031100ee13bf7eb1a4b61c79c5e1e6/docs/recipes/docker-client#--no-sandbox-issues-explained))
+- Avoid function-as-a-service infrastructure (Lambda, GCF, etc)
+- Avoid "burstable" or "shared-core" instance types (AWS `t` instances, GCP shared-core N1 and E2 instances, etc)
+
+AWS's `m5.large`, GCP's `n2-standard-2`, and Azure's `D2` all should be sufficient to run a single Lighthouse run at a time (~$0.10/hour for these instance types, ~30s/test, ~$0.0008/Lighthouse report). While some environments that don't meet the requirements above will still be able to run Lighthouse and the non-performance results will still be usable, we'd advise against it and won't be able to support those environments should any bugs arise. Remember, running on inconsistent hardware will lead to inconsistent results!
+
+**DO NOT** collect multiple Lighthouse reports at the same time on the same machine. Concurrent runs can skew performance results due to resource contention. When it comes to Lighthouse runs, scaling horizontally is better than scaling vertically (i.e. run with 4 `n2-standard-2` instead of 1 `n2-standard-8`).
+
 ### Isolate External Factors
 
 - Isolate your page from third-party influence as much as possible. It’s never fun to be blamed for someone else's variable failures.
@@ -77,7 +91,7 @@ If your machine has really limited resources or creating a clean environment has
 
 When creating your thresholds for failure, either mental or programmatic, use aggregate values like the median, 90th percentile, or even min instead of single tests.
 
-The median Lighthouse score of 5 runs is twice as stable as 1 run, and tools like [pwmetrics](https://github.com/paulirish/pwmetrics) can run Lighthouse for you automatically. Using the minimum value is also a big improvement over not testing at all and is incredibly simple to implement, just run Lighthouse up to 5 times until it passes!
+The median Lighthouse score of 5 runs is twice as stable as 1 run, and tools like [lighthouse-ci](https://github.com/GoogleChrome/lighthouse-ci/) can run Lighthouse multiple times for you automatically. Using the minimum value is also a big improvement over not testing at all and is incredibly simple to implement, just run Lighthouse up to 5 times until it passes!
 
 ## Related Documentation
 

@@ -35,7 +35,7 @@ export const convertOptionsFromArguments = options => {
     }
 
     // format array
-    if (option.type === 'array' && value) {
+    if (option.type === 'array' && typeof value === 'string') {
       value = value.split(',');
     }
 

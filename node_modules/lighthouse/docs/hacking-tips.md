@@ -89,3 +89,6 @@ You can then run the travis commands (e.g. `travis compile`) to install an envir
 
 [travis-ci/travis-build: .travis.yml =&gt; build.sh converter](https://github.com/travis-ci/travis-build#invocation)
 
+## Using Audit Classes Directly, Providing Your Own Artifacts
+
+See [gist](https://gist.github.com/connorjclark/d4555ad90ae5b5ecf793ad2d46ca52db).

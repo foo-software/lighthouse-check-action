@@ -93,3 +93,7 @@ The `details` object is parsed in report-renderer.js. View other audits for guid
 ![image](https://user-images.githubusercontent.com/39191/42241426-609d15f6-7ebf-11e8-9e40-411d9ede43e6.png)
 
 (Generated July 3, 2018 via `madge lighthouse-core/index.js --image arch.png --layout dot --backgroundColor "#fafafa" --nodeColor "#4d4afc" --noDependencyColor "#48ad00"`)
+
+## Lantern
+
+[Lantern](./lantern.md) is how Lighthouse simulates network and cpu throttling.

@@ -16,7 +16,8 @@ describe('convertOptionsFromArguments', () => {
       'world',
       '--foo',
       'bar',
-      '--some-string'
+      '--some-string',
+      '--some-array',
     ];
   });
 
@@ -81,6 +82,15 @@ describe('convertOptionsFromArguments', () => {
       }
     });
     expect(actual['some-string']).toBeUndefined();
+  });
+
+  it('should ignore empty flag values that are explicitly defined as array types', () => {
+    const actual = convertOptionsFromArguments({
+      'some-array': {
+        type: 'array'
+      }
+    });
+    expect(actual['some-array']).toBeUndefined();
   });
 
   it('should create correct types from CLI string argument', () => {

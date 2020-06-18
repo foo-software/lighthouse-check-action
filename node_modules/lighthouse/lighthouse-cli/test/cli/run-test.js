@@ -1,12 +1,12 @@
 /**
- * @license Copyright 2017 Google Inc. All Rights Reserved.
+ * @license Copyright 2017 The Lighthouse Authors. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 'use strict';
 
 /* eslint-env jest */
-const assert = require('assert');
+const assert = require('assert').strict;
 const path = require('path');
 const fs = require('fs');
 
@@ -52,7 +52,7 @@ describe('CLI run', function() {
 
       assert.ok(fs.existsSync(filename));
       fileResults = JSON.parse(fs.readFileSync(filename, 'utf-8'));
-    }, 20 * 1000);
+    }, 60 * 1000);
 
     afterAll(() => {
       fs.unlinkSync(filename);
@@ -91,10 +91,15 @@ describe('CLI run', function() {
 
 describe('flag coercing', () => {
   it('should force to array', () => {
-    assert.deepStrictEqual(getFlags(`--only-audits foo chrome://version`).onlyAudits, ['foo']);
+    assert.deepStrictEqual(
+      getFlags('https://www.example.com --only-audits foo').onlyAudits, ['foo']);
+  });
+
+  it('should allow csv', () => {
+    assert.deepStrictEqual(
+      getFlags('https://www.example.com --output html,json').output, ['html', 'json']);
   });
 });
-
 
 describe('saveResults', () => {
   it('will quit early if we\'re in gather mode', async () => {
@@ -138,6 +143,41 @@ describe('Parsing --chrome-flags', () => {
     assert.deepStrictEqual(
       parseChromeFlags('--spaces="1 2 3 4" --debug=false --verbose --more-spaces="9 9 9"'),
       ['--spaces=1 2 3 4', '--debug=false', '--verbose', '--more-spaces=9 9 9']
+    );
+  });
+
+  it('handles muliple --chrome-flags', () => {
+    assert.deepStrictEqual(
+      parseChromeFlags(['--no-sandbox', '--log-level=0']),
+      ['--no-sandbox', '--log-level=0']
+    );
+  });
+
+  it('removes wrapping single quotes', () => {
+    assert.deepStrictEqual(
+      parseChromeFlags('\'--no-sandbox --log-level=0\''),
+      ['--no-sandbox', '--log-level=0']
+    );
+  });
+
+  it('removes wrapping double quotes', () => {
+    assert.deepStrictEqual(
+      parseChromeFlags('"--no-sandbox --log-level=0"'),
+      ['--no-sandbox', '--log-level=0']
+    );
+  });
+
+  it('removes wrapping single quotes from arrays', () => {
+    assert.deepStrictEqual(
+      parseChromeFlags(['\'--no-sandbox --log-level=0\'', '--headless']),
+      ['--no-sandbox', '--log-level=0', '--headless']
+    );
+  });
+
+  it('removes wrapping double quotes from arrays', () => {
+    assert.deepStrictEqual(
+      parseChromeFlags(['"--no-sandbox --log-level=0"', '--headless']),
+      ['--no-sandbox', '--log-level=0', '--headless']
     );
   });
 });

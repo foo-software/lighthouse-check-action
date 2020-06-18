@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2019 Google Inc. All Rights Reserved.
+ * @license Copyright 2019 The Lighthouse Authors. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
@@ -18,10 +18,11 @@ const PORT = 8041;
 
 /**
  * @param {import('puppeteer').Browser} browser
+ * @param {string} origin
  */
-async function login(browser) {
+async function login(browser, origin) {
   const page = await browser.newPage();
-  await page.goto('http://localhost:8000');
+  await page.goto(origin);
   await page.waitForSelector('input[type="email"]', {visible: true});
 
   // Fill in and submit login form.
@@ -37,6 +38,16 @@ async function login(browser) {
   await page.close();
 }
 
+/**
+ * @param {puppeteer.Browser} browser
+ * @param {string} origin
+ */
+async function logout(browser, origin) {
+  const page = await browser.newPage();
+  await page.goto(`${origin}/logout`);
+  await page.close();
+}
+
 async function main() {
   // Direct Puppeteer to open Chrome with a specific debugging port.
   const browser = await puppeteer.launch({
@@ -47,12 +58,12 @@ async function main() {
   });
 
   // Setup the browser session to be logged into our site.
-  await login(browser);
+  await login(browser, 'http://localhost:10632');
 
-  // The local server is running on port 8000.
-  const url = 'http://localhost:8000/dashboard';
+  // The local server is running on port 10632.
+  const url = 'http://localhost:10632/dashboard';
   // Direct Lighthouse to use the same port.
-  const result = await lighthouse(url, {port: PORT});
+  const result = await lighthouse(url, {port: PORT, disableStorageReset: true});
   // Direct Puppeteer to close the browser as we're done with it.
   await browser.close();
 
@@ -60,4 +71,11 @@ async function main() {
   console.log(JSON.stringify(result.lhr, null, 2));
 }
 
-main();
+if (require.main === module) {
+  main();
+} else {
+  module.exports = {
+    login,
+    logout,
+  };
+}
