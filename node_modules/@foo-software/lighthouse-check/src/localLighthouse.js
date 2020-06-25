@@ -108,6 +108,7 @@ export const localLighthouse = async ({
     url,
     localReport,
     report,
+    emulatedFormFactor,
     scores
   };
 };
@@ -139,15 +140,12 @@ export default async ({
     }
   }
 
-  const auditResults = [];
-  let index = 1;
+  // a list of audit configurations
+  const auditConfigs = [];
 
+  // collect all audit configs
   for (const url of urls) {
-    if (verbose) {
-      console.log(`${NAME}: Auditing (${index}/${urls.length}) ${url}`);
-    }
-
-    const lighthouseAuditResult = await localLighthouse({
+    const options = {
       awsAccessKeyId,
       awsBucket,
       awsRegion,
@@ -160,9 +158,36 @@ export default async ({
       overrides,
       throttling,
       throttlingMethod,
-      url
-    });
+      url,
+      verbose
+    };
 
+    if (options.emulatedFormFactor !== 'all') {
+      auditConfigs.push(options);
+    } else {
+      // establish two audits for all device types
+      auditConfigs.push({
+        ...options,
+        emulatedFormFactor: 'desktop'
+      });
+      auditConfigs.push({
+        ...options,
+        emulatedFormFactor: 'mobile'
+      });
+    }
+  }
+
+  const auditResults = [];
+  let index = 1;
+
+  // for each audit config, run the audit
+  for (const auditConfig of auditConfigs) {
+    if (verbose) {
+      console.log(
+        `${NAME}: Auditing ${auditConfig.emulatedFormFactor} (${index}/${auditConfigs.length}): ${auditConfig.url}`
+      );
+    }
+    const lighthouseAuditResult = await localLighthouse(auditConfig);
     auditResults.push(lighthouseAuditResult);
     index++;
   }

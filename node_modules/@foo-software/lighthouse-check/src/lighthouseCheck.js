@@ -17,7 +17,7 @@ export default ({
   awsBucket,
   awsRegion,
   awsSecretAccessKey,
-  emulatedFormFactor,
+  emulatedFormFactor = 'mobile',
   extraHeaders,
   branch,
   isGitHubAction,

@@ -17,6 +17,7 @@ jobs:
         awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
         awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
         branch: ${{ github.ref }}
+        emulatedFormFactor: all
         outputDirectory: /tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/tag/articles/'
         sha: ${{ github.sha }}
