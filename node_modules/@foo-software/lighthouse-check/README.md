@@ -503,7 +503,7 @@ Below are options for the exported `lighthouseCheck` function or `lighthouse-che
   <tr>
     <td><code>emulatedFormFactor</code></td>
     <td>Lighthouse setting only used for local audits. See <a href="src/lighthouseConfig.js">src/lighthouseConfig.js</a> comments for details.</td>
-    <td><code>oneOf(['mobile', 'desktop']</code></td>
+    <td><code>oneOf(['mobile', 'desktop', 'all'])</code></td>
     <td><code>local</code></td>
     <td><code>undefined</code></td>
     <td>no</td>
