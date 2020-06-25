@@ -152,7 +152,7 @@ You can choose from two ways of running audits - "locally" in a dockerized GitHu
   <tr>
     <td><code>emulatedFormFactor</code></td>
     <td>Lighthouse setting only used for local audits. See <a href="https://github.com/foo-software/lighthouse-check/tree/master/src/lighthouseConfig.js"><code>lighthouse-check</code></a> comments for details.</td>
-    <td><code>oneOf(['mobile', 'desktop']</code></td>
+    <td><code>oneOf(['mobile', 'desktop', 'all'])</code></td>
     <td><code>local</code></td>
     <td><code>mobile</code></td>
   </tr>
