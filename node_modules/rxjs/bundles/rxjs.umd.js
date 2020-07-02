@@ -450,6 +450,16 @@
         return t;
     };
 
+    function __rest(s, e) {
+        var t = {};
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+            t[p] = s[p];
+        if (s != null && typeof Object.getOwnPropertySymbols === "function")
+            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+                t[p[i]] = s[p[i]];
+        return t;
+    }
+
     function isFunction(x) {
         return typeof x === 'function';
     }
@@ -1809,7 +1819,8 @@
         return QueueScheduler;
     }(AsyncScheduler));
 
-    var queue = new QueueScheduler(QueueAction);
+    var queueScheduler = new QueueScheduler(QueueAction);
+    var queue = queueScheduler;
 
     var EMPTY = new Observable(function (subscriber) { return subscriber.complete(); });
     function empty$1(scheduler) {
@@ -2238,9 +2249,11 @@
         return AsapScheduler;
     }(AsyncScheduler));
 
-    var asap = new AsapScheduler(AsapAction);
+    var asapScheduler = new AsapScheduler(AsapAction);
+    var asap = asapScheduler;
 
-    var async = new AsyncScheduler(AsyncAction);
+    var asyncScheduler = new AsyncScheduler(AsyncAction);
+    var async = asyncScheduler;
 
     var AnimationFrameAction = (function (_super) {
         __extends(AnimationFrameAction, _super);
@@ -2301,7 +2314,8 @@
         return AnimationFrameScheduler;
     }(AsyncScheduler));
 
-    var animationFrame = new AnimationFrameScheduler(AnimationFrameAction);
+    var animationFrameScheduler = new AnimationFrameScheduler(AnimationFrameAction);
+    var animationFrame = animationFrameScheduler;
 
     var VirtualTimeScheduler = (function (_super) {
         __extends(VirtualTimeScheduler, _super);
@@ -2740,7 +2754,14 @@
     var subscribeToIterable = function (iterable) { return function (subscriber) {
         var iterator$$1 = iterable[iterator]();
         do {
-            var item = iterator$$1.next();
+            var item = void 0;
+            try {
+                item = iterator$$1.next();
+            }
+            catch (err) {
+                subscriber.error(err);
+                return subscriber;
+            }
             if (item.done) {
                 subscriber.complete();
                 break;
@@ -3097,6 +3118,7 @@
         };
         return MergeMapSubscriber;
     }(OuterSubscriber));
+    var flatMap = mergeMap;
 
     function mergeAll(concurrent) {
         if (concurrent === void 0) { concurrent = Number.POSITIVE_INFINITY; }
@@ -6103,8 +6125,8 @@
         var mapper = function (x) {
             var currentProp = x;
             for (var i = 0; i < length; i++) {
-                var p = currentProp[props[i]];
-                if (typeof p !== 'undefined') {
+                var p = currentProp != null ? currentProp[props[i]] : undefined;
+                if (p !== void 0) {
                     currentProp = p;
                 }
                 else {
@@ -6603,9 +6625,11 @@
         var isComplete = false;
         return function shareReplayOperation(source) {
             refCount++;
+            var innerSub;
             if (!subject || hasError) {
                 hasError = false;
                 subject = new ReplaySubject(bufferSize, windowTime, scheduler);
+                innerSub = subject.subscribe(this);
                 subscription = source.subscribe({
                     next: function (value) { subject.next(value); },
                     error: function (err) {
@@ -6619,7 +6643,9 @@
                     },
                 });
             }
-            var innerSub = subject.subscribe(this);
+            else {
+                innerSub = subject.subscribe(this);
+            }
             this.add(function () {
                 refCount--;
                 innerSub.unsubscribe();
@@ -7574,13 +7600,13 @@
             scheduler = arguments[2];
         }
         else if (isNumeric(arguments[2])) {
-            maxWindowSize = arguments[2];
+            maxWindowSize = Number(arguments[2]);
         }
         if (isScheduler(arguments[1])) {
             scheduler = arguments[1];
         }
         else if (isNumeric(arguments[1])) {
-            windowCreationInterval = arguments[1];
+            windowCreationInterval = Number(arguments[1]);
         }
         return function windowTimeOperatorFunction(source) {
             return source.lift(new WindowTimeOperator(windowTimeSpan, windowCreationInterval, maxWindowSize, scheduler));
@@ -8053,7 +8079,7 @@
         merge: merge$1,
         mergeAll: mergeAll,
         mergeMap: mergeMap,
-        flatMap: mergeMap,
+        flatMap: flatMap,
         mergeMapTo: mergeMapTo,
         mergeScan: mergeScan,
         min: min,
@@ -9166,7 +9192,9 @@
         WebSocketSubject: WebSocketSubject
     });
 
-    function fromFetch(input, init) {
+    function fromFetch(input, initWithSelector) {
+        if (initWithSelector === void 0) { initWithSelector = {}; }
+        var selector = initWithSelector.selector, init = __rest(initWithSelector, ["selector"]);
         return new Observable(function (subscriber) {
             var controller = new AbortController();
             var signal = controller.signal;
@@ -9202,9 +9230,22 @@
                 perSubscriberInit = { signal: signal };
             }
             fetch(input, perSubscriberInit).then(function (response) {
-                abortable = false;
-                subscriber.next(response);
-                subscriber.complete();
+                if (selector) {
+                    subscription.add(from(selector(response)).subscribe(function (value) { return subscriber.next(value); }, function (err) {
+                        abortable = false;
+                        if (!unsubscribed) {
+                            subscriber.error(err);
+                        }
+                    }, function () {
+                        abortable = false;
+                        subscriber.complete();
+                    }));
+                }
+                else {
+                    abortable = false;
+                    subscriber.next(response);
+                    subscriber.complete();
+                }
             }).catch(function (err) {
                 abortable = false;
                 if (!unsubscribed) {
@@ -9240,10 +9281,14 @@
     exports.BehaviorSubject = BehaviorSubject;
     exports.ReplaySubject = ReplaySubject;
     exports.AsyncSubject = AsyncSubject;
-    exports.asapScheduler = asap;
-    exports.asyncScheduler = async;
-    exports.queueScheduler = queue;
-    exports.animationFrameScheduler = animationFrame;
+    exports.asap = asap;
+    exports.asapScheduler = asapScheduler;
+    exports.async = async;
+    exports.asyncScheduler = asyncScheduler;
+    exports.queue = queue;
+    exports.queueScheduler = queueScheduler;
+    exports.animationFrame = animationFrame;
+    exports.animationFrameScheduler = animationFrameScheduler;
     exports.VirtualTimeScheduler = VirtualTimeScheduler;
     exports.VirtualAction = VirtualAction;
     exports.Scheduler = Scheduler;

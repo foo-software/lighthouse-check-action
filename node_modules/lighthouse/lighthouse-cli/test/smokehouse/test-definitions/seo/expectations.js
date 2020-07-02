@@ -199,6 +199,9 @@ const expectations = [
             ],
           },
         },
+        'crawlable-anchors': {
+          score: 1,
+        },
         'link-text': {
           score: 1,
         },
@@ -241,6 +244,14 @@ const expectations = [
           score: 0,
           explanation:
           'Text is illegible because there\'s no viewport meta tag optimized for mobile screens.',
+        },
+        'crawlable-anchors': {
+          score: 0,
+          details: {
+            items: {
+              length: 4,
+            },
+          },
         },
         'link-text': {
           score: 0,
@@ -306,6 +317,9 @@ const expectations = [
           score: null,
         },
         'font-size': {
+          score: null,
+        },
+        'crawlable-anchors': {
           score: null,
         },
         'link-text': {

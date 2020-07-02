@@ -23,7 +23,7 @@ const UIStrings = {
   failureTitle: 'Does not use HTTP/2 for all of its resources',
   /** Description of a Lighthouse audit that tells the user why they should use HTTP/2. This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. */
   description: 'HTTP/2 offers many benefits over HTTP/1.1, including binary headers, ' +
-      'multiplexing, and server push. [Learn more](https://web.dev/uses-http2).',
+      'multiplexing, and server push. [Learn more](https://web.dev/uses-http2/).',
   /** [ICU Syntax] Label identifying the number of network requests that were not served with HTTP/2. */
   displayValue: `{itemCount, plural,
     =1 {1 request not served via HTTP/2}

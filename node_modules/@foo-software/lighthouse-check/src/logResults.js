@@ -52,14 +52,14 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
     // depending on how the user is running this module - provide a respective link
     if (isGitHubAction) {
       message +=
-        'https://github.com/foo-software/lighthouse-check-action#usage-automated-lighthouse-check-api';
+        'https://github.com/foo-software/lighthouse-check-action#usage-foo-api';
     } else if (isOrb) {
       message +=
-        'https://github.com/foo-software/lighthouse-check-orb#usage-automated-lighthouse-check-api';
+        'https://github.com/foo-software/lighthouse-check-orb#usage-foo-api';
     } else {
       message +=
-        'https://www.automated-lighthouse-check.com/\n' +
-        'https://github.com/foo-software/lighthouse-check#automated-lighthouse-check-api-usage';
+        'https://www.foo.software/\n' +
+        'https://github.com/foo-software/lighthouse-check#foo-api-usage';
     }
 
     // plug

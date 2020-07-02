@@ -79,12 +79,13 @@ async function internalRun(url, tmpPath, configJson, isDebug) {
   }
 
   const command = 'node';
+  const env = {...process.env, NODE_ENV: 'test'};
   localConsole.log(`${log.dim}$ ${command} ${args.join(' ')} ${log.reset}`);
 
   /** @type {{stdout: string, stderr: string, code?: number}} */
   let execResult;
   try {
-    execResult = await execFileAsync(command, args);
+    execResult = await execFileAsync(command, args, {env});
   } catch (e) {
     // exec-thrown errors have stdout, stderr, and exit code from child process.
     execResult = e;

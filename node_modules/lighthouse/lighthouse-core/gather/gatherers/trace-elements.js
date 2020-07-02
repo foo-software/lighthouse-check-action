@@ -16,6 +16,8 @@ const pageFunctions = require('../../lib/page-functions.js');
 const TraceProcessor = require('../../lib/tracehouse/trace-processor.js');
 const RectHelpers = require('../../lib/rect-helpers.js');
 
+/** @typedef {{nodeId: number, score?: number}} TraceElementData */
+
 /**
  * @this {HTMLElement}
  * @param {string} metricName
@@ -66,23 +68,31 @@ class TraceElements extends Gatherer {
   }
 
   /**
+   * This function finds the top (up to 5) elements that contribute to the CLS score of the page.
+   * Each layout shift event has a 'score' which is the amount added to the CLS as a result of the given shift(s).
+   * We calculate the score per element by taking the 'score' of each layout shift event and
+   * distributing it between all the nodes that were shifted, proportianal to the impact region of
+   * each shifted element.
    * @param {Array<LH.TraceEvent>} mainThreadEvents
-   * @return {Array<number>}
+   * @return {Array<TraceElementData>}
    */
-  static getCLSNodeIdsFromMainThreadEvents(mainThreadEvents) {
-    const clsPerNodeMap = new Map();
-    /** @type {Set<number>} */
-    const clsNodeIds = new Set();
+  static getTopLayoutShiftElements(mainThreadEvents) {
+    /** @type {Map<number, number>} */
+    const clsPerNode = new Map();
     const shiftEvents = mainThreadEvents
       .filter(e => e.name === 'LayoutShift')
       .map(e => e.args && e.args.data);
 
     shiftEvents.forEach(event => {
-      if (!event) {
+      if (!event || !event.impacted_nodes || !event.score || event.had_recent_input) {
         return;
       }
 
-      event.impacted_nodes && event.impacted_nodes.forEach(node => {
+      let totalAreaOfImpact = 0;
+      /** @type {Map<number, number>} */
+      const pixelsMovedPerNode = new Map();
+
+      event.impacted_nodes.forEach(node => {
         if (!node.node_id || !node.old_rect || !node.new_rect) {
           return;
         }
@@ -93,18 +103,26 @@ class TraceElements extends Gatherer {
           RectHelpers.getRectArea(newRect) -
           RectHelpers.getRectOverlapArea(oldRect, newRect);
 
-        let prevShiftTotal = 0;
-        if (clsPerNodeMap.has(node.node_id)) {
-          prevShiftTotal += clsPerNodeMap.get(node.node_id);
-        }
-        clsPerNodeMap.set(node.node_id, prevShiftTotal + areaOfImpact);
-        clsNodeIds.add(node.node_id);
+        pixelsMovedPerNode.set(node.node_id, areaOfImpact);
+        totalAreaOfImpact += areaOfImpact;
       });
+
+      for (const [nodeId, pixelsMoved] of pixelsMovedPerNode.entries()) {
+        let clsContribution = clsPerNode.get(nodeId) || 0;
+        clsContribution += (pixelsMoved / totalAreaOfImpact) * event.score;
+        clsPerNode.set(nodeId, clsContribution);
+      }
     });
 
-    const topFive = [...clsPerNodeMap.entries()]
+    const topFive = [...clsPerNode.entries()]
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 5).map(entry => Number(entry[0]));
+    .slice(0, 5)
+    .map(([nodeId, clsContribution]) => {
+      return {
+        nodeId: nodeId,
+        score: clsContribution,
+      };
+    });
 
     return topFive;
   }
@@ -119,25 +137,26 @@ class TraceElements extends Gatherer {
     if (!loadData.trace) {
       throw new Error('Trace is missing!');
     }
+
     const {largestContentfulPaintEvt, mainThreadEvents} =
       TraceProcessor.computeTraceOfTab(loadData.trace);
-    /** @type {Array<number>} */
-    const backendNodeIds = [];
+    /** @type {Array<TraceElementData>} */
+    const backendNodeData = [];
 
     const lcpNodeId = TraceElements.getNodeIDFromTraceEvent(largestContentfulPaintEvt);
-    const clsNodeIds = TraceElements.getCLSNodeIdsFromMainThreadEvents(mainThreadEvents);
+    const clsNodeData = TraceElements.getTopLayoutShiftElements(mainThreadEvents);
     if (lcpNodeId) {
-      backendNodeIds.push(lcpNodeId);
+      backendNodeData.push({nodeId: lcpNodeId});
     }
-    backendNodeIds.push(...clsNodeIds);
+    backendNodeData.push(...clsNodeData);
 
     const traceElements = [];
-    for (let i = 0; i < backendNodeIds.length; i++) {
+    for (let i = 0; i < backendNodeData.length; i++) {
+      const backendNodeId = backendNodeData[i].nodeId;
       const metricName =
-        lcpNodeId === backendNodeIds[i] ? 'largest-contentful-paint' : 'cumulative-layout-shift';
-      const resolveNodeResponse =
-        await driver.sendCommand('DOM.resolveNode', {backendNodeId: backendNodeIds[i]});
-      const objectId = resolveNodeResponse.object.objectId;
+        lcpNodeId === backendNodeId ? 'largest-contentful-paint' : 'cumulative-layout-shift';
+      const objectId = await driver.resolveNodeIdToObjectId(backendNodeId);
+      if (!objectId) continue;
       const response = await driver.sendCommand('Runtime.callFunctionOn', {
         objectId,
         functionDeclaration: `function () {
@@ -153,7 +172,7 @@ class TraceElements extends Gatherer {
       });
 
       if (response && response.result && response.result.value) {
-        traceElements.push(response.result.value);
+        traceElements.push({...response.result.value, score: backendNodeData[i].score});
       }
     }
 

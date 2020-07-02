@@ -28,17 +28,6 @@ Use [`--trace-warnings`](https://medium.com/@jasnell/introducing-process-warning
 node --trace-warnings lighthouse-cli http://example.com
 ```
 
-## Updating fixture dumps
-
-`lighthouse-core/test/results/samples_v2.json` is generated from running LH against
-dbw_tester.html. To update this file, start a local server on port `8080` and serve the directory `lighthouse-cli/test/fixtures`. Then run:
-
-```sh
-npm run start -- --output=json --output-path=lighthouse-core/test/results/sample_v2.json http://localhost:8080/dobetterweb/dbw_tester.html
-```
-
-After updating, consider deleting any irrelevant changes from the diff (exact timings, timestamps, etc). Be sure to run the tests.
-
 ## Iterating on the report
 
 This will generate new reports from the same results json.

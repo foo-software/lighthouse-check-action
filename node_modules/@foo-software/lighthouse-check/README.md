@@ -6,13 +6,13 @@
 
 <img src="https://s3.amazonaws.com/foo.software/images/marketing/screenshots/lighthouse-audit-report.png" />
 
-This project provides **two ways of running audits** - locally in your own environment or remotely via [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) API. For basic usage, running locally will suffice, but if you'd like to maintain a historical record of Lighthouse audits and utilize other features, you can run audits remotely by following the [steps and examples](#automated-lighthouse-check-api-usage).
+This project provides **two ways of running audits** - locally in your own environment or remotely via [Foo's Automated Lighthouse Check](https://www.foo.software/lighthouse) API. For basic usage, running locally will suffice, but if you'd like to maintain a historical record of Lighthouse audits and utilize other features, you can run audits remotely by following the [steps and examples](#foo-api-usage).
 
 # Features
 
 - [Simple usage](#basic-usage) - only one parameter required.
 - Run **multiple** Lighthouse audits with one command.
-- Optionally run Lighthouse remotely and save audits with the [Automated Lighthouse Check](https://www.automated-lighthouse-check.com) API.
+- Optionally run Lighthouse remotely and save audits with the [Foo's Automated Lighthouse Check](https://www.foo.software/lighthouse) API.
 - Optionally [save an HTML report locally](#saving-reports-locally).
 - Optionally [save an HTML report in an AWS S3 bucket](#saving-reports-to-s3).
 - [Easy setup with Slack Webhooks](#implementing-with-slack). Just add your Webhook URL and `lighthouse-check` will send results and optionally include versioning data like branch, author, PR, etc (typically from GitHub).
@@ -27,7 +27,7 @@ This project provides **two ways of running audits** - locally in your own envir
 - [Install](#install)
 - [Usage](#usage)
   - [Basic Usage](#basic-usage)
-  - [Automated Lighthouse Check API Usage](#automated-lighthouse-check-api-usage)
+  - [Foo's Automated Lighthouse Check API Usage](#foo-api-usage)
   - [Saving Reports Locally](#saving-reports-locally)
   - [Saving Reports to S3](#saving-reports-to-s3)
   - [Implementing with Slack](#implementing-with-slack)
@@ -51,7 +51,7 @@ npm install @foo-software/lighthouse-check
 
 ## Basic Usage
 
-Calling `lighthouseCheck` will run Lighthouse audits against `https://www.foo.software` and `https://www.foo.software/contact`.
+Calling `lighthouseCheck` will run Lighthouse audits against `https://www.foo.software/lighthouse` and `https://www.foo.software/lighthouse/contact`.
 
 ```javascript
 import { lighthouseCheck } from '@foo-software/lighthouse-check';
@@ -59,8 +59,8 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
 (async () => {
   const response = await lighthouseCheck({
     urls: [
-      'https://www.foo.software',
-      'https://www.foo.software/contact'
+      'https://www.foo.software/lighthouse',
+      'https://www.foo.software/lighthouse/contact'
     ]
   });
 
@@ -71,20 +71,20 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
 Or via CLI.
 
 ```bash
-$ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/contact"
+$ lighthouse-check --urls "https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact"
 ```
 
 The CLI will log the results.
 
 <img alt="lighthouse-check CLI output" src="https://s3.amazonaws.com/foo.software/images/marketing/screenshots/lighthouse-check-cli-output.jpg" width="600" />
 
-## Automated Lighthouse Check API Usage
+## Foo's Automated Lighthouse Check API Usage
 
-[Automated Lighthouse Check](https://www.automated-lighthouse-check.com) can monitor your website's quality by running audits automatically! It can provide a historical record of audits over time to track progression and degradation of website quality. [Create a free account](https://www.automated-lighthouse-check.com/register) to get started. With this, not only will you have automatic audits, but also any that you trigger additionally. Below are steps to trigger audits on URLs that you've created in your account.
+[Foo's Automated Lighthouse Check](https://www.foo.software/lighthouse) can monitor your website's quality by running audits automatically! It can provide a historical record of audits over time to track progression and degradation of website quality. [Create a free account](https://www.foo.software/lighthouse/register) to get started. With this, not only will you have automatic audits, but also any that you trigger additionally. Below are steps to trigger audits on URLs that you've created in your account.
 
 #### Trigger Audits on All Pages in an Account
 
-- Navigate to [your account details](https://www.automated-lighthouse-check.com/account), click into "Account Management" and make note of the "API Token".
+- Navigate to [your account details](https://www.foo.software/lighthouse/account), click into "Account Management" and make note of the "API Token".
 - Use the account token as the [`apiToken` option](#options).
 
 > Basic example with the CLI
@@ -95,8 +95,8 @@ $ lighthouse-check --apiToken "abcdefg"
 
 #### Trigger Audits on Only Certain Pages in an Account
 
-- Navigate to [your account details](https://www.automated-lighthouse-check.com/account), click into "Account Management" and make note of the "API Token".
-- Navigate to [your dashboard](https://www.automated-lighthouse-check.com/dashboard) and once you've created URLs to monitor, click on the "More" link of the URL you'd like to use. From the URL details screen, click the "Edit" link at the top of the page. You should see an "API Token" on this page. It represents the token for this specific page (not to be confused with an **account** API token).
+- Navigate to [your account details](https://www.foo.software/lighthouse/account), click into "Account Management" and make note of the "API Token".
+- Navigate to [your dashboard](https://www.foo.software/lighthouse/dashboard) and once you've created URLs to monitor, click on the "More" link of the URL you'd like to use. From the URL details screen, click the "Edit" link at the top of the page. You should see an "API Token" on this page. It represents the token for this specific page (not to be confused with an **account** API token).
 - Use the account token as the [`apiToken` option](#options) and page token (or group of page tokens) as [`urls` option](#options).
 
 > Basic example with the CLI
@@ -132,8 +132,8 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
     // to where the command is being run from.
     outputDirectory: '../artifacts',
     urls: [
-      'https://www.foo.software',
-      'https://www.foo.software/contact'
+      'https://www.foo.software/lighthouse',
+      'https://www.foo.software/lighthouse/contact'
     ]
   });
 
@@ -144,7 +144,7 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
 Or via CLI.
 
 ```bash
-$ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/contact" \
+$ lighthouse-check --urls "https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact" \
   --ouputDirectory "./artifacts"
 ```
 
@@ -160,8 +160,8 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
     awsRegion: 'us-east-1',
     awsSecretAccessKey: 'def456',
     urls: [
-      'https://www.foo.software',
-      'https://www.foo.software/contact'
+      'https://www.foo.software/lighthouse',
+      'https://www.foo.software/lighthouse/contact'
     ]
   });
 
@@ -172,7 +172,7 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
 Or via CLI.
 
 ```bash
-$ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/contact" \
+$ lighthouse-check --urls "https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact" \
   --awsAccessKeyId abc123 \
   --awsBucket my-bucket \
   --awsRegion us-east-1 \
@@ -190,8 +190,8 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
   const response = await lighthouseCheck({
     slackWebhookUrl: 'https://www.my-slack-webhook-url.com'
     urls: [
-      'https://www.foo.software',
-      'https://www.foo.software/contact'
+      'https://www.foo.software/lighthouse',
+      'https://www.foo.software/lighthouse/contact'
     ]
   });
 
@@ -202,7 +202,7 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
 Or via CLI.
 
 ```bash
-$ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/contact" \
+$ lighthouse-check --urls "https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact" \
   --slackWebhookUrl "https://www.my-slack-webhook-url.com"
 ```
 
@@ -231,8 +231,8 @@ import { lighthouseCheck, validateStatus } from '@foo-software/lighthouse-check'
       awsRegion: 'us-east-1',
       awsSecretAccessKey: 'def456',
       urls: [
-        'https://www.foo.software',
-        'https://www.foo.software/contact'
+        'https://www.foo.software/lighthouse',
+        'https://www.foo.software/lighthouse/contact'
       ]
     });
 
@@ -251,8 +251,8 @@ import { lighthouseCheck, validateStatus } from '@foo-software/lighthouse-check'
 
     // log would look like:
     // Minimum score requirements failed:
-    // https://www.foo.software: Performance: minimum score: 70, actual score: 64
-    // https://www.foo.software/contact: Performance: minimum score: 70, actual score: 44
+    // https://www.foo.software/lighthouse: Performance: minimum score: 70, actual score: 64
+    // https://www.foo.software/lighthouse/contact: Performance: minimum score: 70, actual score: 44
   }
 })();
 ```
@@ -260,7 +260,7 @@ import { lighthouseCheck, validateStatus } from '@foo-software/lighthouse-check'
 Or via CLI. **Important**: `outputDirectory` value must be defined and the same in both commands.
 
 ```bash
-$ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/contact" \
+$ lighthouse-check --urls "https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact" \
   --outputDirectory /tmp/artifacts \
 $ lighthouse-check-status --outputDirectory /tmp/artifacts \
   --minAccessibilityScore 90 \
@@ -287,7 +287,7 @@ jobs:
     executor: lighthouse-check/default
     steps:
       - lighthouse-check/audit:
-          urls: https://www.foo.software,https://www.foo.software/contact
+          urls: https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact
           # this serves as an example, however if the below environment variables
           # are set - the below params aren't even necessary. for example - if
           # LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID is already set - you don't need
@@ -343,7 +343,7 @@ jobs:
           awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref }}
           outputDirectory: /tmp/artifacts
-          urls: 'https://www.foo.software,https://www.foo.software/contact'
+          urls: 'https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact'
           sha: ${{ github.sha }}
           slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
       - name: Upload artifacts
@@ -376,12 +376,12 @@ You can override default config and options by specifying `overridesJsonFile` op
 
 ## CLI
 
-Running `lighthouse-check` in the example below will run Lighthouse audits against `https://www.foo.software` and `https://www.foo.software/contact` and output a report in the '/tmp/artifacts' directory.
+Running `lighthouse-check` in the example below will run Lighthouse audits against `https://www.foo.software/lighthouse` and `https://www.foo.software/lighthouse/contact` and output a report in the '/tmp/artifacts' directory.
 
 Format is `--option <argument>`. Example below.
 
 ```bash
-$ lighthouse-check --urls "https://www.foo.software,https://www.foo.software/contact" \
+$ lighthouse-check --urls "https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact" \
   --outputDirectory /tmp/artifacts
 ```
 
@@ -406,7 +406,7 @@ All options mirror [the NPM module](#options). The only difference is that array
 $ docker pull foosoftware/lighthouse-check:latest
 $ docker run foosoftware/lighthouse-check:latest \
   lighthouse-check --verbose \
-  --urls "https://www.foo.software,https://www.foo.software/contact"
+  --urls "https://www.foo.software/lighthouse,https://www.foo.software/lighthouse/contact"
 ```
 
 ## Options
@@ -415,7 +415,7 @@ $ docker run foosoftware/lighthouse-check:latest \
 
 #### `lighthouseCheck`
 
-You can choose from two ways of running audits - locally in your own environment or remotely via Automated Lighthouse Check API. You can think of local runs as the default implementation. For directions about how to run remotely see the [Automated Lighthouse Check API Usage](#automated-lighthouse-check-api-usage) section. We denote which options are available to a run type with the `Run Type` values of either `local`, `remote`, or `both`.
+You can choose from two ways of running audits - locally in your own environment or remotely via Foo's Automated Lighthouse Check API. You can think of local runs as the default implementation. For directions about how to run remotely see the [Foo's Automated Lighthouse Check API Usage](#foo-api-usage) section. We denote which options are available to a run type with the `Run Type` values of either `local`, `remote`, or `both`.
 
 Below are options for the exported `lighthouseCheck` function or `lighthouse-check` command with CLI.
 
@@ -430,7 +430,7 @@ Below are options for the exported `lighthouseCheck` function or `lighthouse-che
   </tr>
   <tr>
     <td><code>apiToken</code></td>
-    <td>The automated-lighthouse-check.com account API token found in the dashboard.</td>
+    <td>The foo.software account API token found in the dashboard.</td>
     <td><code>string</code></td>
     <td><code>remote</code></td>
     <td><code>undefined</code></td>
@@ -746,4 +746,4 @@ Below are options for the exported `lighthouseCheck` function or `lighthouse-che
 
 ## Credits
 
-> <img src="https://lighthouse-check.s3.amazonaws.com/images/logo-simple-blue-light-512.png" width="100" height="100" align="left" /> This package was brought to you by [Foo - a website performance monitoring tool](https://www.foo.software). Create a **free account** with standard performance testing. Automatic website performance testing, uptime checks, charts showing performance metrics by day, month, and year. Foo also provides real time notifications when performance and uptime notifications when changes are detected. Users can integrate email, Slack and PagerDuty notifications.
+> <img src="https://lighthouse-check.s3.amazonaws.com/images/logo-simple-blue-light-512.png" width="100" height="100" align="left" /> This package was brought to you by [Foo - a website performance monitoring tool](https://www.foo.software/lighthouse). Create a **free account** with standard performance testing. Automatic website performance testing, uptime checks, charts showing performance metrics by day, month, and year. Foo also provides real time notifications when performance and uptime notifications when changes are detected. Users can integrate email, Slack and PagerDuty notifications.

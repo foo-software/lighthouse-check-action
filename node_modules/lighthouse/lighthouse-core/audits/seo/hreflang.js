@@ -18,7 +18,7 @@ const UIStrings = {
   /** Description of a Lighthouse audit that tells the user *why* they need to have an hreflang link on their page. This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. "hreflang" is an HTML attribute and should not be translated. */
   description: 'hreflang links tell search engines what version of a page they should ' +
     'list in search results for a given language or region. [Learn more]' +
-    '(https://web.dev/hreflang).',
+    '(https://web.dev/hreflang/).',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);

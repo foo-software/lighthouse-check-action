@@ -8,31 +8,27 @@ The example below shows how to run Lighthouse programmatically as a Node module.
 assumes you've installed Lighthouse as a dependency (`yarn add --dev lighthouse`).
 
 ```javascript
+const fs = require('fs');
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
+const log = require('lighthouse-logger');
 
-function launchChromeAndRunLighthouse(url, opts, config = null) {
-  return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
-    opts.port = chrome.port;
-    return lighthouse(url, opts, config).then(results => {
-      // use results.lhr for the JS-consumable output
-      // https://github.com/GoogleChrome/lighthouse/blob/master/types/lhr.d.ts
-      // use results.report for the HTML/JSON/CSV output as a string
-      // use results.artifacts for the trace/screenshots/other specific case you need (rarer)
-      return chrome.kill().then(() => results.lhr)
-    });
-  });
-}
+(async () => {
+  log.setLevel('info');
+  const chrome = await chromeLauncher.launch({chromeFlags: ['--headless']});
+  const options = {output: 'html', onlyCategories: ['performance'], port: chrome.port};
+  const runnerResult = await lighthouse('https://example.com', options);
 
-const opts = {
-  chromeFlags: ['--show-paint-rects']
-};
+  // `.report` is the HTML report as a string
+  const reportHtml = runnerResult.report;
+  fs.writeFileSync('lhreport.html', reportHtml);
 
-// Usage:
-launchChromeAndRunLighthouse('https://example.com', opts).then(results => {
-  // Use results!
-});
+  // `.lhr` is the Lighthouse Result as a JS object
+  console.log('Report is done for', runnerResult.lhr.finalUrl);
+  console.log('Performance score was', runnerResult.lhr.categories.performance.score * 100);
 
+  await chrome.kill();
+})();
 ```
 
 ### Performance-only Lighthouse run

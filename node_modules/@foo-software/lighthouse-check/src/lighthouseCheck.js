@@ -51,8 +51,8 @@ export default ({
       // running a lighthouse audit locally.
       const isLocalAudit = !apiToken;
 
-      // if we're auditing through the automated-lighthouse-check.com
-      // API, otherwise we're using Lighthouse directly, locally
+      // if we're auditing through the foo.software API,
+      // otherwise we're using Lighthouse directly, locally
       if (!isLocalAudit) {
         const triggerResult = await triggerLighthouse({
           apiToken,

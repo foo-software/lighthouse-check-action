@@ -27,13 +27,12 @@ const config = {
     ],
     throttlingMethod: 'devtools',
   },
-  // source-maps is not yet in the default config.
-  passes: [{
-    passName: 'defaultPass',
-    gatherers: [
-      'source-maps',
-    ],
-  }],
+  audits: [
+    {path: 'byte-efficiency/unused-javascript', options: {
+      // Lower the threshold so we don't need huge resources to make a test.
+      unusedThreshold: 2000,
+    }},
+  ],
 };
 
 module.exports = config;

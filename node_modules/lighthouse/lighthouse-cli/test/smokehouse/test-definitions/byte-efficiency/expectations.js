@@ -19,6 +19,10 @@ const expectations = [
           async: false,
           defer: false,
           source: 'head',
+          // Only do a single assertion for `devtoolsNodePath`: this can be flaky for elements
+          // deep in the DOM, and the sample LHR test has plenty of places that would catch
+          // a regression in `devtoolsNodePath` calculation. Keep just one for the benefit
+          // of other smoke test runners.
           devtoolsNodePath: '2,HTML,0,HEAD,3,SCRIPT',
         },
         {
@@ -27,7 +31,6 @@ const expectations = [
           async: false,
           defer: false,
           source: 'head',
-          devtoolsNodePath: '2,HTML,0,HEAD,5,SCRIPT',
         },
         {
           type: null,
@@ -35,7 +38,6 @@ const expectations = [
           async: false,
           defer: false,
           source: 'head',
-          devtoolsNodePath: '2,HTML,0,HEAD,6,SCRIPT',
         },
         {
           type: null,
@@ -43,7 +45,7 @@ const expectations = [
           async: false,
           defer: false,
           source: 'body',
-          devtoolsNodePath: '2,HTML,1,BODY,0,DIV,3,SCRIPT',
+          content: /shadowRoot/,
         },
         {
           type: null,
@@ -51,7 +53,7 @@ const expectations = [
           async: false,
           defer: false,
           source: 'body',
-          devtoolsNodePath: '2,HTML,1,BODY,3,SCRIPT',
+          content: /generateInlineStyleWithSize/,
         },
         {
           type: null,
@@ -59,7 +61,6 @@ const expectations = [
           async: true,
           defer: false,
           source: 'body',
-          devtoolsNodePath: '2,HTML,1,BODY,1438,SCRIPT',
         },
         {
           type: null,
@@ -67,7 +68,6 @@ const expectations = [
           async: false,
           defer: false,
           source: 'body',
-          devtoolsNodePath: '2,HTML,1,BODY,1439,SCRIPT',
           content: /Used block #1/,
         },
         {
@@ -76,7 +76,6 @@ const expectations = [
           async: false,
           defer: false,
           source: 'body',
-          devtoolsNodePath: '2,HTML,1,BODY,1440,SCRIPT',
           content: /Unused block #1/,
         },
       ],
@@ -155,21 +154,13 @@ const expectations = [
                 url: 'http://localhost:10200/byte-efficiency/bundle.js',
                 totalBytes: '12913 +/- 1000',
                 wastedBytes: '5827 +/- 200',
-                sources: [
-                  '…./b.js',
-                  '…./c.js',
-                  '…webpack/bootstrap',
-                ],
-                sourceBytes: [
-                  '4417 +/- 50',
-                  '2200 +/- 50',
-                  '2809 +/- 50',
-                ],
-                sourceWastedBytes: [
-                  '2191 +/- 50',
-                  '2182 +/- 50',
-                  '1259 +/- 50',
-                ],
+                subItems: {
+                  items: [
+                    {source: '…./b.js', sourceBytes: '4417 +/- 50', sourceWastedBytes: '2191 +/- 50'},
+                    {source: '…./c.js', sourceBytes: '2200 +/- 50', sourceWastedBytes: '2182 +/- 50'},
+                    {source: '…webpack/bootstrap', sourceBytes: '2809 +/- 50', sourceWastedBytes: '1259 +/- 50'},
+                  ],
+                },
               },
             ],
           },

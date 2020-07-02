@@ -22,7 +22,7 @@ const UIStrings = {
       'over HTTPS. HTTPS prevents intruders from tampering with or passively listening ' +
       'in on the communications between your app and your users, and is a prerequisite for ' +
       'HTTP/2 and many new web platform APIs. ' +
-      '[Learn more](https://web.dev/is-on-https).',
+      '[Learn more](https://web.dev/is-on-https/).',
   /** [ICU Syntax] Label identifying the number of insecure network requests found by an audit of a web page. */
   displayValue: `{itemCount, plural,
     =1 {1 insecure request found}

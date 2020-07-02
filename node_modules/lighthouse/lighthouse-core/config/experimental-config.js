@@ -13,12 +13,6 @@
 /** @type {LH.Config.Json} */
 const config = {
   extends: 'lighthouse:default',
-  passes: [{
-    passName: 'defaultPass',
-    gatherers: [
-      'source-maps',
-    ],
-  }],
   audits: [
     'byte-efficiency/duplicated-javascript',
     'legacy-javascript',

@@ -639,12 +639,12 @@ class Config {
       const category = deepClone(oldCategories[categoryId]);
 
       if (filterByIncludedCategory && filterByIncludedAudit) {
-        // If we're filtering to the category and audit whitelist, include the union of the two
+        // If we're filtering by category and audit, include the union of the two
         if (!categoryIds.includes(categoryId)) {
           category.auditRefs = category.auditRefs.filter(audit => auditIds.includes(audit.id));
         }
       } else if (filterByIncludedCategory) {
-        // If we're filtering to just the category whitelist and the category is not included, skip it
+        // If we're filtering by just category, and the category is not included, skip it
         if (!categoryIds.includes(categoryId)) {
           return;
         }
@@ -652,7 +652,7 @@ class Config {
         category.auditRefs = category.auditRefs.filter(audit => auditIds.includes(audit.id));
       }
 
-      // always filter to the audit blacklist
+      // always filter based on skipAuditIds
       category.auditRefs = category.auditRefs.filter(audit => !skipAuditIds.includes(audit.id));
 
       if (category.auditRefs.length) {

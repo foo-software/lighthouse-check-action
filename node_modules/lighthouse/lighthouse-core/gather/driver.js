@@ -1218,6 +1218,48 @@ class Driver {
   }
 
   /**
+   * Resolves a backend node ID (from a trace event, protocol, etc) to the object ID for use with
+   * `Runtime.callFunctionOn`. `undefined` means the node could not be found.
+   *
+   * @param {number} backendNodeId
+   * @return {Promise<string|undefined>}
+   */
+  async resolveNodeIdToObjectId(backendNodeId) {
+    try {
+      const resolveNodeResponse = await this.sendCommand('DOM.resolveNode', {backendNodeId});
+      return resolveNodeResponse.object.objectId;
+    } catch (err) {
+      if (/No node.*found/.test(err.message)) return undefined;
+      throw err;
+    }
+  }
+
+  /**
+   * Resolves a proprietary devtools node path (created from page-function.js) to the object ID for use
+   * with `Runtime.callFunctionOn`. `undefined` means the node could not be found.
+   * Requires `DOM.getDocument` to have been called since the object's creation or it will always be `undefined`.
+   *
+   * @param {string} devtoolsNodePath
+   * @return {Promise<string|undefined>}
+   */
+  async resolveDevtoolsNodePathToObjectId(devtoolsNodePath) {
+    try {
+      const {nodeId} = await this.sendCommand('DOM.pushNodeByPathToFrontend', {
+        path: devtoolsNodePath,
+      });
+
+      const {object: {objectId}} = await this.sendCommand('DOM.resolveNode', {
+        nodeId,
+      });
+
+      return objectId;
+    } catch (err) {
+      if (/No node.*found/.test(err.message)) return undefined;
+      throw err;
+    }
+  }
+
+  /**
    * @param {{x: number, y: number}} position
    * @return {Promise<void>}
    */

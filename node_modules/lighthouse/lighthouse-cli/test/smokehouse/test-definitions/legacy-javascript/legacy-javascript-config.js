@@ -10,12 +10,6 @@
  */
 module.exports = {
   extends: 'lighthouse:default',
-  passes: [{
-    passName: 'defaultPass',
-    gatherers: [
-      'source-maps',
-    ],
-  }],
   settings: {
     onlyCategories: [
       'performance',

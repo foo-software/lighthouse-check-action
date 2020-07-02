@@ -9,18 +9,10 @@
  * Config file for running source map smokehouse.
  */
 
-// source-maps currently isn't in the default config yet, so we make a new one with it.
-// Also, no audits use source-maps yet, and at least one is required for a successful run,
-// so `viewport` and its required gatherer `meta-elements` is used.
-
 /** @type {LH.Config.Json} */
 module.exports = {
-  passes: [{
-    passName: 'defaultPass',
-    gatherers: [
-      'source-maps',
-      'meta-elements',
-    ],
-  }],
-  audits: ['viewport'],
+  extends: 'lighthouse:default',
+  settings: {
+    onlyAudits: ['unused-javascript'],
+  },
 };

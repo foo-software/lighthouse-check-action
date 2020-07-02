@@ -413,6 +413,33 @@ const expectations = [
       },
     },
   },
+  // TODO: Uncomment when Chrome m84 lands
+  // {
+  //   artifacts: {
+  //     InspectorIssues: {
+  //       mixedContent: [
+  //         {
+  //           resourceType: 'Image',
+  //           resolutionStatus: 'MixedContentWarning',
+  //           insecureURL: 'http://www.mixedcontentexamples.com/Content/Test/steveholt.jpg',
+  //           mainResourceURL: 'https://www.mixedcontentexamples.com/Test/NonSecureImage',
+  //           request: {
+  //             url: 'http://www.mixedcontentexamples.com/Content/Test/steveholt.jpg',
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   },
+  //   lhr: {
+  //     requestedUrl: 'https://www.mixedcontentexamples.com/Test/NonSecureImage',
+  //     finalUrl: 'https://www.mixedcontentexamples.com/Test/NonSecureImage',
+  //     audits: {
+  //       'is-on-https': {
+  //         score: 0,
+  //       },
+  //     },
+  //   },
+  // },
 ];
 
 module.exports = expectations;

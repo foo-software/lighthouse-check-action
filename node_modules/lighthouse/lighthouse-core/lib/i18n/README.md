@@ -268,12 +268,12 @@ CTC is a name that is distinct and identifies this as the Chrome translation for
     This is also the point at which ICU is replaced by values. So this...
 
     ```javascript
-    message = "Total size was {totalBytes, number, bytes} KB"
+    message = "Total size was {totalBytes, number, bytes} KiB"
     sent_values = {totalBytes: 10240}
     ```
 
     Becomes...
 
     ```javascript
-    message = "Total size was 10 KB"
+    message = "Total size was 10 KiB"
     ```

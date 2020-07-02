@@ -35,6 +35,24 @@
     </a>
   </svg>
 
+  <!-- FAIL(crawlable-anchors): Link using window.open() -->
+  <a onclick="window.open(`http://example.com`)">Some link</a>
+
+  <!-- FAIL(crawlable-anchors): Link using javascript:void -->
+  <a href="javascript:void(0)">Some link</a>
+
+  <!-- FAIL(crawlable-anchors): Link with a mousedown event listener -->
+  <a class="some-link">Some link</a>
+  <script>
+    document.querySelector('.some-link').addEventListener('mousedown', () => {});
+  </script>
+
+  <!-- FAIL(crawlable-anchors): Link event listener on parent -->
+  <div class="link-parent"><a>Some link</a></div>
+  <script>
+    document.querySelector('.link-parent').addEventListener('click', () => {});
+  </script>
+
   <!-- FAIL(plugins): java applet on page -->
   <applet code=HelloWorld.class width="200" height="200" id='applet'>
     Your browser does not support the <code>applet</code> tag.

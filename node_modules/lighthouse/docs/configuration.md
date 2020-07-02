@@ -59,7 +59,7 @@ The extends property controls if your configuration should inherit from the defa
 
 ### `settings: Object|undefined`
 
-The settings property controls various aspects of running Lighthouse such as CPU/network throttling and audit whitelisting/blacklisting.
+The settings property controls various aspects of running Lighthouse such as CPU/network throttling and which audits should run.
 
 #### Example
 ```js

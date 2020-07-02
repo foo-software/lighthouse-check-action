@@ -31,7 +31,7 @@ declare global {
       export interface ResourceBudget {
         /** The resource type that a budget applies to. */
         resourceType: ResourceType;
-        /** Budget for resource. Depending on context, this is either the count or size (KB) of a resource. */
+        /** Budget for resource. Depending on context, this is either the count or size (KiB) of a resource. */
         budget: number;
       }
 

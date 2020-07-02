@@ -3,16 +3,6 @@
 <body>
   <div id="late-content"></div>
   <h1>Please don't move me</h1>
-  <script>
-    setTimeout(() => {
-      const imgEl = document.createElement('img');
-      imgEl.src = '../dobetterweb/lighthouse-480x318.jpg';
-      const textEl = document.createElement('span');
-      textEl.textContent = 'Sorry!';
-      const top = document.getElementById('late-content');
-      top.appendChild(imgEl);
-      top.appendChild(textEl);
-    }, 1000);
-  </script>
+  <script src="delayed-element.js"></script>
 </body>
 </html>

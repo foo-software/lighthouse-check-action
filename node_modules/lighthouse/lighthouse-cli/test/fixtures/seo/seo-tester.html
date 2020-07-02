@@ -47,7 +47,7 @@
   <a href='https://example.com'>descriptive link</a>
   <a href='#non-descriptive-local'>click this</a>
   <a href='https://example.com/non-descriptive-no-follow.html' rel="nofollow">click this</a>
-  <a href='javascript:void(0);'>click this</a>
+  <a href='javascript:;'>click this</a>
 
   <h2>Small text</h2>
   <!-- PASS(font-size): amount of illegible text is below the 60% threshold -->
@@ -66,5 +66,17 @@
   <script>URL = '';</script>
   <!-- PASS(plugins): external content does not require java, flash or silverlight -->
   <object data="test.pdf" type="application/pdf" width="300" height="200"></object>
+
+  <!-- PASS(crawlable-anchors): Link with a relative path -->
+  <a href="/pass">Some link</a>
+
+  <!-- PASS(crawlable-anchors): Link with a click event listener -->
+  <a class="some-link">Some link</a>
+  <script>
+    document.querySelector('.some-link').addEventListener('click', () => {});
+  </script>
+
+  <!-- PASS(crawlable-anchors): Link with an onclick which won't match the audit regex -->
+  <a onclick="window.Location = '';">Some link</a>
 </body>
 </html>

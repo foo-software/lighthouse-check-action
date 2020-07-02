@@ -89,9 +89,51 @@ If your machine has really limited resources or creating a clean environment has
 
 ### Run Lighthouse Multiple Times
 
-When creating your thresholds for failure, either mental or programmatic, use aggregate values like the median, 90th percentile, or even min instead of single tests.
+When creating your thresholds for failure, either mental or programmatic, use aggregate values like the median, 90th percentile, or even min/max instead of single test results.
 
-The median Lighthouse score of 5 runs is twice as stable as 1 run, and tools like [lighthouse-ci](https://github.com/GoogleChrome/lighthouse-ci/) can run Lighthouse multiple times for you automatically. Using the minimum value is also a big improvement over not testing at all and is incredibly simple to implement, just run Lighthouse up to 5 times until it passes!
+The median Lighthouse score of 5 runs is twice as stable as 1 run, and tools like [lighthouse-ci](https://github.com/GoogleChrome/lighthouse-ci/) can run Lighthouse multiple times for you automatically.
+
+```bash
+# Note: you must be in a git repository with at least one commit for this to work.
+npx -p @lhci/cli lhci collect --url https://example.com -n 5
+npx -p @lhci/cli lhci upload --target filesystem --outputDir ./path/to/dump/reports
+```
+
+You can then process the reports that are output to the filesystem. Read the [Lighthouse CI documentation](https://github.com/GoogleChrome/lighthouse-ci/blob/master/docs/configuration.md#outputdir) for more.
+
+```js
+const fs = require('fs');
+const lhciManifest = require('./path/to/dump/reports/manifest.json');
+const medianEntry = lhciManifest.find(entry => entry.isRepresentativeRun)
+const medianResult = JSON.parse(fs.readFileSync(medianEntry.jsonPath, 'utf-8'));
+console.log('Median performance score was', medianResult.categories.performance.score * 100);
+```
+
+If you're running Lighthouse directly via node, you can also use the `computeMedianRun` function to determine the median using a blend of the performance metrics.
+
+```js
+const spawnSync = require('child_process').spawnSync;
+const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
+const {computeMedianRun} = require('lighthouse/lighthouse-core/lib/median-run.js');
+
+const results = [];
+for (let i = 0; i < 5; i++) {
+  console.log(`Running Lighthouse attempt #${i + 1}...`);
+  const {status = -1, stdout} = spawnSync('node', [
+    lighthouseCli,
+    'https://example.com',
+    '--output=json'
+  ]);
+  if (status !== 0) {
+    console.log('Lighthouse failed, skipping run...');
+    continue;
+  }
+  results.push(JSON.parse(stdout));
+}
+
+const median = computeMedianRun(results);
+console.log('Median performance score was', median.categories.performance.score * 100);
+```
 
 ## Related Documentation
 

@@ -102,7 +102,7 @@ Supported timing metrics:
 
 ### Resource Budgets
 
-Use the optional `resourceSizes` property to define budgets for the *size* of page resources. In this context, budgets are defined in kilobytes.
+Use the optional `resourceSizes` property to define budgets for the *size* of page resources. In this context, budgets are defined in kibibytes (1 KiB = 1024 bytes).
 
 ```json
 "resourceSizes": [
