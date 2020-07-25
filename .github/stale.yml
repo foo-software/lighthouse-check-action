@@ -4,7 +4,7 @@ daysUntilStale: 25
 daysUntilClose: 5
 # Issues with these labels will never be considered stale
 exemptLabels:
-  - p1
+  - bug
 # Label to use when marking an issue as stale
 staleLabel: stale
 # Comment to post when marking an issue as stale. Set to `false` to disable
