@@ -24,7 +24,7 @@ const formatInput = input => {
     const urls = formatInput(core.getInput('urls'));
     const extraHeaders = core.getInput('extraHeaders');
     const commentUrl = core.getInput('commentUrl');
-    const prApiUrl = commentUrl || get(github, 'context.payload.pull_request.url');
+    const prApiUrl =  get(github, 'context.payload.pull_request.url');
 
     const results = await lighthouseCheck({
       author: formatInput(core.getInput('author')),
@@ -47,7 +47,7 @@ const formatInput = input => {
       prCommentAccessToken: formatInput(core.getInput('accessToken')),
       prCommentEnabled: formatInput(core.getInput('prCommentEnabled')),
       prCommentSaveOld: formatInput(core.getInput('prCommentSaveOld')),
-      prCommentUrl: !prApiUrl ? undefined : `${prApiUrl}/reviews`,
+      prCommentUrl: commentUrl || (!prApiUrl ? undefined : `${prApiUrl}/reviews`),
       sha: formatInput(core.getInput('sha')),
       slackWebhookUrl: formatInput(core.getInput('slackWebhookUrl')),
       tag: formatInput(core.getInput('tag')),
