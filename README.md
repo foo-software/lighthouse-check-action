@@ -143,6 +143,13 @@ You can choose from two ways of running audits - "locally" in a dockerized GitHu
     <td><code>undefined</code></td>
   </tr>
   <tr>
+    <td><code>commentUrl</code></td>
+    <td>An endpoint to post comments to. This is only needed if you want to trigger comments on <code>push</code>. A <code>pull_request</code> trigger does not require this to be set. Typically this will be from GitHub's API. Example: <code>https://api.github.com/repos/:owner/:repo/commits/:commit_sha/comments</code>.</td>
+    <td><code>string</code></td>
+    <td><code>both</code></td>
+    <td><code>pull_request</code> triggered actions populate this under the hood by default</td>
+  </tr>
+  <tr>
     <td><code>configFile</code></td>
     <td>A configuration file path in JSON format which holds all options defined here. This file should be relative to the file being interpretted. In this case it will most likely be the root of the repo ("./")</td>
     <td><code>string</code></td>
