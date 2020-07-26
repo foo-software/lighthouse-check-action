@@ -1,3 +1,13 @@
+ <a name="6.1.1"></a>
+# 6.1.1 (2020-07-07)
+[Full Changelog](https://github.com/GoogleChrome/lighthouse/compare/v6.1.0...v6.1.1)
+
+This is a patch release to fix an issue that only occurred in 6.1.0 for Node environments. It will only be released to npm.
+
+## Core
+
+* fetcher: ensure fetch doesn't cause unhandled promise ([#11036](https://github.com/GoogleChrome/lighthouse/pull/11036))
+
 <a name="6.1.0"></a>
 # 6.1.0 (2020-06-25)
 [Full Changelog](https://github.com/GoogleChrome/lighthouse/compare/v6.0.0...v6.1.0)

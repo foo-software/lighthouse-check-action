@@ -60,10 +60,10 @@ A Lighthouse plugin is just a node module with a name that starts with `lighthou
   "name": "lighthouse-plugin-cats",
   "main": "plugin.js",
   "peerDependencies": {
-    "lighthouse": "^6.1.0"
+    "lighthouse": "^6.1.1"
   },
   "devDependencies": {
-    "lighthouse": "^6.1.0"
+    "lighthouse": "^6.1.1"
   }
 }
 ```

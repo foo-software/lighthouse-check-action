@@ -46,7 +46,7 @@ Simple configuration or choose from a variety of features below. See the [exampl
 - [Usage](#usage)
   - [Standard Example](#usage-standard-example)
   - [Failing Workflows by Enforcing Minimum Scores](#usage-failing-workflows-by-enforcing-minimum-scores)
-  - [Foo's Automated Lighthouse Check API](#usage-automated-lighthouse-check-api)
+  - [Foo's Automated Lighthouse Check API](#usage-foos-automated-lighthouse-check-api)
   - [Example with ZEIT Now](#usage-zeit-now)
 
 # Screenshots

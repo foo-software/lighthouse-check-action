@@ -25,7 +25,7 @@ See all exported types at https://octokit.github.io/types.ts
 ### Get parameter and response data types for a REST API endpoint
 
 ```ts
-import { Endpoints } from "./src";
+import { Endpoints } from "@octokit/types";
 
 type listUserReposParameters = Endpoints["GET /repos/:owner/:repo"]["parameters"];
 type listUserReposResponse = Endpoints["GET /repos/:owner/:repo"]["response"];

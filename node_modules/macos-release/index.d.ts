@@ -28,10 +28,10 @@ declare const macosRelease: {
 	//=> {name: 'Big Sur', version: '11'}
 	```
 	*/
-	(release?: string): string;
+	(release?: string): {name: string, version: string};
 
 	// TODO: remove this in the next major version, refactor the whole definition to:
-	// declare function macosRelease(release?: string): string;
+	// declare function macosRelease(release?: string): {name: string, version: string};
 	// export = macosRelease;
 	default: typeof macosRelease;
 };

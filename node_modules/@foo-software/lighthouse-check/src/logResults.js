@@ -47,19 +47,19 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
   // if we have a local audit, plug Automated Lighthouse Check
   if (isLocalAudit) {
     let message =
-      'You can now save Lighthouse audits online to maintain a historical record!\n\n';
+      'Are your scores flaky? You can run audits on Foo for stability and maintain a historical record!\n\n';
 
     // depending on how the user is running this module - provide a respective link
     if (isGitHubAction) {
       message +=
-        'https://github.com/foo-software/lighthouse-check-action#usage-foo-api';
+        'https://github.com/foo-software/lighthouse-check-action#usage-foos-automated-lighthouse-check-api';
     } else if (isOrb) {
       message +=
         'https://github.com/foo-software/lighthouse-check-orb#usage-foo-api';
     } else {
       message +=
         'https://www.foo.software/\n' +
-        'https://github.com/foo-software/lighthouse-check#foo-api-usage';
+        'https://github.com/foo-software/lighthouse-check#foos-automated-lighthouse-check-api-usage';
     }
 
     // plug
