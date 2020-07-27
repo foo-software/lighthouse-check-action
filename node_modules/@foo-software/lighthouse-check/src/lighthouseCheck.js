@@ -121,6 +121,9 @@ export default ({
 
             if (prCommentEnabled && prCommentUrl && prCommentAccessToken) {
               await postPrComment({
+                isGitHubAction,
+                isLocalAudit,
+                isOrb,
                 prCommentAccessToken,
                 prCommentSaveOld,
                 prCommentUrl,
@@ -195,6 +198,9 @@ export default ({
 
           if (prCommentEnabled && prCommentUrl && prCommentAccessToken) {
             await postPrComment({
+              isGitHubAction,
+              isLocalAudit,
+              isOrb,
               prCommentAccessToken,
               prCommentSaveOld,
               prCommentUrl,
