@@ -58,7 +58,7 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
         'https://github.com/foo-software/lighthouse-check-orb#usage-foo-api';
     } else {
       message +=
-        'https://www.foo.software/\n' +
+        'https://www.foo.software/lighthouse\n' +
         'https://github.com/foo-software/lighthouse-check#foos-automated-lighthouse-check-api-usage';
     }
 

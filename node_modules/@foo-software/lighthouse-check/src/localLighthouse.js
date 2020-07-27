@@ -29,10 +29,17 @@ export const localLighthouse = async ({
   maxWaitForLoad,
   outputDirectory,
   overrides,
-  throttling: throttlingOverride,
+  throttling: throttlingParam,
   throttlingMethod,
   url
 }) => {
+  // if desktop device, and no throttling param specified, use the
+  // appropriate throttling
+  const throttlingOverride =
+    emulatedFormFactor === 'desktop' && !throttlingParam
+      ? 'desktopDense4G'
+      : throttlingParam;
+
   // the default config combined with overriding query params
   const fullConfig = {
     ...lighthouseDefaultConfig,

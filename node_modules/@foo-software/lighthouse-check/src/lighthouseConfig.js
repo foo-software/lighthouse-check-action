@@ -31,6 +31,16 @@ export const throttling = {
     downloadThroughputKbps: 700 * DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR,
     uploadThroughputKbps: 700 * DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR,
     cpuSlowdownMultiplier: 4
+  },
+  // Using a "broadband" connection type
+  // Corresponds to "Dense 4G 25th percentile" in https://docs.google.com/document/d/1Ft1Bnq9-t4jK5egLSOc28IL4TvR-Tt0se_1faTA4KTY/edit#heading=h.bb7nfy2x9e5v
+  desktopDense4G: {
+    rttMs: 40,
+    throughputKbps: 10 * 1024,
+    cpuSlowdownMultiplier: 1,
+    requestLatencyMs: 0, // 0 means unset
+    downloadThroughputKbps: 0,
+    uploadThroughputKbps: 0
   }
 };
 
@@ -44,7 +54,6 @@ export default {
     // "These exact figures are used as Lighthouse's throttling default"
     // https://github.com/GoogleChrome/lighthouse/blob/8f500e00243e07ef0a80b39334bedcc8ddc8d3d0/lighthouse-core/config/constants.js#L19-L26
     // https://github.com/GoogleChrome/lighthouse/blob/master/docs/throttling.md
-    throttling: throttling.mobileSlow4G,
-    throttlingMethod: 'simulate'
+    throttling: throttling.mobileSlow4G
   }
 };

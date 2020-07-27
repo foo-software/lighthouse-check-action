@@ -14,6 +14,9 @@ const getBadge = ({ title, score }) =>
   )}?style=flat-square) `;
 
 export default async ({
+  isGitHubAction,
+  isLocalAudit,
+  isOrb,
   prCommentAccessToken,
   prCommentSaveOld,
   prCommentUrl,
@@ -23,7 +26,7 @@ export default async ({
   try {
     let markdown = '';
 
-    results.forEach((result, index) => {
+    results.forEach(result => {
       // badges
       Object.keys(result.scores).forEach(current => {
         markdown += getBadge({
@@ -32,22 +35,40 @@ export default async ({
         });
       });
 
-      // the emulatedformfactor
-      markdown += `\n\n Device: **${result.emulatedFormFactor}**`;
+      // table header
+      markdown += `\n| Device ${!result.report ? '' : `| Report `}| URL |\n`;
+      markdown += `|--${!result.report ? '' : `|--`}|--|\n`;
 
-      // the url
-      markdown += `\n\n${result.url}`;
+      // the emulatedformfactor
+      markdown += `| ${result.emulatedFormFactor} `;
 
       // if we have a URL for the full report
       if (result.report) {
-        markdown += `\n\n[Full report](${result.report})`;
+        markdown += `| [report](${result.report}) `;
       }
 
-      // add a horizontal line
-      if (index + 1 < results.length) {
-        markdown += `\n\n<hr />\n\n`;
-      }
+      // the url
+      markdown += `| ${result.url} |\n\n`;
     });
+
+    markdown += 'Not what you expected? Are your scores flaky? ';
+    markdown += `[Run Lighthouse on Foo](https://www.foo.software/lighthouse)\n`;
+
+    if (isLocalAudit) {
+      markdown +=
+        'If scores continue to be inconsistent consider [running all audits on Foo]';
+
+      if (isGitHubAction) {
+        markdown +=
+          '(https://github.com/foo-software/lighthouse-check-action#usage-foos-automated-lighthouse-check-api)\n';
+      } else if (isOrb) {
+        markdown +=
+          '(https://github.com/foo-software/lighthouse-check-orb#usage-foo-api)\n';
+      } else {
+        markdown +=
+          '(https://github.com/foo-software/lighthouse-check#foos-automated-lighthouse-check-api-usage)\n';
+      }
+    }
 
     // create an identifier within the comment when searching comments
     // in the future

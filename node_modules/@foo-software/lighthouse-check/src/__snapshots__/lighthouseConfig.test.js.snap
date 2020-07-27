@@ -13,7 +13,6 @@ Object {
       "throughputKbps": 1638.4,
       "uploadThroughputKbps": 675,
     },
-    "throttlingMethod": "simulate",
   },
 }
 `;
