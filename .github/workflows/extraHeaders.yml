@@ -23,7 +23,7 @@ jobs:
       - name: Run Lighthouse
         uses: ./
         with:
-          extraHeaders: '{ "x-hello-world": "foobar", "x-some-other-thing": "hi" }'
+          extraHeaders: '{ "x-test-1": "hello world", "x-test-2": "ipsum lorem" }'
           urls: ${{ steps.now.outputs.preview-url }}
           outputDirectory: /tmp/artifacts
       - name: Upload artifacts
