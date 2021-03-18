@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: amondnet/now-deployment@1.2.0
+      - uses: amondnet/now-deployment@1
         id: now
         with:
           github-comment: false
