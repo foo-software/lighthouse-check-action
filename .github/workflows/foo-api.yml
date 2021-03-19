@@ -1,14 +1,11 @@
-name: Test Automated Lighthouse Check
+name: Foo API Test
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
 
 jobs:
-  lighthouse-check:
+  lighthouse:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -16,8 +13,7 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
-        # uncomment for PR comments
-        # accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+        accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
         apiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
         tag: GitHub Action
         urls: ${{ secrets.LIGHTHOUSE_CHECK_URLS }}
