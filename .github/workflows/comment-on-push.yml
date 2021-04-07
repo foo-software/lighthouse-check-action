@@ -12,7 +12,7 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
-        # accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
-        # commentUrl: https://api.github.com/repos/foo-software/lighthouse-check-action/commits/${{ github.sha }}/comments
-        # prCommentEnabled: true
+        accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+        commentUrl: https://api.github.com/repos/foo-software/lighthouse-check-action/commits/${{ github.sha }}/comments
+        prCommentEnabled: true
         urls: 'https://www.foo.software'
