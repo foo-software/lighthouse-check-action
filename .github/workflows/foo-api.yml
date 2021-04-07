@@ -15,6 +15,5 @@ jobs:
       with:
         accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
         apiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
-        tag: GitHub Action Test
+        tag: GitHub Action
         urls: ${{ secrets.LIGHTHOUSE_CHECK_URLS }}
-        prCommentSaveOld: true
