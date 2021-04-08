@@ -57,13 +57,6 @@ const expectations = [
         },
         {
           type: null,
-          src: 'http://localhost:10200/byte-efficiency/delay-complete.js?delay=8000',
-          async: true,
-          defer: false,
-          source: 'body',
-        },
-        {
-          type: null,
           src: null,
           async: false,
           defer: false,
@@ -78,12 +71,47 @@ const expectations = [
           source: 'body',
           content: /Unused block #1/,
         },
+        {
+          type: null,
+          src: 'http://localhost:10200/byte-efficiency/delay-complete.js?delay=8000',
+          async: true,
+          defer: false,
+          source: 'body',
+        },
       ],
+      JsUsage: {
+        // ScriptParsedEvent.embedderName wasn't added to the protocol until M86,
+        // and `some-custom-url.js` won't show without it.
+        // https://chromiumdash.appspot.com/commit/52ed57138d0b83e8afd9de25e60655c6ace7527c
+        '_minChromiumMilestone': 86,
+        'http://localhost:10200/byte-efficiency/tester.html': [
+          {url: 'http://localhost:10200/byte-efficiency/tester.html'},
+          {url: 'http://localhost:10200/byte-efficiency/tester.html'},
+          {url: 'http://localhost:10200/byte-efficiency/tester.html'},
+          {url: 'http://localhost:10200/byte-efficiency/tester.html'},
+          {url: '/some-custom-url.js'},
+        ],
+        'http://localhost:10200/byte-efficiency/script.js': [
+          {url: 'http://localhost:10200/byte-efficiency/script.js'},
+        ],
+        'http://localhost:10200/byte-efficiency/bundle.js': [
+          {url: 'http://localhost:10200/byte-efficiency/bundle.js'},
+        ],
+      },
     },
     lhr: {
       requestedUrl: 'http://localhost:10200/byte-efficiency/tester.html',
       finalUrl: 'http://localhost:10200/byte-efficiency/tester.html',
       audits: {
+        'uses-http2': {
+          score: '<1',
+          details: {
+            overallSavingsMs: '>0',
+            items: {
+              length: '>10',
+            },
+          },
+        },
         'unminified-css': {
           details: {
             overallSavingsBytes: '>17000',
@@ -107,7 +135,7 @@ const expectations = [
               },
               {
                 url: 'inline: \n  function unusedFunction() {\n    // Un...',
-                wastedBytes: '6581 +/- 100',
+                wastedBytes: '6700 +/- 100',
                 wastedPercent: '99.6 +/- 0.1',
               },
               {
@@ -133,12 +161,15 @@ const expectations = [
           },
         },
         'unused-javascript': {
+          // ScriptParsedEvent.embedderName wasn't added to the protocol until M86.
+          // https://chromiumdash.appspot.com/commit/52ed57138d0b83e8afd9de25e60655c6ace7527c
+          _minChromiumMilestone: 86,
           score: '<1',
           details: {
             // the specific ms value here is not meaningful for this smoketest
             // *some* savings should be reported
             overallSavingsMs: '>0',
-            overallSavingsBytes: '>=25000',
+            overallSavingsBytes: '35000 +/- 1000',
             items: [
               {
                 url: 'http://localhost:10200/byte-efficiency/script.js',
@@ -184,7 +215,7 @@ const expectations = [
           details: {
             overallSavingsBytes: '>60000',
             items: {
-              length: 5,
+              length: 6,
             },
           },
         },
@@ -208,16 +239,38 @@ const expectations = [
             },
           },
         },
+        // Check that images aren't TOO BIG.
         'uses-responsive-images': {
           details: {
-            overallSavingsBytes: '108000 +/- 5000',
-            items: {
-              0: {wastedPercent: '56 +/- 5', url: /lighthouse-1024x680.jpg/},
-              1: {wastedPercent: '78 +/- 5', url: /lighthouse-2048x1356.webp\?size0/},
-              2: {wastedPercent: '56 +/- 5', url: /lighthouse-480x320.webp/},
-              3: {wastedPercent: '20 +/- 5', url: /lighthouse-480x320.jpg/},
-              length: 4,
-            },
+            overallSavingsBytes: '113000 +/- 5000',
+            items: [
+              {wastedPercent: '56 +/- 5', url: /lighthouse-1024x680.jpg/},
+              {wastedPercent: '78 +/- 5', url: /lighthouse-2048x1356.webp\?size0/},
+              {wastedPercent: '56 +/- 5', url: /lighthouse-480x320.webp/},
+              {wastedPercent: '20 +/- 5', url: /lighthouse-480x320.jpg/},
+              {wastedPercent: '20 +/- 5', url: /lighthouse-480x320\.jpg\?attributesized/},
+            ],
+          },
+        },
+        // Checks that images aren't TOO SMALL.
+        'image-size-responsive': {
+          details: {
+            items: [
+              // One of these is the ?duplicate variant and another is the
+              // ?cssauto variant but sort order isn't guaranteed
+              // since the pixel diff is equivalent for identical images.
+              {url: /lighthouse-320x212-poor.jpg/},
+              {url: /lighthouse-320x212-poor.jpg/},
+              {url: /lighthouse-320x212-poor.jpg/},
+            ],
+          },
+        },
+        'unsized-images': {
+          details: {
+            items: [
+              {url: /lighthouse-320x212-poor\.jpg/},
+              {url: /lighthouse-320x212-poor\.jpg\?cssauto/},
+            ],
           },
         },
       },
@@ -237,7 +290,7 @@ const expectations = [
               },
               {
                 url: 'http://localhost:10200/byte-efficiency/script.js?gzip=1',
-                transferSize: '1100 +/- 100',
+                transferSize: '1200 +/- 150',
                 resourceSize: '53000 +/- 1000',
                 finished: true,
               },

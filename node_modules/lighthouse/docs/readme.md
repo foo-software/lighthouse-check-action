@@ -11,12 +11,10 @@ assumes you've installed Lighthouse as a dependency (`yarn add --dev lighthouse`
 const fs = require('fs');
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
-const log = require('lighthouse-logger');
 
 (async () => {
-  log.setLevel('info');
   const chrome = await chromeLauncher.launch({chromeFlags: ['--headless']});
-  const options = {output: 'html', onlyCategories: ['performance'], port: chrome.port};
+  const options = {logLevel: 'info', output: 'html', onlyCategories: ['performance'], port: chrome.port};
   const runnerResult = await lighthouse('https://example.com', options);
 
   // `.report` is the HTML report as a string
@@ -65,15 +63,11 @@ Note that some flag functionality is only available to the CLI. The set of share
 
 ### Turn on logging
 
-If you want to see log output as Lighthouse runs, include the `lighthouse-logger` module
-and set an appropriate logging level in your code. You'll also need to pass
+If you want to see log output as Lighthouse runs, set an appropriate logging level in your code and pass
 the `logLevel` flag when calling `lighthouse`.
 
 ```javascript
-const log = require('lighthouse-logger');
-
 const flags = {logLevel: 'info'};
-log.setLevel(flags.logLevel);
 
 launchChromeAndRunLighthouse('https://example.com', flags).then(...);
 ```
@@ -139,7 +133,7 @@ $ lighthouse --port=9222 --emulated-form-factor=none --throttling.cpuSlowdownMul
 
 ## Lighthouse as trace processor
 
-Lighthouse can be used to analyze trace and performance data collected from other tools (like WebPageTest and ChromeDriver). The `traces` and `devtoolsLogs` artifact items can be provided using a string for the absolute path on disk if they're saved with `.trace.json` and `.devtoolslog.json` file extensions, respectively. The `devtoolsLogs` array is captured from the `Network` and `Page` domains (a la ChromeDriver's [enableNetwork and enablePage options]((https://sites.google.com/a/chromium.org/chromedriver/capabilities#TOC-perfLoggingPrefs-object)).
+Lighthouse can be used to analyze trace and performance data collected from other tools (like WebPageTest and ChromeDriver). The `traces` and `devtoolsLogs` artifact items can be provided using a string for the absolute path on disk if they're saved with `.trace.json` and `.devtoolslog.json` file extensions, respectively. The `devtoolsLogs` array is captured from the `Network` and `Page` domains (a la ChromeDriver's [enableNetwork and enablePage options](https://sites.google.com/a/chromium.org/chromedriver/capabilities#TOC-perfLoggingPrefs-object)).
 
 As an example, here's a trace-only run that reports on user timings and critical request chains:
 

@@ -16,6 +16,10 @@
   <meta name="RoBots" content="nofollow, NOINDEX, all">
   <!-- FAIL(hreflang): invalid language code, vary the case to make sure we are case insensitive -->
   <link rel="alTeRnate" hreflang="xx" href="https://xx.example.com" />
+  <!-- FAIL(hreflang): valid language code but no href -->
+  <link rel="alternate" hreflang="es" />
+  <!-- FAIL(hreflang): valid language code but a relative href -->
+  <link rel="alternate" hreflang="es" href="/example.html" />
   <!-- FAIL(hreflang): spece before a valid code -->
   <link rel="alternate" href="http://example.com/" hreflang=" x-default" />
   <!-- FAIL(canonical): multiple canonical URLs provided (another one is in the HTTP header) -->

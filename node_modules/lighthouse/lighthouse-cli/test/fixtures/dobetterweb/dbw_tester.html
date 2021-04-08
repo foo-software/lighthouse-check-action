@@ -383,6 +383,12 @@ function isOnHttps() {
   document.body.appendChild(img); // PASS
 }
 
+function noUnloadListenersTest() {
+  window.addEventListener('unload', () => {
+    console.log('unload on unload');
+  });
+}
+
 // Figure out which tests to fun.
 const params = new URLSearchParams(location.search);
 if (location.search === '') {
@@ -398,6 +404,7 @@ if (location.search === '') {
   deprecationsTest();
   passwordInputsCanBePastedIntoTest();
   isOnHttps();
+  noUnloadListenersTest();
 } else {
   if (params.has('documentWrite')) {
     documentWriteTest();
@@ -443,6 +450,9 @@ if (location.search === '') {
   Also, script is located down here to avoid being flagged in render-blocking-resources. -->
 <script src="./third_party/aggressive-promise-polyfill.js"></script>
 
+<!-- Including this validates that pages that override fetch don't crash our entire stacks gatherer. -->
+<script>window.fetch = () => new Promise(r => setTimeout(r, 90000));</script>
+
 <!-- FAIL(is-on-https): requires a non-localhost http file
      FAIL(no-vulnerable-libraries): Loads a vulnerable JS library -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -456,8 +466,8 @@ if (location.search === '') {
       document.body.appendChild(img);
     }, console.error);
   }
-    
-  window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024, onInitFs, console.error); 
+
+  window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024, onInitFs, console.error);
 </script>
 
 </body>

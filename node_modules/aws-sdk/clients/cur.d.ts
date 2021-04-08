@@ -3,7 +3,7 @@ import {Response} from '../lib/response';
 import {AWSError} from '../lib/error';
 import {Service} from '../lib/service';
 import {ServiceConfigurationOptions} from '../lib/service';
-import {ConfigBase as Config} from '../lib/config';
+import {ConfigBase as Config} from '../lib/config-base';
 interface Blob {}
 declare class CUR extends Service {
   /**
@@ -45,11 +45,15 @@ declare class CUR extends Service {
   putReportDefinition(callback?: (err: AWSError, data: CUR.Types.PutReportDefinitionResponse) => void): Request<CUR.Types.PutReportDefinitionResponse, AWSError>;
 }
 declare namespace CUR {
-  export type AWSRegion = "us-east-1"|"us-west-1"|"us-west-2"|"eu-central-1"|"eu-west-1"|"ap-southeast-1"|"ap-southeast-2"|"ap-northeast-1"|"eu-north-1"|"ap-northeast-3"|"ap-east-1"|string;
+  export type AWSRegion = "af-south-1"|"ap-east-1"|"ap-south-1"|"ap-southeast-1"|"ap-southeast-2"|"ap-northeast-1"|"ap-northeast-2"|"ap-northeast-3"|"ca-central-1"|"eu-central-1"|"eu-west-1"|"eu-west-2"|"eu-west-3"|"eu-north-1"|"eu-south-1"|"me-south-1"|"sa-east-1"|"us-east-1"|"us-east-2"|"us-west-1"|"us-west-2"|"cn-north-1"|"cn-northwest-1"|string;
   export type AdditionalArtifact = "REDSHIFT"|"QUICKSIGHT"|"ATHENA"|string;
   export type AdditionalArtifactList = AdditionalArtifact[];
+  export type BillingViewArn = string;
   export type CompressionFormat = "ZIP"|"GZIP"|"Parquet"|string;
   export interface DeleteReportDefinitionRequest {
+    /**
+     * The name of the report that you want to delete. The name must be unique, is case sensitive, and can't include spaces.
+     */
     ReportName?: ReportName;
   }
   export interface DeleteReportDefinitionResponse {
@@ -108,6 +112,10 @@ declare namespace CUR {
      * Whether you want Amazon Web Services to overwrite the previous version of each report or to deliver the report in addition to the previous versions.
      */
     ReportVersioning?: ReportVersioning;
+    /**
+     *  The Amazon resource name of the billing view. You can get this value by using the billing view service public APIs. 
+     */
+    BillingViewArn?: BillingViewArn;
   }
   export type ReportDefinitionList = ReportDefinition[];
   export type ReportFormat = "textORcsv"|"Parquet"|string;
@@ -117,7 +125,7 @@ declare namespace CUR {
   export type S3Prefix = string;
   export type SchemaElement = "RESOURCES"|string;
   export type SchemaElementList = SchemaElement[];
-  export type TimeUnit = "HOURLY"|"DAILY"|string;
+  export type TimeUnit = "HOURLY"|"DAILY"|"MONTHLY"|string;
   /**
    * A string in YYYY-MM-DD format that represents the latest possible API version that can be used in this service. Specify 'latest' to use the latest possible version.
    */

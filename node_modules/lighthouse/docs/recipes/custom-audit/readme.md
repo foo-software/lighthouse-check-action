@@ -5,7 +5,7 @@ on terminology and architecture.
 
 ## What this example does
 
-This example shows how to write a custom Lighthouse audit for a hypothetical search page. The page is considered fully initialized when the main search box (the page's "hero element") is ready to be used. When this happens, the page uses `performance.now()` to find the time since navigation start and saves the value in a global variable called `window.myLoadMetrics.searchableTime`.
+This example shows how to write a custom Lighthouse audit for a hypothetical search page. The page is considered fully initialized when the main search box (the page's "hero element") is ready to be used. When this happens, the page uses `performance.now()` to mark the time it took to become ready and saves the value in a global variable called `window.myLoadMetrics.searchableTime`.
 
 ## The Audit, Gatherer, and Config
 

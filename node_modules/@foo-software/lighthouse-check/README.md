@@ -19,7 +19,7 @@ This project provides **two ways of running audits** - locally in your own envir
 - PR comments of audit scores.
 - NPM module for programmatic [usage](#basic-usage).
 - CLI - see [CLI Usage](#cli-usage).
-- Docker - see [Docker Usage](#docker-usage).
+- Docker - see [Docker Usage](#docker).
 - Support for implementations like [CircleCI](#implementing-with-circleci).
 
 # Table of Contents

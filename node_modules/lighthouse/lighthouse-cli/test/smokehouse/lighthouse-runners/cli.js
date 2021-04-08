@@ -72,12 +72,6 @@ async function internalRun(url, tmpPath, configJson, isDebug) {
     args.push(`--config-path=${configPath}`);
   }
 
-  if (process.env.APPVEYOR) {
-    // Appveyor is hella slow already, disable CPU throttling so we're not 16x slowdown
-    // see https://github.com/GoogleChrome/lighthouse/issues/4891
-    args.push('--throttling.cpuSlowdownMultiplier=1');
-  }
-
   const command = 'node';
   const env = {...process.env, NODE_ENV: 'test'};
   localConsole.log(`${log.dim}$ ${command} ${args.join(' ')} ${log.reset}`);

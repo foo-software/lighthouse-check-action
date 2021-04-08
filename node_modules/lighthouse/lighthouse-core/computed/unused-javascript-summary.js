@@ -17,7 +17,7 @@ const makeComputedArtifact = require('./computed-artifact.js');
 /**
  * @typedef ComputeInput
  * @property {string} url
- * @property {LH.Crdp.Profiler.ScriptCoverage[]} scriptCoverages
+ * @property {Array<Omit<LH.Crdp.Profiler.ScriptCoverage, 'url'>>} scriptCoverages
  * @property {LH.Artifacts.Bundle=} bundle
  */
 
@@ -33,7 +33,7 @@ const makeComputedArtifact = require('./computed-artifact.js');
 
 class UnusedJavascriptSummary {
   /**
-   * @param {LH.Crdp.Profiler.ScriptCoverage} scriptCoverage
+   * @param {Omit<LH.Crdp.Profiler.ScriptCoverage, 'url'>} scriptCoverage
    * @return {WasteData}
    */
   static computeWaste(scriptCoverage) {
@@ -77,7 +77,7 @@ class UnusedJavascriptSummary {
     const wastedBytes = Math.round(lengths.content * wastedRatio);
 
     return {
-      url: url,
+      url,
       totalBytes: lengths.content,
       wastedBytes,
       wastedPercent: 100 * wastedRatio,
@@ -121,14 +121,14 @@ class UnusedJavascriptSummary {
       return retVal;
     });
 
-    // @ts-ignore: We will upstream computeLastGeneratedColumns to CDT eventually.
+    // @ts-expect-error: We will upstream computeLastGeneratedColumns to CDT eventually.
     bundle.map.computeLastGeneratedColumns();
     for (const mapping of bundle.map.mappings()) {
       let offset = lineOffsets[mapping.lineNumber];
 
       offset += mapping.columnNumber;
       const lastColumnOfMapping =
-        // @ts-ignore: We will upstream lastColumnNumber to CDT eventually.
+        // @ts-expect-error: We will upstream lastColumnNumber to CDT eventually.
         (mapping.lastColumnNumber - 1) || lineLengths[mapping.lineNumber];
       for (let i = mapping.columnNumber; i <= lastColumnOfMapping; i++) {
         if (wasteData.every(data => data.unusedByIndex[offset] === 1)) {

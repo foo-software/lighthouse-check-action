@@ -28,17 +28,23 @@ async function rerender(iterations) {
 setTimeout(() => {
   const imgEl = document.createElement('img');
   imgEl.src = '../dobetterweb/lighthouse-480x318.jpg';
-  const textEl = document.createElement('span');
+  const textEl = document.createElement('div');
   textEl.textContent = 'Sorry!';
+  textEl.style.height = '18px' // this height can be flaky so we set it manually
   const top = document.getElementById('late-content');
-  top.appendChild(imgEl);
-  top.appendChild(textEl);
 
-  // layout-shift-elements: ensure we can handle missing shift elements
-  if (window.location.href.includes('?missing')) {
+  // Use shadow DOM to verify devtoolsNodePath resolves through it
+  const shadowRoot = top.attachShadow({mode: 'open'});
+  const sectionEl = document.createElement('section');
+  sectionEl.append(imgEl, textEl);
+  shadowRoot.append(sectionEl);
+
+  // layout-shift-elements: ensure we can handle shift elements that the protocol can no longer identify
+  // see https://github.com/GoogleChrome/lighthouse/pull/10877
+  if (window.location.href.includes('?evicted')) {
     stall(100); // force a long task to ensure we reach the rerendering stage
     setTimeout(async () => {
-      await rerender(20); // rerender a large number of nodes to evict the early layout shift node
+      await rerender(30); // rerender a large number of nodes to evict the early layout shift node
       document.body.textContent = 'Now it is all gone!';
     }, 50);
   }

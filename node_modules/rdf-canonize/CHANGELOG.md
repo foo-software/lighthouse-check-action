@@ -1,5 +1,10 @@
 # rdf-canonize ChangeLog
 
+## 1.2.0 - 2020-09-30
+
+### Changed
+- Use node-forge@0.10.0.
+
 ## 1.1.0 - 2020-01-17
 
 ### Changed

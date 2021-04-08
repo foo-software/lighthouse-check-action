@@ -124,6 +124,10 @@ module.exports = [
         },
         'service-worker': {
           score: 1,
+          details: {
+            scriptUrl: 'http://localhost:10503/offline-ready-sw.js',
+            scopeUrl: 'http://localhost:10503/',
+          },
         },
         'works-offline': {
           score: 1,
@@ -182,6 +186,10 @@ module.exports = [
       audits: {
         'service-worker': {
           score: 1,
+          details: {
+            scriptUrl: 'http://localhost:10503/offline-ready-sw.js?delay=5000&slow',
+            scopeUrl: 'http://localhost:10503/',
+          },
         },
         'works-offline': {
           score: 1,

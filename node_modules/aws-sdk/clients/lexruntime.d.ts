@@ -3,7 +3,7 @@ import {Response} from '../lib/response';
 import {AWSError} from '../lib/error';
 import {Service} from '../lib/service';
 import {ServiceConfigurationOptions} from '../lib/service';
-import {ConfigBase as Config} from '../lib/config';
+import {ConfigBase as Config} from '../lib/config-base';
 import {Readable} from 'stream';
 interface Blob {}
 declare class LexRuntime extends Service {
@@ -55,10 +55,41 @@ declare class LexRuntime extends Service {
 }
 declare namespace LexRuntime {
   export type Accept = string;
+  export interface ActiveContext {
+    /**
+     * The name of the context.
+     */
+    name: ActiveContextName;
+    /**
+     * The length of time or number of turns that a context remains active.
+     */
+    timeToLive: ActiveContextTimeToLive;
+    /**
+     * State variables for the current context. You can use these values as default values for slots in subsequent events.
+     */
+    parameters: ActiveContextParametersMap;
+  }
+  export type ActiveContextName = string;
+  export type ActiveContextParametersMap = {[key: string]: Text};
+  export interface ActiveContextTimeToLive {
+    /**
+     * The number of seconds that the context should be active after it is first sent in a PostContent or PostText response. You can set the value between 5 and 86,400 seconds (24 hours).
+     */
+    timeToLiveInSeconds?: ActiveContextTimeToLiveInSeconds;
+    /**
+     * The number of conversation turns that the context should be active. A conversation turn is one PostContent or PostText request and the corresponding response from Amazon Lex.
+     */
+    turnsToLive?: ActiveContextTurnsToLive;
+  }
+  export type ActiveContextTimeToLiveInSeconds = number;
+  export type ActiveContextTurnsToLive = number;
+  export type ActiveContextsList = ActiveContext[];
+  export type ActiveContextsString = string;
   export type AttributesString = string;
   export type BlobStream = Buffer|Uint8Array|Blob|string|Readable;
   export type BotAlias = string;
   export type BotName = string;
+  export type BotVersion = string;
   export interface Button {
     /**
      * Text that is visible to the user on the button.
@@ -137,6 +168,7 @@ declare namespace LexRuntime {
   }
   export type DialogActionType = "ElicitIntent"|"ConfirmIntent"|"ElicitSlot"|"Close"|"Delegate"|string;
   export type DialogState = "ElicitIntent"|"ConfirmIntent"|"ElicitSlot"|"Fulfilled"|"ReadyForFulfillment"|"Failed"|string;
+  export type Double = number;
   export type FulfillmentState = "Fulfilled"|"Failed"|"ReadyForFulfillment"|string;
   export interface GenericAttachment {
     /**
@@ -195,8 +227,19 @@ declare namespace LexRuntime {
      * Describes the current state of the bot.
      */
     dialogAction?: DialogAction;
+    /**
+     * A list of active contexts for the session. A context can be set when an intent is fulfilled or by calling the PostContent, PostText, or PutSession operation. You can use a context to control the intents that can follow up an intent, or to modify the operation of your application.
+     */
+    activeContexts?: ActiveContextsList;
   }
   export type HttpContentType = string;
+  export interface IntentConfidence {
+    /**
+     * A score that indicates how confident Amazon Lex is that an intent satisfies the user's intent. Ranges between 0.00 and 1.00. Higher scores indicate higher confidence.
+     */
+    score?: Double;
+  }
+  export type IntentList = PredictedIntent[];
   export type IntentName = string;
   export interface IntentSummary {
     /**
@@ -231,6 +274,7 @@ declare namespace LexRuntime {
   export type IntentSummaryCheckpointLabel = string;
   export type IntentSummaryList = IntentSummary[];
   export type MessageFormatType = "PlainText"|"CustomPayload"|"SSML"|"Composite"|string;
+  export type ParameterName = string;
   export interface PostContentRequest {
     /**
      * Name of the Amazon Lex bot.
@@ -264,6 +308,10 @@ declare namespace LexRuntime {
      *  User input in PCM or Opus audio format or text format as described in the Content-Type HTTP header.  You can stream audio data to Amazon Lex or you can create a local buffer that captures all of the audio data before sending. In general, you get better performance if you stream audio data rather than buffering the data locally.
      */
     inputStream: BlobStream;
+    /**
+     * A list of contexts active for the request. A context can be activated when a previous intent is fulfilled, or by including the context in the request, If you don't specify a list of contexts, Amazon Lex will use the current list of contexts for the session. If you specify an empty list, all contexts for the session are cleared.
+     */
+    activeContexts?: ActiveContextsString;
   }
   export interface PostContentResponse {
     /**
@@ -275,6 +323,14 @@ declare namespace LexRuntime {
      */
     intentName?: IntentName;
     /**
+     * Provides a score that indicates how confident Amazon Lex is that the returned intent is the one that matches the user's intent. The score is between 0.0 and 1.0. The score is a relative score, not an absolute score. The score may change based on improvements to Amazon Lex. 
+     */
+    nluIntentConfidence?: String;
+    /**
+     * One to four alternative intents that may be applicable to the user's intent. Each alternative includes a score that indicates how confident Amazon Lex is that the intent matches the user's intent. The intents are sorted by the confidence score.
+     */
+    alternativeIntents?: String;
+    /**
      * Map of zero or more intent slots (name/value pairs) Amazon Lex detected from the user input during the conversation. The field is base-64 encoded. Amazon Lex creates a resolution list containing likely values for a slot. The value that it returns is determined by the valueSelectionStrategy selected when the slot type was created or updated. If valueSelectionStrategy is set to ORIGINAL_VALUE, the value provided by the user is returned, if the user value is similar to the slot values. If valueSelectionStrategy is set to TOP_RESOLUTION Amazon Lex returns the first value in the resolution list or, if there is no resolution list, null. If you don't specify a valueSelectionStrategy, the default is ORIGINAL_VALUE.
      */
     slots?: String;
@@ -283,13 +339,17 @@ declare namespace LexRuntime {
      */
     sessionAttributes?: String;
     /**
-     * The sentiment expressed in and utterance. When the bot is configured to send utterances to Amazon Comprehend for sentiment analysis, this field contains the result of the analysis.
+     * The sentiment expressed in an utterance. When the bot is configured to send utterances to Amazon Comprehend for sentiment analysis, this field contains the result of the analysis.
      */
     sentimentResponse?: String;
     /**
-     * The message to convey to the user. The message can come from the bot's configuration or from a Lambda function. If the intent is not configured with a Lambda function, or if the Lambda function returned Delegate as the dialogAction.type in its response, Amazon Lex decides on the next course of action and selects an appropriate message from the bot's configuration based on the current interaction context. For example, if Amazon Lex isn't able to understand user input, it uses a clarification prompt message. When you create an intent you can assign messages to groups. When messages are assigned to groups Amazon Lex returns one message from each group in the response. The message field is an escaped JSON string containing the messages. For more information about the structure of the JSON string returned, see msg-prompts-formats. If the Lambda function returns a message, Amazon Lex passes it to the client in its response.
+     * You can only use this field in the de-DE, en-AU, en-GB, en-US, es-419, es-ES, es-US, fr-CA, fr-FR, and it-IT locales. In all other locales, the message field is null. You should use the encodedMessage field instead. The message to convey to the user. The message can come from the bot's configuration or from a Lambda function. If the intent is not configured with a Lambda function, or if the Lambda function returned Delegate as the dialogAction.type in its response, Amazon Lex decides on the next course of action and selects an appropriate message from the bot's configuration based on the current interaction context. For example, if Amazon Lex isn't able to understand user input, it uses a clarification prompt message. When you create an intent you can assign messages to groups. When messages are assigned to groups Amazon Lex returns one message from each group in the response. The message field is an escaped JSON string containing the messages. For more information about the structure of the JSON string returned, see msg-prompts-formats. If the Lambda function returns a message, Amazon Lex passes it to the client in its response.
      */
     message?: Text;
+    /**
+     * The message to convey to the user. The message can come from the bot's configuration or from a Lambda function. If the intent is not configured with a Lambda function, or if the Lambda function returned Delegate as the dialogAction.type in its response, Amazon Lex decides on the next course of action and selects an appropriate message from the bot's configuration based on the current interaction context. For example, if Amazon Lex isn't able to understand user input, it uses a clarification prompt message. When you create an intent you can assign messages to groups. When messages are assigned to groups Amazon Lex returns one message from each group in the response. The message field is an escaped JSON string containing the messages. For more information about the structure of the JSON string returned, see msg-prompts-formats. If the Lambda function returns a message, Amazon Lex passes it to the client in its response. The encodedMessage field is base-64 encoded. You must decode the field before you can use the value.
+     */
+    encodedMessage?: SensitiveString;
     /**
      * The format of the response message. One of the following values:    PlainText - The message contains plain UTF-8 text.    CustomPayload - The message is a custom format for the client.    SSML - The message contains text formatted for voice output.    Composite - The message contains an escaped JSON object containing one or more messages from the groups that messages were assigned to when the intent was created.  
      */
@@ -303,17 +363,29 @@ declare namespace LexRuntime {
      */
     slotToElicit?: String;
     /**
-     * The text used to process the request. If the input was an audio stream, the inputTranscript field contains the text extracted from the audio stream. This is the text that is actually processed to recognize intents and slot values. You can use this information to determine if Amazon Lex is correctly processing the audio that you send.
+     * The text used to process the request. You can use this field only in the de-DE, en-AU, en-GB, en-US, es-419, es-ES, es-US, fr-CA, fr-FR, and it-IT locales. In all other locales, the inputTranscript field is null. You should use the encodedInputTranscript field instead. If the input was an audio stream, the inputTranscript field contains the text extracted from the audio stream. This is the text that is actually processed to recognize intents and slot values. You can use this information to determine if Amazon Lex is correctly processing the audio that you send.
      */
     inputTranscript?: String;
+    /**
+     * The text used to process the request. If the input was an audio stream, the encodedInputTranscript field contains the text extracted from the audio stream. This is the text that is actually processed to recognize intents and slot values. You can use this information to determine if Amazon Lex is correctly processing the audio that you send. The encodedInputTranscript field is base-64 encoded. You must decode the field before you can use the value.
+     */
+    encodedInputTranscript?: SensitiveStringUnbounded;
     /**
      * The prompt (or statement) to convey to the user. This is based on the bot configuration and context. For example, if Amazon Lex did not understand the user intent, it sends the clarificationPrompt configured for the bot. If the intent requires confirmation before taking the fulfillment action, it sends the confirmationPrompt. Another example: Suppose that the Lambda function successfully fulfilled the intent, and sent a message to convey to the user. Then Amazon Lex sends that message in the response. 
      */
     audioStream?: BlobStream;
     /**
+     * The version of the bot that responded to the conversation. You can use this information to help determine if one version of a bot is performing better than another version.
+     */
+    botVersion?: BotVersion;
+    /**
      * The unique identifier for the session.
      */
     sessionId?: String;
+    /**
+     * A list of active contexts for the session. A context can be set when an intent is fulfilled or by calling the PostContent, PostText, or PutSession operation. You can use a context to control the intents that can follow up an intent, or to modify the operation of your application.
+     */
+    activeContexts?: ActiveContextsString;
   }
   export interface PostTextRequest {
     /**
@@ -340,12 +412,24 @@ declare namespace LexRuntime {
      * The text that the user entered (Amazon Lex interprets this text).
      */
     inputText: Text;
+    /**
+     * A list of contexts active for the request. A context can be activated when a previous intent is fulfilled, or by including the context in the request, If you don't specify a list of contexts, Amazon Lex will use the current list of contexts for the session. If you specify an empty list, all contexts for the session are cleared.
+     */
+    activeContexts?: ActiveContextsList;
   }
   export interface PostTextResponse {
     /**
      * The current user intent that Amazon Lex is aware of.
      */
     intentName?: IntentName;
+    /**
+     * Provides a score that indicates how confident Amazon Lex is that the returned intent is the one that matches the user's intent. The score is between 0.0 and 1.0. For more information, see Confidence Scores. The score is a relative score, not an absolute score. The score may change based on improvements to Amazon Lex.
+     */
+    nluIntentConfidence?: IntentConfidence;
+    /**
+     * One to four alternative intents that may be applicable to the user's intent. Each alternative includes a score that indicates how confident Amazon Lex is that the intent matches the user's intent. The intents are sorted by the confidence score.
+     */
+    alternativeIntents?: IntentList;
     /**
      *  The intent slots that Amazon Lex detected from the user input in the conversation.  Amazon Lex creates a resolution list containing likely values for a slot. The value that it returns is determined by the valueSelectionStrategy selected when the slot type was created or updated. If valueSelectionStrategy is set to ORIGINAL_VALUE, the value provided by the user is returned, if the user value is similar to the slot values. If valueSelectionStrategy is set to TOP_RESOLUTION Amazon Lex returns the first value in the resolution list or, if there is no resolution list, null. If you don't specify a valueSelectionStrategy, the default is ORIGINAL_VALUE.
      */
@@ -382,6 +466,28 @@ declare namespace LexRuntime {
      * A unique identifier for the session.
      */
     sessionId?: String;
+    /**
+     * The version of the bot that responded to the conversation. You can use this information to help determine if one version of a bot is performing better than another version.
+     */
+    botVersion?: BotVersion;
+    /**
+     * A list of active contexts for the session. A context can be set when an intent is fulfilled or by calling the PostContent, PostText, or PutSession operation. You can use a context to control the intents that can follow up an intent, or to modify the operation of your application.
+     */
+    activeContexts?: ActiveContextsList;
+  }
+  export interface PredictedIntent {
+    /**
+     * The name of the intent that Amazon Lex suggests satisfies the user's intent.
+     */
+    intentName?: IntentName;
+    /**
+     * Indicates how confident Amazon Lex is that an intent satisfies the user's intent.
+     */
+    nluIntentConfidence?: IntentConfidence;
+    /**
+     * The slot and slot values associated with the predicted intent.
+     */
+    slots?: StringMap;
   }
   export interface PutSessionRequest {
     /**
@@ -412,6 +518,10 @@ declare namespace LexRuntime {
      * The message that Amazon Lex returns in the response can be either text or speech based depending on the value of this field.   If the value is text/plain; charset=utf-8, Amazon Lex returns text in the response.   If the value begins with audio/, Amazon Lex returns speech in the response. Amazon Lex uses Amazon Polly to generate the speech in the configuration that you specify. For example, if you specify audio/mpeg as the value, Amazon Lex returns speech in the MPEG format.   If the value is audio/pcm, the speech is returned as audio/pcm in 16-bit, little endian format.   The following are the accepted values:    audio/mpeg     audio/ogg     audio/pcm     audio/* (defaults to mpeg)    text/plain; charset=utf-8     
      */
     accept?: Accept;
+    /**
+     * A list of contexts active for the request. A context can be activated when a previous intent is fulfilled, or by including the context in the request, If you don't specify a list of contexts, Amazon Lex will use the current list of contexts for the session. If you specify an empty list, all contexts for the session are cleared.
+     */
+    activeContexts?: ActiveContextsList;
   }
   export interface PutSessionResponse {
     /**
@@ -431,9 +541,13 @@ declare namespace LexRuntime {
      */
     sessionAttributes?: String;
     /**
-     * The next message that should be presented to the user.
+     * The next message that should be presented to the user. You can only use this field in the de-DE, en-AU, en-GB, en-US, es-419, es-ES, es-US, fr-CA, fr-FR, and it-IT locales. In all other locales, the message field is null. You should use the encodedMessage field instead.
      */
     message?: Text;
+    /**
+     * The next message that should be presented to the user. The encodedMessage field is base-64 encoded. You must decode the field before you can use the value.
+     */
+    encodedMessage?: SensitiveString;
     /**
      * The format of the response message. One of the following values:    PlainText - The message contains plain UTF-8 text.    CustomPayload - The message is a custom format for the client.    SSML - The message contains text formatted for voice output.    Composite - The message contains an escaped JSON object containing one or more messages from the groups that messages were assigned to when the intent was created.  
      */
@@ -454,6 +568,10 @@ declare namespace LexRuntime {
      * A unique identifier for the session.
      */
     sessionId?: String;
+    /**
+     * A list of active contexts for the session.
+     */
+    activeContexts?: ActiveContextsString;
   }
   export interface ResponseCard {
     /**
@@ -469,6 +587,8 @@ declare namespace LexRuntime {
      */
     genericAttachments?: genericAttachmentList;
   }
+  export type SensitiveString = string;
+  export type SensitiveStringUnbounded = string;
   export type SentimentLabel = string;
   export interface SentimentResponse {
     /**

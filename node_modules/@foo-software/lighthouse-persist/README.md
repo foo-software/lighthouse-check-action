@@ -25,15 +25,15 @@ npm install @foo-software/lighthouse-persist
 Save report to local directory.
 
 ```javascript
-import path from 'path';
-import lighthousePersist from '@foo-software/lighthouse-persist';
+const path = require('path');
+const lighthousePersist = require('@foo-software/lighthouse-persist').default;
 
 (async () => {
   const { localReport, result } = await lighthousePersist({
     url: 'https://www.foo.software',
 
-    // example if you have an "artifact" directory one level up
-    outputDirectory: path.resolve(__dirname + '/../artifacts')
+    // example if you have an "artifacts" directory in your root directory
+    outputDirectory: path.resolve('./artifacts')
   });
 
   console.log({ localReport, result });

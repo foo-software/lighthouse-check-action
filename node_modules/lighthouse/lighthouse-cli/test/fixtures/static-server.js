@@ -158,7 +158,7 @@ class Server {
       return;
     }
 
-    if (filePath.startsWith('/dist/viewer')) {
+    if (filePath.startsWith('/dist/gh-pages')) {
       // Rewrite lighthouse-viewer paths to point to that location.
       absoluteFilePath = path.join(__dirname, '/../../../', filePath);
     }
@@ -188,6 +188,14 @@ class Server {
     }
 
     function sendRedirect(url) {
+      // Redirects can only contain ASCII characters.
+      if (url.split('').some(char => char.charCodeAt(0) > 256)) {
+        response.writeHead(500);
+        response.write(`Invalid redirect URL: ${url}`);
+        response.end();
+        return;
+      }
+
       const headers = {
         Location: url,
       };

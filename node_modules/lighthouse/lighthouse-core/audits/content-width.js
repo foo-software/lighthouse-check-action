@@ -59,7 +59,7 @@ class ContentWidth extends Audit {
       };
     }
 
-    let explanation = '';
+    let explanation;
     if (!widthsMatch) {
       explanation = str_(UIStrings.explanation,
         {innerWidth: artifacts.ViewportDimensions.innerWidth,

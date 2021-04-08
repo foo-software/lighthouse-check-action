@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/nexdrew/ansi-align.svg?branch=master)](https://travis-ci.org/nexdrew/ansi-align)
 [![Coverage Status](https://coveralls.io/repos/github/nexdrew/ansi-align/badge.svg?branch=master)](https://coveralls.io/github/nexdrew/ansi-align?branch=master)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
+[![Greenkeeper badge](https://badges.greenkeeper.io/nexdrew/ansi-align.svg)](https://greenkeeper.io/)
 
 Easily center- or right- align a block of text, carefully ignoring ANSI escape codes.
 

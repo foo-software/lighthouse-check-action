@@ -2,6 +2,7 @@
   font-family: 'Lobster Three';
   font-style: normal;
   font-weight: 700;
+  font-display: optional;
   src: url("http://localhost:10503/perf/lobster-two-v10-latin-700.woff2?cors=true") format('woff2');
 }
 .corsfont {

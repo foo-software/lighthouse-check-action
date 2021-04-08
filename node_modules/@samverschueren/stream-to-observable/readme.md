@@ -115,3 +115,16 @@ It's important to note that using this module disables back-pressure controls on
 ## License
 
 MIT
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-samverschueren-stream-to-observable?utm_source=npm-samverschueren-stream-to-observable&utm_medium=referral&utm_campaign=enterprise&utm_term=repo">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>

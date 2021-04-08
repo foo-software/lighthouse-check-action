@@ -37,6 +37,43 @@ An audit can return a number of different [detail types](https://github.com/Goog
 <!--- https://docs.google.com/document/d/1KS6PGPYDfE_TWrRdw55Rd67P-g_MU4KdMetT3cTPHjI/edit#heading=h.32w9jjm4c70w -->
 ![Detail type examples](../assets/detail-type-examples.png)
 
+## Naming
+
+### Audit ID
+
+The audit ID should be based on the noun of the subject matter that it surfaces to the user.
+
+The filename should match the audit ID.
+
+**Policy**
+
+- No verbs.
+- No `no-` prefixes.
+- Use the noun of the items it surfaces or concept it centers around.
+- Adjective modifiers are acceptable and encouraged if the noun would be too broad without specificty.
+- If an adjective modifier will result in describing either the passing or failing state, prefer the failing state.
+
+**Examples**
+
+- ~~no-vulnerable-dependencies~~ vulnerable-dependencies (no `no-`)
+- ~~redirects-http~~ http-redirect (no verbs)
+- ~~uses-long-cache-ttl~~ cache-headers (no verbs)
+- ~~is-crawlable~~ crawlability (no verbs)
+- ~~images~~ oversized-images (too broad)
+- ~~used-css~~ unused-css (prefer failing state adjective)
+
+### Audit Title / Failure Title
+
+Audit titles vary based on report context and audit type.
+
+- Opportunities should have an *imperative* `title` describing the action the developer should take to fix the issue.
+- Standard audits should have both a *descriptive* `title` and a `failureTitle` that describe what the page is currently doing that resulted in a passing/failing state.
+
+Opportunity `title`: "Compress large images"
+Standard Audit `title`: "Page works offline"
+Standard Audit `failureTitle`: "Page does not work offline"
+
+
 ## Process for creating a new audit
 
 1. Scan the criteria we’ve laid out above. If you think the principles match with your proposed new audit, then proceed! 

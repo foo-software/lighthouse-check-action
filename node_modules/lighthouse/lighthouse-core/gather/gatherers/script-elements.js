@@ -11,7 +11,7 @@ const NetworkRequest = require('../../lib/network-request.js');
 const getElementsInDocumentString = require('../../lib/page-functions.js').getElementsInDocumentString; // eslint-disable-line max-len
 const pageFunctions = require('../../lib/page-functions.js');
 
-/* global getNodePath */
+/* global getNodeDetails */
 
 /**
  * @return {LH.Artifacts['ScriptElements']}
@@ -19,7 +19,7 @@ const pageFunctions = require('../../lib/page-functions.js');
 /* istanbul ignore next */
 function collectAllScriptElements() {
   /** @type {HTMLScriptElement[]} */
-  // @ts-ignore - getElementsInDocument put into scope via stringification
+  // @ts-expect-error - getElementsInDocument put into scope via stringification
   const scripts = getElementsInDocument('script'); // eslint-disable-line no-undef
 
   return scripts.map(script => {
@@ -30,8 +30,8 @@ function collectAllScriptElements() {
       async: script.async,
       defer: script.defer,
       source: /** @type {'head'|'body'} */ (script.closest('head') ? 'head' : 'body'),
-      // @ts-ignore - getNodePath put into scope via stringification
-      devtoolsNodePath: getNodePath(script),
+      // @ts-expect-error - getNodeDetails put into scope via stringification
+      ...getNodeDetails(script),
       content: script.src ? null : script.text,
       requestId: null,
     };
@@ -75,7 +75,7 @@ class ScriptElements extends Gatherer {
     /** @type {LH.Artifacts['ScriptElements']} */
     const scripts = await driver.evaluateAsync(`(() => {
       ${getElementsInDocumentString}
-      ${pageFunctions.getNodePathString};
+      ${pageFunctions.getNodeDetailsString};
       return (${collectAllScriptElements.toString()})();
     })()`, {useIsolation: true});
 
@@ -108,6 +108,10 @@ class ScriptElements extends Gatherer {
       } else {
         scripts.push({
           devtoolsNodePath: '',
+          snippet: '',
+          selector: '',
+          nodeLabel: '',
+          boundingRect: null,
           type: null,
           src: record.url,
           id: null,

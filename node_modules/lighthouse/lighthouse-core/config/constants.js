@@ -30,7 +30,7 @@ const throttling = {
   // These values partially align with WebPageTest's definition of "Regular 3G".
   // These values are meant to roughly align with Chrome UX report's 3G definition which are based
   // on HTTP RTT of 300-1400ms and downlink throughput of <700kbps.
-  mobileRegluar3G: {
+  mobileRegular3G: {
     rttMs: 300,
     throughputKbps: 700,
     requestLatencyMs: 300 * DEVTOOLS_RTT_ADJUSTMENT_FACTOR,

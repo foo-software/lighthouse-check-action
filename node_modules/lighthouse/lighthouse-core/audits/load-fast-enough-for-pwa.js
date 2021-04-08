@@ -84,9 +84,7 @@ class LoadFastEnough4Pwa extends Audit {
 
     const score = Number(tti.timing < MAXIMUM_TTI);
 
-    /** @type {string|undefined} */
     let displayValue;
-    /** @type {string|undefined} */
     let explanation;
     if (!score) {
       displayValue = str_(displayValueTemplate, {timeInMs: tti.timing});

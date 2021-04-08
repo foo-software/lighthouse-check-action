@@ -23,8 +23,6 @@ const UIStrings = {
   description: 'Errors logged to the console indicate unresolved problems. ' +
     'They can come from network request failures and other browser concerns. ' +
     '[Learn more](https://web.dev/errors-in-console/)',
-  /**  Label for a column in a data table; entries in the column will be the descriptions of logged browser errors. */
-  columnDesc: 'Description',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
@@ -116,7 +114,7 @@ class ErrorLogs extends Audit {
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
       {key: 'url', itemType: 'url', text: str_(i18n.UIStrings.columnURL)},
-      {key: 'description', itemType: 'code', text: str_(UIStrings.columnDesc)},
+      {key: 'description', itemType: 'code', text: str_(i18n.UIStrings.columnDescription)},
     ];
 
     const details = Audit.makeTableDetails(headings, tableRows);

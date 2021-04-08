@@ -19,6 +19,7 @@ module.exports = [
             items: [
               {
                 url: 'http://localhost:10200/legacy-javascript.js',
+                wastedBytes: '78000 +/- 2000',
                 subItems: {
                   items: [
                     {signal: 'Array.prototype.fill'},

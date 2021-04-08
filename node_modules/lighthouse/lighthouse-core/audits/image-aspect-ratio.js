@@ -56,7 +56,7 @@ class ImageAspectRatio extends Audit {
 
   /**
    * @param {WellDefinedImage} image
-   * @return {Error|{url: string, displayedAspectRatio: string, actualAspectRatio: string, doRatiosMatch: boolean}}
+   * @return {LH.IcuMessage|{url: string, displayedAspectRatio: string, actualAspectRatio: string, doRatiosMatch: boolean}}
    */
   static computeAspectRatios(image) {
     const url = URL.elideDataURI(image.src);
@@ -68,7 +68,7 @@ class ImageAspectRatio extends Audit {
 
     if (!Number.isFinite(actualAspectRatio) ||
       !Number.isFinite(displayedAspectRatio)) {
-      return new Error(str_(UIStrings.warningCompute, {url}));
+      return str_(UIStrings.warningCompute, {url});
     }
 
     return {
@@ -88,7 +88,7 @@ class ImageAspectRatio extends Audit {
   static audit(artifacts) {
     const images = artifacts.ImageElements;
 
-    /** @type {string[]} */
+    /** @type {LH.IcuMessage[]} */
     const warnings = [];
     /** @type {Array<{url: string, displayedAspectRatio: string, actualAspectRatio: string, doRatiosMatch: boolean}>} */
     const results = [];
@@ -109,8 +109,8 @@ class ImageAspectRatio extends Audit {
     }).forEach(image => {
       const wellDefinedImage = /** @type {WellDefinedImage} */ (image);
       const processed = ImageAspectRatio.computeAspectRatios(wellDefinedImage);
-      if (processed instanceof Error) {
-        warnings.push(processed.message);
+      if (i18n.isIcuMessage(processed)) {
+        warnings.push(processed);
         return;
       }
 

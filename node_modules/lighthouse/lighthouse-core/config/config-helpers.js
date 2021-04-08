@@ -8,6 +8,7 @@
 const path = require('path');
 const Audit = require('../audits/audit.js');
 const Runner = require('../runner.js');
+const i18n = require('../lib/i18n/i18n.js');
 
 /**
  * If any items with identical `path` properties are found in the input array,
@@ -53,19 +54,19 @@ function assertValidAudit(auditDefinition) {
     throw new Error(`${auditName} has no meta.id property, or the property is not a string.`);
   }
 
-  if (typeof implementation.meta.title !== 'string') {
+  if (!i18n.isStringOrIcuMessage(implementation.meta.title)) {
     throw new Error(`${auditName} has no meta.title property, or the property is not a string.`);
   }
 
   // If it'll have a ✔ or ✖ displayed alongside the result, it should have failureTitle
   if (
-    typeof implementation.meta.failureTitle !== 'string' &&
+    !i18n.isStringOrIcuMessage(implementation.meta.failureTitle) &&
     implementation.meta.scoreDisplayMode === Audit.SCORING_MODES.BINARY
   ) {
     throw new Error(`${auditName} has no failureTitle and should.`);
   }
 
-  if (typeof implementation.meta.description !== 'string') {
+  if (!i18n.isStringOrIcuMessage(implementation.meta.description)) {
     throw new Error(
       `${auditName} has no meta.description property, or the property is not a string.`
     );
@@ -139,7 +140,7 @@ function requireAudits(audits, configDir) {
       let requirePath = `../audits/${audit.path}`;
       if (!coreAudit) {
         // TODO: refactor and delete `global.isDevtools`.
-        if (global.isDevtools) {
+        if (global.isDevtools || global.isLightrider) {
           // This is for pubads bundling.
           requirePath = audit.path;
         } else {

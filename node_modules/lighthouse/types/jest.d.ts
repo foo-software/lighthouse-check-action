@@ -20,6 +20,6 @@ declare namespace jest {
     /**
      * Asserts that an i18n string (using en-US) matches an expected pattern.
      */
-    toBeDisplayString: (pattern: RegExp) => R;
+    toBeDisplayString: (pattern: RegExp | string) => R;
   }
 }
