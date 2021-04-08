@@ -16,18 +16,28 @@
  */
 'use strict';
 
-/* globals self CriticalRequestChainRenderer SnippetRenderer Util URL */
+/* globals self CriticalRequestChainRenderer SnippetRenderer ElementScreenshotRenderer Util URL */
 
 /** @typedef {import('./dom.js')} DOM */
+
+// Convenience types for localized AuditDetails.
+/** @typedef {LH.FormattedIcu<LH.Audit.Details>} AuditDetails */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.Opportunity>} OpportunityTable */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.Table>} Table */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.TableItem>} TableItem */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.ItemValue>} TableItemValue */
 
 const URL_PREFIXES = ['http://', 'https://', 'data:'];
 
 class DetailsRenderer {
   /**
    * @param {DOM} dom
+   * @param {{fullPageScreenshot?: LH.Artifacts.FullPageScreenshot}} [options]
    */
-  constructor(dom) {
+  constructor(dom, options = {}) {
     this._dom = dom;
+    this._fullPageScreenshot = options.fullPageScreenshot;
+
     /** @type {ParentNode} */
     this._templateContext; // eslint-disable-line no-unused-expressions
   }
@@ -40,7 +50,7 @@ class DetailsRenderer {
   }
 
   /**
-   * @param {LH.Audit.Details} details
+   * @param {AuditDetails} details
    * @return {Element|null}
    */
   render(details) {
@@ -59,10 +69,11 @@ class DetailsRenderer {
       // Internal-only details, not for rendering.
       case 'screenshot':
       case 'debugdata':
+      case 'full-page-screenshot':
         return null;
 
       default: {
-        // @ts-ignore tsc thinks this is unreachable, but be forward compatible
+        // @ts-expect-error tsc thinks this is unreachable, but be forward compatible
         // with new unexpected detail types.
         return this._renderUnknown(details.type, details);
       }
@@ -108,7 +119,7 @@ class DetailsRenderer {
     try {
       const parsed = Util.parseURL(url);
       displayedPath = parsed.file === '/' ? parsed.origin : parsed.file;
-      displayedHost = parsed.file === '/' ? '' : `(${parsed.hostname})`;
+      displayedHost = parsed.file === '/' || parsed.hostname === '' ? '' : `(${parsed.hostname})`;
       title = url;
     } catch (e) {
       displayedPath = url;
@@ -144,7 +155,9 @@ class DetailsRenderer {
 
     if (!url || !allowedProtocols.includes(url.protocol)) {
       // Fall back to just the link text if invalid or protocol not allowed.
-      return this._renderText(details.text);
+      const element = this._renderText(details.text);
+      element.classList.add('lh-link');
+      return element;
     }
 
     const a = this._dom.createElement('a');
@@ -152,7 +165,7 @@ class DetailsRenderer {
     a.target = '_blank';
     a.textContent = details.text;
     a.href = url.href;
-
+    a.classList.add('lh-link');
     return a;
   }
 
@@ -211,7 +224,7 @@ class DetailsRenderer {
    * Render a details item value for embedding in a table. Renders the value
    * based on the heading's valueType, unless the value itself has a `type`
    * property to override it.
-   * @param {LH.Audit.Details.ItemValue} value
+   * @param {TableItemValue} value
    * @param {LH.Audit.Details.OpportunityColumnHeading} heading
    * @return {Element|null}
    */
@@ -232,6 +245,9 @@ class DetailsRenderer {
         }
         case 'node': {
           return this.renderNode(value);
+        }
+        case 'numeric': {
+          return this._renderNumeric(value);
         }
         case 'source-location': {
           return this.renderSourceLocation(value);
@@ -298,8 +314,8 @@ class DetailsRenderer {
    * Get the headings of a table-like details object, converted into the
    * OpportunityColumnHeading type until we have all details use the same
    * heading format.
-   * @param {LH.Audit.Details.Table|LH.Audit.Details.Opportunity} tableLike
-   * @return {Array<LH.Audit.Details.OpportunityColumnHeading>}
+   * @param {Table|OpportunityTable} tableLike
+   * @return {OpportunityTable['headings']}
    */
   _getCanonicalizedHeadingsFromTable(tableLike) {
     if (tableLike.type === 'opportunity') {
@@ -313,8 +329,8 @@ class DetailsRenderer {
    * Get the headings of a table-like details object, converted into the
    * OpportunityColumnHeading type until we have all details use the same
    * heading format.
-   * @param {LH.Audit.Details.TableColumnHeading} heading
-   * @return {LH.Audit.Details.OpportunityColumnHeading}
+   * @param {Table['headings'][number]} heading
+   * @return {OpportunityTable['headings'][number]}
    */
   _getCanonicalizedHeading(heading) {
     let subItemsHeading;
@@ -372,7 +388,7 @@ class DetailsRenderer {
   }
 
   /**
-   * @param {LH.Audit.Details.OpportunityItem | LH.Audit.Details.TableItem} item
+   * @param {TableItem} item
    * @param {(LH.Audit.Details.OpportunityColumnHeading | null)[]} headings
    */
   _renderTableRow(item, headings) {
@@ -409,7 +425,7 @@ class DetailsRenderer {
   /**
    * Renders one or more rows from a details table item. A single table item can
    * expand into multiple rows, if there is a subItemsHeading.
-   * @param {LH.Audit.Details.OpportunityItem | LH.Audit.Details.TableItem} item
+   * @param {TableItem} item
    * @param {LH.Audit.Details.OpportunityColumnHeading[]} headings
    */
   _renderTableRowsFromItem(item, headings) {
@@ -431,7 +447,7 @@ class DetailsRenderer {
   }
 
   /**
-   * @param {LH.Audit.Details.Table|LH.Audit.Details.Opportunity} details
+   * @param {OpportunityTable|Table} details
    * @return {Element}
    */
   _renderTable(details) {
@@ -505,6 +521,22 @@ class DetailsRenderer {
     if (item.selector) element.setAttribute('data-selector', item.selector);
     if (item.snippet) element.setAttribute('data-snippet', item.snippet);
 
+    if (!this._fullPageScreenshot) return element;
+
+    const rect =
+      (item.lhId ? this._fullPageScreenshot.nodes[item.lhId] : null) || item.boundingRect;
+    if (!rect) return element;
+
+    const maxThumbnailSize = {width: 147, height: 100};
+    const elementScreenshot = ElementScreenshotRenderer.render(
+      this._dom,
+      this._templateContext,
+      this._fullPageScreenshot.screenshot,
+      rect,
+      maxThumbnailSize
+    );
+    if (elementScreenshot) element.prepend(elementScreenshot);
+
     return element;
   }
 
@@ -525,7 +557,7 @@ class DetailsRenderer {
     let element;
     if (item.urlProvider === 'network') {
       element = this.renderTextURL(item.url);
-      this._dom.find('a', element).textContent += `:${line}:${column}`;
+      this._dom.find('.lh-link', element).textContent += `:${line}:${column}`;
     } else {
       element = this._renderText(`${item.url}:${line}:${column} (from sourceURL)`);
     }

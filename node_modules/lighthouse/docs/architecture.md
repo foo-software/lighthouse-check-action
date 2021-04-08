@@ -2,7 +2,7 @@
 
 _Some incomplete notes_
 
-![Lighthouse Architecture](https://raw.githubusercontent.com/GoogleChrome/lighthouse/master/assets/architecture.jpg)
+![Lighthouse Architecture](https://raw.githubusercontent.com/GoogleChrome/lighthouse/master/assets/architecture.png)
 
 ## Components & Terminology
 
@@ -17,7 +17,7 @@ _Some incomplete notes_
 * **Category** - Roll-up collection of audits and audit groups into a user-facing section of the report (eg. `Best Practices`). Applies weighting and overall scoring to the section. Examples: PWA, Accessibility, Best Practices.
 * **Audit title** - Short user-visible title for the successful audit. eg. “All image elements have `[alt]` attributes.”
 * **Audit failureTitle** - Short user-visible title for a failing audit. eg. “Some image elements do not have `[alt]` attributes.”
-* **Audit description** - Explanation of why the user should care about the audit. Not necessarily how to fix it, unless there is no external link that explains it. ([See description guidelines](CONTRIBUTING.md#description-guidelines)). eg. “Informative elements should aim for short, descriptive alternate text. Decorative elements can be ignored with an empty alt attribute. [Learn more].”
+* **Audit description** - Explanation of why the user should care about the audit. Not necessarily how to fix it, unless there is no external link that explains it. ([See description guidelines](../CONTRIBUTING.md#audit-description-guidelines)). eg. “Informative elements should aim for short, descriptive alternate text. Decorative elements can be ignored with an empty alt attribute. [Learn more].”
 
 ## Protocol
 
@@ -64,13 +64,13 @@ Trace-of-tab identifies trace events for key moments (navigation start, first me
   processEvents: [/* all trace events in the main process */],
   mainThreadEvents: [/* all trace events on the main thread */],
   timings: {
-    navigationStart: 0,
-    firstPaint: 150, // firstPaint time in ms after nav start
+    timeOrigin: 0, // timeOrigin is always 0 ms
+    firstPaint: 150, // firstPaint time in ms after time origin
     /* other key moments */
-    traceEnd: 16420, // traceEnd time in ms after nav start
+    traceEnd: 16420, // traceEnd time in ms after time origin
   },
   timestamps: {
-    navigationStart: 623000000, // navigationStart timestamp in microseconds
+    timeOrigin: 623000000, // timeOrigin timestamp in microseconds, marks the start of the navigation of interest
     firstPaint: 623150000, // firstPaint timestamp in microseconds
     /* other key moments */
     traceEnd: 639420000, // traceEnd timestamp in microseconds
@@ -90,9 +90,9 @@ The `details` object is parsed in report-renderer.js. View other audits for guid
 
 ## Lighthouse-core internal module dependencies
 
-![image](https://user-images.githubusercontent.com/39191/42241426-609d15f6-7ebf-11e8-9e40-411d9ede43e6.png)
+![image](https://user-images.githubusercontent.com/39191/86166329-786fb100-bac9-11ea-919a-d6c3b156d3a4.png)
 
-(Generated July 3, 2018 via `madge lighthouse-core/index.js --image arch.png --layout dot --backgroundColor "#fafafa" --nodeColor "#4d4afc" --noDependencyColor "#48ad00"`)
+(Generated June 30, 2020 via `madge lighthouse-core/index.js --image arch.png --layout dot --exclude="(locales\/)|(stack-packs\/packs)"`)
 
 ## Lantern
 

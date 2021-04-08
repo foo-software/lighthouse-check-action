@@ -8,7 +8,7 @@ Read more about the [architecture of Lighthouse](./architecture.md).
 
 You can specify a custom config file when using Lighthouse through the CLI or consuming the npm module yourself.
 
-**custom-config.js**
+**custom-config.js file**
 ```js
 module.exports = {
   extends: 'lighthouse:default',
@@ -23,12 +23,12 @@ module.exports = {
 };
 ```
 
-**CLI**
+**Use config file via CLI**
 ```sh
 lighthouse --config-path=path/to/custom-config.js https://example.com
 ```
 
-**Node**
+**Use config file via Node**
 ```js
 const lighthouse = require('lighthouse');
 const config = require('./path/to/custom-config.js');
@@ -46,9 +46,11 @@ lighthouse('https://example.com/', {port: 9222}, config);
 | categories | <code>Object&#124;undefined</code> |
 | groups | <code>Object&#124;undefined</code> |
 
-### `extends: string|boolean|undefined`
+### `extends: "lighthouse:default"|boolean|undefined`
 
-The extends property controls if your configuration should inherit from the default Lighthouse configuration. [Learn more.](#config-extension)
+The `extends` property controls if your configuration should inherit from the default Lighthouse configuration. [Learn more.](#config-extension)
+
+Both the values `"lighthouse:default"` and `true` will enable inheritance, while `false` and `undefined` will not.
 
 #### Example
 ```js
@@ -72,7 +74,7 @@ The settings property controls various aspects of running Lighthouse such as CPU
 ```
 
 #### Options
-For full list see [our default config settings](https://github.com/GoogleChrome/lighthouse/blob/8f500e00243e07ef0a80b39334bedcc8ddc8d3d0/lighthouse-core/config/constants.js#L30-L48).
+For full list see [our config settings typedef](https://github.com/GoogleChrome/lighthouse/blob/575e29b8b6634bfb280bc820efea6795f3dd9017/types/externs.d.ts#L141-L186).
 
 | Name | Type | Description |
 | -- | -- | -- |
@@ -197,7 +199,7 @@ The groups property controls how to visually group audits within a category. For
 
 The stock Lighthouse configurations can be extended if you only need to make small tweaks, such as adding an audit or skipping an audit, but wish to still run most of what Lighthouse offers. When adding the `extends: 'lighthouse:default'` property to your config, the default passes, audits, groups, and categories will be automatically included, allowing you modify settings or add additional audits to a pass.
 
-Please note that you can only extend from `lighthouse:default` using the `extends` property. Other internal configs found in the [lighthouse-core/config](https://github.com/GoogleChrome/lighthouse/tree/master/lighthouse-core/config) directory can be used by importing the config object from file reference, or by using the [`--preset`](https://github.com/GoogleChrome/lighthouse#cli-options) CLI flag.
+Please note that the `extends` property only supports extension of `lighthouse:default`. Other internal configs found in the [lighthouse-core/config](https://github.com/GoogleChrome/lighthouse/tree/master/lighthouse-core/config) directory can be used by importing the config object from file reference, or by using the [`--preset`](https://github.com/GoogleChrome/lighthouse#cli-options) CLI flag.
 
 See [more examples below](#more-examples) to view different types of extensions in action.
 
@@ -213,4 +215,3 @@ The best examples are the ones Lighthouse uses itself! There are several referen
 * [lighthouse-core/config/perf-config.js](https://github.com/GoogleChrome/lighthouse/blob/master/lighthouse-core/config/perf-config.js)
 * [docs/recipes/custom-audit/custom-config.js](https://github.com/GoogleChrome/lighthouse/blob/master/docs/recipes/custom-audit/custom-config.js)
 * [pwmetrics](https://github.com/paulirish/pwmetrics/blob/v4.1.1/lib/perf-config.ts)
-

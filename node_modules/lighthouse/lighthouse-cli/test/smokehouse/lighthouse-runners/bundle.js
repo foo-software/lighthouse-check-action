@@ -14,11 +14,22 @@
 const ChromeLauncher = require('chrome-launcher');
 const ChromeProtocol = require('../../../../lighthouse-core/gather/connections/cri.js');
 
+// @ts-expect-error - `require` isn't on `global` in the node typedefs.
+const originalRequire = global.require;
+if (typeof globalThis === 'undefined') {
+  // @ts-expect-error - exposing for loading of dt-bundle.
+  global.globalThis = global;
+}
+
 // Load bundle, which creates a `global.runBundledLighthouse`.
-require('../../../../dist/lighthouse-dt-bundle.js');
+// @ts-ignore - file exists if `yarn build-all` is run, but not used for types anyways.
+require('../../../../dist/lighthouse-dt-bundle.js'); // eslint-disable-line
+
+// @ts-expect-error - `require` isn't on `global` in the node typedefs.
+global.require = originalRequire;
 
 /** @type {import('../../../../lighthouse-core/index.js')} */
-// @ts-ignore - not worth giving test global an actual type.
+// @ts-expect-error - not worth giving test global an actual type.
 const lighthouse = global.runBundledLighthouse;
 
 /**
@@ -30,7 +41,9 @@ const lighthouse = global.runBundledLighthouse;
  */
 async function runLighthouse(url, configJson, testRunnerOptions = {}) {
   // Launch and connect to Chrome.
-  const launchedChrome = await ChromeLauncher.launch();
+  const launchedChrome = await ChromeLauncher.launch({
+    chromeFlags: ['--enable-features=AutofillShowTypePredictions'],
+  });
   const port = launchedChrome.port;
   const connection = new ChromeProtocol(port);
 

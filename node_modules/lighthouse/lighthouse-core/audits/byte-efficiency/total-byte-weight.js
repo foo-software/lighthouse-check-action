@@ -78,7 +78,6 @@ class TotalByteWeight extends ByteEfficiencyAudit {
       totalBytes += result.totalBytes;
       results.push(result);
     });
-    const totalCompletedRequests = results.length;
     results = results.sort((itemA, itemB) => {
       return itemB.totalBytes - itemA.totalBytes ||
         itemA.url.localeCompare(itemB.url);
@@ -102,12 +101,6 @@ class TotalByteWeight extends ByteEfficiencyAudit {
       numericValue: totalBytes,
       numericUnit: 'byte',
       displayValue: str_(UIStrings.displayValue, {totalBytes}),
-      extendedInfo: {
-        value: {
-          results,
-          totalCompletedRequests,
-        },
-      },
       details: tableDetails,
     };
   }

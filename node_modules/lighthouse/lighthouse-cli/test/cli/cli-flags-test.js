@@ -14,14 +14,14 @@ describe('CLI bin', function() {
     getFlags('chrome://version');
     const yargs = require('yargs');
 
-    // @ts-ignore - getGroups is private
+    // @ts-expect-error - getGroups is private
     const optionGroups = yargs.getGroups();
     /** @type {string[]} */
     const allOptions = [];
     Object.keys(optionGroups).forEach(key => {
       allOptions.push(...optionGroups[key]);
     });
-    // @ts-ignore - getUsageInstance is private
+    // @ts-expect-error - getUsageInstance is private
     const optionsWithDescriptions = Object.keys(yargs.getUsageInstance().getDescriptions());
 
     allOptions.forEach(opt => {

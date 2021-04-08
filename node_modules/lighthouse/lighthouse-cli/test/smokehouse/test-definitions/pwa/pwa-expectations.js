@@ -90,13 +90,13 @@ const expectations = [
           score: 1,
         },
         'service-worker': {
-          score: 1,
+          score: 0,
         },
         'works-offline': {
-          score: 1,
+          score: 0,
         },
         'offline-start-url': {
-          score: 1,
+          score: 0,
         },
         'viewport': {
           score: 1,
@@ -108,16 +108,13 @@ const expectations = [
         // Ignore speed test; just verify that it ran.
         },
         'installable-manifest': {
-          score: 1,
-          details: {items: [pwaDetailsExpectations]},
+          score: 0,
         },
         'splash-screen': {
-          score: 1,
-          details: {items: [pwaDetailsExpectations]},
+          score: 0,
         },
         'themed-omnibox': {
-          score: 1,
-          details: {items: [pwaDetailsExpectations]},
+          score: 0,
         },
         'content-width': {
           score: 1,

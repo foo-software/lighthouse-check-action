@@ -12,7 +12,12 @@ module.exports = {
   extends: 'lighthouse:default',
   settings: {
     onlyAudits: [
+      'first-contentful-paint',
+      'interactive',
+      'speed-index',
       'redirects',
     ],
+    // Use provided throttling method to test usage of correct navStart.
+    throttlingMethod: /** @type {'provided'} */ ('provided'),
   },
 };

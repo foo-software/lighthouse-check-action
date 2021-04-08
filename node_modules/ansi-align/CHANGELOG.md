@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/nexdrew/ansi-align/compare/v2.0.0...v3.0.0) (2018-12-17)
+
+
+### Bug Fixes
+
+* **package:** update string-width to version 3.0.0 ([#50](https://github.com/nexdrew/ansi-align/issues/50)) ([67f0d8f](https://github.com/nexdrew/ansi-align/commit/67f0d8f))
+
+
+### BREAKING CHANGES
+
+* **package:** Node 4 no longer supported, please update to Node 6+ or use ansi-align@2.0.0
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/nexdrew/ansi-align/compare/v1.1.0...v2.0.0) (2017-05-01)
 

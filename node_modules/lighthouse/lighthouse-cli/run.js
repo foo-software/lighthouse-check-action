@@ -8,6 +8,7 @@
 /* eslint-disable no-console */
 
 const path = require('path');
+const psList = require('ps-list');
 
 const Printer = require('./printer.js');
 const ChromeLauncher = require('chrome-launcher');
@@ -20,7 +21,7 @@ const assetSaver = require('../lighthouse-core/lib/asset-saver.js');
 
 const open = require('open');
 
-/** @typedef {import('../lighthouse-core/lib/lh-error.js')} LighthouseError */
+/** @typedef {Error & {code: string, friendlyMessage?: string}} ExitError */
 
 const _RUNTIME_ERROR_CODE = 1;
 const _PROTOCOL_TIMEOUT_EXIT_CODE = 67;
@@ -43,7 +44,7 @@ function parseChromeFlags(flags = '') {
       // i.e. `child_process.execFile("lighthouse", ["http://google.com", "--chrome-flags='--headless --no-sandbox'")`
       // the following regular expression removes those wrapping quotes:
       .map((flagsGroup) => flagsGroup.replace(/^\s*('|")(.+)\1\s*$/, '$2').trim())
-      .join(' ');
+      .join(' ').trim();
 
   const parsed = yargsParser(trimmedFlags, {
     configuration: {'camel-case-expansion': false, 'boolean-negation': false},
@@ -91,7 +92,7 @@ function printProtocolTimeoutErrorAndExit() {
 }
 
 /**
- * @param {LighthouseError} err
+ * @param {ExitError} err
  * @return {never}
  */
 function printRuntimeErrorAndExit(err) {
@@ -103,7 +104,7 @@ function printRuntimeErrorAndExit(err) {
 }
 
 /**
- * @param {LighthouseError} err
+ * @param {ExitError} err
  * @return {never}
  */
 function printErrorAndExit(err) {
@@ -171,11 +172,25 @@ async function saveResults(runnerResult, flags) {
 async function potentiallyKillChrome(launchedChrome) {
   if (!launchedChrome) return;
 
+  /** @type {NodeJS.Timeout} */
+  let timeout;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeout = setTimeout(() => reject(new Error('Timed out waiting to kill Chrome')), 5000);
+  });
+
   return Promise.race([
     launchedChrome.kill(),
-    new Promise((_, reject) => setTimeout(reject, 5000, 'Timed out.')),
-  ]).catch(err => {
+    timeoutPromise,
+  ]).catch(async err => {
+    const runningProcesses = await psList();
+    if (!runningProcesses.some(proc => proc.pid === launchedChrome.pid)) {
+      log.warn('CLI', 'Warning: Chrome process could not be killed because it already exited.');
+      return;
+    }
+
     throw new Error(`Couldn't quit Chrome process. ${err}`);
+  }).finally(() => {
+    clearTimeout(timeout);
   });
 }
 
@@ -224,7 +239,6 @@ async function runLighthouse(url, flags, config) {
       return printErrorAndExit({
         name: 'LHError',
         friendlyMessage: runtimeError.message,
-        lhrRuntimeError: true,
         code: runtimeError.code,
         message: runtimeError.message,
       });

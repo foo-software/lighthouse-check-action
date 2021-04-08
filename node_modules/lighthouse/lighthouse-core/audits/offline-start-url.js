@@ -65,6 +65,7 @@ class OfflineStartUrl extends Audit {
     // The StartUrl artifact provides no explanation if a response was received from a service
     // worker with a non-200 status code. In that case, this audit provides its own explanation.
     // In all other cases it defers to the artifact explanation.
+    /** @type {string|LH.IcuMessage|undefined} */
     let explanation = artifacts.StartUrl.explanation;
     if (!explanation && artifacts.StartUrl.statusCode !== -1 && !hasOfflineStartUrl) {
       explanation = str_(UIStrings.errorLoading, {

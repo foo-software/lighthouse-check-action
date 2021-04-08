@@ -91,13 +91,14 @@ If your machine has really limited resources or creating a clean environment has
 
 When creating your thresholds for failure, either mental or programmatic, use aggregate values like the median, 90th percentile, or even min/max instead of single test results.
 
-The median Lighthouse score of 5 runs is twice as stable as 1 run, and tools like [lighthouse-ci](https://github.com/GoogleChrome/lighthouse-ci/) can run Lighthouse multiple times for you automatically.
+The median Lighthouse score of 5 runs is twice as stable as 1 run. There are multiple ways to get a Lighthouse report, but the simplest way to run Lighthouse multiple times and also get a median run is to use [lighthouse-ci](https://github.com/GoogleChrome/lighthouse-ci/).
 
 ```bash
-# Note: you must be in a git repository with at least one commit for this to work.
 npx -p @lhci/cli lhci collect --url https://example.com -n 5
 npx -p @lhci/cli lhci upload --target filesystem --outputDir ./path/to/dump/reports
 ```
+
+> Note: you must have [Node](https://nodejs.org/en/download/package-manager/) installed.
 
 You can then process the reports that are output to the filesystem. Read the [Lighthouse CI documentation](https://github.com/GoogleChrome/lighthouse-ci/blob/master/docs/configuration.md#outputdir) for more.
 
@@ -109,7 +110,14 @@ const medianResult = JSON.parse(fs.readFileSync(medianEntry.jsonPath, 'utf-8'));
 console.log('Median performance score was', medianResult.categories.performance.score * 100);
 ```
 
-If you're running Lighthouse directly via node, you can also use the `computeMedianRun` function to determine the median using a blend of the performance metrics.
+You can also direct `lighthouse-ci` to use PageSpeedInsights:
+
+```bash
+npx -p @lhci/cli lhci collect --url https://example.com -n 5 --mode psi --psiApiKey xXxXxXx
+npx -p @lhci/cli lhci upload --target filesystem --outputDir ./path/to/dump/reports
+```
+
+If you're running Lighthouse directly via node, you can use the `computeMedianRun` function to determine the median using a blend of the performance metrics.
 
 ```js
 const spawnSync = require('child_process').spawnSync;

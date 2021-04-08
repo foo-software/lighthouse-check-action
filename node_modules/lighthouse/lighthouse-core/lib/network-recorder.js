@@ -333,7 +333,7 @@ class NetworkRecorder extends EventEmitter {
    * @return {NetworkRequest|null}
    * @private
    */
-  static _chooseInitiator(record, recordsByURL) {
+  static _chooseInitiatorRequest(record, recordsByURL) {
     if (record.redirectSource) {
       return record.redirectSource;
     }
@@ -344,7 +344,7 @@ class NetworkRecorder extends EventEmitter {
     // The initiator must come before the initiated request.
     candidates = candidates.filter(cand => cand.responseReceivedTime <= record.startTime);
     if (candidates.length > 1) {
-      // Disambiguate based on resource type. Prefetch requests have type 'Other' and cannot
+      // Disambiguate based on prefetch. Prefetch requests have type 'Other' and cannot
       // initiate requests, so we drop them here.
       const nonPrefetchCandidates = candidates.filter(
           cand => cand.resourceType !== NetworkRequest.TYPES.Other);
@@ -359,8 +359,17 @@ class NetworkRecorder extends EventEmitter {
         candidates = sameFrameCandidates;
       }
     }
+    if (candidates.length > 1 && record.initiator.type === 'parser') {
+      // Filter to just Documents when initiator type is parser.
+      const documentCandidates = candidates.filter(cand =>
+        cand.resourceType === NetworkRequest.TYPES.Document);
+      if (documentCandidates.length) {
+        candidates = documentCandidates;
+      }
+    }
 
-    return candidates.length ? candidates[0] : null;
+    // Only return an initiator if the result is unambiguous.
+    return candidates.length === 1 ? candidates[0] : null;
   }
 
   /**
@@ -384,11 +393,11 @@ class NetworkRecorder extends EventEmitter {
       recordsByURL.set(record.url, records);
     }
 
-    // set the initiator and redirects array
+    // set the initiatorRequest and redirects array
     for (const record of records) {
-      const initiator = NetworkRecorder._chooseInitiator(record, recordsByURL);
-      if (initiator) {
-        record.setInitiatorRequest(initiator);
+      const initiatorRequest = NetworkRecorder._chooseInitiatorRequest(record, recordsByURL);
+      if (initiatorRequest) {
+        record.setInitiatorRequest(initiatorRequest);
       }
 
       let finalRecord = record;

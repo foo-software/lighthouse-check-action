@@ -32,8 +32,3 @@ console.log(isInstalledGlobally);
 - [import-global](https://github.com/sindresorhus/import-global) - Import a globally installed module
 - [resolve-global](https://github.com/sindresorhus/resolve-global) - Resolve the path of a globally installed module
 - [global-dirs](https://github.com/sindresorhus/global-dirs) - Get the directory of globally installed packages and binaries
-
-
-## License
-
-MIT © [Sindre Sorhus](https://sindresorhus.com)

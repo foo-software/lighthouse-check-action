@@ -51,8 +51,6 @@ const BLOCKLIST = new Set([
   'empezar',
   // Portuguese
   'clique aqui',
-  'inicio',
-  'início',
   'ir',
   'mais informação',
   'mais informações',

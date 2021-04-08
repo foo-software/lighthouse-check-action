@@ -71,6 +71,35 @@ However, if an array literal is used as the expectation, an extra condition is e
 | `[{timeInMs: 5}, {timeInMs: 15}]` | `{length: 2}` | ✅ PASS |
 | `[{timeInMs: 5}, {timeInMs: 15}]` | `[{timeInMs: 5}]` | ❌ FAIL |
 
+### Special environment checks
+
+If an expectation requires a minimum version of Chromium, use `_minChromiumMilestone: xx` to conditionally ignore that entire object in the expectation.
+
+**Examples**:
+```js
+{
+  artifacts: {
+    InspectorIssues: {
+      // Mixed Content issues weren't added to the protocol until M84.
+      _minChromiumMilestone: 84, // The entire `InspectorIssues` is ignored for older Chrome.
+      mixedContent: [
+        {
+          resourceType: 'Image',
+          resolutionStatus: 'MixedContentWarning',
+          insecureURL: 'http://www.mixedcontentexamples.com/Content/Test/steveholt.jpg',
+          mainResourceURL: 'https://www.mixedcontentexamples.com/Test/NonSecureImage',
+          request: {
+            url: 'http://www.mixedcontentexamples.com/Content/Test/steveholt.jpg',
+          },
+        },
+      ],
+    },
+    TraceElements: {
+      // ... anything here won't be ignored
+    }
+  },
+```
+
 ## Pipeline
 
 The different frontends launch smokehouse with a set of tests to run. Smokehouse then coordinates the tests using a particular method of running Lighthouse (CLI, as a bundle, etc).

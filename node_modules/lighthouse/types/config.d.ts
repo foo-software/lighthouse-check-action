@@ -49,15 +49,15 @@ declare global {
       } | Gatherer | typeof Gatherer | string;
 
       export interface CategoryJson {
-        title: string;
+        title: string | IcuMessage;
         auditRefs: AuditRefJson[];
-        description?: string;
-        manualDescription?: string;
+        description?: string | IcuMessage;
+        manualDescription?: string | IcuMessage;
       }
 
       export interface GroupJson {
-        title: string;
-        description?: string;
+        title: string | IcuMessage;
+        description?: string | IcuMessage;
       }
 
       export type AuditJson = {

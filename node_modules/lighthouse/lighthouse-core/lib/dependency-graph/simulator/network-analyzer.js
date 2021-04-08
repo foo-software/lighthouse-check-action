@@ -268,7 +268,6 @@ class NetworkAnalyzer {
 
     // Check if we can trust the connection information coming from the protocol
     if (!forceCoarseEstimates && NetworkAnalyzer.canTrustConnectionInformation(records)) {
-      // @ts-ignore
       return new Map(records.map(record => [record.requestId, !!record.connectionReused]));
     }
 
@@ -452,6 +451,18 @@ class NetworkAnalyzer {
     if (!documentRequests.length) throw new Error('Unable to identify the main resource');
     // The main document is the earliest document request, using position in networkRecords array to break ties.
     return documentRequests.reduce((min, r) => (r.startTime < min.startTime ? r : min));
+  }
+
+  /**
+   * Resolves redirect chain given a main document.
+   * See: {@link NetworkAnalyzer.findMainDocument}) for how to retrieve main document.
+   *
+   * @param {LH.Artifacts.NetworkRequest} request
+   * @returns {LH.Artifacts.NetworkRequest}
+   */
+  static resolveRedirects(request) {
+    while (request.redirectDestination) request = request.redirectDestination;
+    return request;
   }
 }
 

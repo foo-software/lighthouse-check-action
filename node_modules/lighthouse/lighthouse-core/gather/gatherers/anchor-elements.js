@@ -5,6 +5,8 @@
  */
 'use strict';
 
+/* global getNodeDetails */
+
 const Gatherer = require('./gatherer.js');
 const pageFunctions = require('../../lib/page-functions.js');
 
@@ -37,19 +39,12 @@ function collectAnchorElements() {
   }
 
   /** @type {Array<HTMLAnchorElement|SVGAElement>} */
-  // @ts-ignore - put into scope via stringification
+  // @ts-expect-error - put into scope via stringification
   const anchorElements = getElementsInDocument('a'); // eslint-disable-line no-undef
 
   return anchorElements.map(node => {
-    // @ts-ignore - put into scope via stringification
-    const outerHTML = getOuterHTMLSnippet(node); // eslint-disable-line no-undef
-    // @ts-ignore - put into scope via stringification
-    const nodePath = getNodePath(node); // eslint-disable-line no-undef
-    // @ts-ignore - getNodeSelector put into scope via stringification
-    const selector = getNodeSelector(node); // eslint-disable-line no-undef
-    // @ts-ignore - getNodeLabel put into scope via stringification
-    const nodeLabel = getNodeLabel(node); // eslint-disable-line no-undef
-
+    // @ts-expect-error - getNodeDetails put into scope via stringification
+    const nodeInfo = getNodeDetails(node);
     if (node instanceof HTMLAnchorElement) {
       return {
         href: node.href,
@@ -60,10 +55,7 @@ function collectAnchorElements() {
         text: node.innerText, // we don't want to return hidden text, so use innerText
         rel: node.rel,
         target: node.target,
-        devtoolsNodePath: nodePath,
-        selector,
-        nodeLabel,
-        outerHTML,
+        ...nodeInfo,
       };
     }
 
@@ -75,10 +67,7 @@ function collectAnchorElements() {
       text: node.textContent || '',
       rel: '',
       target: node.target.baseVal || '',
-      devtoolsNodePath: nodePath,
-      selector,
-      nodeLabel,
-      outerHTML,
+      ...nodeInfo,
     };
   });
 }
@@ -107,11 +96,8 @@ class AnchorElements extends Gatherer {
   async afterPass(passContext) {
     const driver = passContext.driver;
     const expression = `(() => {
-      ${pageFunctions.getOuterHTMLSnippetString};
       ${pageFunctions.getElementsInDocumentString};
-      ${pageFunctions.getNodePathString};
-      ${pageFunctions.getNodeSelectorString};
-      ${pageFunctions.getNodeLabelString};
+      ${pageFunctions.getNodeDetailsString};
 
       return (${collectAnchorElements})();
     })()`;

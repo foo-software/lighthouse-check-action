@@ -20,7 +20,7 @@ class LoadAudit extends Audit {
       id: 'searchable-audit',
       title: 'Search box initialized and ready',
       failureTitle: 'Search box slow to initialize',
-      description: 'Used to measure time from navigationStart to when the search' +
+      description: 'Used to measure time to when the search' +
           ' box is initialized and ready to search.',
 
       // The name of the custom gatherer class that provides input to this audit.

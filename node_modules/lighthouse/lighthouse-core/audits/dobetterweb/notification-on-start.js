@@ -58,9 +58,6 @@ class NotificationOnStart extends ViolationAudit {
 
     return {
       score: Number(results.length === 0),
-      extendedInfo: {
-        value: results,
-      },
       details,
     };
   }

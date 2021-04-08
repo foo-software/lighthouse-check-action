@@ -4,6 +4,7 @@ exports[`options should match snapshot 1`] = `
 Object {
   "chromeFlags": Array [
     "--disable-dev-shm-usage",
+    "--disable-gpu",
     "--headless",
     "--no-sandbox",
     "--ignore-certificate-errors",

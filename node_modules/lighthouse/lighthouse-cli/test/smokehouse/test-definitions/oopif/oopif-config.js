@@ -6,8 +6,23 @@
 'use strict';
 
 /**
+ * @type {LH.Config.Json}
  * Config file for running the OOPIF tests
  */
 module.exports = {
   extends: 'lighthouse:default',
+  settings: {
+    // This test runs in CI and hits the outside network of a live site.
+    // Be a little more forgiving on how long it takes all network requests of several nested iframes
+    // to complete.
+    maxWaitForLoad: 180000,
+  },
+  passes: [
+    // CI machines are pretty weak which lead to many more long tasks than normal.
+    // Reduce our requirement for CPU quiet.
+    {
+      passName: 'defaultPass',
+      cpuQuietThresholdMs: 500,
+    },
+  ],
 };

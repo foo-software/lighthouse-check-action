@@ -74,14 +74,6 @@ class InteractiveMetric extends Audit {
     const timeInMs = metricResult.timing;
     const isDesktop = artifacts.TestedAsMobileDevice === false;
     const options = isDesktop ? context.options.desktop : context.options.mobile;
-    const extendedInfo = {
-      timeInMs,
-      timestamp: metricResult.timestamp,
-      // @ts-ignore - TODO(bckenny): make lantern metric/metric a discriminated union.
-      optimistic: metricResult.optimisticEstimate && metricResult.optimisticEstimate.timeInMs,
-      // @ts-ignore
-      pessimistic: metricResult.pessimisticEstimate && metricResult.pessimisticEstimate.timeInMs,
-    };
 
     return {
       score: Audit.computeLogNormalScore(
@@ -91,9 +83,6 @@ class InteractiveMetric extends Audit {
       numericValue: timeInMs,
       numericUnit: 'millisecond',
       displayValue: str_(i18n.UIStrings.seconds, {timeInMs}),
-      extendedInfo: {
-        value: extendedInfo,
-      },
     };
   }
 }

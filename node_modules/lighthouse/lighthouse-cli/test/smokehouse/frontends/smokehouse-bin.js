@@ -34,18 +34,19 @@ const runnerPaths = {
  * Determine batches of smoketests to run, based on the `requestedIds`.
  * @param {Array<Smokehouse.TestDfn>} allTestDefns
  * @param {Array<string>} requestedIds
+ * @param {{invertMatch: boolean}} options
  * @return {Array<Smokehouse.TestDfn>}
  */
-function getDefinitionsToRun(allTestDefns, requestedIds) {
+function getDefinitionsToRun(allTestDefns, requestedIds, {invertMatch}) {
   let smokes = [];
   const usage = `    ${log.dim}yarn smoke ${allTestDefns.map(t => t.id).join(' ')}${log.reset}\n`;
 
-  if (requestedIds.length === 0) {
+  if (requestedIds.length === 0 && !invertMatch) {
     smokes = [...allTestDefns];
     console.log('Running ALL smoketests. Equivalent to:');
     console.log(usage);
   } else {
-    smokes = allTestDefns.filter(test => requestedIds.includes(test.id));
+    smokes = allTestDefns.filter(test => invertMatch !== requestedIds.includes(test.id));
     console.log(`Running ONLY smoketests for: ${smokes.map(t => t.id).join(' ')}\n`);
   }
 
@@ -55,6 +56,10 @@ function getDefinitionsToRun(allTestDefns, requestedIds) {
   if (unmatchedIds.length) {
     console.log(log.redify(`Smoketests not found for: ${unmatchedIds.join(' ')}`));
     console.log(usage);
+  }
+
+  if (!smokes.length) {
+    throw new Error('no smoketest found to run');
   }
 
   return smokes;
@@ -68,14 +73,16 @@ async function begin() {
     .help('help')
     .usage('node $0 [<options>] <test-ids>')
     .example('node $0 -j=1 pwa seo', 'run pwa and seo tests serially')
+    .example('node $0 --invert-match byte', 'run all smoke tests but `byte`')
     .describe({
       'debug': 'Save test artifacts and output verbose logs',
       'jobs': 'Manually set the number of jobs to run at once. `1` runs all tests serially',
       'retries': 'The number of times to retry failing tests before accepting. Defaults to 0',
       'runner': 'The method of running Lighthouse',
       'tests-path': 'The path to a set of test definitions to run. Defaults to core smoke tests.',
+      'invert-match': 'Run all available tests except the ones provided',
     })
-    .boolean(['debug'])
+    .boolean(['debug', 'invert-match'])
     .alias({
       'jobs': 'j',
     })
@@ -99,7 +106,8 @@ async function begin() {
   testDefnPath = path.resolve(process.cwd(), testDefnPath);
   const requestedTestIds = argv._;
   const allTestDefns = require(testDefnPath);
-  const testDefns = getDefinitionsToRun(allTestDefns, requestedTestIds);
+  const invertMatch = argv.invertMatch;
+  const testDefns = getDefinitionsToRun(allTestDefns, requestedTestIds, {invertMatch});
 
   const options = {jobs, retries, isDebug: argv.debug, lighthouseRunner};
 

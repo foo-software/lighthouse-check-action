@@ -10,7 +10,9 @@ const perfConfig = {
   extends: 'lighthouse:default',
   settings: {
     throttlingMethod: 'devtools',
-    onlyCategories: ['performance'],
+    // preload-fonts isn't a performance audit, but can easily leverage the font
+    // webpages present here, hence the inclusion of 'best-practices'.
+    onlyCategories: ['performance', 'best-practices'],
 
     // A mixture of under, over, and meeting budget to exercise all paths.
     budgets: [{

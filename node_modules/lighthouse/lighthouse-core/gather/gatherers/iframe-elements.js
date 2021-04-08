@@ -5,6 +5,8 @@
  */
 'use strict';
 
+/* global getNodeDetails */
+
 const Gatherer = require('./gatherer.js');
 const pageFunctions = require('../../lib/page-functions.js');
 
@@ -15,7 +17,7 @@ const pageFunctions = require('../../lib/page-functions.js');
  */
 /* istanbul ignore next */
 function collectIFrameElements() {
-  // @ts-ignore - put into scope via stringification
+  // @ts-expect-error - put into scope via stringification
   const iFrameElements = getElementsInDocument('iframe'); // eslint-disable-line no-undef
   return iFrameElements.map(/** @param {HTMLIFrameElement} node */ (node) => {
     const clientRect = node.getBoundingClientRect();
@@ -24,8 +26,10 @@ function collectIFrameElements() {
       id: node.id,
       src: node.src,
       clientRect: {top, bottom, left, right, width, height},
-      // @ts-ignore - put into scope via stringification
+      // @ts-expect-error - put into scope via stringification
       isPositionFixed: isPositionFixed(node), // eslint-disable-line no-undef
+      // @ts-expect-error - getNodeDetails put into scope via stringification
+      ...getNodeDetails(node),
     };
   });
 }
@@ -40,9 +44,9 @@ class IFrameElements extends Gatherer {
     const driver = passContext.driver;
 
     const expression = `(() => {
-      ${pageFunctions.getOuterHTMLSnippetString};
       ${pageFunctions.getElementsInDocumentString};
       ${pageFunctions.isPositionFixedString};
+      ${pageFunctions.getNodeDetailsString};
       return (${collectIFrameElements})();
     })()`;
 

@@ -55,4 +55,15 @@ module.exports = [
       },
     },
   },
+  {
+    lhr: {
+      requestedUrl: 'http://localhost:10200/debugger.html',
+      finalUrl: 'http://localhost:10200/debugger.html',
+      audits: {
+        'first-contentful-paint': {
+          numericValue: '>1', // We just want to check that it doesn't error
+        },
+      },
+    },
+  },
 ];

@@ -15,7 +15,7 @@ const UIStrings = {
   title: 'Remove unused JavaScript',
   /** Description of a Lighthouse audit that tells the user *why* they should remove JavaScript that is never needed/evaluated by the browser. This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. */
   description: 'Remove unused JavaScript to reduce bytes consumed by network activity. ' +
-    '[Learn more](https://web.dev/remove-unused-code/).',
+    '[Learn more](https://web.dev/unused-javascript/).',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
@@ -104,15 +104,20 @@ class UnusedJavaScript extends ByteEfficiencyAudit {
       };
 
       if (item.wastedBytes <= unusedThreshold) continue;
+      items.push(item);
+
+      // If there was an error calculating the bundle sizes, we can't
+      // create any sub-items.
+      if (!bundle || 'errorMessage' in bundle.sizes) continue;
+      const sizes = bundle.sizes;
 
       // Augment with bundle data.
-      if (bundle && unusedJsSummary.sourcesWastedBytes) {
+      if (unusedJsSummary.sourcesWastedBytes) {
         const topUnusedSourceSizes = Object.entries(unusedJsSummary.sourcesWastedBytes)
           .sort((a, b) => b[1] - a[1])
           .slice(0, 5)
           .map(([source, unused]) => {
-            const total =
-              source === '(unmapped)' ? bundle.sizes.unmappedBytes : bundle.sizes.files[source];
+            const total = source === '(unmapped)' ? sizes.unmappedBytes : sizes.files[source];
             return {
               source,
               unused: Math.round(unused * transferRatio),
@@ -133,8 +138,6 @@ class UnusedJavaScript extends ByteEfficiencyAudit {
           }),
         };
       }
-
-      items.push(item);
     }
 
     return {

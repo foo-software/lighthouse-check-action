@@ -152,8 +152,8 @@ function allowedImageSize(displayedWidth, displayedHeight, DPR) {
  * @return {[number, number]}
  */
 function expectedImageSize(displayedWidth, displayedHeight, DPR) {
-  const width = Math.ceil(DPR * displayedWidth);
-  const height = Math.ceil(DPR * displayedHeight);
+  const width = Math.ceil(quantizeDpr(DPR) * displayedWidth);
+  const height = Math.ceil(quantizeDpr(DPR) * displayedHeight);
   return [width, height];
 }
 
@@ -241,15 +241,44 @@ class ImageSizeResponsive extends Audit {
 /**
  * Return a quantized version of the DPR.
  *
- * This is to relax the required size of the image, as there are some densities that are not that
- * common, and the default DPR used in some contexts by lightouse is 2.625.
+ * This is to relax the required size of the image.
+ * There's strong evidence that 3 DPR images are not perceived to be significantly better to mobile users than
+ * 2 DPR images. The additional high byte cost (3x images are ~225% the file size of 2x images) makes this practice
+ * difficult to recommend.
  *
+ * Human minimum visual acuity angle = 0.016 degrees (see Sun Microsystems paper)
+ * Typical phone operating distance from eye = 12 in
+ *
+ *        A
+ *        _
+ *       \ | B
+ *        \|
+ *         θ
+ * A = minimum observable pixel size = ?
+ * B = viewing distance = 12 in
+ * θ = human minimum visual acuity angle = 0.016 degrees
+ *
+ * tan θ = A / B ---- Solve for A
+ * A = tan (0.016 degrees) * B = 0.00335 in
+ *
+ * Moto G4 display width = 2.7 in
+ * Moto G4 horizontal 2x resolution = 720 pixels
+ * Moto G4 horizontal 3x resolution = 1080 pixels
+ *
+ * Moto G4 1x pixel size = 2.7 / 360 = 0.0075 in
+ * Moto G4 2x pixel size = 2.7 / 720 = 0.00375 in
+ * Moto G4 3x pixel size = 2.7 / 1080 = 0.0025 in
+ *
+ * Wasted additional pixels in 3x image = (.00335 - .0025) / (.00375 - .0025) = 68% waste
+ *
+ *
+ * @see https://www.swift.ac.uk/about/files/vision.pdf
  * @param {number} dpr
  * @return {number}
  */
 function quantizeDpr(dpr) {
   if (dpr >= 2) {
-    return Math.floor(dpr);
+    return 2;
   }
   if (dpr >= 1.5) {
     return 1.5;

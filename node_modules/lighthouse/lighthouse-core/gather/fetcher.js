@@ -156,8 +156,8 @@ class Fetcher {
       iframe.src = src;
       iframe.onload = iframe.onerror = () => {
         iframe.remove();
-        delete iframe.onload;
-        delete iframe.onerror;
+        iframe.onload = null;
+        iframe.onerror = null;
       };
       document.body.appendChild(iframe);
     }

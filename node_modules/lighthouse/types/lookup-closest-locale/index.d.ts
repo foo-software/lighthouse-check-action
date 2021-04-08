@@ -5,7 +5,7 @@
  */
 
 declare module 'lookup-closest-locale' {
-  function lookupClosestLocale(locale: string|undefined, available: Record<LH.Locale, any>): LH.Locale|undefined;
+  function lookupClosestLocale(locale: string[]|string|undefined, available: Record<LH.Locale, any>): LH.Locale|undefined;
 
   export = lookupClosestLocale;
 }

@@ -15,6 +15,7 @@ export default async ({
   config: customConfig,
   options: customOptions,
   outputDirectory,
+  updateReport,
   url
 }) => {
   // will upload to S3?
@@ -56,6 +57,10 @@ export default async ({
     // a local file path
     let localReport;
 
+    const reportContent = !updateReport
+      ? results.report
+      : updateReport(results.report);
+
     if (isS3) {
       // upload to S3
       const s3Response = await upload({
@@ -67,10 +72,10 @@ export default async ({
         }),
         params: {
           ACL: 'public-read',
-          Body: results.report,
+          Body: reportContent,
           Bucket,
           ContentType: 'text/html',
-          Key: `lighthouse-report-${Date.now()}.html`
+          Key: `report-${Date.now()}.html`
         }
       });
 
@@ -78,8 +83,8 @@ export default async ({
     }
 
     if (outputDirectory) {
-      localReport = `${outputDirectory}/lighthouse-report-${Date.now()}.html`;
-      fs.writeFileSync(localReport, results.report);
+      localReport = `${outputDirectory}/report-${Date.now()}.html`;
+      fs.writeFileSync(localReport, reportContent);
     }
 
     await chrome.kill();
