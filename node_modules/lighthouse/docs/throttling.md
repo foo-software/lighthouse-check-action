@@ -25,7 +25,7 @@ Within web performance testing, there are four typical styles of network throttl
 
 Lighthouse, by default, uses simulated throttling as it provides both quick evaluation and minimized variance. However, some may want to experiment with more accurate throttling... [Learn more about these throttling types and how they behave in in different scenarios](https://www.debugbear.com/blog/network-throttling-methods).
 
-## DevTools' Audits Panel Throttling
+## DevTools' Lighthouse Panel Throttling
 
 In Chrome 79 and earlier, you could choose between [the throttling types](#types-of-throttling) of Simulated, Applied, and none.
 
@@ -35,7 +35,7 @@ Starting with Chrome 80, the Audits panel is simplifying the throttling configur
 1. _No throttling_ is removed as it leads to innacurate scoring and misleading metric results.
 1. Within the Audits panel settings, you can uncheck the _Simulated throttling_ checkbox to use _Applied throttling_. For the moment, we are keeping this _Applied throttling_ option available for users of the [`View Trace` button](https://developers.google.com/web/updates/2018/04/devtools#traces). Under applied throttling, the trace matches the metrics values, whereas under Simulated things do not currently match up.
 
-We plan to improve the experience of viewing a trace under simulated throttling. At that point, the _Applied throttling_ option will be removed and _Simulated throttling_ will be the only option within the DevTools Audits panel. Of course, CLI users can still control the exact [configuration](../#cli-options) of throttling.
+We plan to improve the experience of viewing a trace under simulated throttling. At that point, the _Applied throttling_ option will be removed and _Simulated throttling_ will be the only option within the DevTools Audits panel. Of course, CLI users can still control the exact [configuration](../readme.md#cli-options) of throttling.
 
 ## How do I get packet-level throttling?
 
@@ -87,36 +87,44 @@ throttle --stop
 
 Lighthouse applies CPU throttling to emulate a mid-tier mobile device even when run on far more powerful desktop hardware.
 
-## Types of CPU Throttling
-
-Within web performance testing, there are two typical styles of CPU throttling:
-
-1. **_Simulated throttling_**, which Lighthouse uses by **default**, uses a simulation of a page load, based on the data observed in the initial unthrottled load. This approach makes it very fast. However, due to the imperfect nature of predicting alternate execution paths, there is inherent inaccuracy that is summarized in this doc: [Lighthouse Metric Variability and Accuracy](https://docs.google.com/document/d/1BqtL-nG53rxWOI5RO0pItSRPowZVnYJ_gBEQCJ5EeUE/edit). The TLDR: while it's fairly accurate for most circumstances, it suffers from edge cases and a deep investigation to performance should use _applied_ CPU throttling tools.
-1. **_Applied throttling_** , also called _`devtools` throttling_ in Lighthouse configuration. This method actually interrupts execution of CPU work at periodic intervals to emulate a slower processor. It is [fairly accurate](https://docs.google.com/document/d/1jGHeGjjjzfTAE2WHXipKF3aqwF2bFA6r0B877nFtBpc/edit) and much easier than obtaining target hardware. The same underlying principle can be used by [linux cgroups](https://www.kernel.org/doc/html/latest/scheduler/sched-bwc.html) to throttle any process, not just the browser. Other tools like [WebPageTest use applied CPU throttling](https://github.com/WPO-Foundation/wptagent/commit/f7fe0d6b5b01bd1b042a1fe3144c68a6bff846a6) offered by DevTools.
-
-## Calibrating Multipliers
+## Benchmarking CPU Power
 
 Unlike network throttling where objective criteria like RTT and throughput allow targeting of a specific environment, CPU throttling is expressed relative to the performance of the host device. This poses challenges to [variability in results across devices](./variability.md), so it's important to calibrate your device before attempting to compare different reports.
 
-Lighthouse computes and saves a `benchmarkIndex` as a rough approximation of the host device's CPU performance with every report. You can find this value under the title "CPU/Memory Power" at the bottom of the Lighthouse report.
+Lighthouse computes and saves a `benchmarkIndex` as a rough approximation of the host device's CPU performance with every report. You can find this value under the title "CPU/Memory Power" at the bottom of the Lighthouse report:
+
+<img src="https://user-images.githubusercontent.com/2301202/96950078-1b03d380-14af-11eb-9583-fbf8133315b2.png" alt="Screenshot of CPU/Memory Power in Lighthouse report" width=600 border=1 />
 
 **NOTE:** In Lighthouse 6.3 BenchmarkIndex changed its definition to better align with changes in Chrome 86. Benchmark index values prior to 6.3 and Chrome 86 may differ.
 
-<img src="https://user-images.githubusercontent.com/2301202/91339533-3c409000-e79c-11ea-97a1-5da33bd3da18.png" alt="Screenshot of CPU/Memory Power in Lighthouse report" />
-
-Below is a table of various device classes and their approximate ranges of `benchmarkIndex` as of Chrome m86 along with a few other benchmarks.
+Below is a table of various device classes and their approximate ranges of `benchmarkIndex` as of Chrome m86 along with a few other benchmarks. The amount of variation in each class is quite high. Even the same device can be purchased with multiple different processors and memory options.
 
 | -                                   | High-End Desktop | Low-End Desktop | High-End Mobile | Mid-Tier Mobile | Low-End Mobile    |
 | ----------------------------------- | ---------------- | --------------- | --------------- | --------------- | ----------------- |
 | Example Device                      | 16" Macbook Pro  | Intel NUC i3    | Samsung S10     | Moto G4         | Samsung Galaxy J2 |
-| Lighthouse BenchmarkIndex           | 1500-2000        | 1000-1500       | 800-1200        | 125-800         | <125              |
+| **Lighthouse BenchmarkIndex**           | 1500-2000        | 1000-1500       | 800-1200        | 125-800         | <125              |
 | Octane 2.0                          | 30000-45000      | 20000-35000     | 15000-25000     | 2000-20000      | <2000             |
 | Speedometer 2.0                     | 90-200           | 50-90           | 20-50           | 10-20           | <10               |
 | JavaScript Execution of a News Site | 2-4s             | 4-8s            | 4-8s            | 8-20s           | 20-40s            |
 
-The amount of variation in each class is quite high. Even the same device can be purchased with multiple different processors and memory options. Lighthouse uses a constant 4x CPU multiplier by default which moves a typical run in the high-end desktop bracket somewhere into the mid-tier mobile bracket. If you notice your benchmarkIndex is in a different range though, you may want to adjust the CPU throttling settings accordingly.
 
-Below is a table of the various `cpuSlowdownMultipliers` you might want to use to target different devices along with the possible range. If your device's BenchmarkIndex falls on the _higher_ end of its bracket, use a _higher_ multiplier from the range in the table below. If your device's BenchmarkIndex falls on the _lower_ end of its bracket, use a _lower_ multiplier from the range in the table below. If it's somewhere in the middle, use the suggested multiplier.
+## Calibrating the CPU slowdown
+
+By default, Lighthouse uses **a constant 4x CPU multiplier** which moves a typical run in the high-end desktop bracket somewhere into the mid-tier mobile bracket. 
+
+You may choose to calibrate if your benchmarkIndex is in a different range than the above table would expect. Additionally, when Lighthouse is run from the CLI with default settings on an underpowered device, a warning will be added to the report suggesting you calibrate the slowdown:
+
+![image](https://user-images.githubusercontent.com/39191/101437249-99cc9880-38c4-11eb-8122-76f2c73d9283.png)
+
+The `--throttling.cpuSlowdownMultiplier` CLI flag allows you to configure the throttling level applied. On a weaker machine, you can lower it from the default of 4x  to something more appropriate. 
+
+The [Lighthouse CPU slowdown calculator webapp](https://lighthouse-cpu-throttling-calculator.vercel.app/) will compute what mutiplier to use from the  `CPU/Memory Power` value from the bottom of the report.
+
+<a href="https://lighthouse-cpu-throttling-calculator.vercel.app/">
+<img src="https://user-images.githubusercontent.com/39191/101436708-8a991b00-38c3-11eb-89c5-7d43752932e9.png" width=300>
+</a>
+
+Alternatively, consider the below table of the various `cpuSlowdownMultiplier`s you might want to use to target different devices along with the possible range:
 
 | -                | High-End Desktop | Low-End Desktop | High-End Mobile | Mid-Tier Mobile | Low-End Mobile |
 | ---------------- | ---------------- | --------------- | --------------- | --------------- | -------------- |
@@ -126,9 +134,17 @@ Below is a table of the various `cpuSlowdownMultipliers` you might want to use t
 | Mid-Tier Mobile  | -                | -               | -               | 1x              | 2x (1-5)       |
 | Low-End Mobile   | -                | -               | -               | -               | 1x             |
 
-## Using Lighthouse with a custom multiplier
+
+If your device's BenchmarkIndex falls on the _higher_ end of its bracket, use a _higher_ multiplier from the range in the table. If your device's BenchmarkIndex falls on the _lower_ end of its bracket, use a _lower_ multiplier from the range in the table. If it's somewhere in the middle, use the suggested multiplier.
 
 ```bash
-# Run Lighthouse with a custom multiplier
+# Run Lighthouse with a custom CPU slowdown multiplier
 lighthouse --throttling.cpuSlowdownMultiplier=6 https://example.com
 ```
+
+## Types of CPU Throttling
+
+Within web performance testing, there are two typical styles of CPU throttling:
+
+1. **_Simulated throttling_**, which Lighthouse uses by **default**, uses a simulation of a page load, based on the data observed in the initial unthrottled load. This approach makes it very fast. However, due to the imperfect nature of predicting alternate execution paths, there is inherent inaccuracy that is summarized in this doc: [Lighthouse Metric Variability and Accuracy](https://docs.google.com/document/d/1BqtL-nG53rxWOI5RO0pItSRPowZVnYJ_gBEQCJ5EeUE/edit). The TLDR: while it's fairly accurate for most circumstances, it suffers from edge cases and a deep investigation to performance should use _applied_ CPU throttling tools.
+1. **_Applied throttling_** , also called _`devtools` throttling_ in Lighthouse configuration. This method actually interrupts execution of CPU work at periodic intervals to emulate a slower processor. It is [fairly accurate](https://docs.google.com/document/d/1jGHeGjjjzfTAE2WHXipKF3aqwF2bFA6r0B877nFtBpc/edit) and much easier than obtaining target hardware. The same underlying principle can be used by [linux cgroups](https://www.kernel.org/doc/html/latest/scheduler/sched-bwc.html) to throttle any process, not just the browser. Other tools like [WebPageTest use applied CPU throttling](https://github.com/WPO-Foundation/wptagent/commit/f7fe0d6b5b01bd1b042a1fe3144c68a6bff846a6) offered by DevTools.

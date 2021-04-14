@@ -109,10 +109,10 @@ class ValidSourceMaps extends Audit {
         results.push({
           scriptUrl: scriptElement.src,
           sourceMapUrl: sourceMap && sourceMap.sourceMapUrl,
-          subItems: /** @type {LH.Audit.Details.TableSubItems} */ ({
-            type: 'subitems',
+          subItems: {
+            type: /** @type {'subitems'} */ ('subitems'),
             items: errors,
-          }),
+          },
         });
       }
     }

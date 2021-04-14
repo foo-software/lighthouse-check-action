@@ -121,7 +121,7 @@ An object containing information about the configuration used by Lighthouse.
   },
   "gatherMode": false,
   "disableStorageReset": false,
-  "emulatedFormFactor": "mobile",
+  "formFactor": "mobile",
   "blockedUrlPatterns": null,
   "additionalTraceCategories": null,
   "extraHeaders": null,

@@ -39,15 +39,15 @@ class ErrorLogs extends Audit {
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
-      requiredArtifacts: ['ConsoleMessages', 'RuntimeExceptions'],
+      requiredArtifacts: ['ConsoleMessages'],
     };
   }
 
   /** @return {AuditOptions} */
-  static defaultOptions() {
-    return {};
+  static get defaultOptions() {
+    // Any failed network requests with error messsage aren't actionable
+    return {ignoredPatterns: ['ERR_BLOCKED_BY_CLIENT.Inspector']};
   }
-
 
   /**
    * @template {{description: string | undefined}} T
@@ -78,42 +78,28 @@ class ErrorLogs extends Audit {
    * @return {LH.Audit.Product}
    */
   static audit(artifacts, context) {
-    const auditOptions = /** @type {AuditOptions} */ (context.options);
+    /** @type {AuditOptions} */
+    const auditOptions = context.options;
 
-    const consoleEntries = artifacts.ConsoleMessages;
-    const runtimeExceptions = artifacts.RuntimeExceptions;
-    /** @type {Array<{source: string, description: string|undefined, url: string|undefined}>} */
-    const consoleRows =
-      consoleEntries.filter(log => log.entry && log.entry.level === 'error')
+    /** @type {Array<{source: string, description: string|undefined, sourceLocation: LH.Audit.Details.SourceLocationValue|undefined}>} */
+    const consoleRows = artifacts.ConsoleMessages
+      .filter(item => item.level === 'error')
       .map(item => {
         return {
-          source: item.entry.source,
-          description: item.entry.text,
-          url: item.entry.url,
+          source: item.source,
+          description: item.text,
+          // TODO: remove for v8 (url is covered in sourceLocation)
+          url: item.url,
+          sourceLocation: Audit.makeSourceLocationFromConsoleMessage(item),
         };
       });
 
-    const runtimeExRows =
-      runtimeExceptions.filter(entry => entry.exceptionDetails !== undefined)
-      .map(entry => {
-        const description = entry.exceptionDetails.exception ?
-          entry.exceptionDetails.exception.description : entry.exceptionDetails.text;
-
-        return {
-          source: 'Runtime.exception',
-          description,
-          url: entry.exceptionDetails.url,
-        };
-      });
-
-    const tableRows = ErrorLogs.filterAccordingToOptions(
-      consoleRows.concat(runtimeExRows),
-      auditOptions
-    ).sort((a, b) => (a.description || '').localeCompare(b.description || ''));
+    const tableRows = ErrorLogs.filterAccordingToOptions(consoleRows, auditOptions)
+      .sort((a, b) => (a.description || '').localeCompare(b.description || ''));
 
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
-      {key: 'url', itemType: 'url', text: str_(i18n.UIStrings.columnURL)},
+      {key: 'sourceLocation', itemType: 'source-location', text: str_(i18n.UIStrings.columnSource)},
       {key: 'description', itemType: 'code', text: str_(i18n.UIStrings.columnDescription)},
     ];
 

@@ -195,6 +195,14 @@ setTimeout(() => {
   <!-- PASS(webp): image is vector -->
   <!-- PASS(responsive): image is vector -->
   <!-- PASS(responsive-inverse): is vector -->
+  <!-- PASS(offscreen): image is too small -->
+  <!-- PASS(unsized-images): is non-network SVG -->
+  <img src="data:image/svg+xml;charset=utf-8,<svg width=&quot;180&quot; height=&quot;60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot;/>">
+
+  <!-- PASS(optimized): image is vector -->
+  <!-- PASS(webp): image is vector -->
+  <!-- PASS(responsive): image is vector -->
+  <!-- PASS(responsive-inverse): is vector -->
   <!-- PASS(offscreen): image is offscreen and loads before TTI, but loads lazily -->
   <!-- PASS(unsized-images): has CSS sizing -->
   <img style="width: 100px; height: 100px;" src="large.svg?nativeLazyLoad" loading="lazy">

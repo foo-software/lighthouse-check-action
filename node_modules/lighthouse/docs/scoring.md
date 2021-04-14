@@ -23,58 +23,56 @@ All audits in the SEO category are [equally weighted](https://github.com/GoogleC
 
 ## How is the accessibility score calculated?
 
-<!--
-  sum = auditRefs.reduce((sum, item) => sum += item.weight, 0);
-  auditRefs
-    .filter(a => a.weight)
-    .sort((a, b) => b.weight - a.weight)
-    .map(a => [undefined, a.id, `${(a.weight / sum * 100).toLocaleString(undefined, {maximumFractionDigits:1})}%`, undefined].join(' | '))
-    .join('\n')
-  -->
+<!-- To regnerate score weights, run `node lighthouse-core/scripts/print-a11y-scoring.js`-->
 
-The accessibility score is a weighted average. The specific weights, at the time of publishing, are [as follows](https://github.com/GoogleChrome/lighthouse/blob/080c6b4b9fec6dfcaf8e0cd8d09c3224465e4fd3/lighthouse-core/config/default-config.js#L450-L491):
+The accessibility score is a weighted average. The specific weights for v7 are as follows:
+
+(See the [v6 scoring explanation](https://github.com/GoogleChrome/lighthouse/blob/v6.5.0/docs/scoring.md#how-is-the-accessibility-score-calculated))
 
 | audit id | weight |
 |-|-|
- | aria-allowed-attr | 4.2% |
- | aria-hidden-body | 4.2% |
- | aria-required-attr | 4.2% |
- | aria-required-children | 4.2% |
- | aria-required-parent | 4.2% |
- | aria-roles | 4.2% |
- | aria-valid-attr-value | 4.2% |
- | aria-valid-attr | 4.2% |
- | button-name | 4.2% |
- | duplicate-id-aria | 4.2% |
- | image-alt | 4.2% |
- | input-image-alt | 4.2% |
- | label | 4.2% |
- | meta-refresh | 4.2% |
- | meta-viewport | 4.2% |
- | video-caption | 4.2% |
- | video-description | 4.2% |
- | accesskeys | 1.3% |
- | aria-hidden-focus | 1.3% |
- | aria-input-field-name | 1.3% |
- | aria-toggle-field-name | 1.3% |
- | bypass | 1.3% |
- | color-contrast | 1.3% |
- | definition-list | 1.3% |
- | dlitem | 1.3% |
- | document-title | 1.3% |
- | duplicate-id-active | 1.3% |
- | frame-title | 1.3% |
- | html-has-lang | 1.3% |
- | html-lang-valid | 1.3% |
- | layout-table | 1.3% |
- | link-name | 1.3% |
- | list | 1.3% |
- | listitem | 1.3% |
- | object-alt | 1.3% |
- | tabindex | 1.3% |
- | td-headers-attr | 1.3% |
- | th-has-data-cells | 1.3% |
- | valid-lang | 1.3% |
+ | aria-allowed-attr | 4.1% |
+ | aria-hidden-body | 4.1% |
+ | aria-required-attr | 4.1% |
+ | aria-required-children | 4.1% |
+ | aria-required-parent | 4.1% |
+ | aria-roles | 4.1% |
+ | aria-valid-attr-value | 4.1% |
+ | aria-valid-attr | 4.1% |
+ | button-name | 4.1% |
+ | duplicate-id-aria | 4.1% |
+ | image-alt | 4.1% |
+ | input-image-alt | 4.1% |
+ | label | 4.1% |
+ | meta-refresh | 4.1% |
+ | meta-viewport | 4.1% |
+ | video-caption | 4.1% |
+ | accesskeys | 1.2% |
+ | aria-command-name | 1.2% |
+ | aria-hidden-focus | 1.2% |
+ | aria-input-field-name | 1.2% |
+ | aria-meter-name | 1.2% |
+ | aria-progressbar-name | 1.2% |
+ | aria-toggle-field-name | 1.2% |
+ | aria-tooltip-name | 1.2% |
+ | aria-treeitem-name | 1.2% |
+ | bypass | 1.2% |
+ | color-contrast | 1.2% |
+ | definition-list | 1.2% |
+ | dlitem | 1.2% |
+ | document-title | 1.2% |
+ | duplicate-id-active | 1.2% |
+ | frame-title | 1.2% |
+ | html-has-lang | 1.2% |
+ | html-lang-valid | 1.2% |
+ | link-name | 1.2% |
+ | list | 1.2% |
+ | listitem | 1.2% |
+ | object-alt | 1.2% |
+ | tabindex | 1.2% |
+ | td-headers-attr | 1.2% |
+ | th-has-data-cells | 1.2% |
+ | valid-lang | 1.2% |
  | form-field-multiple-labels | 0.8% |
  | heading-order | 0.8% |
 

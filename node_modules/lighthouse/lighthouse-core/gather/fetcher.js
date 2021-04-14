@@ -141,9 +141,8 @@ class Fetcher {
     /**
      * @param {string} src
      */
-    /* istanbul ignore next */
+    /* c8 ignore start */
     function injectIframe(src) {
-      /** @type {HTMLIFrameElement} */
       const iframe = document.createElement('iframe');
       // Try really hard not to affect the page.
       iframe.style.display = 'none';
@@ -161,6 +160,7 @@ class Fetcher {
       };
       document.body.appendChild(iframe);
     }
+    /* c8 ignore stop */
 
     /** @type {NodeJS.Timeout} */
     let timeoutHandle;
@@ -175,7 +175,8 @@ class Fetcher {
       requestInterceptionPromise,
     ]).finally(() => clearTimeout(timeoutHandle));
 
-    const injectionPromise = this.driver.evaluateAsync(`${injectIframe}(${JSON.stringify(url)})`, {
+    const injectionPromise = this.driver.executionContext.evaluate(injectIframe, {
+      args: [url],
       useIsolation: true,
     });
 

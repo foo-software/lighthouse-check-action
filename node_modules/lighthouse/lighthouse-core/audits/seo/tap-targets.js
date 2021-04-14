@@ -18,7 +18,6 @@ const {
   allRectsContainedWithinEachOther,
   getLargestRect,
   getBoundingRectWithPadding,
-  getBoundingRect,
 } = require('../../lib/rect-helpers.js');
 const {getTappableRectsFromClientRects} = require('../../lib/tappable-rects.js');
 const i18n = require('../../lib/i18n/i18n.js');
@@ -222,8 +221,8 @@ function getTableItems(overlapFailures) {
     const height = Math.floor(largestCR.height);
     const size = width + 'x' + height;
     return {
-      tapTarget: targetToTableNode(failure.tapTarget),
-      overlappingTarget: targetToTableNode(failure.overlappingTarget),
+      tapTarget: Audit.makeNodeItem(failure.tapTarget.node),
+      overlappingTarget: Audit.makeNodeItem(failure.overlappingTarget.node),
       tapTargetScore: failure.tapTargetScore,
       overlappingTargetScore: failure.overlappingTargetScore,
       overlapScoreRatio: failure.overlapScoreRatio,
@@ -240,24 +239,6 @@ function getTableItems(overlapFailures) {
   return tableItems;
 }
 
-/**
- * @param {LH.Artifacts.TapTarget} target
- * @returns {LH.Audit.Details.NodeValue}
- */
-function targetToTableNode(target) {
-  const boundingRect = getBoundingRect(target.clientRects);
-
-  return {
-    type: 'node',
-    lhId: target.lhId,
-    snippet: target.snippet,
-    path: target.devtoolsNodePath,
-    selector: target.selector,
-    boundingRect,
-    nodeLabel: target.nodeLabel,
-  };
-}
-
 class TapTargets extends Audit {
   /**
    * @return {LH.Audit.Meta}
@@ -268,7 +249,7 @@ class TapTargets extends Audit {
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
-      requiredArtifacts: ['MetaElements', 'TapTargets', 'TestedAsMobileDevice'],
+      requiredArtifacts: ['MetaElements', 'TapTargets'],
     };
   }
 
@@ -278,7 +259,7 @@ class TapTargets extends Audit {
    * @return {Promise<LH.Audit.Product>}
    */
   static async audit(artifacts, context) {
-    if (!artifacts.TestedAsMobileDevice) {
+    if (context.settings.formFactor === 'desktop') {
       // Tap target sizes aren't important for desktop SEO, so disable the audit there.
       // On desktop people also tend to have more precise pointing devices than fingers.
       return {

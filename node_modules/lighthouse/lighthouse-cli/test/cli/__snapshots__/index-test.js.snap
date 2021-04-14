@@ -13,13 +13,7 @@ Object {
       "path": "service-worker",
     },
     Object {
-      "path": "works-offline",
-    },
-    Object {
       "path": "viewport",
-    },
-    Object {
-      "path": "without-javascript",
     },
     Object {
       "path": "metrics/first-contentful-paint",
@@ -29,9 +23,6 @@ Object {
     },
     Object {
       "path": "metrics/first-meaningful-paint",
-    },
-    Object {
-      "path": "load-fast-enough-for-pwa",
     },
     Object {
       "path": "metrics/speed-index",
@@ -139,9 +130,6 @@ Object {
       "path": "metrics",
     },
     Object {
-      "path": "offline-start-url",
-    },
-    Object {
       "path": "performance-budget",
     },
     Object {
@@ -152,6 +140,9 @@ Object {
     },
     Object {
       "path": "third-party-summary",
+    },
+    Object {
+      "path": "third-party-facades",
     },
     Object {
       "path": "largest-contentful-paint-element",
@@ -178,6 +169,9 @@ Object {
       "path": "preload-lcp-image",
     },
     Object {
+      "path": "full-page-screenshot",
+    },
+    Object {
       "path": "manual/pwa-cross-browser",
     },
     Object {
@@ -193,6 +187,9 @@ Object {
       "path": "accessibility/aria-allowed-attr",
     },
     Object {
+      "path": "accessibility/aria-command-name",
+    },
+    Object {
       "path": "accessibility/aria-hidden-body",
     },
     Object {
@@ -200,6 +197,12 @@ Object {
     },
     Object {
       "path": "accessibility/aria-input-field-name",
+    },
+    Object {
+      "path": "accessibility/aria-meter-name",
+    },
+    Object {
+      "path": "accessibility/aria-progressbar-name",
     },
     Object {
       "path": "accessibility/aria-required-attr",
@@ -215,6 +218,12 @@ Object {
     },
     Object {
       "path": "accessibility/aria-toggle-field-name",
+    },
+    Object {
+      "path": "accessibility/aria-tooltip-name",
+    },
+    Object {
+      "path": "accessibility/aria-treeitem-name",
     },
     Object {
       "path": "accessibility/aria-valid-attr-value",
@@ -271,9 +280,6 @@ Object {
       "path": "accessibility/label",
     },
     Object {
-      "path": "accessibility/layout-table",
-    },
-    Object {
       "path": "accessibility/link-name",
     },
     Object {
@@ -305,9 +311,6 @@ Object {
     },
     Object {
       "path": "accessibility/video-caption",
-    },
-    Object {
-      "path": "accessibility/video-description",
     },
     Object {
       "path": "accessibility/manual/custom-controls-labels",
@@ -478,6 +481,11 @@ Object {
         },
         Object {
           "group": "a11y-aria",
+          "id": "aria-command-name",
+          "weight": 3,
+        },
+        Object {
+          "group": "a11y-aria",
           "id": "aria-hidden-body",
           "weight": 10,
         },
@@ -489,6 +497,16 @@ Object {
         Object {
           "group": "a11y-aria",
           "id": "aria-input-field-name",
+          "weight": 3,
+        },
+        Object {
+          "group": "a11y-aria",
+          "id": "aria-meter-name",
+          "weight": 3,
+        },
+        Object {
+          "group": "a11y-aria",
+          "id": "aria-progressbar-name",
           "weight": 3,
         },
         Object {
@@ -514,6 +532,16 @@ Object {
         Object {
           "group": "a11y-aria",
           "id": "aria-toggle-field-name",
+          "weight": 3,
+        },
+        Object {
+          "group": "a11y-aria",
+          "id": "aria-tooltip-name",
+          "weight": 3,
+        },
+        Object {
+          "group": "a11y-aria",
+          "id": "aria-treeitem-name",
           "weight": 3,
         },
         Object {
@@ -607,11 +635,6 @@ Object {
           "weight": 10,
         },
         Object {
-          "group": "a11y-tables-lists",
-          "id": "layout-table",
-          "weight": 3,
-        },
-        Object {
           "group": "a11y-names-labels",
           "id": "link-name",
           "weight": 3,
@@ -664,11 +687,6 @@ Object {
         Object {
           "group": "a11y-audio-video",
           "id": "video-caption",
-          "weight": 10,
-        },
-        Object {
-          "group": "a11y-audio-video",
-          "id": "video-description",
           "weight": 10,
         },
         Object {
@@ -1016,6 +1034,11 @@ Object {
         },
         Object {
           "group": "diagnostics",
+          "id": "third-party-facades",
+          "weight": 0,
+        },
+        Object {
+          "group": "diagnostics",
           "id": "largest-contentful-paint-element",
           "weight": 0,
         },
@@ -1087,34 +1110,14 @@ Object {
     "pwa": Object {
       "auditRefs": Array [
         Object {
-          "group": "pwa-fast-reliable",
-          "id": "load-fast-enough-for-pwa",
-          "weight": 7,
-        },
-        Object {
-          "group": "pwa-fast-reliable",
-          "id": "works-offline",
-          "weight": 5,
-        },
-        Object {
-          "group": "pwa-fast-reliable",
-          "id": "offline-start-url",
-          "weight": 1,
-        },
-        Object {
-          "group": "pwa-installable",
-          "id": "is-on-https",
-          "weight": 2,
-        },
-        Object {
-          "group": "pwa-installable",
-          "id": "service-worker",
-          "weight": 1,
-        },
-        Object {
           "group": "pwa-installable",
           "id": "installable-manifest",
           "weight": 2,
+        },
+        Object {
+          "group": "pwa-optimized",
+          "id": "service-worker",
+          "weight": 1,
         },
         Object {
           "group": "pwa-optimized",
@@ -1140,11 +1143,6 @@ Object {
           "group": "pwa-optimized",
           "id": "viewport",
           "weight": 2,
-        },
-        Object {
-          "group": "pwa-optimized",
-          "id": "without-javascript",
-          "weight": 1,
         },
         Object {
           "group": "pwa-optimized",
@@ -1315,9 +1313,6 @@ Object {
     "metrics": Object {
       "title": "Metrics",
     },
-    "pwa-fast-reliable": Object {
-      "title": "Fast and reliable",
-    },
     "pwa-installable": Object {
       "title": "Installable",
     },
@@ -1351,9 +1346,6 @@ Object {
         },
         Object {
           "path": "viewport-dimensions",
-        },
-        Object {
-          "path": "runtime-exceptions",
         },
         Object {
           "path": "console-messages",
@@ -1430,6 +1422,9 @@ Object {
         Object {
           "path": "source-maps",
         },
+        Object {
+          "path": "full-page-screenshot",
+        },
       ],
       "loadFailureMode": "fatal",
       "networkQuietThresholdMs": 1000,
@@ -1446,12 +1441,6 @@ Object {
       "gatherers": Array [
         Object {
           "path": "service-worker",
-        },
-        Object {
-          "path": "offline",
-        },
-        Object {
-          "path": "start-url",
         },
       ],
       "loadFailureMode": "ignore",
@@ -1480,9 +1469,6 @@ Object {
         Object {
           "path": "http-redirect",
         },
-        Object {
-          "path": "html-without-javascript",
-        },
       ],
       "loadFailureMode": "warn",
       "networkQuietThresholdMs": 0,
@@ -1500,10 +1486,10 @@ Object {
     "budgets": null,
     "channel": "cli",
     "disableStorageReset": false,
-    "emulatedFormFactor": "mobile",
+    "emulatedUserAgent": "Mozilla/5.0 (Linux; Android 7.0; Moto G (4)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Mobile Safari/537.36 Chrome-Lighthouse",
     "extraHeaders": null,
+    "formFactor": "mobile",
     "gatherMode": false,
-    "internalDisableDeviceScreenEmulation": false,
     "locale": "en-US",
     "maxWaitForFcp": 30000,
     "maxWaitForLoad": 45000,
@@ -1513,6 +1499,13 @@ Object {
       "html",
     ],
     "precomputedLanternData": null,
+    "screenEmulation": Object {
+      "deviceScaleFactor": 2.625,
+      "disabled": false,
+      "height": 640,
+      "mobile": true,
+      "width": 360,
+    },
     "skipAudits": null,
     "throttling": Object {
       "cpuSlowdownMultiplier": 4,
@@ -1605,9 +1598,6 @@ Object {
     "metrics": Object {
       "title": "Metrics",
     },
-    "pwa-fast-reliable": Object {
-      "title": "Fast and reliable",
-    },
     "pwa-installable": Object {
       "title": "Installable",
     },
@@ -1649,10 +1639,10 @@ Object {
     "budgets": null,
     "channel": "cli",
     "disableStorageReset": false,
-    "emulatedFormFactor": "mobile",
+    "emulatedUserAgent": "Mozilla/5.0 (Linux; Android 7.0; Moto G (4)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Mobile Safari/537.36 Chrome-Lighthouse",
     "extraHeaders": null,
+    "formFactor": "mobile",
     "gatherMode": false,
-    "internalDisableDeviceScreenEmulation": false,
     "locale": "en-US",
     "maxWaitForFcp": 30000,
     "maxWaitForLoad": 45000,
@@ -1664,6 +1654,13 @@ Object {
       "json",
     ],
     "precomputedLanternData": null,
+    "screenEmulation": Object {
+      "deviceScaleFactor": 2.625,
+      "disabled": false,
+      "height": 640,
+      "mobile": true,
+      "width": 360,
+    },
     "skipAudits": null,
     "throttling": Object {
       "cpuSlowdownMultiplier": 4,

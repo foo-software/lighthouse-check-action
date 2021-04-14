@@ -43,7 +43,7 @@
   if (window.location.search.includes('slow')) {
     window.addEventListener('load', () => registerServiceWorker('?delay=5000&slow'));
   } else {
-    registerServiceWorker();
+    registerServiceWorker(window.location.search);
   }
 
 </script>

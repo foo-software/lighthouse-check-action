@@ -17,6 +17,15 @@
   "lighthouse-core/audits/accessibility/aria-allowed-attr.js | title": {
     "message": "Els atributs `[aria-*]` coincideixen amb les seves funcions"
   },
+  "lighthouse-core/audits/accessibility/aria-command-name.js | description": {
+    "message": "Si un element no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-name/)."
+  },
+  "lighthouse-core/audits/accessibility/aria-command-name.js | failureTitle": {
+    "message": "Els elements `button`, `link` i `menuitem` no tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-command-name.js | title": {
+    "message": "Els elements `button`, `link` i `menuitem` tenen noms accessibles"
+  },
   "lighthouse-core/audits/accessibility/aria-hidden-body.js | description": {
     "message": "Les tecnologies d'assistència, com ara els lectors de pantalla, funcionen de manera incongruent quan `aria-hidden=\"true\"` està definit en el document `<body>`. [Obtén més informació](https://web.dev/aria-hidden-body/)."
   },
@@ -36,13 +45,31 @@
     "message": "Els elements `[aria-hidden=\"true\"]` no contenen cap descendent en què es pugui posar el focus"
   },
   "lighthouse-core/audits/accessibility/aria-input-field-name.js | description": {
-    "message": "Si un camp d'entrada no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-input-field-name/)."
+    "message": "Si un camp d'entrada no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-name/)."
   },
   "lighthouse-core/audits/accessibility/aria-input-field-name.js | failureTitle": {
     "message": "Els camps d'entrada ARIA no tenen noms accessibles"
   },
   "lighthouse-core/audits/accessibility/aria-input-field-name.js | title": {
     "message": "Els camps d'entrada ARIA tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-meter-name.js | description": {
+    "message": "Si un element no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-name/)."
+  },
+  "lighthouse-core/audits/accessibility/aria-meter-name.js | failureTitle": {
+    "message": "Els elements `meter` d'ARIA no tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-meter-name.js | title": {
+    "message": "Els elements `meter` d'ARIA tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-progressbar-name.js | description": {
+    "message": "Si un element no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-name/)."
+  },
+  "lighthouse-core/audits/accessibility/aria-progressbar-name.js | failureTitle": {
+    "message": "Els elements `progressbar` d'ARIA no tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-progressbar-name.js | title": {
+    "message": "Els elements `progressbar` d'ARIA tenen noms accessibles"
   },
   "lighthouse-core/audits/accessibility/aria-required-attr.js | description": {
     "message": "Algunes funcions d'ARIA tenen atributs obligatoris que descriuen l'estat de l'element als lectors de pantalla. [Obtén més informació](https://web.dev/aria-required-attr/)."
@@ -81,13 +108,31 @@
     "message": "Els valors de l'atribut `[role]` són vàlids"
   },
   "lighthouse-core/audits/accessibility/aria-toggle-field-name.js | description": {
-    "message": "Si un camp de commutació no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-toggle-field-name/)."
+    "message": "Si un camp de commutació no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-name/)."
   },
   "lighthouse-core/audits/accessibility/aria-toggle-field-name.js | failureTitle": {
     "message": "Els camps de commutació ARIA no tenen noms accessibles"
   },
   "lighthouse-core/audits/accessibility/aria-toggle-field-name.js | title": {
     "message": "Els camps de commutació ARIA tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-tooltip-name.js | description": {
+    "message": "Si un element no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-name/)."
+  },
+  "lighthouse-core/audits/accessibility/aria-tooltip-name.js | failureTitle": {
+    "message": "Els elements `tooltip` d'ARIA no tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-tooltip-name.js | title": {
+    "message": "Els elements `tooltip` d'ARIA tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-treeitem-name.js | description": {
+    "message": "Si un element no té un nom accessible, els lectors de pantalla el llegeixen amb un nom genèric, de manera que resulta inservible per als usuaris que depenen d'aquesta tecnologia. [Obtén més informació](https://web.dev/aria-name/)."
+  },
+  "lighthouse-core/audits/accessibility/aria-treeitem-name.js | failureTitle": {
+    "message": "Els elements `treeitem` d'ARIA no tenen noms accessibles"
+  },
+  "lighthouse-core/audits/accessibility/aria-treeitem-name.js | title": {
+    "message": "Els elements `treeitem` d'ARIA tenen noms accessibles"
   },
   "lighthouse-core/audits/accessibility/aria-valid-attr-value.js | description": {
     "message": "Les tecnologies d'assistència, com ara els lectors de pantalla, no poden interpretar els atributs ARIA que tenen valors que no són vàlids. [Obtén més informació](https://web.dev/aria-valid-attr-value/)."
@@ -254,15 +299,6 @@
   "lighthouse-core/audits/accessibility/label.js | title": {
     "message": "Els elements de formulari tenen etiquetes associades"
   },
-  "lighthouse-core/audits/accessibility/layout-table.js | description": {
-    "message": "Una taula que s'utilitza per al disseny no pot incloure elements de dades, com ara un superíndex, elements de subtítols o l'atribut de resum, ja que es pot crear una experiència confusa per als usuaris de lectors de pantalla. [Obtén més informació](https://web.dev/layout-table/)."
-  },
-  "lighthouse-core/audits/accessibility/layout-table.js | failureTitle": {
-    "message": "Els elements `<table>` per a presentacions no eviten utilitzar `<th>`, `<caption>` ni l'atribut `[summary]`."
-  },
-  "lighthouse-core/audits/accessibility/layout-table.js | title": {
-    "message": "Els elements `<table>` per a presentacions eviten utilitzar `<th>`, `<caption>` o l'atribut `[summary]`."
-  },
   "lighthouse-core/audits/accessibility/link-name.js | description": {
     "message": "Si el text dels enllaços (així com el text alternatiu per a les imatges, quan s'utilitzen com a enllaços) és discernible, únic i permet que s'hi posi el focus, millora l'experiència de navegació dels usuaris de lectors de pantalla. [Obtén més informació](https://web.dev/link-name/)."
   },
@@ -357,19 +393,10 @@
     "message": "Si un vídeo ofereix subtítols, permet que els usuaris sords o amb discapacitat auditiva accedeixin a la informació més fàcilment. [Obtén més informació](https://web.dev/video-caption/)."
   },
   "lighthouse-core/audits/accessibility/video-caption.js | failureTitle": {
-    "message": "Els elements `<video>` no contenen cap element `<track>` amb `[kind=\"captions\"]`."
+    "message": "Els elements `<video>` no contenen cap element `<track>` amb `[kind=\"captions\"]`"
   },
   "lighthouse-core/audits/accessibility/video-caption.js | title": {
     "message": "Els elements `<video>` contenen un element `<track>` amb `[kind=\"captions\"]`"
-  },
-  "lighthouse-core/audits/accessibility/video-description.js | description": {
-    "message": "Les audiodescripcions proporcionen informació rellevant dels vídeos que els diàlegs no poden oferir, com ara les expressions facials i les escenes. [Obtén més informació](https://web.dev/video-description/)."
-  },
-  "lighthouse-core/audits/accessibility/video-description.js | failureTitle": {
-    "message": "Els elements `<video>` no contenen cap element `<track>` amb `[kind=\"description\"]`."
-  },
-  "lighthouse-core/audits/accessibility/video-description.js | title": {
-    "message": "Els elements `<video>` contenen un element `<track>` amb `[kind=\"description\"]`"
   },
   "lighthouse-core/audits/apple-touch-icon.js | description": {
     "message": "Perquè l'aspecte a iOS sigui l'ideal quan els usuaris afegeixin una aplicació web progressiva a la pantalla d'inici, defineix un atribut `apple-touch-icon`. Ha de dirigir a una imatge PNG quadrada de 192 píxels o de 180 píxels que no sigui transparent. [Obtén més informació](https://web.dev/apple-touch-icon/)."
@@ -554,6 +581,21 @@
   "lighthouse-core/audits/critical-request-chains.js | title": {
     "message": "No encadenis sol·licituds importants"
   },
+  "lighthouse-core/audits/csp-xss.js | columnDirective": {
+    "message": "Directiva"
+  },
+  "lighthouse-core/audits/csp-xss.js | description": {
+    "message": "Una política de seguretat del contingut (CSP) sòlida redueix significativament el risc de patir atacs XSS. [Més informació](https://csp.withgoogle.com/docs/index.html)"
+  },
+  "lighthouse-core/audits/csp-xss.js | metaTagMessage": {
+    "message": "La pàgina conté una CSP definida en una etiqueta <meta>. Si pots, també pots optar per definir la CSP en una capçalera HTTP."
+  },
+  "lighthouse-core/audits/csp-xss.js | noCsp": {
+    "message": "No s'ha trobat cap CSP en mode de compliment"
+  },
+  "lighthouse-core/audits/csp-xss.js | title": {
+    "message": "Comprova que la CSP sigui efectiva contra atacs XSS"
+  },
   "lighthouse-core/audits/deprecations.js | columnDeprecate": {
     "message": "Desactivació/advertiment"
   },
@@ -665,6 +707,24 @@
   "lighthouse-core/audits/dobetterweb/geolocation-on-start.js | title": {
     "message": "Evita sol·licitar el permís de geolocalització en carregar la pàgina"
   },
+  "lighthouse-core/audits/dobetterweb/inspector-issues.js | columnIssueType": {
+    "message": "Tipus de problema"
+  },
+  "lighthouse-core/audits/dobetterweb/inspector-issues.js | description": {
+    "message": "Els problemes registrats al tauler `Issues` de Chrome DevTools indiquen que hi ha problemes sense resoldre. Poden provenir d'errors de sol·licitud de la xarxa, de controls de seguretat insuficients i d'altres problemes del navegador. Obre el tauler Issues de Chrome DevTools per obtenir més informació sobre cada problema."
+  },
+  "lighthouse-core/audits/dobetterweb/inspector-issues.js | failureTitle": {
+    "message": "S'han registrat problemes al tauler `Issues` de Chrome Devtools"
+  },
+  "lighthouse-core/audits/dobetterweb/inspector-issues.js | issueTypeBlockedByResponse": {
+    "message": "Bloquejat per una política de diversos orígens"
+  },
+  "lighthouse-core/audits/dobetterweb/inspector-issues.js | issueTypeHeavyAds": {
+    "message": "Els anuncis utilitzen molts recursos"
+  },
+  "lighthouse-core/audits/dobetterweb/inspector-issues.js | title": {
+    "message": "No s'han detectat problemes al tauler `Issues` de Chrome Devtools"
+  },
   "lighthouse-core/audits/dobetterweb/js-libraries.js | columnVersion": {
     "message": "Versió"
   },
@@ -735,7 +795,7 @@
     "message": "Protocol"
   },
   "lighthouse-core/audits/dobetterweb/uses-http2.js | description": {
-    "message": "HTTP/2 ofereix molts avantatges respecte a HTTP/1.1, com ara capçaleres binàries, multiplexatge i tramesa automàtica de servidor. [Obtén més informació](https://web.dev/uses-http2/)."
+    "message": "HTTP/2 ofereix molts avantatges respecte a HTTP/1.1, com ara capçaleres binàries i multiplexatge. [Obtén més informació](https://web.dev/uses-http2/)."
   },
   "lighthouse-core/audits/dobetterweb/uses-http2.js | displayValue": {
     "message": "{itemCount,plural, =1{No s'ha atès 1 sol·licitud mitjançant HTTP/2}other{No s'han atès # sol·licituds mitjançant HTTP/2}}"
@@ -788,9 +848,6 @@
   "lighthouse-core/audits/image-aspect-ratio.js | title": {
     "message": "Mostra les imatges amb una relació d'aspecte correcta"
   },
-  "lighthouse-core/audits/image-aspect-ratio.js | warningCompute": {
-    "message": "La informació sobre la mida de la imatge no és vàlida: {url}"
-  },
   "lighthouse-core/audits/image-size-responsive.js | columnActual": {
     "message": "Mida real"
   },
@@ -809,14 +866,98 @@
   "lighthouse-core/audits/image-size-responsive.js | title": {
     "message": "Utilitza imatges amb una resolució adequada"
   },
+  "lighthouse-core/audits/installable-manifest.js | already-installed": {
+    "message": "L'aplicació ja està instal·lada"
+  },
+  "lighthouse-core/audits/installable-manifest.js | cannot-download-icon": {
+    "message": "No s'ha pogut baixar una icona necessària del fitxer de manifest"
+  },
+  "lighthouse-core/audits/installable-manifest.js | columnValue": {
+    "message": "Motiu de l'error"
+  },
   "lighthouse-core/audits/installable-manifest.js | description": {
-    "message": "Els navegadors poden demanar de manera proactiva als usuaris que afegeixin la teva aplicació a la pantalla d'inici, cosa que permet que hi interaccionin més. [Obtén més informació](https://web.dev/installable-manifest/)."
+    "message": "Service Worker és la tecnologia que fa possible que la teva aplicació utilitzi moltes funcions d'aplicació web progressiva, com ara funcionar sense connexió, poder afegir-se a la pàgina d'inici i mostrar notificacions automàtiques. Amb un Service Worker adequat i implementacions del fitxer de manifest, els navegadors poden demanar als usuaris de manera proactiva que afegeixin la teva aplicació a la pantalla d'inici, cosa que permet obtenir més interaccions. [Obtén més informació](https://web.dev/installable-manifest/)."
+  },
+  "lighthouse-core/audits/installable-manifest.js | displayValue": {
+    "message": "{itemCount,plural, =1{1 motiu}other{# motius}}"
   },
   "lighthouse-core/audits/installable-manifest.js | failureTitle": {
-    "message": "El fitxer de manifest de l'aplicació web no compleix els requisits d'instal·lació"
+    "message": "El fitxer de manifest de l'aplicació web o el Service Worker no compleixen els requisits d'instal·lació"
+  },
+  "lighthouse-core/audits/installable-manifest.js | ids-do-not-match": {
+    "message": "L'identificador i l'URL de l'aplicació Play Store no coincideixen"
+  },
+  "lighthouse-core/audits/installable-manifest.js | in-incognito": {
+    "message": "La pàgina es carrega en una finestra d'incògnit"
+  },
+  "lighthouse-core/audits/installable-manifest.js | manifest-display-not-supported": {
+    "message": "La propietat \"display\" del fitxer de manifest ha de ser \"standalone\", \"fullscreen\" o \"minimal-ui\""
+  },
+  "lighthouse-core/audits/installable-manifest.js | manifest-display-override-not-supported": {
+    "message": "El fitxer de manifest conté el camp \"display_override\" i el primer mode de visualització admès ha de ser \"standalone\", \"fullscreen\" o \"minimal-ui\""
+  },
+  "lighthouse-core/audits/installable-manifest.js | manifest-empty": {
+    "message": "El fitxer de manifest no s'ha pogut obtenir, és buit o no s'ha pogut analitzar"
+  },
+  "lighthouse-core/audits/installable-manifest.js | manifest-location-changed": {
+    "message": "L'URL del fitxer de manifest ha canviat mentre s'estava recollint el fitxer de manifest."
+  },
+  "lighthouse-core/audits/installable-manifest.js | manifest-missing-name-or-short-name": {
+    "message": "El fitxer de manifest no conté cap camp \"name\" o \"short_name\""
+  },
+  "lighthouse-core/audits/installable-manifest.js | manifest-missing-suitable-icon": {
+    "message": "El fitxer de manifest no conté cap icona adequada. Es requereix un format PNG, SVG o WebP de com a mínim {value0} píxels, l'atribut sizes ha d'estar establert i l'atribut purpose, si s'estableix, ha de ser \"any\" o \"maskable\"."
+  },
+  "lighthouse-core/audits/installable-manifest.js | no-acceptable-icon": {
+    "message": "No s'ha proporcionat cap icona que tingui com a mínim {value0} píxels quadrats en format PNG, SVG o WebP"
+  },
+  "lighthouse-core/audits/installable-manifest.js | no-icon-available": {
+    "message": "La icona baixada era buida o estava malmesa"
+  },
+  "lighthouse-core/audits/installable-manifest.js | no-id-specified": {
+    "message": "No s'ha proporcionat cap identificador de Play Store"
+  },
+  "lighthouse-core/audits/installable-manifest.js | no-manifest": {
+    "message": "La pàgina no té cap URL <link> del fitxer de manifest"
+  },
+  "lighthouse-core/audits/installable-manifest.js | no-matching-service-worker": {
+    "message": "No s'ha detectat cap Service Worker coincident. Pot ser que hagis de tornar a carregar la pàgina o comprovar que l'abast del Service Worker per a la pàgina actual englobi l'abast i l'URL d'inici del fitxer de manifest."
+  },
+  "lighthouse-core/audits/installable-manifest.js | no-url-for-service-worker": {
+    "message": "No s'ha pogut comprovar el Service Worker perquè el fitxer de manifest no té cap camp \"start_url\""
+  },
+  "lighthouse-core/audits/installable-manifest.js | noErrorId": {
+    "message": "No es reconeix l'identificador d'error d'instal·lació \"{errorId}\""
+  },
+  "lighthouse-core/audits/installable-manifest.js | not-from-secure-origin": {
+    "message": "La pàgina no es publica des d'un origen segur"
+  },
+  "lighthouse-core/audits/installable-manifest.js | not-in-main-frame": {
+    "message": "La pàgina no es carrega al marc principal"
+  },
+  "lighthouse-core/audits/installable-manifest.js | not-offline-capable": {
+    "message": "La pàgina no funciona sense connexió"
+  },
+  "lighthouse-core/audits/installable-manifest.js | platform-not-supported-on-android": {
+    "message": "La plataforma de l'aplicació especificada no s'admet a Android"
+  },
+  "lighthouse-core/audits/installable-manifest.js | prefer-related-applications": {
+    "message": "El fitxer de manifest especifica prefer_related_applications: true"
+  },
+  "lighthouse-core/audits/installable-manifest.js | prefer-related-applications-only-beta-stable": {
+    "message": "prefer_related_applications només s'admet a Chrome beta i als canals estables a Android."
+  },
+  "lighthouse-core/audits/installable-manifest.js | start-url-not-valid": {
+    "message": "L'URL d'inici del manifest no és vàlid"
   },
   "lighthouse-core/audits/installable-manifest.js | title": {
-    "message": "El fitxer de manifest de l'aplicació web compleix els requisits d'instal·lació"
+    "message": "El fitxer de manifest de l'aplicació web i el Service Worker no compleixen els requisits d'instal·lació"
+  },
+  "lighthouse-core/audits/installable-manifest.js | url-not-supported-for-webapk": {
+    "message": "Un URL del fitxer de manifest conté un nom d'usuari, una contrasenya o un port"
+  },
+  "lighthouse-core/audits/installable-manifest.js | warn-not-offline-capable": {
+    "message": "La pàgina no funciona sense connexió. A partir de Chrome 93, versió estable d'agost de 2021, es considerarà que la pàgina no es pot instal·lar."
   },
   "lighthouse-core/audits/is-on-https.js | allowed": {
     "message": "Permès"
@@ -878,24 +1019,6 @@
   "lighthouse-core/audits/layout-shift-elements.js | title": {
     "message": "Evita els canvis de disseny importants"
   },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | description": {
-    "message": "Carregar les pàgines ràpidament mitjançant una xarxa mòbil garanteix una experiència satisfactòria per als usuaris de mòbils. [Obtén més informació](https://web.dev/load-fast-enough-for-pwa/)."
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | displayValueText": {
-    "message": "Ha tardat {timeInMs, number, seconds} segons a fer-se interactiva"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | displayValueTextWithOverride": {
-    "message": "Ha tardat {timeInMs, number, seconds} segons a fer-se interactiva a la xarxa mòbil"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | explanationLoadSlow": {
-    "message": "La pàgina es carrega massa lentament i no es torna interactiva al cap de 10 segons. Consulta les seccions Oportunitats i Diagnòstic de la categoria Rendiment per obtenir informació sobre com es pot millorar."
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | failureTitle": {
-    "message": "La pàgina no es carrega amb prou rapidesa a les xarxes mòbils"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | title": {
-    "message": "La pàgina es carrega amb prou rapidesa a les xarxes mòbils"
-  },
   "lighthouse-core/audits/long-tasks.js | description": {
     "message": "Enumera les tasques més llargues del fil principal, cosa que resulta útil per identificar què contribueix més al retard de les interaccions. [Més informació](https://web.dev/long-tasks-devtools/)"
   },
@@ -936,13 +1059,13 @@
     "message": "No sembla que les transicions entre pàgines es bloquegin a la xarxa"
   },
   "lighthouse-core/audits/maskable-icon.js | description": {
-    "message": "Una icona emmascarable garanteix que la imatge omple la forma completa sense adquirir el format de bústia en instal·lar l'aplicació en un dispositiu. [Obtén més informació](https://web.dev/maskable-icon-audit/)."
+    "message": "Una icona adaptativa garanteix que la imatge omple la forma completa sense adquirir el format de bústia en instal·lar l'aplicació en un dispositiu. [Obtén més informació](https://web.dev/maskable-icon-audit/)."
   },
   "lighthouse-core/audits/maskable-icon.js | failureTitle": {
-    "message": "El manifest no té cap icona adaptable"
+    "message": "El manifest no té cap icona adaptativa"
   },
   "lighthouse-core/audits/maskable-icon.js | title": {
-    "message": "El manifest té una icona emmascarable"
+    "message": "El manifest té una icona adaptativa"
   },
   "lighthouse-core/audits/metrics/cumulative-layout-shift.js | description": {
     "message": "El canvi de disseny acumulatiu mesura el moviment d'elements visibles a la finestra gràfica. [Obtén més informació](https://web.dev/cls/)."
@@ -963,7 +1086,7 @@
     "message": "La mètrica Temps fins que és interactiva és el que tarda la pàgina a fer-se completament interactiva. [Obtén més informació](https://web.dev/interactive/)."
   },
   "lighthouse-core/audits/metrics/largest-contentful-paint.js | description": {
-    "message": "La renderització de l'element més gran amb contingut marca el moment en què es renderitza el text o la imatge més gran. [Obtén més informació](https://web.dev/lighthouse-largest-contentful-paint/)."
+    "message": "La renderització de l'element més gran amb contingut marca el moment en què es renderitza el text o la imatge més gran. [Més informació](https://web.dev/lighthouse-largest-contentful-paint/)"
   },
   "lighthouse-core/audits/metrics/max-potential-fid.js | description": {
     "message": "El retard potencial màxim respecte a la primera interacció que els usuaris es poden trobar és la durada de la tasca més llarga. [Obtén més informació](https://web.dev/lighthouse-max-potential-fid/)."
@@ -987,7 +1110,7 @@
     "message": "Latències dorsals del servidor"
   },
   "lighthouse-core/audits/no-unload-listeners.js | description": {
-    "message": "L'esdeveniment `unload` no es pot activar amb fiabilitat i detectar-lo pot impedir optimitzacions del navegador, com ara la memòria cau Back-Forward. També pots fer servir els esdeveniments `pagehide` o `visibilitychange`. [Més informació](https://developers.google.com/web/updates/2018/07/page-lifecycle-api#the-unload-event)"
+    "message": "L'esdeveniment `unload` no es pot activar amb fiabilitat i detectar-lo pot impedir optimitzacions del navegador, com ara la memòria cau back-forward. També pots fer servir els esdeveniments `pagehide` o `visibilitychange`. [Més informació](https://developers.google.com/web/updates/2018/07/page-lifecycle-api#the-unload-event)"
   },
   "lighthouse-core/audits/no-unload-listeners.js | failureTitle": {
     "message": "Registra un detector de `unload`"
@@ -1021,21 +1144,6 @@
   },
   "lighthouse-core/audits/non-composited-animations.js | unsupportedTimingParameters": {
     "message": "L'efecte té paràmetres de temps no admesos"
-  },
-  "lighthouse-core/audits/offline-start-url.js | description": {
-    "message": "Els Service Workers permeten que la teva aplicació sigui fiable en condicions imprevisibles de la xarxa. [Obtén més informació](https://web.dev/offline-start-url/)."
-  },
-  "lighthouse-core/audits/offline-start-url.js | errorLoading": {
-    "message": "S'ha produït un error en carregar {url} a Service Worker; s'ha obtingut el codi d'estat {statusCode}"
-  },
-  "lighthouse-core/audits/offline-start-url.js | failureTitle": {
-    "message": "`start_url` no respon amb un codi 200 quan no hi ha connexió"
-  },
-  "lighthouse-core/audits/offline-start-url.js | title": {
-    "message": "`start_url` respon amb un codi 200 quan no hi ha connexió"
-  },
-  "lighthouse-core/audits/offline-start-url.js | warningCantStart": {
-    "message": "Lighthouse no ha pogut llegir l'atribut `start_url` del fitxer de manifest, de manera que s'ha donat per fet que `start_url` era l'URL del document. Missatge d'error: \"{manifestWarning}\"."
   },
   "lighthouse-core/audits/performance-budget.js | description": {
     "message": "Manté la quantitat i la mida de les sol·licituds de xarxa ajustades als objectius establerts al pressupost de rendiment que s'ha proporcionat. [Obtén més informació](https://developers.google.com/web/tools/lighthouse/audits/budgets)."
@@ -1316,8 +1424,32 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Estableix un color temàtic per a la barra d'adreces."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Temps de bloqueig del fil principal"
+  "lighthouse-core/audits/third-party-facades.js | categoryCustomerSuccess": {
+    "message": "{productName} (històries d'èxit)"
+  },
+  "lighthouse-core/audits/third-party-facades.js | categoryMarketing": {
+    "message": "{productName} (màrqueting)"
+  },
+  "lighthouse-core/audits/third-party-facades.js | categorySocial": {
+    "message": "{productName} (social)"
+  },
+  "lighthouse-core/audits/third-party-facades.js | categoryVideo": {
+    "message": "{productName} (vídeo)"
+  },
+  "lighthouse-core/audits/third-party-facades.js | columnProduct": {
+    "message": "Producte"
+  },
+  "lighthouse-core/audits/third-party-facades.js | description": {
+    "message": "Pot ser que algunes insercions de tercers es carreguin lentament. Pots substituir-les per una façana fins que s'hagin de fer servir. [Obtén més informació](https://web.dev/third-party-facades/)."
+  },
+  "lighthouse-core/audits/third-party-facades.js | displayValue": {
+    "message": "{itemCount,plural, =1{# alternativa de façana disponible}other{# alternatives de façana disponibles}}"
+  },
+  "lighthouse-core/audits/third-party-facades.js | failureTitle": {
+    "message": "Pot ser que alguns recursos de tercers es carreguin lentament amb una façana"
+  },
+  "lighthouse-core/audits/third-party-facades.js | title": {
+    "message": "Carrega lentament recursos externs amb façanes"
   },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Tercers"
@@ -1330,9 +1462,6 @@
   },
   "lighthouse-core/audits/third-party-summary.js | failureTitle": {
     "message": "Redueix l'impacte del codi de tercers"
-  },
-  "lighthouse-core/audits/third-party-summary.js | otherValue": {
-    "message": "Altres recursos"
   },
   "lighthouse-core/audits/third-party-summary.js | title": {
     "message": "Redueix l'ús de tercers"
@@ -1423,30 +1552,6 @@
   },
   "lighthouse-core/audits/viewport.js | title": {
     "message": "Té una etiqueta `<meta name=\"viewport\">` amb l'atribut `width` o `initial-scale`"
-  },
-  "lighthouse-core/audits/without-javascript.js | description": {
-    "message": "L'aplicació ha de mostrar algun tipus de contingut quan JavaScript estigui desactivat, encara que només sigui per avisar l'usuari que es requereix JavaScript per utilitzar l'aplicació. [Obtén més informació](https://web.dev/without-javascript/)."
-  },
-  "lighthouse-core/audits/without-javascript.js | explanation": {
-    "message": "El cos de la pàgina ha de renderitzar algun tipus de contingut si els scripts no estan disponibles."
-  },
-  "lighthouse-core/audits/without-javascript.js | failureTitle": {
-    "message": "No proporciona contingut alternatiu quan JavaScript no està disponible"
-  },
-  "lighthouse-core/audits/without-javascript.js | title": {
-    "message": "Inclou algun tipus de contingut quan JavaScript no està disponible"
-  },
-  "lighthouse-core/audits/works-offline.js | description": {
-    "message": "Si vols crear una aplicació web progressiva, considera la possibilitat d'utilitzar un Service Worker perquè l'aplicació funcioni sense connexió. [Obtén més informació](https://web.dev/works-offline/)."
-  },
-  "lighthouse-core/audits/works-offline.js | failureTitle": {
-    "message": "La pàgina actual no respon amb un codi 200 quan no hi ha connexió"
-  },
-  "lighthouse-core/audits/works-offline.js | title": {
-    "message": "La pàgina actual respon amb un codi 200 quan no hi ha connexió"
-  },
-  "lighthouse-core/audits/works-offline.js | warningNoLoad": {
-    "message": "És possible que la pàgina no es carregui sense connexió perquè l'URL de prova ({requested}) s'ha redirigit cap a \"{final}\". Prova el segon URL directament."
   },
   "lighthouse-core/config/default-config.js | a11yAriaGroupDescription": {
     "message": "Aquí tens recomanacions per millorar l'ús dels elements d'ARIA a l'aplicació. També poden millorar l'experiència dels usuaris de tecnologia d'assistència (per exemple, de lectors de pantalla)."
@@ -1565,9 +1670,6 @@
   "lighthouse-core/config/default-config.js | pwaCategoryTitle": {
     "message": "Aplicació web progressiva"
   },
-  "lighthouse-core/config/default-config.js | pwaFastReliableGroupTitle": {
-    "message": "Ràpid i fiable"
-  },
   "lighthouse-core/config/default-config.js | pwaInstallableGroupTitle": {
     "message": "Es pot instal·lar"
   },
@@ -1607,11 +1709,71 @@
   "lighthouse-core/gather/gather-runner.js | warningRedirected": {
     "message": "És possible que la pàgina no s'estigui carregant com s'esperava perquè s'ha redirigit el teu URL de prova ({requested}) a {final}. Intenta provar el segon URL directament."
   },
+  "lighthouse-core/gather/gather-runner.js | warningSlowHostCpu": {
+    "message": "Sembla que el dispositiu provat té una CPU més lenta que la que espera Lighthouse. Això pot repercutir negativament en el teu resultat del rendiment. Obtén més informació sobre com pots [calibrar un multiplicador de retenció de la CPU adequat](https://github.com/GoogleChrome/lighthouse/blob/master/docs/throttling.md#cpu-throttling)."
+  },
   "lighthouse-core/gather/gather-runner.js | warningTimeout": {
     "message": "La pàgina s'ha carregat molt lentament i ha sobrepassat el límit de temps. És possible que els resultats siguin incomplets."
   },
+  "lighthouse-core/lib/csp-evaluator.js | allowlistFallback": {
+    "message": "Pots optar per afegir esquemes d'URL https: o http: (els navegadors que admeten \"strict-dynamic\" els ignoren) perquè sigui retrocompatible amb navegadors més antics."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | deprecatedDisownOpener": {
+    "message": "La directiva \"disown-opener\" està obsoleta des de la CSP3. Com a alternativa, utilitza la capçalera Cross-Origin-Opener-Policy."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | deprecatedReferrer": {
+    "message": "La directiva \"referrer\" està obsoleta des de la CSP2. Com a alternativa, utilitza la capçalera Referrer-Policy."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | deprecatedReflectedXSS": {
+    "message": "La directiva \"reflected-xss\" està obsoleta des de la CSP2. Com a alternativa, utilitza la capçalera X-XSS-Protection."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | missingBaseUri": {
+    "message": "Missing base-uri allows injected <base> tags to set the base URL for all relative URLs (e.g. scripts) to an attacker controlled domain. Consider setting base-uri to 'none' or 'self'."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | missingObjectSrc": {
+    "message": "Els elements controlats per \"object-src\" es consideren funcions heretades. Pots optar per establir \"object-src\" en \"none\" per prevenir la injecció de connectors que executin scripts no segurs."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | missingScriptSrc": {
+    "message": "Falta la directiva \"script-src\". Això pot permetre l'execució de scripts no segurs."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | missingSemicolon": {
+    "message": "Se t'ha oblidat el punt i coma? Sembla que \"{keyword}\" és una directiva i no una paraula clau."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | nonceCharset": {
+    "message": "Els nonces han d'utilitzar el codi de caràcters base64."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | nonceLength": {
+    "message": "Els nonces han de tenir 8 caràcters com a mínim."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | reportToOnly": {
+    "message": "La destinació d'informes només es pot configurar mitjançant la directiva \"report-to\". Aquesta directiva només s'admet en navegadors basats en Chromium i, per tant, també es recomana utilitzar una directiva \"report-uri\"."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | reportingDestinationMissing": {
+    "message": "No hi ha cap CSP que ofereixi una destinació d'informes. Això fa que sigui més difícil mantenir la CSP al llarg del temps i monitorar les vulnerabilitats."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | strictDynamic": {
+    "message": "Les llistes d'amfitrions permesos sovint es poden ometre. Pots optar per utilitzar \"strict-dynamic\" juntament amb nonces o valors resum de la CSP."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | unknownDirective": {
+    "message": "Directiva CSP desconeguda."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | unknownKeyword": {
+    "message": "\"{keyword}\" sembla una paraula clau no vàlida."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | unsafeInline": {
+    "message": "La directiva \"unsafe-inline\" permet l'execució de scripts in-page i gestors d'esdeveniments no segurs. Pots utilitzar nonces o valors resum de la CSP per permetre els scripts individualment."
+  },
+  "lighthouse-core/lib/csp-evaluator.js | unsafeInlineFallback": {
+    "message": "Pots optar per afegir \"unsafe-inline\" (els navegadors que admeten nonces o valors resum l'ignoren) perquè sigui retrocompatible amb navegadors més antics."
+  },
+  "lighthouse-core/lib/i18n/i18n.js | columnBlockingTime": {
+    "message": "Temps de bloqueig del fil principal"
+  },
   "lighthouse-core/lib/i18n/i18n.js | columnCacheTTL": {
     "message": "TTL de la memòria cau"
+  },
+  "lighthouse-core/lib/i18n/i18n.js | columnDescription": {
+    "message": "Descripció"
   },
   "lighthouse-core/lib/i18n/i18n.js | columnDuration": {
     "message": "Durada"
@@ -1715,6 +1877,9 @@
   "lighthouse-core/lib/i18n/i18n.js | otherResourceType": {
     "message": "Altres"
   },
+  "lighthouse-core/lib/i18n/i18n.js | otherResourcesLabel": {
+    "message": "Altres recursos"
+  },
   "lighthouse-core/lib/i18n/i18n.js | scriptResourceType": {
     "message": "Script"
   },
@@ -1757,6 +1922,9 @@
   "lighthouse-core/lib/lh-error.js | missingRequiredArtifact": {
     "message": "El recopilador obligatori {artifactName} no s'ha executat."
   },
+  "lighthouse-core/lib/lh-error.js | noFcp": {
+    "message": "La pàgina no ha renderitzat contingut. Assegura't de mantenir la finestra del navegador en primer pla durant la càrrega i torna-ho a provar. ({errorCode})"
+  },
   "lighthouse-core/lib/lh-error.js | notHtml": {
     "message": "La pàgina proporcionada no és HTML (s'ha publicat com a tipus MIME {mimeType})."
   },
@@ -1792,9 +1960,6 @@
   },
   "lighthouse-core/lib/lh-error.js | urlInvalid": {
     "message": "Sembla que l'URL que has proporcionat no és vàlid."
-  },
-  "lighthouse-core/report/html/renderer/util.js | auditGroupExpandTooltip": {
-    "message": "Mostra les auditories"
   },
   "lighthouse-core/report/html/renderer/util.js | calculatorLink": {
     "message": "Consulta la calculadora."
@@ -2013,7 +2178,7 @@
     "message": "Pots penjar el GIF en un servei que permeti inserir-lo com un vídeo HTML5."
   },
   "node_modules/lighthouse-stack-packs/packs/joomla.js | offscreen-images": {
-    "message": "Instal·la un [connector de Joomla de càrrega lenta](https://extensions.joomla.org/instant-search/?jed_live%5Bquery%5D=lazy%20loading) que t'ofereixi la possibilitat d'ajornar les imatges fora de pantalla o de canviar a una plantilla que t'ofereixi aquesta funcionalitat. A partir de Joomla 4.0, es pot activar un connector de càrrega lenta dedicat utilitzant el connector \"Content - Lazy Loading Images\" (Contingut > Imatges de càrrega lenta). També pots fer servir [un connector AMP](https://extensions.joomla.org/instant-search/?jed_live%5Bquery%5D=amp)."
+    "message": "Instal·la un [connector de Joomla de càrrega lenta](https://extensions.joomla.org/instant-search/?jed_live%5Bquery%5D=lazy%20loading) que t'ofereixi la possibilitat d'ajornar les imatges fora de pantalla o bé canvia a una plantilla que t'ofereixi aquesta funcionalitat. A partir de Joomla 4.0, totes les imatges noves obtenen [automàticament](https://github.com/joomla/joomla-cms/pull/30748) l'atribut `loading` del nucli."
   },
   "node_modules/lighthouse-stack-packs/packs/joomla.js | render-blocking-resources": {
     "message": "Hi ha diversos connectors de Joomla que et poden ajudar a [inserir recursos essencials](https://extensions.joomla.org/instant-search/?jed_live%5Bquery%5D=performance) o a [ajornar els recursos menys importants](https://extensions.joomla.org/instant-search/?jed_live%5Bquery%5D=performance). Tingues en compte que les optimitzacions que proporcionen aquests connectors poden afectar les funcions de les plantilles o dels connectors, de manera que hi hauràs de fer proves minucioses."
@@ -2087,8 +2252,50 @@
   "node_modules/lighthouse-stack-packs/packs/magento.js | uses-webp-images": {
     "message": "Pots optar per cercar diverses extensions de tercers a [Magento Marketplace](https://marketplace.magento.com/catalogsearch/result/?q=webp) per utilitzar formats d'imatge més nous."
   },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | efficient-animated-content": {
+    "message": "[Suprimeix els GIF animats amb vídeo](https://web.dev/replace-gifs-with-videos/) per carregar les pàgines web més ràpidament i planteja't l'opció d'utilitzar formats de fitxer moderns, com ara [WebM](https://web.dev/replace-gifs-with-videos/#create-webm-videos) o [AV1](https://developers.google.com/web/updates/2018/09/chrome-70-media-updates#av1-decoder), per millorar l'eficàcia de compressió en més d'un 30% respecte al còdec de vídeo actual més avançat, VP9."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | offscreen-images": {
+    "message": "Pots instal·lar un [connector de càrrega lenta d'imatges](https://octobercms.com/plugins?search=lazy) que t'ofereixi la possibilitat d'ajornar les imatges fora de pantalla o bé canviar a un tema que t'ofereixi aquesta funcionalitat. També pots fer servir [el connector AMP](https://octobercms.com/plugins?search=Accelerated+Mobile+Pages)."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | render-blocking-resources": {
+    "message": "Hi ha molts connectors que ajuden a [inserir recursos essencials](https://octobercms.com/plugins?search=css). Aquests connectors, però, poden malmetre altres connectors; et recomanem que els provis a fons."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | time-to-first-byte": {
+    "message": "Els temes, els connectors i les especificacions del servidor contribueixen al temps de resposta del servidor. Pots buscar un tema més optimitzat, seleccionar amb cura un connector d'optimització o actualitzar el servidor. El CMS d'October també permet als desenvolupadors fer servir [`Queues`](https://octobercms.com/docs/services/queues) per ajornar el processament d'una tasca llarga, com ara enviar un correu electrònic. Això accelera enormement les sol·licituds web."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | total-byte-weight": {
+    "message": "Pots mostrar extractes a les llistes de publicacions (per exemple, utilitzar un botó `show more`), reduir el nombre de publicacions que es mostren en una pàgina web determinada, dividir les publicacions llargues en diverses pàgines web o utilitzar un connector per carregar lentament els comentaris."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | unminified-css": {
+    "message": "Hi ha molts [connectors](https://octobercms.com/plugins?search=css) que poden accelerar un lloc web mitjançant la concatenació, minimització i compressió dels estils. Utilitzar un procés de compilació per dur a terme aquesta minimització de manera anticipada pot accelerar el desenvolupament."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | unminified-javascript": {
+    "message": "Hi ha molts [connectors](https://octobercms.com/plugins?search=javascript) que poden accelerar un lloc web mitjançant la concatenació, minimització i compressió dels scripts. Utilitzar un procés de compilació per dur a terme aquesta minimització de manera anticipada pot accelerar el desenvolupament."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | unused-css-rules": {
+    "message": "Pots revisar els [connectors](https://octobercms.com/plugins) que carreguen fitxers CSS que no s'utilitzen al lloc web. Per identificar aquest tipus de connectors, executa la [cobertura del codi](https://developers.google.com/web/updates/2017/04/devtools-release-notes#coverage) a Chrome DevTools. Identifica el tema o connector responsable de l'URL del full d'estil. Cerca connectors que tinguin molts fulls d'estil i molt de vermell a la cobertura del codi. Un connector només hauria d'afegir un full d'estil si aquest full d'estil s'utilitza a la pàgina web."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | unused-javascript": {
+    "message": "Pots revisar els [connectors](https://octobercms.com/plugins?search=javascript) que carreguen fitxers JavaScript que no s'utilitzen a la pàgina web. Per identificar aquest tipus de connectors, executa la [cobertura del codi](https://developers.google.com/web/updates/2017/04/devtools-release-notes#coverage) a Chrome DevTools. Identifica el tema o connector responsable de l'URL de l'script. Cerca connectors que tinguin molts scripts i molt de vermell a la cobertura del codi. Un connector només hauria d'afegir un script si aquest script s'utilitza a la pàgina web."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | uses-long-cache-ttl": {
+    "message": "Informa't sobre com pots [evitar sol·licituds de xarxa innecessàries amb la memòria cau HTTP](https://web.dev/http-cache/#caching-checklist). Hi ha molts [connectors](https://octobercms.com/plugins?search=Caching) que es poden utilitzar per accelerar l'emmagatzematge a la memòria cau."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | uses-optimized-images": {
+    "message": "Pots utilitzar un [connector d'optimització d'imatges](https://octobercms.com/plugins?search=image) per comprimir les imatges sense perdre qualitat."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | uses-responsive-images": {
+    "message": "Penja imatges directament al gestor multimèdia per assegurar-te que estan disponibles les mides d'imatge necessàries. Pots utilitzar el [filtre per canviar de mida](https://octobercms.com/docs/markup/filter-resize) o un [connector per canviar la mida de la imatge](https://octobercms.com/plugins?search=image) per assegurar-te que s'utilitzen les mides d'imatge òptimes."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | uses-text-compression": {
+    "message": "Activa la compressió de text a la configuració del servidor web."
+  },
+  "node_modules/lighthouse-stack-packs/packs/octobercms.js | uses-webp-images": {
+    "message": "Pots fer servir un [connector](https://octobercms.com/plugins?search=image) o un servei que converteixi automàticament les imatges penjades als formats òptims. [Les imatges WebP sense pèrdua](https://developers.google.com/speed/webp) són un 26% més petites en comparació amb les imatges PNG i entre un 25 i un 34% més petites que les imatges JPEG comparables a l'índex de qualitat SSIM equivalent. Un altre format d'imatge d'última generació que cal tenir en compte és [AVIF](https://jakearchibald.com/2020/avif-has-landed/)."
+  },
   "node_modules/lighthouse-stack-packs/packs/react.js | dom-size": {
-    "message": "Pots utilitzar una biblioteca que s'obri en finestres, com ara `react-window`, per minimitzar el nombre de nodes DOM que es crea en renderitzar molts elements repetits a la pàgina. [Obtén més informació](https://web.dev/virtualize-long-lists-react-window/). Si estàs utilitzant el hook `Effect` per millorar el rendiment en temps d'execució, també pots [ometre els efectes](https://reactjs.org/docs/hooks-effect.html#tip-optimizing-performance-by-skipping-effects) només fins que certes dependències canviïn i minimitzar les renderitzacions repetides innecessàries utilitzant [`shouldComponentUpdate`](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action), [`PureComponent`](https://reactjs.org/docs/react-api.html#reactpurecomponent) o [`React.memo`](https://reactjs.org/docs/react-api.html#reactmemo)."
+    "message": "Pots utilitzar una biblioteca d'enfinestrament, com ara `react-window`, per minimitzar el nombre de nodes DOM que es crea en renderitzar molts elements repetits a la pàgina. [Obtén més informació](https://web.dev/virtualize-long-lists-react-window/). Si estàs utilitzant el hook `Effect` per millorar el rendiment en temps d'execució, també pots [ometre els efectes](https://reactjs.org/docs/hooks-effect.html#tip-optimizing-performance-by-skipping-effects) només fins que certes dependències canviïn i minimitzar les renderitzacions repetides innecessàries utilitzant [`shouldComponentUpdate`](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action), [`PureComponent`](https://reactjs.org/docs/react-api.html#reactpurecomponent) o [`React.memo`](https://reactjs.org/docs/react-api.html#reactmemo)."
   },
   "node_modules/lighthouse-stack-packs/packs/react.js | redirects": {
     "message": "Si estàs utilitzant un encaminador de React, redueix l'ús del component `<Redirect>` a les [navegacions per rutes](https://reacttraining.com/react-router/web/api/Redirect)."

@@ -5,11 +5,15 @@
  */
 
 declare module 'jsonld' {
-  type CallbackFn = (err: null|Error, result?: any) => void
-
-  interface JsonldOptions {
-    documentLoader: (url: string, callback: CallbackFn) => void
+  interface RemoteDocument {
+    contextUrl?: string;
+    documentUrl?: string;
+    document: unknown;
   }
 
-  export function expand(object: any, options: JsonldOptions): Promise<any>;
+  interface JsonldOptions {
+    documentLoader: (url: string) => Promise<RemoteDocument>;
+  }
+
+  export function expand(object: unknown, options: JsonldOptions): Promise<any>;
 }

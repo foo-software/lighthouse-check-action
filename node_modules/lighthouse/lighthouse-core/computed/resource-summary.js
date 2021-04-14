@@ -8,6 +8,7 @@
 const makeComputedArtifact = require('./computed-artifact.js');
 const NetworkRecords = require('./network-records.js');
 const URL = require('../lib/url-shim.js');
+const NetworkRequest = require('../lib/network-request.js');
 const MainResource = require('./main-resource.js');
 const Budget = require('../config/budget.js');
 const Util = require('../report/html/renderer/util.js');
@@ -71,11 +72,7 @@ class ResourceSummary {
         return false;
       }
       // Ignore non-network protocols
-      const url = new URL(record.url);
-      const protocol = url.protocol.slice(0, -1); // Removes trailing ":" from protocol
-      if (URL.NON_NETWORK_PROTOCOLS.includes(protocol)) {
-        return false;
-      }
+      if (NetworkRequest.isNonNetworkRequest(record)) return false;
       return true;
     }).forEach((record) => {
       const type = this.determineResourceType(record);

@@ -29,10 +29,10 @@ function processForProto(lhr) {
   // 'ignore unknown fields' in the language of conversion.
   if (reportJson.configSettings) {
     // The settings that are in both proto and LHR
-    const {emulatedFormFactor, locale, onlyCategories, channel} = reportJson.configSettings;
+    const {formFactor, locale, onlyCategories, channel} = reportJson.configSettings;
 
     // @ts-expect-error - intentionally only a subset of settings.
-    reportJson.configSettings = {emulatedFormFactor, locale, onlyCategories, channel};
+    reportJson.configSettings = {formFactor, locale, onlyCategories, channel};
   }
 
   // Remove runtimeError if it is NO_ERROR
@@ -100,7 +100,7 @@ function processForProto(lhr) {
   return reportJson;
 }
 
-// @ts-expect-error claims always false, but this checks if cli or module
+// Test if called from the CLI or as a module.
 if (require.main === module) {
   // read in the argv for the input & output
   const args = process.argv.slice(2);

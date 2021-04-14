@@ -18,6 +18,14 @@
 /** @typedef {{width: number, height: number}} Size */
 
 /**
+ * @typedef InstallOverlayFeatureParams
+ * @property {DOM} dom
+ * @property {Element} el
+ * @property {ParentNode} templateContext
+ * @property {LH.Artifacts.FullPageScreenshot} fullPageScreenshot
+ */
+
+/**
  * @param {LH.Artifacts.FullPageScreenshot['screenshot']} screenshot
  * @param {LH.Artifacts.Rect} rect
  * @return {boolean}
@@ -118,45 +126,44 @@ class ElementScreenshotRenderer {
   }
 
   /**
-   * Called externally and must be injected to the report in order to use this renderer.
-   * @param {DOM} dom
+   * Called by report renderer. Defines a css variable used by any element screenshots
+   * in the provided report element.
+   * Allows for multiple Lighthouse reports to be rendered on the page, each with their
+   * own full page screenshot.
+   * @param {HTMLElement} el
    * @param {LH.Artifacts.FullPageScreenshot['screenshot']} screenshot
    */
-  static createBackgroundImageStyle(dom, screenshot) {
-    const styleEl = dom.createElement('style');
-    styleEl.id = 'full-page-screenshot-style';
-    styleEl.textContent = `
-      .lh-element-screenshot__image {
-        background-image: url(${screenshot.data})
-      }`;
-    return styleEl;
+  static installFullPageScreenshot(el, screenshot) {
+    el.style.setProperty('--element-screenshot-url', `url(${screenshot.data})`);
   }
 
   /**
    * Installs the lightbox elements and wires up click listeners to all .lh-element-screenshot elements.
-   * @param {DOM} dom
-   * @param {ParentNode} templateContext
-   * @param {LH.Artifacts.FullPageScreenshot} fullPageScreenshot
+   * @param {InstallOverlayFeatureParams} _
    */
-  static installOverlayFeature(dom, templateContext, fullPageScreenshot) {
-    const reportEl = dom.find('.lh-report', dom.document());
-    const screenshotOverlayClass = 'lh-feature-screenshot-overlay';
-    if (reportEl.classList.contains(screenshotOverlayClass)) return;
-    reportEl.classList.add(screenshotOverlayClass);
+  static installOverlayFeature({dom, el, templateContext, fullPageScreenshot}) {
+    const screenshotOverlayClass = 'lh-screenshot-overlay--enabled';
+    // Don't install the feature more than once.
+    if (el.classList.contains(screenshotOverlayClass)) return;
+    el.classList.add(screenshotOverlayClass);
 
-    const maxLightboxSize = {
-      width: dom.document().documentElement.clientWidth,
-      height: dom.document().documentElement.clientHeight * 0.75,
-    };
-
-    dom.document().addEventListener('click', e => {
+    // Add a single listener to the provided element to handle all clicks within (event delegation).
+    el.addEventListener('click', e => {
       const target = /** @type {?HTMLElement} */ (e.target);
       if (!target) return;
-      const el = /** @type {?HTMLElement} */ (target.closest('.lh-element-screenshot'));
+      // Only activate the overlay for clicks on the screenshot *preview* of an element, not the full-size too.
+      const el = /** @type {?HTMLElement} */ (target.closest('.lh-node > .lh-element-screenshot'));
       if (!el) return;
 
-      const overlay = dom.createElement('div');
-      overlay.classList.add('lh-element-screenshot__overlay');
+      const overlay = dom.createElement('div', 'lh-element-screenshot__overlay');
+      el.append(overlay);
+
+      // The newly-added overlay has the dimensions we need.
+      const maxLightboxSize = {
+        width: overlay.clientWidth * 0.95,
+        height: overlay.clientHeight * 0.80,
+      };
+
       const elementRectSC = {
         width: Number(el.dataset['rectWidth']),
         height: Number(el.dataset['rectHeight']),
@@ -172,14 +179,15 @@ class ElementScreenshotRenderer {
         elementRectSC,
         maxLightboxSize
       );
-      if (!screenshotElement) return;
 
-      overlay.appendChild(screenshotElement);
-      overlay.addEventListener('click', () => {
+      // This would be unexpected here.
+      // When `screenshotElement` is `null`, there is also no thumbnail element for the user to have clicked to make it this far.
+      if (!screenshotElement) {
         overlay.remove();
-      });
-
-      reportEl.appendChild(overlay);
+        return;
+      }
+      overlay.appendChild(screenshotElement);
+      overlay.addEventListener('click', () => overlay.remove());
     });
   }
 
@@ -217,7 +225,7 @@ class ElementScreenshotRenderer {
     }
 
     const tmpl = dom.cloneTemplate('#tmpl-lh-element-screenshot', templateContext);
-    const containerEl = dom.find('.lh-element-screenshot', tmpl);
+    const containerEl = dom.find('div.lh-element-screenshot', tmpl);
 
     containerEl.dataset['rectWidth'] = elementRectSC.width.toString();
     containerEl.dataset['rectHeight'] = elementRectSC.height.toString();
@@ -245,10 +253,10 @@ class ElementScreenshotRenderer {
       {width: screenshot.width, height: screenshot.height}
     );
 
-    const contentEl = dom.find('.lh-element-screenshot__content', containerEl);
+    const contentEl = dom.find('div.lh-element-screenshot__content', containerEl);
     contentEl.style.top = `-${elementPreviewSizeDC.height}px`;
 
-    const imageEl = dom.find('.lh-element-screenshot__image', containerEl);
+    const imageEl = dom.find('div.lh-element-screenshot__image', containerEl);
     imageEl.style.width = elementPreviewSizeDC.width + 'px';
     imageEl.style.height = elementPreviewSizeDC.height + 'px';
 
@@ -257,13 +265,13 @@ class ElementScreenshotRenderer {
     imageEl.style.backgroundSize =
       `${screenshot.width * zoomFactor}px ${screenshot.height * zoomFactor}px`;
 
-    const markerEl = dom.find('.lh-element-screenshot__element-marker', containerEl);
+    const markerEl = dom.find('div.lh-element-screenshot__element-marker', containerEl);
     markerEl.style.width = elementRectSC.width * zoomFactor + 'px';
     markerEl.style.height = elementRectSC.height * zoomFactor + 'px';
     markerEl.style.left = positions.clip.left * zoomFactor + 'px';
     markerEl.style.top = positions.clip.top * zoomFactor + 'px';
 
-    const maskEl = dom.find('.lh-element-screenshot__mask', containerEl);
+    const maskEl = dom.find('div.lh-element-screenshot__mask', containerEl);
     maskEl.style.width = elementPreviewSizeDC.width + 'px';
     maskEl.style.height = elementPreviewSizeDC.height + 'px';
 

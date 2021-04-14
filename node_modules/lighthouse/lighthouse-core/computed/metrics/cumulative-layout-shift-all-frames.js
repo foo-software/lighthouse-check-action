@@ -5,27 +5,45 @@
  */
 'use strict';
 
+/** @typedef {Omit<LH.TraceEvent, 'name'|'args'> & {name: 'LayoutShift', args: {data: {score: number, weighted_score_delta: number, had_recent_input: boolean}}}} LayoutShiftEvent */
+
 const makeComputedArtifact = require('../computed-artifact.js');
+const TraceOfTab = require('../trace-of-tab.js');
+const log = require('lighthouse-logger');
+const LayoutShiftVariants = require('../layout-shift-variants.js');
 
 class CumulativeLayoutShiftAllFrames {
   /**
    * @param {LH.Trace} trace
+   * @param {LH.Audit.Context} context
    * @return {Promise<{value: number}>}
    */
-  static async compute_(trace) {
-    const cumulativeShift = trace.traceEvents
-      .filter(e =>
-        e.name === 'LayoutShift' &&
-        e.args &&
-        e.args.data &&
-        e.args.data.score &&
-        !e.args.data.had_recent_input
-      )
+  static async compute_(trace, context) {
+    const traceOfTab = await TraceOfTab.request(trace, context);
+    const layoutShiftEvents = LayoutShiftVariants.getLayoutShiftEvents(traceOfTab.frameTreeEvents);
+
+    let traceHasWeightedScore = true;
+    const cumulativeShift = layoutShiftEvents
       .map(e => {
-        // @ts-expect-error Events without score are filtered out.
-        return /** @type {number} */ (e.args.data.score);
+        // COMPAT: remove after m90 hits stable
+        // We should replace with a LHError at that point:
+        // https://github.com/GoogleChrome/lighthouse/pull/12034#discussion_r568150032
+        if (e.weightedScoreDelta === undefined) {
+          traceHasWeightedScore = false;
+          return e.score;
+        }
+
+        return e.weightedScoreDelta;
       })
       .reduce((sum, score) => sum + score, 0);
+
+    if (traceHasWeightedScore) {
+      log.warn(
+        'CLS-AF',
+        'Trace does not have weighted layout shift scores. CLS-AF may not be accurate.'
+      );
+    }
+
     return {
       value: cumulativeShift,
     };

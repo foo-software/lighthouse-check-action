@@ -22,6 +22,8 @@ const HEADER_SAFELIST = new Set(['x-robots-tag', 'link']);
 const lhRootDirPath = path.join(__dirname, '../../../');
 
 class Server {
+  baseDir = __dirname;
+
   constructor() {
     this._server = http.createServer(this._requestHandler.bind(this));
     /** @type {(data: string) => string=} */
@@ -64,8 +66,7 @@ class Server {
     const requestUrl = parseURL(request.url);
     const filePath = requestUrl.pathname;
     const queryString = requestUrl.search && parseQueryString(requestUrl.search.slice(1));
-    let absoluteFilePath = path.join(__dirname, filePath);
-
+    let absoluteFilePath = path.join(this.baseDir, filePath);
     const sendResponse = (statusCode, data) => {
       // Used by Smokerider.
       if (this._dataTransformer) data = this._dataTransformer(data);
@@ -133,13 +134,13 @@ class Server {
       }
 
       response.writeHead(statusCode, headers);
+      const encoding = charset === 'UTF-8' ? 'utf-8' : 'binary';
 
       // Delay the response
       if (delay > 0) {
-        return setTimeout(finishResponse, delay, data);
+        return setTimeout(finishResponse, delay, data, encoding);
       }
 
-      const encoding = charset === 'UTF-8' ? 'utf-8' : 'binary';
       finishResponse(data, encoding);
     };
 
@@ -227,6 +228,7 @@ if (require.main === module) {
   console.log(`offline: listening on http://localhost:${offlinePort}`);
 } else {
   module.exports = {
+    Server,
     server: serverForOnline,
     serverForOffline,
   };

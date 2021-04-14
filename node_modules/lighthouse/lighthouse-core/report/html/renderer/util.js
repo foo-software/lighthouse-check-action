@@ -66,6 +66,10 @@ class Util {
     if (!clone.configSettings.locale) {
       clone.configSettings.locale = 'en';
     }
+    if (!clone.configSettings.formFactor) {
+      // @ts-expect-error fallback handling for emulatedFormFactor
+      clone.configSettings.formFactor = clone.configSettings.emulatedFormFactor;
+    }
 
     for (const audit of Object.values(clone.audits)) {
       // Turn 'not-applicable' (LHR <4.0) and 'not_applicable' (older proto versions)
@@ -424,12 +428,11 @@ class Util {
         networkThrottling = Util.i18n.strings.runtimeUnknown;
     }
 
-    let deviceEmulation = Util.i18n.strings.runtimeNoEmulation;
-    if (settings.emulatedFormFactor === 'mobile') {
-      deviceEmulation = Util.i18n.strings.runtimeMobileEmulation;
-    } else if (settings.emulatedFormFactor === 'desktop') {
-      deviceEmulation = Util.i18n.strings.runtimeDesktopEmulation;
-    }
+    // TODO(paulirish): revise Runtime Settings strings: https://github.com/GoogleChrome/lighthouse/pull/11796
+    const deviceEmulation = {
+      mobile: Util.i18n.strings.runtimeMobileEmulation,
+      desktop: Util.i18n.strings.runtimeDesktopEmulation,
+    }[settings.formFactor] || Util.i18n.strings.runtimeNoEmulation;
 
     return {
       deviceEmulation,
@@ -528,8 +531,6 @@ Util.UIStrings = {
   errorLabel: 'Error!',
   /** This label is shown above a bulleted list of warnings. It is shown directly below an audit that produced warnings. Warnings describe situations the user should be aware of, as Lighthouse was unable to complete all the work required on this audit. For example, The 'Unable to decode image (biglogo.jpg)' warning may show up below an image encoding audit. */
   warningHeader: 'Warnings: ',
-  /** The tooltip text on an expandable chevron icon. Clicking the icon expands a section to reveal a list of audit results that was hidden by default. */
-  auditGroupExpandTooltip: 'Show audits',
   /** Section heading shown above a list of passed audits that contain warnings. Audits under this section do not negatively impact the score, but Lighthouse has generated some potentially actionable suggestions that should be reviewed. This section is expanded by default and displays after the failing audits. */
   warningAuditsGroupTitle: 'Passed audits but with warnings',
   /** Section heading shown above a list of audits that are passing. 'Passed' here refers to a passing grade. This section is collapsed by default, as the user should be focusing on the failed audits instead. Users can click this heading to reveal the list. */

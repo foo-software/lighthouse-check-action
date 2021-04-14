@@ -88,6 +88,8 @@ module.exports = [
           details: {
             items: {
               0: {
+                // TODO: Remove when attribution is resolved.
+                _maxChromiumMilestone: 90,
                 url: /main-thread-consumer/,
                 scripting: '>9000',
               },

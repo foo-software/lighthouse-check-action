@@ -284,11 +284,6 @@ const ERRORS = {
     code: 'UNSUPPORTED_OLD_CHROME',
     message: UIStrings.oldChromeDoesNotSupportFeature,
   },
-  /** Layout Shift trace events are found but without data */
-  LAYOUT_SHIFT_MISSING_DATA: {
-    code: 'LAYOUT_SHIFT_MISSING_DATA',
-    message: UIStrings.badTraceRecording,
-  },
 
   // TTI calculation failures
   FMP_TOO_LATE_FOR_FCPUI: {code: 'FMP_TOO_LATE_FOR_FCPUI', message: UIStrings.pageLoadTookTooLong},

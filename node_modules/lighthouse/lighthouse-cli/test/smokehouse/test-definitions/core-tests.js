@@ -59,6 +59,10 @@ const smokeTests = [{
   config: require('./perf/perf-config.js'),
   runSerially: true,
 }, {
+  id: 'perf-diagnostics',
+  expectations: require('./perf-diagnostics/expectations.js'),
+  config: require('./perf-diagnostics/perf-diagnostics-config.js'),
+}, {
   id: 'lantern',
   expectations: require('./lantern/lantern-expectations.js'),
   config: require('./lantern/lantern-config.js'),
@@ -75,10 +79,11 @@ const smokeTests = [{
   expectations: require('./source-maps/expectations.js'),
   config: require('./source-maps/source-maps-config.js'),
 }, {
-  id: 'forms',
-  expectations: require('./forms/form-expectations.js'),
-  config: require('./forms/form-config.js'),
-}, {
+// TODO: restore when --enable-features=AutofillShowTypePredictions is not needed.
+//   id: 'forms',
+//   expectations: require('./forms/form-expectations.js'),
+//   config: require('./forms/form-config.js'),
+// }, {
   id: 'screenshot',
   expectations: require('./screenshot/expectations.js'),
   config: require('./screenshot/screenshot-config.js'),

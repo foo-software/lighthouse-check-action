@@ -10,21 +10,25 @@ declare global {
       lhr: LH.Result;
     }
 
-    interface RootNodeContainer {
-      /** Arbitrary name identifier. Usually a script url. */
-      name: string;
-      node: Node;
+    type NodePath = string[];
+
+    interface ViewMode {
+      id: 'all' | 'unused-bytes';
+      label: string;
+      subLabel: string;
+      partitionBy?: 'resourceBytes' | 'unusedBytes';
+      highlightNodePaths?: NodePath[];
     }
 
     interface Node {
-      /** Arbitrary name identifier. Usually a path component from a source map. */
+      /** Could be a url, a path component from a source map, or an arbitrary string. */
       name: string;
       resourceBytes: number;
       unusedBytes?: number;
       /** If present, this module is a duplicate. String is normalized source path. See ModuleDuplication.normalizeSource */
       duplicatedNormalizedModuleName?: string;
       children?: Node[];
-    }    
+    }
   }
 }
 

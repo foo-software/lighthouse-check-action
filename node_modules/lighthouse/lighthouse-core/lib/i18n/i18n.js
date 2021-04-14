@@ -68,6 +68,8 @@ const UIStrings = {
   columnWastedBytes: 'Potential Savings',
   /** Label for a column in a data table; entries will be the number of milliseconds the user could reduce page load by if they implemented the suggestions. */
   columnWastedMs: 'Potential Savings',
+  /** Label for a table column that displays how much time each row spent blocking other work on the main thread, entries will be the number of milliseconds spent. */
+  columnBlockingTime: 'Main-Thread Blocking Time',
   /** Label for a column in a data table; entries will be the number of milliseconds spent during a particular activity. */
   columnTimeSpent: 'Time Spent',
   /** Label for a column in a data table; entries will be the location of a specific line of code in a file, in the format "line: 102". */
@@ -110,6 +112,8 @@ const UIStrings = {
   otherResourceType: 'Other',
   /** Label for a row in a data table; entries will be the total number and byte size of all third-party resources loaded by a web page. 'Third-party resources are items loaded from URLs that aren't controlled by the owner of the web page. */
   thirdPartyResourceType: 'Third-party',
+  /** Label used to identify a value in a table where many individual values are aggregated to a single value, for brevity. "Other resources" could also be read as "the rest of the resources". Resource refers to network resources requested by the browser. */
+  otherResourcesLabel: 'Other resources',
   /** The name of the metric that marks the time at which the first text or image is painted by the browser. Shown to users as the label for the numeric metric value. Ideally fits within a ~40 character limit. */
   firstContentfulPaintMetric: 'First Contentful Paint',
   /** The name of the metric that marks when the page has displayed content and the CPU is not busy executing the page's scripts. Shown to users as the label for the numeric metric value. Ideally fits within a ~40 character limit. */

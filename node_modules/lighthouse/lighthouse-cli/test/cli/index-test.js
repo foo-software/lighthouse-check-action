@@ -95,4 +95,43 @@ describe('CLI Tests', function() {
       expect(config).toMatchSnapshot();
     });
   });
+
+  describe('preset', () => {
+    it('desktop should set appropriate config', () => {
+      const ret = spawnSync('node', [indexPath, '--print-config', '--preset=desktop'], {
+        encoding: 'utf8',
+      });
+
+      const config = JSON.parse(ret.stdout);
+      const {emulatedUserAgent, formFactor, screenEmulation, throttling, throttlingMethod} =
+        config.settings;
+      const emulationSettings =
+            {emulatedUserAgent, formFactor, screenEmulation, throttling, throttlingMethod};
+
+      /* eslint-disable max-len */
+      expect(emulationSettings).toMatchInlineSnapshot(`
+        Object {
+          "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Safari/537.36 Chrome-Lighthouse",
+          "formFactor": "desktop",
+          "screenEmulation": Object {
+            "deviceScaleFactor": 1,
+            "disabled": false,
+            "height": 940,
+            "mobile": false,
+            "width": 1350,
+          },
+          "throttling": Object {
+            "cpuSlowdownMultiplier": 1,
+            "downloadThroughputKbps": 0,
+            "requestLatencyMs": 0,
+            "rttMs": 40,
+            "throughputKbps": 10240,
+            "uploadThroughputKbps": 0,
+          },
+          "throttlingMethod": "simulate",
+        }
+      `);
+      /* eslint-enable max-len */
+    });
+  });
 });

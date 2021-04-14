@@ -141,12 +141,13 @@ class I18n {
 
     /** @type {Array<string>} */
     const parts = [];
-    const unitLabels = /** @type {Object<string, number>} */ ({
+    /** @type {Record<string, number>} */
+    const unitLabels = {
       d: 60 * 60 * 24,
       h: 60 * 60,
       m: 60,
       s: 1,
-    });
+    };
 
     Object.keys(unitLabels).forEach(label => {
       const unit = unitLabels[label];

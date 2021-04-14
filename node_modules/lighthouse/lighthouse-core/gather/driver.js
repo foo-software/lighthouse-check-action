@@ -8,7 +8,6 @@
 const Fetcher = require('./fetcher.js');
 const ExecutionContext = require('./driver/execution-context.js');
 const {waitForFullyLoaded, waitForFrameNavigated} = require('./driver/wait-for-condition.js');
-const NetworkRecorder = require('../lib/network-recorder.js');
 const emulation = require('../lib/emulation.js');
 const LHElement = require('../lib/lh-element.js');
 const LHError = require('../lib/lh-error.js');
@@ -20,12 +19,15 @@ const constants = require('../config/constants.js');
 
 const log = require('lighthouse-logger');
 const DevtoolsLog = require('./devtools-log.js');
+const TraceGatherer = require('./gatherers/trace.js');
 
 const pageFunctions = require('../lib/page-functions.js');
 
 // Pulled in for Connection type checking.
 // eslint-disable-next-line no-unused-vars
 const Connection = require('./connections/connection.js');
+const NetworkMonitor = require('./driver/network-monitor.js');
+const {getBrowserVersion} = require('./driver/environment.js');
 
 const UIStrings = {
   /**
@@ -65,126 +67,70 @@ const DEFAULT_PROTOCOL_TIMEOUT = 30000;
  */
 class Driver {
   /**
+   * @pri_vate (This should be private, but that makes our tests harder).
+   * An event emitter that enforces mapping between Crdp event names and payload types.
+   */
+  _eventEmitter = /** @type {CrdpEventEmitter} */ (new EventEmitter());
+
+  /**
+   * @private
+   * Used to save network and lifecycle protocol traffic. Just Page and Network are needed.
+   */
+  _devtoolsLog = new DevtoolsLog(/^(Page|Network)\./);
+
+  /**
+   * @private
+   * @type {Map<string, number>}
+   */
+  _domainEnabledCounts = new Map();
+
+  /**
+   * @type {number}
+   * @private
+   */
+  _nextProtocolTimeout = DEFAULT_PROTOCOL_TIMEOUT;
+
+  online = true;
+
+  // eslint-disable-next-line no-invalid-this
+  fetcher = new Fetcher(this);
+
+  // eslint-disable-next-line no-invalid-this
+  executionContext = new ExecutionContext(this);
+
+  // eslint-disable-next-line no-invalid-this
+  defaultSession = this;
+
+  /**
    * @param {Connection} connection
    */
   constructor(connection) {
-    this._traceCategories = Driver.traceCategories;
-    /**
-     * An event emitter that enforces mapping between Crdp event names and payload types.
-     */
-    this._eventEmitter = /** @type {CrdpEventEmitter} */ (new EventEmitter());
     this._connection = connection;
-    // Used to save network and lifecycle protocol traffic. Just Page and Network are needed.
-    this._devtoolsLog = new DevtoolsLog(/^(Page|Network)\./);
-    this.online = true;
-    /** @type {Map<string, number>} */
-    this._domainEnabledCounts = new Map();
-
-    /**
-     * Used for monitoring network status events during gotoURL.
-     * @type {?NetworkRecorder}
-     * @private
-     */
-    this._networkStatusMonitor = null;
-
-    /**
-     * Used for monitoring url redirects during gotoURL.
-     * @type {?string}
-     * @private
-     */
-    this._monitoredUrl = null;
-
-    /**
-     * Used for monitoring frame navigations during gotoURL.
-     * @type {Array<LH.Crdp.Page.Frame>}
-     * @private
-     */
-    this._monitoredUrlNavigations = [];
+    this._networkMonitor = new NetworkMonitor(this);
 
     this.on('Target.attachedToTarget', event => {
       this._handleTargetAttached(event).catch(this._handleEventError);
     });
-
-    this.on('Page.frameNavigated', evt => this._monitoredUrlNavigations.push(evt.frame));
     this.on('Debugger.paused', () => this.sendCommand('Debugger.resume'));
 
     connection.on('protocolevent', this._handleProtocolEvent.bind(this));
 
-    /**
-     * @type {number}
-     * @private
-     */
-    this._nextProtocolTimeout = DEFAULT_PROTOCOL_TIMEOUT;
-
-    /** @type {Fetcher} */
-    this.fetcher = new Fetcher(this);
-
-    this._executionContext = new ExecutionContext(this);
+    /** @private @deprecated Only available for plugin backcompat. */
+    this.evaluate = this.executionContext.evaluate.bind(this.executionContext);
+    /** @private @deprecated Only available for plugin backcompat. */
+    this.evaluateAsync = this.executionContext.evaluateAsync.bind(this.executionContext);
   }
 
+  /** @deprecated - Not available on Fraggle Rock driver. */
   static get traceCategories() {
-    return [
-      // Exclude default categories. We'll be selective to minimize trace size
-      '-*',
-
-      // Used instead of 'toplevel' in Chrome 71+
-      'disabled-by-default-lighthouse',
-
-      // Used for Cumulative Layout Shift metric
-      'loading',
-
-      // All compile/execute events are captured by parent events in devtools.timeline..
-      // But the v8 category provides some nice context for only <0.5% of the trace size
-      'v8',
-      // Same situation here. This category is there for RunMicrotasks only, but with other teams
-      // accidentally excluding microtasks, we don't want to assume a parent event will always exist
-      'v8.execute',
-
-      // For extracting UserTiming marks/measures
-      'blink.user_timing',
-
-      // Not mandatory but not used much
-      'blink.console',
-
-      // Most of the events we need are from these two categories
-      'devtools.timeline',
-      'disabled-by-default-devtools.timeline',
-
-      // Up to 450 (https://goo.gl/rBfhn4) JPGs added to the trace
-      'disabled-by-default-devtools.screenshot',
-
-      // This doesn't add its own events, but adds a `stackTrace` property to devtools.timeline events
-      'disabled-by-default-devtools.timeline.stack',
-
-      // CPU sampling profiler data only enabled for debugging purposes
-      // 'disabled-by-default-v8.cpu_profiler',
-      // 'disabled-by-default-v8.cpu_profiler.hires',
-    ];
+    return TraceGatherer.getDefaultTraceCategories();
   }
 
   /**
    * @return {Promise<LH.Crdp.Browser.GetVersionResponse & {milestone: number}>}
    */
   async getBrowserVersion() {
-    const status = {msg: 'Getting browser version', id: 'lh:gather:getVersion'};
-    log.time(status, 'verbose');
-    const version = await this.sendCommand('Browser.getVersion');
-    const match = version.product.match(/\/(\d+)/); // eg 'Chrome/71.0.3577.0'
-    const milestone = match ? parseInt(match[1]) : 0;
-    log.timeEnd(status);
-    return Object.assign(version, {milestone});
-  }
-
-  /**
-   * Computes the benchmark index to get a rough estimate of device class.
-   * @return {Promise<number>}
-   */
-  async getBenchmarkIndex() {
-    const status = {msg: 'Benchmarking machine', id: 'lh:gather:getBenchmarkIndex'};
-    log.time(status);
-    const indexVal = await this.evaluateAsync(`(${pageFunctions.computeBenchmarkIndexString})()`);
-    log.timeEnd(status);
-    return indexVal;
+    return getBrowserVersion(this);
   }
 
   /**
@@ -260,6 +206,22 @@ class Driver {
   }
 
   /**
+   * Bind to *any* protocol event.
+   * @param {(payload: LH.Protocol.RawEventMessage) => void} callback
+   */
+  addProtocolMessageListener(callback) {
+    this._connection.on('protocolevent', callback);
+  }
+
+  /**
+   * Unbind to *any* protocol event.
+   * @param {(payload: LH.Protocol.RawEventMessage) => void} callback
+   */
+  removeProtocolMessageListener(callback) {
+    this._connection.off('protocolevent', callback);
+  }
+
+  /**
    * Debounce enabling or disabling domains to prevent driver users from
    * stomping on each other. Maintains an internal count of the times a domain
    * has been enabled. Returns false if the command would have no effect (domain
@@ -319,9 +281,6 @@ class Driver {
    */
   _handleProtocolEvent(event) {
     this._devtoolsLog.record(event);
-    if (this._networkStatusMonitor) {
-      this._networkStatusMonitor.dispatch(event);
-    }
 
     // @ts-expect-error TODO(bckenny): tsc can't type event.params correctly yet,
     // typing as property of union instead of narrowing from union of
@@ -449,62 +408,6 @@ class Driver {
   }
 
   /**
-   * @param {string} expression
-   * @param {{useIsolation?: boolean}=} options
-   * @return {Promise<*>}
-   */
-  evaluateAsync(expression, options) {
-    return this._executionContext.evaluateAsync(expression, options);
-  }
-
-  /**
-   * @return {Promise<{url: string, data: string}|null>}
-   */
-  async getAppManifest() {
-    // In all environments but LR, Page.getAppManifest finishes very quickly.
-    // In LR, there is a bug that causes this command to hang until outgoing
-    // requests finish. This has been seen in long polling (where it will never
-    // return) and when other requests take a long time to finish. We allow 10 seconds
-    // for outgoing requests to finish. Anything more, and we continue the run without
-    // a manifest.
-    // Googlers, see: http://b/124008171
-    this.setNextProtocolTimeout(10000);
-    let response;
-    try {
-      response = await this.sendCommand('Page.getAppManifest');
-    } catch (err) {
-      if (err.code === 'PROTOCOL_TIMEOUT') {
-        // LR will timeout fetching the app manifest in some cases, move on without one.
-        // https://github.com/GoogleChrome/lighthouse/issues/7147#issuecomment-461210921
-        log.error('Driver', 'Failed fetching manifest', err);
-        return null;
-      }
-
-      throw err;
-    }
-
-    let data = response.data;
-
-    // We're not reading `response.errors` however it may contain critical and noncritical
-    // errors from Blink's manifest parser:
-    //   https://chromedevtools.github.io/debugger-protocol-viewer/tot/Page/#type-AppManifestError
-    if (!data) {
-      // If the data is empty, the page had no manifest.
-      return null;
-    }
-
-    const BOM_LENGTH = 3;
-    const BOM_FIRSTCHAR = 65279;
-    const isBomEncoded = data.charCodeAt(0) === BOM_FIRSTCHAR;
-
-    if (isBomEncoded) {
-      data = Buffer.from(data).slice(BOM_LENGTH).toString();
-    }
-
-    return {...response, data};
-  }
-
-  /**
    * @return {Promise<LH.Crdp.ServiceWorker.WorkerVersionUpdatedEvent>}
    */
   getServiceWorkerVersions() {
@@ -592,47 +495,6 @@ class Driver {
   }
 
   /**
-   * Set up listener for network quiet events and reset the monitored navigation events.
-   * @param {string} startingUrl
-   * @return {Promise<void>}
-   * @private
-   */
-  _beginNetworkStatusMonitoring(startingUrl) {
-    this._networkStatusMonitor = new NetworkRecorder();
-
-    this._monitoredUrl = startingUrl;
-    // Reset back to empty
-    this._monitoredUrlNavigations = [];
-
-    return this.sendCommand('Network.enable');
-  }
-
-  /**
-   * End network status listening. Returns the final, possibly redirected,
-   * loaded URL starting with the one passed into _endNetworkStatusMonitoring.
-   * @return {Promise<string>}
-   * @private
-   */
-  async _endNetworkStatusMonitoring() {
-    const startingUrl = this._monitoredUrl;
-    const frameNavigations = this._monitoredUrlNavigations;
-
-    const resourceTreeResponse = await this.sendCommand('Page.getResourceTree');
-    const mainFrameId = resourceTreeResponse.frameTree.frame.id;
-    const mainFrameNavigations = frameNavigations.filter(frame => frame.id === mainFrameId);
-    const finalNavigation = mainFrameNavigations[mainFrameNavigations.length - 1];
-
-    this._networkStatusMonitor = null;
-    this._monitoredUrl = null;
-    this._monitoredUrlNavigations = [];
-
-    const finalUrl = (finalNavigation && finalNavigation.url) || startingUrl;
-    if (!finalNavigation) log.warn('Driver', 'No detected navigations');
-    if (!finalUrl) throw new Error('Unable to determine finalUrl');
-    return finalUrl;
-  }
-
-  /**
    * Navigate to the given URL. Direct use of this method isn't advised: if
    * the current page is already at the given URL, navigation will not occur and
    * so the returned promise will only resolve after the MAX_WAIT_FOR_FULLY_LOADED
@@ -647,15 +509,15 @@ class Driver {
     const waitForFcp = options.waitForFcp || false;
     const waitForNavigated = options.waitForNavigated || false;
     const waitForLoad = options.waitForLoad || false;
-    const passContext = /** @type {Partial<LH.Gatherer.PassContext>} */ (options.passContext || {});
-    const disableJS = passContext.disableJavaScript || false;
+    /** @type {Partial<LH.Gatherer.PassContext>} */
+    const passContext = options.passContext || {};
 
     if (waitForNavigated && (waitForFcp || waitForLoad)) {
       throw new Error('Cannot use both waitForNavigated and another event, pick just one');
     }
 
-    await this._beginNetworkStatusMonitoring(url);
-    await this._executionContext.clearContextId();
+    await this._networkMonitor.enable();
+    await this.executionContext.clearContextId();
 
     // Enable auto-attaching to subtargets so we receive iframe information
     await this.sendCommand('Target.setAutoAttach', {
@@ -667,7 +529,6 @@ class Driver {
 
     await this.sendCommand('Page.enable');
     await this.sendCommand('Page.setLifecycleEventsEnabled', {enabled: true});
-    await this.sendCommand('Emulation.setScriptExecutionDisabled', {value: disableJS});
     // No timeout needed for Page.navigate. See https://github.com/GoogleChrome/lighthouse/pull/6413.
     const waitforPageNavigateCmd = this._innerSendCommand('Page.navigate', undefined, {url});
 
@@ -675,8 +536,8 @@ class Driver {
     if (waitForNavigated) {
       await waitForFrameNavigated(this).promise;
     } else if (waitForLoad) {
-      const networkMonitor = this._networkStatusMonitor;
-      const passConfig = /** @type {Partial<LH.Config.Pass>} */ (passContext.passConfig || {});
+      /** @type {Partial<LH.Config.Pass>} */
+      const passConfig = passContext.passConfig || {};
 
       /* eslint-disable max-len */
       let {pauseAfterFcpMs, pauseAfterLoadMs, networkQuietThresholdMs, cpuQuietThresholdMs} = passConfig;
@@ -689,21 +550,23 @@ class Driver {
       if (typeof cpuQuietThresholdMs !== 'number') cpuQuietThresholdMs = DEFAULT_CPU_QUIET_THRESHOLD;
       if (typeof maxWaitMs !== 'number') maxWaitMs = constants.defaultSettings.maxWaitForLoad;
       if (typeof maxFCPMs !== 'number') maxFCPMs = constants.defaultSettings.maxWaitForFcp;
-      if (!networkMonitor) throw new Error('Failed to instantiate networkStatusMonitor');
       /* eslint-enable max-len */
 
       if (!waitForFcp) maxFCPMs = undefined;
       const waitOptions = {pauseAfterFcpMs, pauseAfterLoadMs, networkQuietThresholdMs,
         cpuQuietThresholdMs, maxWaitForLoadedMs: maxWaitMs, maxWaitForFcpMs: maxFCPMs};
-      const loadResult = await waitForFullyLoaded(this, networkMonitor, waitOptions);
+      const loadResult = await waitForFullyLoaded(this, this._networkMonitor, waitOptions);
       timedOut = loadResult.timedOut;
     }
 
+    const finalUrl = await this._networkMonitor.getFinalNavigationUrl() || url;
+
     // Bring `Page.navigate` errors back into the promise chain. See https://github.com/GoogleChrome/lighthouse/pull/6739.
     await waitforPageNavigateCmd;
+    await this._networkMonitor.disable();
 
     return {
-      finalUrl: await this._endNetworkStatusMonitoring(),
+      finalUrl,
       timedOut,
     };
   }
@@ -816,14 +679,15 @@ class Driver {
    */
   scrollTo(position) {
     const scrollExpression = `window.scrollTo(${position.x}, ${position.y})`;
-    return this.evaluateAsync(scrollExpression, {useIsolation: true});
+    return this.executionContext.evaluateAsync(scrollExpression, {useIsolation: true});
   }
 
   /**
    * @return {Promise<{x: number, y: number}>}
    */
   getScrollPosition() {
-    return this.evaluateAsync(`({x: window.scrollX, y: window.scrollY})`, {useIsolation: true});
+    return this.executionContext.evaluateAsync(`({x: window.scrollX, y: window.scrollY})`,
+      {useIsolation: true});
   }
 
   /**
@@ -833,15 +697,7 @@ class Driver {
   async beginTrace(settings) {
     const additionalCategories = (settings && settings.additionalTraceCategories &&
         settings.additionalTraceCategories.split(',')) || [];
-    const traceCategories = this._traceCategories.concat(additionalCategories);
-
-    // In Chrome <71, gotta use the chatty 'toplevel' cat instead of our own.
-    // TODO(COMPAT): Once m71 ships to stable, drop this section
-    const milestone = (await this.getBrowserVersion()).milestone;
-    if (milestone < 71) {
-      const toplevelIndex = traceCategories.indexOf('disabled-by-default-lighthouse');
-      traceCategories[toplevelIndex] = 'toplevel';
-    }
+    const traceCategories = TraceGatherer.getDefaultTraceCategories().concat(additionalCategories);
 
     const uniqueCategories = Array.from(new Set(traceCategories));
 
@@ -865,26 +721,7 @@ class Driver {
    * @return {Promise<LH.Trace>}
    */
   endTrace() {
-    /** @type {Array<LH.TraceEvent>} */
-    const traceEvents = [];
-
-    /**
-     * Listener for when dataCollected events fire for each trace chunk
-     * @param {LH.Crdp.Tracing.DataCollectedEvent} data
-     */
-    const dataListener = function(data) {
-      traceEvents.push(...data.value);
-    };
-    this.on('Tracing.dataCollected', dataListener);
-
-    return new Promise((resolve, reject) => {
-      this.once('Tracing.tracingComplete', _ => {
-        this.off('Tracing.dataCollected', dataListener);
-        resolve({traceEvents});
-      });
-
-      this.sendCommand('Tracing.end').catch(reject);
-    });
+    return TraceGatherer.endTraceAndCollectEvents(this.defaultSession);
   }
 
   /**
@@ -950,26 +787,6 @@ class Driver {
         emulation.clearAllNetworkEmulation(this);
 
     await Promise.all([cpuPromise, networkPromise]);
-  }
-
-  /**
-   * Emulate internet disconnection.
-   * @return {Promise<void>}
-   */
-  async goOffline() {
-    await this.sendCommand('Network.enable');
-    await emulation.goOffline(this);
-    this.online = false;
-  }
-
-  /**
-   * Enable internet connection, using emulated mobile settings if applicable.
-   * @param {{settings: LH.Config.Settings, passConfig: LH.Config.Pass}} options
-   * @return {Promise<void>}
-   */
-  async goOnline(options) {
-    await this.setThrottling(options.settings, options.passConfig);
-    this.online = true;
   }
 
   /**
@@ -1074,7 +891,6 @@ class Driver {
   async cacheNatives() {
     await this.evaluateScriptOnNewDocument(`
         window.__nativePromise = Promise;
-        window.__nativeError = Error;
         window.__nativeURL = URL;
         window.__ElementMatches = Element.prototype.matches;
         window.__perfNow = performance.now.bind(performance);

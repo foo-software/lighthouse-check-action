@@ -83,9 +83,9 @@ class ExecutionContext {
       // 3. Ensure that errors captured in the Promise are converted into plain-old JS Objects
       //    so that they can be serialized properly b/c JSON.stringify(new Error('foo')) === '{}'
       expression: `(function wrapInNativePromise() {
-        const __nativePromise = window.__nativePromise || Promise;
-        const URL = window.__nativeURL || window.URL;
-        window.__lighthouseExecutionContextId = ${contextId};
+        const __nativePromise = globalThis.__nativePromise || Promise;
+        const URL = globalThis.__nativeURL || globalThis.URL;
+        globalThis.__lighthouseExecutionContextId = ${contextId};
         return new __nativePromise(function (resolve) {
           return __nativePromise.resolve()
             .then(_ => ${expression})
@@ -124,6 +124,7 @@ class ExecutionContext {
   }
 
   /**
+   * Note: Prefer `evaluate` instead.
    * Evaluate an expression in the context of the current page. If useIsolation is true, the expression
    * will be evaluated in a content script that has access to the page's DOM but whose JavaScript state
    * is completely separate.
@@ -148,6 +149,28 @@ class ExecutionContext {
 
       throw err;
     }
+  }
+
+  /**
+   * Evaluate a function in the context of the current page.
+   * If `useIsolation` is true, the function will be evaluated in a content script that has
+   * access to the page's DOM but whose JavaScript state is completely separate.
+   * Returns a promise that resolves on a value of `mainFn`'s return type.
+   * @template {any[]} T, R
+   * @param {((...args: T) => R)} mainFn The main function to call.
+   * @param {{args: T, useIsolation?: boolean, deps?: Array<Function|string>}} options `args` should
+   *   match the args of `mainFn`, and can be any serializable value. `deps` are functions that must be
+   *   defined for `mainFn` to work.
+   * @return {FlattenedPromise<R>}
+   */
+  evaluate(mainFn, options) {
+    const argsSerialized = options.args.map(arg => JSON.stringify(arg)).join(',');
+    const depsSerialized = options.deps ? options.deps.join('\n') : '';
+    const expression = `(() => {
+      ${depsSerialized}
+      return (${mainFn})(${argsSerialized});
+    })()`;
+    return this.evaluateAsync(expression, options);
   }
 }
 

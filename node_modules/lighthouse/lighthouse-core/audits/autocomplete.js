@@ -245,11 +245,11 @@ class AutocompleteAudit extends Audit {
         // Warning is created because while there is an autocomplete attribute, the autocomplete property does not exsist, thus the attribute's value is invalid.
         if (input.autocomplete.attribute) {
           warnings.push(str_(UIStrings.warningInvalid, {token: input.autocomplete.attribute,
-            snippet: input.snippet}));
+            snippet: input.node.snippet}));
         }
         if (validity.isValidOrder === false) {
           warnings.push(str_(UIStrings.warningOrder, {tokens: input.autocomplete.attribute,
-            snippet: input.snippet}));
+            snippet: input.node.snippet}));
           suggestion = UIStrings.reviewOrder;
         }
         // If the autofill prediction is not in our autofill suggestion mapping, then we warn
@@ -260,11 +260,7 @@ class AutocompleteAudit extends Audit {
           continue;
         }
         failingFormsData.push({
-          node: /** @type {LH.Audit.Details.NodeValue} */ ({
-            type: 'node',
-            snippet: input.snippet,
-            nodeLabel: input.nodeLabel,
-          }),
+          node: Audit.makeNodeItem(input.node),
           suggestion: suggestion,
           current: input.autocomplete.attribute,
         });

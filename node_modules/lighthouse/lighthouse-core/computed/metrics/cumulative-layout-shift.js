@@ -7,7 +7,7 @@
 
 const makeComputedArtifact = require('../computed-artifact.js');
 const TraceOfTab = require('../trace-of-tab.js');
-const LHError = require('../../lib/lh-error.js');
+const LayoutShiftVariants = require('../layout-shift-variants.js');
 
 class CumulativeLayoutShift {
   /**
@@ -17,57 +17,16 @@ class CumulativeLayoutShift {
    */
   static async compute_(trace, context) {
     const traceOfTab = await TraceOfTab.request(trace, context);
+    const layoutShiftEvents = LayoutShiftVariants.getLayoutShiftEvents(traceOfTab.mainThreadEvents);
 
-    // Find the last LayoutShift event, if any.
-    let finalLayoutShift;
-    for (let i = traceOfTab.mainThreadEvents.length - 1; i >= 0; i--) {
-      const evt = traceOfTab.mainThreadEvents[i];
-      if (evt.name === 'LayoutShift' && evt.args && evt.args.data && evt.args.data.is_main_frame) {
-        finalLayoutShift = evt;
-        break;
-      }
-    }
-
-    const finalLayoutShiftTraceEventFound = !!finalLayoutShift;
-    // tdresser sez: In about 10% of cases, layout instability is 0, and there will be no trace events.
-    // TODO: Validate that. http://crbug.com/1003459
-    if (!finalLayoutShift) {
-      return {
-        value: 0,
-        debugInfo: {
-          finalLayoutShiftTraceEventFound,
-        },
-      };
-    }
-
-    let cumulativeLayoutShift =
-      finalLayoutShift.args &&
-      finalLayoutShift.args.data &&
-      finalLayoutShift.args.data.cumulative_score;
-
-    if (cumulativeLayoutShift === undefined) {
-      throw new LHError(LHError.errors.LAYOUT_SHIFT_MISSING_DATA);
-    }
-
-    // Chromium will set `had_recent_input` if there was recent user input, which
-    // skips shift events from contributing to CLS. This flag is also set when Lighthouse changes
-    // the emulation size. This consistently results in the first few shift event always being
-    // ignored for CLS. Since we don't expect any user input, we add the score of these
-    // shift events to CLS.
-    // See https://bugs.chromium.org/p/chromium/issues/detail?id=1094974.
-    for (let i = 0; i < traceOfTab.mainThreadEvents.length; i++) {
-      const evt = traceOfTab.mainThreadEvents[i];
-      if (evt.name === 'LayoutShift' && evt.args && evt.args.data && evt.args.data.is_main_frame) {
-        if (!evt.args.data.had_recent_input) break;
-        if (typeof evt.args.data.score !== 'number') continue;
-        cumulativeLayoutShift += evt.args.data.score;
-      }
-    }
+    const cumulativeLayoutShift = layoutShiftEvents
+      .filter(e => e.isMainFrame)
+      .reduce((sum, e) => sum += e.score, 0);
 
     return {
       value: cumulativeLayoutShift,
       debugInfo: {
-        finalLayoutShiftTraceEventFound,
+        finalLayoutShiftTraceEventFound: Boolean(layoutShiftEvents.length),
       },
     };
   }

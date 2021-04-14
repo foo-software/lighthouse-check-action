@@ -19,36 +19,18 @@ module.exports = [
       requestedUrl: 'https://jakearchibald.github.io/svgomg/',
       finalUrl: 'https://jakearchibald.github.io/svgomg/',
       audits: {
-        'is-on-https': {
-          score: 1,
-        },
         'redirects-http': {
-        // Note: relies on JS redirect.
-        // see https://github.com/GoogleChrome/lighthouse/issues/2383
-          score: 0,
+          score: 1,
         },
         'service-worker': {
-          score: 1,
-        },
-        'works-offline': {
-          score: 1,
-        },
-        'offline-start-url': {
           score: 1,
         },
         'viewport': {
           score: 1,
         },
-        'without-javascript': {
-          score: 1,
-        },
-        'load-fast-enough-for-pwa': {
-        // Ignore speed test; just verify that it ran.
-        },
         'installable-manifest': {
-          score: 0,
-          details: {items: [jakeExpectations]},
-          explanation: /^Failures: .*short_name/,
+          score: 1,
+          details: {items: [], debugData: {manifestUrl: 'https://jakearchibald.github.io/svgomg/manifest.json'}},
         },
         'splash-screen': {
           score: 1,
@@ -90,33 +72,18 @@ module.exports = [
       requestedUrl: 'https://caltrainschedule.io/',
       finalUrl: 'https://caltrainschedule.io/',
       audits: {
-        'is-on-https': {
-          score: 1,
-        },
         'redirects-http': {
           score: 1,
         },
         'service-worker': {
           score: 1,
         },
-        'works-offline': {
-          score: 1,
-        },
-        'offline-start-url': {
-          score: 1,
-        },
         'viewport': {
           score: 1,
         },
-        'without-javascript': {
-          score: 1,
-        },
-        'load-fast-enough-for-pwa': {
-        // Ignore speed test; just verify that it ran.
-        },
         'installable-manifest': {
           score: 1,
-          details: {items: [{...pwaDetailsExpectations, manifestUrl: 'https://caltrainschedule.io/manifest.json'}]},
+          details: {items: [], debugData: {manifestUrl: 'https://caltrainschedule.io/manifest.json'}},
         },
         'splash-screen': {
           score: 1,

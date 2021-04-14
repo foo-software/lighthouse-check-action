@@ -28,13 +28,12 @@ class LargestContentfulPaintAllFrames extends ComputedMetric {
    */
   static async computeObservedMetric(data) {
     const {traceOfTab} = data;
-    if (!traceOfTab.timestamps.largestContentfulPaintAllFrames) {
+    if (traceOfTab.timings.largestContentfulPaintAllFrames === undefined) {
       throw new LHError(LHError.errors.NO_LCP_ALL_FRAMES);
     }
 
     return {
-      // LCP established as existing, so cast
-      timing: /** @type {number} */ (traceOfTab.timings.largestContentfulPaintAllFrames),
+      timing: traceOfTab.timings.largestContentfulPaintAllFrames,
       timestamp: traceOfTab.timestamps.largestContentfulPaintAllFrames,
     };
   }

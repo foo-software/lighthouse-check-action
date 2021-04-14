@@ -37,7 +37,7 @@ class AxeAudit extends Audit {
     const isNotApplicable = notApplicables.find(result => result.id === this.meta.id);
     if (isNotApplicable) {
       return {
-        score: 1,
+        score: null,
         notApplicable: true,
       };
     }
@@ -66,7 +66,7 @@ class AxeAudit extends Audit {
     // Since there is no score impact from informative rules, display the rule as not applicable
     if (isInformative && !rule) {
       return {
-        score: 1,
+        score: null,
         notApplicable: true,
       };
     }
@@ -74,17 +74,11 @@ class AxeAudit extends Audit {
     /** @type {LH.Audit.Details.Table['items']}>} */
     let items = [];
     if (rule && rule.nodes) {
-      items = rule.nodes.map(node => ({
-        node: /** @type {LH.Audit.Details.NodeValue} */ ({
-          type: 'node',
-          lhId: node.lhId,
-          selector: node.selector,
-          path: node.devtoolsNodePath,
-          snippet: node.snippet,
-          boundingRect: node.boundingRect,
-          explanation: node.failureSummary,
-          nodeLabel: node.nodeLabel,
-        }),
+      items = rule.nodes.map(axeNode => ({
+        node: {
+          ...Audit.makeNodeItem(axeNode.node),
+          explanation: axeNode.failureSummary,
+        },
       }));
     }
 

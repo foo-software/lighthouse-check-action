@@ -9,7 +9,7 @@ const LinkHeader = require('http-link-header');
 const Gatherer = require('./gatherer.js');
 const {URL} = require('../../lib/url-shim.js');
 const NetworkAnalyzer = require('../../lib/dependency-graph/simulator/network-analyzer.js');
-const {getElementsInDocumentString, getNodeDetailsString} = require('../../lib/page-functions.js');
+const pageFunctions = require('../../lib/page-functions.js');
 
 /* globals HTMLLinkElement getNodeDetails */
 
@@ -46,7 +46,7 @@ function getCrossoriginFromHeader(value) {
 /**
  * @return {LH.Artifacts['LinkElements']}
  */
-/* istanbul ignore next */
+/* c8 ignore start */
 function getLinkElementsInDOM() {
   /** @type {Array<HTMLOrSVGElement>} */
   // @ts-expect-error - getElementsInDocument put into scope via stringification
@@ -71,12 +71,13 @@ function getLinkElementsInDOM() {
       hrefRaw,
       source,
       // @ts-expect-error - put into scope via stringification
-      ...getNodeDetails(link),
+      node: getNodeDetails(link),
     });
   }
 
   return linkElements;
 }
+/* c8 ignore stop */
 
 class LinkElements extends Gatherer {
   /**
@@ -86,13 +87,14 @@ class LinkElements extends Gatherer {
   static getLinkElementsInDOM(passContext) {
     // We'll use evaluateAsync because the `node.getAttribute` method doesn't actually normalize
     // the values like access from JavaScript does.
-    return passContext.driver.evaluateAsync(`(() => {
-      ${getElementsInDocumentString};
-      ${getLinkElementsInDOM};
-      ${getNodeDetailsString};
-
-      return getLinkElementsInDOM();
-    })()`, {useIsolation: true});
+    return passContext.driver.executionContext.evaluate(getLinkElementsInDOM, {
+      args: [],
+      useIsolation: true,
+      deps: [
+        pageFunctions.getNodeDetailsString,
+        pageFunctions.getElementsInDocument,
+      ],
+    });
   }
 
   /**
@@ -120,11 +122,7 @@ class LinkElements extends Gatherer {
           as: link.as || '',
           crossOrigin: getCrossoriginFromHeader(link.crossorigin),
           source: 'headers',
-          devtoolsNodePath: '',
-          selector: '',
-          nodeLabel: '',
-          boundingRect: null,
-          snippet: '',
+          node: null,
         });
       }
     }

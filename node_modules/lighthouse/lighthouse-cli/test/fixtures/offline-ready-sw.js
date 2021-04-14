@@ -59,6 +59,9 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // no real offline capability in the ?broken case
+  if (self.location.search.includes('broken')) return;
+
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
       if (cachedResponse) {

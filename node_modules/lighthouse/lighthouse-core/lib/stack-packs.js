@@ -55,6 +55,10 @@ const stackPacksToInclude = [
     packId: 'octobercms',
     requiredStacks: ['js:octobercms'],
   },
+  {
+    packId: 'joomla',
+    requiredStacks: ['js:joomla'],
+  },
 ];
 
 /**

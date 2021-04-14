@@ -6,7 +6,7 @@
 'use strict';
 
 const fs = require('fs');
-const fetch = require('isomorphic-fetch');
+const fetch = require('node-fetch');
 const {server} = require('./fixtures/static-server.js');
 
 /* eslint-env jest */

@@ -7,7 +7,7 @@
 
 /* global getNodeDetails */
 
-const Gatherer = require('./gatherer.js');
+const FRGatherer = require('../../fraggle-rock/gather/base-gatherer.js');
 const pageFunctions = require('../../lib/page-functions.js');
 
 /* eslint-env browser, node */
@@ -15,7 +15,7 @@ const pageFunctions = require('../../lib/page-functions.js');
 /**
  * @return {LH.Artifacts['IFrameElements']}
  */
-/* istanbul ignore next */
+/* c8 ignore start */
 function collectIFrameElements() {
   // @ts-expect-error - put into scope via stringification
   const iFrameElements = getElementsInDocument('iframe'); // eslint-disable-line no-undef
@@ -29,29 +29,35 @@ function collectIFrameElements() {
       // @ts-expect-error - put into scope via stringification
       isPositionFixed: isPositionFixed(node), // eslint-disable-line no-undef
       // @ts-expect-error - getNodeDetails put into scope via stringification
-      ...getNodeDetails(node),
+      node: getNodeDetails(node),
     };
   });
 }
+/* c8 ignore stop */
 
-class IFrameElements extends Gatherer {
+class IFrameElements extends FRGatherer {
+  /** @type {LH.Gatherer.GathererMeta} */
+  meta = {
+    supportedModes: ['snapshot', 'navigation'],
+  }
+
   /**
-   * @param {LH.Gatherer.PassContext} passContext
+   * @param {LH.Gatherer.FRTransitionalContext} passContext
    * @return {Promise<LH.Artifacts['IFrameElements']>}
    * @override
    */
-  async afterPass(passContext) {
+  async snapshot(passContext) {
     const driver = passContext.driver;
 
-    const expression = `(() => {
-      ${pageFunctions.getElementsInDocumentString};
-      ${pageFunctions.isPositionFixedString};
-      ${pageFunctions.getNodeDetailsString};
-      return (${collectIFrameElements})();
-    })()`;
-
-    /** @type {LH.Artifacts['IFrameElements']} */
-    const iframeElements = await driver.evaluateAsync(expression, {useIsolation: true});
+    const iframeElements = await driver.executionContext.evaluate(collectIFrameElements, {
+      args: [],
+      useIsolation: true,
+      deps: [
+        pageFunctions.getElementsInDocumentString,
+        pageFunctions.isPositionFixedString,
+        pageFunctions.getNodeDetailsString,
+      ],
+    });
     return iframeElements;
   }
 }

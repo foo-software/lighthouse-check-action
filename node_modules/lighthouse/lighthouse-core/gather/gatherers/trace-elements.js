@@ -24,16 +24,17 @@ const Sentry = require('../../lib/sentry.js');
 /**
  * @this {HTMLElement}
  */
-/* istanbul ignore next */
+/* c8 ignore start */
 function getNodeDetailsData() {
   const elem = this.nodeType === document.ELEMENT_NODE ? this : this.parentElement; // eslint-disable-line no-undef
   let traceElement;
   if (elem) {
     // @ts-expect-error - getNodeDetails put into scope via stringification
-    traceElement = getNodeDetails(elem);
+    traceElement = {node: getNodeDetails(elem)};
   }
   return traceElement;
 }
+/* c8 ignore stop */
 
 class TraceElements extends Gatherer {
   /**

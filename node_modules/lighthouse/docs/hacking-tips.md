@@ -50,34 +50,6 @@ const html = ReportGenerator.generateReportHtml(results);
 console.log(html);
 ```
 
-## Debugging Travis via docker image
-
-You can do a local docker image install of Travis to better inspect a travis build:
-
-* [How to run travis-ci locally - Stack Overflow](https://stackoverflow.com/questions/21053657/how-to-run-travis-ci-locally)
-* [Common Build Problems - Travis CI](https://docs.travis-ci.com/user/common-build-problems/#Troubleshooting-Locally-in-a-Docker-Image)
-
-```sh
-docker run --name travis-debug -dit travisci/ci-garnet:packer-1512502276-986baf0 /sbin/init
-docker exec -it travis-debug bash -l
-
-# once inside, change to travis user, rather than root
-su - travis
-
-# once on the travis user, make a clone of lighthouse and play around
-```
-
-```sh
-# you may also want to mount a local folder into your docker instance.
-# This will mount your local machines's ~/temp/trav folder into the container's /home/travis/mountpoint folder
-docker run -v $HOME/temp/trav:/home/travis/mountpoint --name travis-debug -dit travisci/ci-garnet:packer-1496954857 /sbin/init
-
-```
-
-You can then run the travis commands (e.g. `travis compile`) to install an environment and run the build script:
-
-[travis-ci/travis-build: .travis.yml =&gt; build.sh converter](https://github.com/travis-ci/travis-build#invocation)
-
 ## Using Audit Classes Directly, Providing Your Own Artifacts
 
 See [gist](https://gist.github.com/connorjclark/d4555ad90ae5b5ecf793ad2d46ca52db).

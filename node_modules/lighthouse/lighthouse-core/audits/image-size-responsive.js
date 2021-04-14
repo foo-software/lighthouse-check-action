@@ -65,10 +65,16 @@ function isVisible(imageRect, viewportDimensions) {
  * @return {boolean}
  */
 function isCandidate(image) {
+  /** image-rendering solution for pixel art scaling.
+   * https://developer.mozilla.org/en-US/docs/Games/Techniques/Crisp_pixel_art_look
+  */
+  const artisticImageRenderingValues = ['pixelated', 'crisp-edges'];
+  // https://html.spec.whatwg.org/multipage/images.html#pixel-density-descriptor
+  const densityDescriptorRegex = / \d+(\.\d+)?x/;
   if (image.displayedWidth <= 1 || image.displayedHeight <= 1) {
     return false;
   }
-  if (image.naturalWidth === 0 || image.naturalHeight === 0) {
+  if (!image.naturalWidth || !image.naturalHeight) {
     return false;
   }
   if (image.mimeType === 'image/svg+xml') {
@@ -77,20 +83,32 @@ function isCandidate(image) {
   if (image.isCss) {
     return false;
   }
-  if (image.usesObjectFit) {
+  if (image.cssComputedObjectFit !== 'fill') {
     return false;
   }
-  if (image.usesPixelArtScaling) {
+  // Check if pixel art scaling is used.
+  if (artisticImageRenderingValues.includes(image.cssComputedImageRendering)) {
     return false;
   }
-  if (image.usesSrcSetDensityDescriptor) {
+  // Check if density descriptor is used.
+  if (densityDescriptorRegex.test(image.srcset)) {
     return false;
   }
   return true;
 }
 
 /**
+ * Type check to ensure that the ImageElement has natural dimensions.
+ *
  * @param {LH.Artifacts.ImageElement} image
+ * @return {image is LH.Artifacts.ImageElement & {naturalWidth: number, naturalHeight: number}}
+ */
+function imageHasNaturalDimensions(image) {
+  return image.naturalHeight !== undefined && image.naturalWidth !== undefined;
+}
+
+/**
+ * @param {LH.Artifacts.ImageElement & {naturalHeight: number, naturalWidth: number}} image
  * @param {number} DPR
  * @return {boolean}
  */
@@ -101,7 +119,7 @@ function imageHasRightSize(image, DPR) {
 }
 
 /**
- * @param {LH.Artifacts.ImageElement} image
+ * @param {LH.Artifacts.ImageElement & {naturalWidth: number, naturalHeight: number}} image
  * @param {number} DPR
  * @return {Result}
  */
@@ -167,7 +185,8 @@ function expectedImageSize(displayedWidth, displayedHeight, DPR) {
  */
 function deduplicateResultsByUrl(results) {
   results.sort((a, b) => a.url === b.url ? 0 : (a.url < b. url ? -1 : 1));
-  const deduplicated = /** @type {Result[]} */ ([]);
+  /** @type {Result[]} */
+  const deduplicated = [];
   for (const r of results) {
     const previousResult = deduplicated[deduplicated.length - 1];
     if (previousResult && previousResult.url === r.url) {
@@ -213,9 +232,11 @@ class ImageSizeResponsive extends Audit {
    */
   static audit(artifacts) {
     const DPR = artifacts.ViewportDimensions.devicePixelRatio;
+
     const results = Array
       .from(artifacts.ImageElements)
       .filter(isCandidate)
+      .filter(imageHasNaturalDimensions)
       .filter(image => !imageHasRightSize(image, DPR))
       .filter(image => isVisible(image.clientRect, artifacts.ViewportDimensions))
       .map(image => getResult(image, DPR));

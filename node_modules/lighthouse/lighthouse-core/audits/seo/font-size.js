@@ -68,18 +68,21 @@ function getUniqueFailingRules(fontSizeArtifact) {
 }
 
 /**
- * @param {Array<string>=} attributes
+ * @param {Array<string|undefined>=} attributes
  * @returns {Map<string, string>}
  */
 function getAttributeMap(attributes = []) {
   const map = new Map();
 
   for (let i = 0; i < attributes.length; i += 2) {
-    const name = attributes[i].toLowerCase();
-    const value = attributes[i + 1].trim();
+    const name = attributes[i];
+    const value = attributes[i + 1];
+    if (!name || !value) continue;
 
-    if (value) {
-      map.set(name, value);
+    const normalizedValue = value.trim();
+
+    if (normalizedValue) {
+      map.set(name.toLowerCase(), normalizedValue);
     }
   }
 
@@ -233,7 +236,7 @@ class FontSize extends Audit {
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
-      requiredArtifacts: ['FontSize', 'URL', 'MetaElements', 'TestedAsMobileDevice'],
+      requiredArtifacts: ['FontSize', 'URL', 'MetaElements'],
     };
   }
 
@@ -243,7 +246,7 @@ class FontSize extends Audit {
    * @return {Promise<LH.Audit.Product>}
    */
   static async audit(artifacts, context) {
-    if (!artifacts.TestedAsMobileDevice) {
+    if (context.settings.formFactor === 'desktop') {
       // Font size isn't important to desktop SEO
       return {
         score: 1,

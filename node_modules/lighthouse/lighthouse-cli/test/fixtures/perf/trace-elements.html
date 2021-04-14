@@ -4,18 +4,19 @@
  #animate-me {
    width: 100px;
    height: 100px;
+   font-size: 20pt;
    background-color: red;
    animation-name: anim;
    animation-duration: 1s;
  }
 
  @keyframes anim {
-   from {background-color: red;}
-   from {background-color: blue;}
+   from {font-size: 20pt;}
+   to {font-size: 10pt;}
  }
 </style>
 <body>
-  <div id="animate-me"></div>
+  <div id="animate-me">This is changing font size</div>
   <div id="late-content"></div>
   <h1>Please don't move me</h1>
   <script src="delayed-element.js"></script>

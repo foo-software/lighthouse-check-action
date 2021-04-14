@@ -41,9 +41,7 @@ const lighthouse = global.runBundledLighthouse;
  */
 async function runLighthouse(url, configJson, testRunnerOptions = {}) {
   // Launch and connect to Chrome.
-  const launchedChrome = await ChromeLauncher.launch({
-    chromeFlags: ['--enable-features=AutofillShowTypePredictions'],
-  });
+  const launchedChrome = await ChromeLauncher.launch();
   const port = launchedChrome.port;
   const connection = new ChromeProtocol(port);
 

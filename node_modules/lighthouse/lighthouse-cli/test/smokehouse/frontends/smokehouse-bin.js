@@ -69,31 +69,54 @@ function getDefinitionsToRun(allTestDefns, requestedIds, {invertMatch}) {
  * CLI entry point.
  */
 async function begin() {
-  const argv = yargs
+  const rawArgv = yargs
     .help('help')
     .usage('node $0 [<options>] <test-ids>')
     .example('node $0 -j=1 pwa seo', 'run pwa and seo tests serially')
     .example('node $0 --invert-match byte', 'run all smoke tests but `byte`')
-    .describe({
-      'debug': 'Save test artifacts and output verbose logs',
-      'jobs': 'Manually set the number of jobs to run at once. `1` runs all tests serially',
-      'retries': 'The number of times to retry failing tests before accepting. Defaults to 0',
-      'runner': 'The method of running Lighthouse',
-      'tests-path': 'The path to a set of test definitions to run. Defaults to core smoke tests.',
-      'invert-match': 'Run all available tests except the ones provided',
+    .option('_', {
+      array: true,
+      type: 'string',
     })
-    .boolean(['debug', 'invert-match'])
-    .alias({
-      'jobs': 'j',
+    .options({
+      'debug': {
+        type: 'boolean',
+        default: false,
+        describe: 'Save test artifacts and output verbose logs',
+      },
+      'jobs': {
+        type: 'number',
+        alias: 'j',
+        describe: 'Manually set the number of jobs to run at once. `1` runs all tests serially',
+      },
+      'retries': {
+        type: 'number',
+        describe: 'The number of times to retry failing tests before accepting. Defaults to 0',
+      },
+      'runner': {
+        default: 'cli',
+        choices: ['cli', 'bundle'],
+        describe: 'The method of running Lighthouse',
+      },
+      'tests-path': {
+        type: 'string',
+        describe: 'The path to a set of test definitions to run. Defaults to core smoke tests.',
+      },
+      'invert-match': {
+        type: 'boolean',
+        default: false,
+        describe: 'Run all available tests except the ones provided',
+      },
     })
-    .choices('runner', ['cli', 'bundle'])
-    .default('runner', 'cli')
     .wrap(yargs.terminalWidth())
     .argv;
 
-  // TODO: use .number() when yargs is updated
-  const jobs = argv.jobs !== undefined ? Number(argv.jobs) : undefined;
-  const retries = argv.retries !== undefined ? Number(argv.retries) : undefined;
+  // Augmenting yargs type with auto-camelCasing breaks in tsc@4.1.2 and @types/yargs@15.0.11,
+  // so for now cast to add yarg's camelCase properties to type.
+  const argv = /** @type {typeof rawArgv & CamelCasify<typeof rawArgv>} */ (rawArgv);
+
+  const jobs = Number.isFinite(argv.jobs) ? argv.jobs : undefined;
+  const retries = Number.isFinite(argv.retries) ? argv.retries : undefined;
 
   const runnerPath = runnerPaths[/** @type {keyof typeof runnerPaths} */ (argv.runner)];
   if (argv.runner === 'bundle') {

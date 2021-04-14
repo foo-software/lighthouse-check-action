@@ -34,7 +34,7 @@ class FullPageScreenshot extends Audit {
       score: 1,
       details: {
         type: 'full-page-screenshot',
-        fullPageScreenshot: artifacts.FullPageScreenshot,
+        ...artifacts.FullPageScreenshot,
       },
     };
   }

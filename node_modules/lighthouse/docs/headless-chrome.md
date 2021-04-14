@@ -5,8 +5,8 @@
 Setup:
 
 ```sh
-# Lighthouse requires Node 10 LTS (10.13) or later.
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - &&\
+# Lighthouse requires Node 12 LTS (12.x) or later.
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs npm
 
 # get chromium (stable)
@@ -27,8 +27,8 @@ lighthouse --chrome-flags="--headless" https://github.com
 Alternatively, you can run full Chrome + xvfb instead of headless mode. These steps worked on Debian Jessie:
 
 ```sh
-# get node 10
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+# get node 12
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs npm
 
 # get chromium (stable) and Xvfb
@@ -116,4 +116,4 @@ Other resources you might find helpful:
 
 - [Getting Started with Headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome)
 - Example [Dockerfile](https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile)
-- Lighthouse's [`.travis.yml`](https://github.com/GoogleChrome/lighthouse/blob/master/.travis.yml)
+- Lighthouse's GitHub Actions [`.ci.yml`](https://github.com/GoogleChrome/lighthouse/blob/master/.github/workflows/ci.yml)

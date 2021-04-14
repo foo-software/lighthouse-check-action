@@ -117,27 +117,27 @@ class LargeJavascriptLibraries extends Audit {
       const suggestions = libraryPairing.suggestions;
       const suggestionItems = suggestions.map(suggestion => {
         return {
-          suggestion: /** @type {LH.Audit.Details.LinkValue} */ ({
-            type: 'link',
+          suggestion: {
+            type: /** @type {'link'} */ ('link'),
             text: suggestion.name,
             url: suggestion.repository,
-          }),
+          },
           transferSize: suggestion.gzip,
           wastedBytes: original.gzip - suggestion.gzip,
         };
       });
 
       return {
-        name: /** @type {LH.Audit.Details.TableItem} */ {
-          type: 'link',
+        name: {
+          type: /** @type {'link'} */ ('link'),
           text: original.name,
           url: original.repository,
         },
         transferSize: original.gzip,
-        subItems: /** @type {LH.Audit.Details.TableSubItems} */ ({
-          type: 'subitems',
+        subItems: {
+          type: /** @type {'subitems'} */ ('subitems'),
           items: suggestionItems,
-        }),
+        },
       };
     });
 

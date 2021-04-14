@@ -33,6 +33,7 @@ const expectations = [
             left: 8,
             height: '>40',
           },
+          // Note: The first number (5) in these ids comes from an executionContextId, and has the potential to change
           '5-1-P': {
             top: 8,
             left: 8,

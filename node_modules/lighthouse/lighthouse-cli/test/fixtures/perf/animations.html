@@ -10,6 +10,7 @@
 #animated-boi {
   width: 100px;
   height: 100px;
+  font-size: 20pt;
   background-color: red;
   animation: alpha 4s, beta 2s;
 }
@@ -27,21 +28,21 @@
 }
 
 @keyframes beta {
-  from {background-color: red;}
-  to {background-color: blue;}
+  from {font-size: 20pt;}
+  to {font-size: 10pt;}
 }
 
 @keyframes gamma {
   from {opacity: 1;}
-  from {opacity: 0;}
+  to {opacity: 0;}
 }
 </style>
 </head>
 <body>
 
 <div id='composited-boi'></div>
-<div id='animated-boi'></div>
-<div>AAAAAAAAAAAAAAAAAAA</div>
+<div id='animated-boi'>This is changing font size</div>
+<div>This is getting pushed around</div>
 
 <script>
   document.getElementById("animated-boi").animate([

@@ -22,6 +22,7 @@ module.exports = {
   testMatch: [
     '**/lighthouse-core/**/*-test.js',
     '**/lighthouse-cli/**/*-test.js',
+    '**/lighthouse-core/test/fraggle-rock/**/*-test-pptr.js',
     '**/lighthouse-treemap/**/*-test.js',
     '**/lighthouse-treemap/**/*-test-pptr.js',
     '**/lighthouse-viewer/**/*-test.js',

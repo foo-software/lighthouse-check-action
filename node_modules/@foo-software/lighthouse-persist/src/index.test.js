@@ -1,4 +1,7 @@
+jest.mock('./helpers/getPageSpeedInsightsApiResult');
+
 import lighthousePersist from '.';
+import getPageSpeedInsightsApiResult from './helpers/getPageSpeedInsightsApiResult';
 
 jest.mock('chrome-launcher', () => ({
   launch: jest.fn().mockReturnValue({
@@ -37,6 +40,31 @@ describe('@foo-software/lighthouse-persist', () => {
       awsBucket: 'myBucket',
       awsRegion: 'us-east-1',
       awsSecretAccessKey: 'def456'
+    });
+
+    expect(response).toMatchSnapshot();
+  });
+
+  it('should return an expected response payload when "psiKey" is provided', async () => {
+    getPageSpeedInsightsApiResult.mockReturnValue({
+      lighthouseResult: {
+        mock: true
+      },
+      loadingExperience: {
+        mock: true
+      },
+      originLoadingExperience: {
+        mock: true
+      }
+    });
+
+    const response = await lighthousePersist({
+      url: 'https://www.foo.software',
+      awsAccessKeyId: 'abc123',
+      awsBucket: 'myBucket',
+      awsRegion: 'us-east-1',
+      awsSecretAccessKey: 'def456',
+      psiKey: 'abc123'
     });
 
     expect(response).toMatchSnapshot();

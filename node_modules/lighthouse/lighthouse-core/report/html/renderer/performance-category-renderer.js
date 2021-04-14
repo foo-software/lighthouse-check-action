@@ -70,15 +70,17 @@ class PerformanceCategoryRenderer extends CategoryRenderer {
     }
 
     // Overwrite the displayValue with opportunity's wastedMs
-    const displayEl = this.dom.find('.lh-audit__display-text', element);
+    // TODO: normalize this to one tagName.
+    const displayEl =
+      this.dom.find('span.lh-audit__display-text, div.lh-audit__display-text', element);
     const sparklineWidthPct = `${details.overallSavingsMs / scale * 100}%`;
-    this.dom.find('.lh-sparkline__bar', element).style.width = sparklineWidthPct;
+    this.dom.find('div.lh-sparkline__bar', element).style.width = sparklineWidthPct;
     displayEl.textContent = Util.i18n.formatSeconds(details.overallSavingsMs, 0.01);
 
     // Set [title] tooltips
     if (audit.result.displayValue) {
       const displayValue = audit.result.displayValue;
-      this.dom.find('.lh-load-opportunity__sparkline', element).title = displayValue;
+      this.dom.find('div.lh-load-opportunity__sparkline', element).title = displayValue;
       displayEl.title = displayValue;
     }
 
@@ -150,7 +152,7 @@ class PerformanceCategoryRenderer extends CategoryRenderer {
     const paramPairs = [...metricPairs];
 
     if (Util.reportJson) {
-      paramPairs.push(['device', Util.reportJson.configSettings.emulatedFormFactor]);
+      paramPairs.push(['device', Util.reportJson.configSettings.formFactor]);
       paramPairs.push(['version', Util.reportJson.lighthouseVersion]);
     }
 

@@ -8,7 +8,6 @@
 const Gatherer = require('./gatherer.js');
 const NetworkAnalyzer = require('../../lib/dependency-graph/simulator/network-analyzer.js');
 const NetworkRequest = require('../../lib/network-request.js');
-const getElementsInDocumentString = require('../../lib/page-functions.js').getElementsInDocumentString; // eslint-disable-line max-len
 const pageFunctions = require('../../lib/page-functions.js');
 
 /* global getNodeDetails */
@@ -16,7 +15,7 @@ const pageFunctions = require('../../lib/page-functions.js');
 /**
  * @return {LH.Artifacts['ScriptElements']}
  */
-/* istanbul ignore next */
+/* c8 ignore start */
 function collectAllScriptElements() {
   /** @type {HTMLScriptElement[]} */
   // @ts-expect-error - getElementsInDocument put into scope via stringification
@@ -29,14 +28,15 @@ function collectAllScriptElements() {
       id: script.id || null,
       async: script.async,
       defer: script.defer,
-      source: /** @type {'head'|'body'} */ (script.closest('head') ? 'head' : 'body'),
-      // @ts-expect-error - getNodeDetails put into scope via stringification
-      ...getNodeDetails(script),
+      source: script.closest('head') ? 'head' : 'body',
       content: script.src ? null : script.text,
       requestId: null,
+      // @ts-expect-error - getNodeDetails put into scope via stringification
+      node: getNodeDetails(script),
     };
   });
 }
+/* c8 ignore stop */
 
 /**
  * @template T, U
@@ -72,12 +72,14 @@ class ScriptElements extends Gatherer {
     const driver = passContext.driver;
     const mainResource = NetworkAnalyzer.findMainDocument(loadData.networkRecords, passContext.url);
 
-    /** @type {LH.Artifacts['ScriptElements']} */
-    const scripts = await driver.evaluateAsync(`(() => {
-      ${getElementsInDocumentString}
-      ${pageFunctions.getNodeDetailsString};
-      return (${collectAllScriptElements.toString()})();
-    })()`, {useIsolation: true});
+    const scripts = await driver.executionContext.evaluate(collectAllScriptElements, {
+      args: [],
+      useIsolation: true,
+      deps: [
+        pageFunctions.getNodeDetailsString,
+        pageFunctions.getElementsInDocument,
+      ],
+    });
 
     for (const script of scripts) {
       if (script.content) script.requestId = mainResource.requestId;
@@ -107,11 +109,6 @@ class ScriptElements extends Gatherer {
         matchedScriptElement.content = content;
       } else {
         scripts.push({
-          devtoolsNodePath: '',
-          snippet: '',
-          selector: '',
-          nodeLabel: '',
-          boundingRect: null,
           type: null,
           src: record.url,
           id: null,
@@ -120,10 +117,10 @@ class ScriptElements extends Gatherer {
           source: 'network',
           requestId: record.requestId,
           content,
+          node: null,
         });
       }
     }
-
     return scripts;
   }
 }

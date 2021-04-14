@@ -10,7 +10,8 @@ const LHError = require('../../lib/lh-error.js');
 const ExecutionContext = require('./execution-context.js');
 const pageFunctions = require('../../lib/page-functions.js');
 
-/** @typedef {import('../../lib/network-recorder.js')} NetworkRecorder */
+/** @typedef {import('./network-monitor.js')} NetworkMonitor */
+/** @typedef {import('./network-monitor.js').NetworkMonitorEvent} NetworkMonitorEvent */
 /** @typedef {{promise: Promise<void>, cancel: function(): void}} CancellableWait */
 
 /**
@@ -111,11 +112,11 @@ function waitForFcp(session, pauseAfterFcpMs, maxWaitForFcpMs) {
  * Returns a promise that resolves when the network has been idle (after DCL) for
  * `networkQuietThresholdMs` ms and a method to cancel internal network listeners/timeout.
  * @param {LH.Gatherer.FRProtocolSession} session
- * @param {NetworkRecorder} networkMonitor
- * @param {number} networkQuietThresholdMs
+ * @param {NetworkMonitor} networkMonitor
+ * @param {{networkQuietThresholdMs: number, busyEvent: NetworkMonitorEvent, idleEvent: NetworkMonitorEvent, isIdle(recorder: NetworkMonitor): boolean}} networkQuietOptions
  * @return {CancellableWait}
  */
-function waitForNetworkIdle(session, networkMonitor, networkQuietThresholdMs) {
+function waitForNetworkIdle(session, networkMonitor, networkQuietOptions) {
   let hasDCLFired = false;
   /** @type {NodeJS.Timer|undefined} */
   let idleTimeout;
@@ -124,11 +125,13 @@ function waitForNetworkIdle(session, networkMonitor, networkQuietThresholdMs) {
     throw new Error('waitForNetworkIdle.cancel() called before it was defined');
   };
 
+  const {networkQuietThresholdMs, busyEvent, idleEvent, isIdle} = networkQuietOptions;
+
   /** @type {Promise<void>} */
   const promise = new Promise((resolve, reject) => {
     const onIdle = () => {
       // eslint-disable-next-line no-use-before-define
-      networkMonitor.once('network-2-busy', onBusy);
+      networkMonitor.once(busyEvent, onBusy);
       idleTimeout = setTimeout(() => {
         cancel();
         resolve();
@@ -136,13 +139,13 @@ function waitForNetworkIdle(session, networkMonitor, networkQuietThresholdMs) {
     };
 
     const onBusy = () => {
-      networkMonitor.once('network-2-idle', onIdle);
+      networkMonitor.once(idleEvent, onIdle);
       idleTimeout && clearTimeout(idleTimeout);
     };
 
     const domContentLoadedListener = () => {
       hasDCLFired = true;
-      if (networkMonitor.is2Idle()) {
+      if (isIdle(networkMonitor)) {
         onIdle();
       } else {
         onBusy();
@@ -157,7 +160,7 @@ function waitForNetworkIdle(session, networkMonitor, networkQuietThresholdMs) {
         return;
       }
 
-      const inflightRecords = networkMonitor.getInflightRecords();
+      const inflightRecords = networkMonitor.getInflightRequests();
       // If there are more than 20 inflight requests, load is still in full swing.
       // Wait until it calms down a bit to be a little less spammy.
       if (inflightRecords.length < 20) {
@@ -169,7 +172,7 @@ function waitForNetworkIdle(session, networkMonitor, networkQuietThresholdMs) {
 
     networkMonitor.on('requeststarted', logStatus);
     networkMonitor.on('requestloaded', logStatus);
-    networkMonitor.on('network-2-busy', logStatus);
+    networkMonitor.on(busyEvent, logStatus);
 
     session.once('Page.domContentEventFired', domContentLoadedListener);
     let canceled = false;
@@ -178,11 +181,11 @@ function waitForNetworkIdle(session, networkMonitor, networkQuietThresholdMs) {
       canceled = true;
       idleTimeout && clearTimeout(idleTimeout);
       session.off('Page.domContentEventFired', domContentLoadedListener);
-      networkMonitor.removeListener('network-2-busy', onBusy);
-      networkMonitor.removeListener('network-2-idle', onIdle);
+      networkMonitor.removeListener(busyEvent, onBusy);
+      networkMonitor.removeListener(idleEvent, onIdle);
       networkMonitor.removeListener('requeststarted', logStatus);
       networkMonitor.removeListener('requestloaded', logStatus);
-      networkMonitor.removeListener('network-2-busy', logStatus);
+      networkMonitor.removeListener(busyEvent, logStatus);
     };
   });
 
@@ -210,7 +213,6 @@ function waitForCPUIdle(session, waitForCPUQuiet) {
   let lastTimeout;
   let canceled = false;
 
-  const checkForQuietExpression = `(${pageFunctions.checkTimeSinceLastLongTaskString})()`;
   /**
    * @param {ExecutionContext} executionContext
    * @param {() => void} resolve
@@ -218,7 +220,8 @@ function waitForCPUIdle(session, waitForCPUQuiet) {
    */
   async function checkForQuiet(executionContext, resolve) {
     if (canceled) return;
-    const timeSinceLongTask = await executionContext.evaluateAsync(checkForQuietExpression);
+    const timeSinceLongTask =
+      await executionContext.evaluate(pageFunctions.checkTimeSinceLastLongTask, {args: []});
     if (canceled) return;
 
     if (typeof timeSinceLongTask === 'number') {
@@ -326,7 +329,7 @@ const DEFAULT_WAIT_FUNCTIONS = {waitForFcp, waitForLoadEvent, waitForCPUIdle, wa
  * - maxWaitForLoadedMs milliseconds have passed.
  * See https://github.com/GoogleChrome/lighthouse/issues/627 for more.
  * @param {LH.Gatherer.FRProtocolSession} session
- * @param {NetworkRecorder} networkMonitor
+ * @param {NetworkMonitor} networkMonitor
  * @param {WaitOptions} options
  * @return {Promise<{timedOut: boolean}>}
  */
@@ -344,8 +347,20 @@ async function waitForFullyLoaded(session, networkMonitor, options) {
     waitForNothing();
   // Listener for onload. Resolves pauseAfterLoadMs ms after load.
   const resolveOnLoadEvent = waitForLoadEvent(session, pauseAfterLoadMs);
-  // Network listener. Resolves when the network has been idle for networkQuietThresholdMs.
-  const resolveOnNetworkIdle = waitForNetworkIdle(session, networkMonitor, networkQuietThresholdMs);
+  // General network listener. Resolves when the network has been 2-idle for networkQuietThresholdMs.
+  const resolveOnNetworkIdle = waitForNetworkIdle(session, networkMonitor, {
+    networkQuietThresholdMs,
+    busyEvent: 'network-2-busy',
+    idleEvent: 'network-2-idle',
+    isIdle: recorder => recorder.is2Idle(),
+  });
+  // Critical network listener. Resolves when the network has had 0 critical requests for networkQuietThresholdMs.
+  const resolveOnCriticalNetworkIdle = waitForNetworkIdle(session, networkMonitor, {
+    networkQuietThresholdMs,
+    busyEvent: 'network-critical-busy',
+    idleEvent: 'network-critical-idle',
+    isIdle: recorder => recorder.isCriticalIdle(),
+  });
   // CPU listener. Resolves when the CPU has been idle for cpuQuietThresholdMs after network idle.
   let resolveOnCPUIdle = waitForNothing();
 
@@ -356,6 +371,7 @@ async function waitForFullyLoaded(session, networkMonitor, options) {
     resolveOnFcp.promise,
     resolveOnLoadEvent.promise,
     resolveOnNetworkIdle.promise,
+    resolveOnCriticalNetworkIdle.promise,
   ]).then(() => {
     resolveOnCPUIdle = waitForCPUIdle(session, cpuQuietThresholdMs);
     return resolveOnCPUIdle.promise;

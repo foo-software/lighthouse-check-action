@@ -15,7 +15,7 @@ class TimeToSearchable extends Gatherer {
   afterPass(options) {
     const driver = options.driver;
 
-    return driver.evaluateAsync('window.myLoadMetrics')
+    return driver.executionContext.evaluateAsync('window.myLoadMetrics')
       // Ensure returned value is what we expect.
       .then(loadMetrics => {
         if (!loadMetrics || loadMetrics.searchableTime === undefined) {

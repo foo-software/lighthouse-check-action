@@ -216,8 +216,11 @@ function collateResults(localConsole, actual, expected) {
   const runtimeErrorAssertion = makeComparison('runtimeError', actual.lhr.runtimeError,
       expected.lhr.runtimeError);
 
-  // Same for warnings.
-  const runWarningsAssertion = makeComparison('runWarnings', actual.lhr.runWarnings,
+  // Same for warnings, exclude the slow CPU warning which is flaky and differs between CI machines.
+  const warnings = actual.lhr.runWarnings
+    .filter(warning => !warning.includes('loaded too slowly'))
+    .filter(warning => !warning.includes('a slower CPU'));
+  const runWarningsAssertion = makeComparison('runWarnings', warnings,
       expected.lhr.runWarnings || []);
 
   /** @type {Comparison[]} */
