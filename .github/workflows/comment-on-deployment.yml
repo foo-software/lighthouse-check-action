@@ -10,5 +10,6 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     steps:
       - uses: actions/checkout@master
+      - name: Log deploy URL
         run: |
           echo "deploy URL ${{ github.event.deployment_status.target_url }}"
