@@ -1,0 +1,14 @@
+name: Test on Deployment
+on:
+  deployment_status:
+    branches:
+      - '*'
+
+jobs:
+  deployment-test:
+    runs-on: ubuntu-latest
+    if: github.event.deployment_status.state == 'success'
+    steps:
+      - uses: actions/checkout@master
+        run: |
+          echo "deploy URL ${{ github.event.deployment_status.target_url }}"
