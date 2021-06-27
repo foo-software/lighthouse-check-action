@@ -6,7 +6,7 @@ class Settings {
     constructor(_options = {}) {
         this._options = _options;
         this.basePath = this._getValue(this._options.basePath, undefined);
-        this.concurrency = this._getValue(this._options.concurrency, Infinity);
+        this.concurrency = this._getValue(this._options.concurrency, Number.POSITIVE_INFINITY);
         this.deepFilter = this._getValue(this._options.deepFilter, null);
         this.entryFilter = this._getValue(this._options.entryFilter, null);
         this.errorFilter = this._getValue(this._options.errorFilter, null);

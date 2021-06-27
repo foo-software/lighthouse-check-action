@@ -56,7 +56,6 @@
 			"files": "test/**",
 			"extends": "@ljharb/eslint-config/tests",
 			"rules": {
-				"id-length": 0,
 				"max-lines-per-function": 0,
 				"no-implicit-coercion": 0,
 				"no-invalid-this": 1,

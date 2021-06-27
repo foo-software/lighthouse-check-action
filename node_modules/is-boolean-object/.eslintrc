@@ -14,5 +14,9 @@
 				"prefer-regex-literals": 0,
 			},
 		},
+		{
+			"files": "test-corejs.js",
+			"extends": "@ljharb/eslint-config/tests",
+		},
 	],
 }

@@ -41,6 +41,9 @@ module.exports = function ToNumber(argument) {
 	if (typeof value === 'symbol') {
 		throw new $TypeError('Cannot convert a Symbol value to a number');
 	}
+	if (typeof value === 'bigint') {
+		throw new $TypeError('Conversion from \'BigInt\' to \'number\' is not allowed.');
+	}
 	if (typeof value === 'string') {
 		if (isBinary(value)) {
 			return ToNumber($parseInteger($strSlice(value, 2), 2));

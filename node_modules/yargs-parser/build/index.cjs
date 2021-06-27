@@ -7,7 +7,7 @@ var path = require('path');
 function camelCase(str) {
     const isCamelCase = str !== str.toLowerCase() && str !== str.toUpperCase();
     if (!isCamelCase) {
-        str = str.toLocaleLowerCase();
+        str = str.toLowerCase();
     }
     if (str.indexOf('-') === -1 && str.indexOf('_') === -1) {
         return str;
@@ -20,7 +20,7 @@ function camelCase(str) {
             let chr = str.charAt(i);
             if (nextChrUpper) {
                 nextChrUpper = false;
-                chr = chr.toLocaleUpperCase();
+                chr = chr.toUpperCase();
             }
             if (i !== 0 && (chr === '-' || chr === '_')) {
                 nextChrUpper = true;
@@ -33,7 +33,7 @@ function camelCase(str) {
     }
 }
 function decamelize(str, joinString) {
-    const lowercase = str.toLocaleLowerCase();
+    const lowercase = str.toLowerCase();
     joinString = joinString || '-';
     let notCamelcase = '';
     for (let i = 0; i < str.length; i++) {
@@ -55,7 +55,7 @@ function looksLikeNumber(x) {
         return true;
     if (/^0x[0-9a-f]+$/i.test(x))
         return true;
-    if (x.length > 1 && x[0] === '0')
+    if (/^0[^.]/.test(x))
         return false;
     return /^[-]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/.test(x);
 }
@@ -91,6 +91,14 @@ function tokenizeArgString(argString) {
     }
     return args;
 }
+
+var DefaultValuesForTypeKey;
+(function (DefaultValuesForTypeKey) {
+    DefaultValuesForTypeKey["BOOLEAN"] = "boolean";
+    DefaultValuesForTypeKey["STRING"] = "string";
+    DefaultValuesForTypeKey["NUMBER"] = "number";
+    DefaultValuesForTypeKey["ARRAY"] = "array";
+})(DefaultValuesForTypeKey || (DefaultValuesForTypeKey = {}));
 
 let mixin;
 class YargsParser {
@@ -240,6 +248,7 @@ class YargsParser {
         const argvReturn = {};
         for (let i = 0; i < args.length; i++) {
             const arg = args[i];
+            const truncatedArg = arg.replace(/^-{3,}/, '---');
             let broken;
             let key;
             let letters;
@@ -249,7 +258,7 @@ class YargsParser {
             if (arg !== '--' && isUnknownOptionAsArg(arg)) {
                 pushPositional(arg);
             }
-            else if (arg.match(/---+(=|$)/)) {
+            else if (truncatedArg.match(/---+(=|$)/)) {
                 pushPositional(arg);
                 continue;
             }
@@ -875,6 +884,7 @@ class YargsParser {
             return configuration['unknown-options-as-args'] && isUnknownOption(arg);
         }
         function isUnknownOption(arg) {
+            arg = arg.replace(/^-{3,}/, '--');
             if (arg.match(negative)) {
                 return false;
             }
@@ -900,23 +910,23 @@ class YargsParser {
         }
         function defaultForType(type) {
             const def = {
-                boolean: true,
-                string: '',
-                number: undefined,
-                array: []
+                [DefaultValuesForTypeKey.BOOLEAN]: true,
+                [DefaultValuesForTypeKey.STRING]: '',
+                [DefaultValuesForTypeKey.NUMBER]: undefined,
+                [DefaultValuesForTypeKey.ARRAY]: []
             };
             return def[type];
         }
         function guessType(key) {
-            let type = 'boolean';
+            let type = DefaultValuesForTypeKey.BOOLEAN;
             if (checkAllAliases(key, flags.strings))
-                type = 'string';
+                type = DefaultValuesForTypeKey.STRING;
             else if (checkAllAliases(key, flags.numbers))
-                type = 'number';
+                type = DefaultValuesForTypeKey.NUMBER;
             else if (checkAllAliases(key, flags.bools))
-                type = 'boolean';
+                type = DefaultValuesForTypeKey.BOOLEAN;
             else if (checkAllAliases(key, flags.arrays))
-                type = 'array';
+                type = DefaultValuesForTypeKey.ARRAY;
             return type;
         }
         function isUndefined(num) {

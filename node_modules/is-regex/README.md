@@ -1,5 +1,7 @@
 # is-regex <sup>[![Version Badge][2]][1]</sup>
 
+[![github actions][actions-image]][actions-url]
+[![coverage][codecov-image]][codecov-url]
 [![dependency status][5]][6]
 [![dev dependency status][7]][8]
 [![License][license-image]][license-url]
@@ -44,4 +46,7 @@ Simply clone the repo, `npm install`, and run `npm test`
 [license-url]: LICENSE
 [downloads-image]: https://img.shields.io/npm/dm/is-regex.svg
 [downloads-url]: https://npm-stat.com/charts.html?package=is-regex
-
+[codecov-image]: https://codecov.io/gh/inspect-js/is-regex/branch/main/graphs/badge.svg
+[codecov-url]: https://app.codecov.io/gh/inspect-js/is-regex/
+[actions-image]: https://img.shields.io/endpoint?url=https://github-actions-badge-u3jn4tfpocch.runkit.sh/inspect-js/is-regex
+[actions-url]: https://github.com/inspect-js/is-regex/actions

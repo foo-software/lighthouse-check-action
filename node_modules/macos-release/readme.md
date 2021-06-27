@@ -1,4 +1,4 @@
-# macos-release [![Build Status](https://travis-ci.com/sindresorhus/macos-release.svg?branch=master)](https://travis-ci.com/github/sindresorhus/macos-release)
+# macos-release
 
 > Get the name and version of a macOS release from the Darwin version\
 > Example: `13.2.0` → `{name: 'Mavericks', version: '10.9'}`

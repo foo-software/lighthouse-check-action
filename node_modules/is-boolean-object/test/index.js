@@ -2,7 +2,7 @@
 
 var test = require('tape');
 var isBoolean = require('../');
-var hasSymbols = typeof Symbol === 'function' && typeof Symbol('') === 'symbol';
+var hasSymbols = require('has-symbols/shams')();
 
 test('not Booleans', function (t) {
 	t.test('primitives', function (st) {

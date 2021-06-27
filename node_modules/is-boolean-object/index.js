@@ -13,7 +13,7 @@ var tryBooleanObject = function booleanBrandCheck(value) {
 	}
 };
 var boolClass = '[object Boolean]';
-var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var hasToStringTag = typeof Symbol === 'function' && !!Symbol.toStringTag;
 
 module.exports = function isBoolean(value) {
 	if (typeof value === 'boolean') {

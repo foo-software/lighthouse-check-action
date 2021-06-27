@@ -1,6 +1,5 @@
 # is-bigint <sup>[![Version Badge][2]][1]</sup>
 
-[![Build Status][3]][4]
 [![dependency status][5]][6]
 [![dev dependency status][7]][8]
 [![License][license-image]][license-url]
@@ -27,15 +26,13 @@ assert(isBigInt(Object(1n)));
 Simply clone the repo, `npm install`, and run `npm test`
 
 [1]: https://npmjs.org/package/is-bigint
-[2]: http://versionbadg.es/ljharb/is-bigint.svg
-[3]: https://travis-ci.org/ljharb/is-bigint.svg
-[4]: https://travis-ci.org/ljharb/is-bigint
-[5]: https://david-dm.org/ljharb/is-bigint.svg
-[6]: https://david-dm.org/ljharb/is-bigint
-[7]: https://david-dm.org/ljharb/is-bigint/dev-status.svg
-[8]: https://david-dm.org/ljharb/is-bigint#info=devDependencies
+[2]: https://versionbadg.es/inspect-js/is-bigint.svg
+[5]: https://david-dm.org/inspect-js/is-bigint.svg
+[6]: https://david-dm.org/inspect-js/is-bigint
+[7]: https://david-dm.org/inspect-js/is-bigint/dev-status.svg
+[8]: https://david-dm.org/inspect-js/is-bigint#info=devDependencies
 [11]: https://nodei.co/npm/is-bigint.png?downloads=true&stars=true
-[license-image]: http://img.shields.io/npm/l/is-bigint.svg
+[license-image]: https://img.shields.io/npm/l/is-bigint.svg
 [license-url]: LICENSE
-[downloads-image]: http://img.shields.io/npm/dm/is-bigint.svg
-[downloads-url]: http://npm-stat.com/charts.html?package=is-bigint
+[downloads-image]: https://img.shields.io/npm/dm/is-bigint.svg
+[downloads-url]: https://npm-stat.com/charts.html?package=is-bigint

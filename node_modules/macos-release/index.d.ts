@@ -28,7 +28,8 @@ declare const macosRelease: {
 	//=> {name: 'Big Sur', version: '11'}
 	```
 	*/
-	(release?: string): {name: string, version: string};
+	(): {name: string, version: string}
+	(release: string): {name: string, version: string} | undefined;
 
 	// TODO: remove this in the next major version, refactor the whole definition to:
 	// declare function macosRelease(release?: string): {name: string, version: string};

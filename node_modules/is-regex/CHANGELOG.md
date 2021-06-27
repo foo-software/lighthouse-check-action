@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.3](https://github.com/inspect-js/is-regex/compare/v1.1.2...v1.1.3) - 2021-05-07
+
+### Commits
+
+- [actions] use `node/install` instead of `node/run`; use `codecov` action [`c681ab9`](https://github.com/inspect-js/is-regex/commit/c681ab99c07f8b3b7ae5f652b3105a30bce94f69)
+- [Fix] do not use `Object.prototype.toString` when `Symbol.toStringTag` is shammed [`ca019fd`](https://github.com/inspect-js/is-regex/commit/ca019fdb828dc7d32e323213403ac9995d8604e3)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `aud`, `tape` [`605a66f`](https://github.com/inspect-js/is-regex/commit/605a66f278900f1c8ae9d1dfcec31e5f61b10ad3)
+- [readme] add actions and codecov badges [`8d7c6f0`](https://github.com/inspect-js/is-regex/commit/8d7c6f0e007bd982f21b958e0abc98b8a84e2a24)
+- [meta] use `prepublishOnly` script for npm 7+ [`8e50e91`](https://github.com/inspect-js/is-regex/commit/8e50e91f51aa5038745526710ef2e030527982a7)
+- [Deps] update `has-symbols` [`4742c81`](https://github.com/inspect-js/is-regex/commit/4742c81260c3db9a8c9ef57110981fb6175f58e0)
+
 ## [v1.1.2](https://github.com/inspect-js/is-regex/compare/v1.1.1...v1.1.2) - 2021-02-01
 
 ### Commits

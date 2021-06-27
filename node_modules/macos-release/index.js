@@ -2,6 +2,7 @@
 const os = require('os');
 
 const nameMap = new Map([
+	[21, ['Monterey', '12']],
 	[20, ['Big Sur', '11']],
 	[19, ['Catalina', '10.15']],
 	[18, ['Mojave', '10.14']],
