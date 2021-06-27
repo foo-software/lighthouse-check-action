@@ -11,7 +11,7 @@ var tryNumberObject = function tryNumberObject(value) {
 };
 var toStr = Object.prototype.toString;
 var numClass = '[object Number]';
-var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var hasToStringTag = typeof Symbol === 'function' && !!Symbol.toStringTag;
 
 module.exports = function isNumberObject(value) {
 	if (typeof value === 'number') {

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.2](https://github.com/inspect-js/is-bigint/compare/v1.0.1...v1.0.2) - 2021-05-04
+
+### Commits
+
+- [meta] do not publish github action workflow files [`276d677`](https://github.com/inspect-js/is-bigint/commit/276d677d1eac61e990a2f2b523c7cdef70784865)
+- [actions] use `node/install` instead of `node/run`; use `codecov` action [`cea7fb6`](https://github.com/inspect-js/is-bigint/commit/cea7fb6e882ad7e2f550de2bd9317a4409bcd735)
+- [readme] fix repo URLs; remove travis badge [`c8e7c36`](https://github.com/inspect-js/is-bigint/commit/c8e7c3651f3303fddafa61cf29cfbb79ea2d5d4b)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `aud`, `has-symbols`, `object-inspect`, `tape` [`32f3d90`](https://github.com/inspect-js/is-bigint/commit/32f3d909363045fe5d40dde9e4db354344ab4d50)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `object-inspect`, `tape` [`c2f20f5`](https://github.com/inspect-js/is-bigint/commit/c2f20f577d84e68b4e3224abb51024fbc4b9b2ba)
+- [meta] remove unneeded token; update checkout action [`94e46e9`](https://github.com/inspect-js/is-bigint/commit/94e46e92a1a85ec022c8febf8d5d3c2369b46e97)
+- [meta] use `prepublishOnly` script for npm 7+ [`3e663ec`](https://github.com/inspect-js/is-bigint/commit/3e663ecb09bfdc5dbaaa37aaef4adf28b5e49035)
+
 ## [v1.0.1](https://github.com/inspect-js/is-bigint/compare/v1.0.0...v1.0.1) - 2020-11-30
 
 ### Commits

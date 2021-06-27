@@ -1,5 +1,7 @@
 'use strict';
 
+// TODO, semver-major: delete this
+
 var isPropertyDescriptor = require('../helpers/isPropertyDescriptor');
 
 var Type = require('./Type');

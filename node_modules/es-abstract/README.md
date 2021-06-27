@@ -8,8 +8,10 @@
 [![npm badge][npm-badge-png]][package-url]
 
 ECMAScript spec abstract operations.
-When different versions of the spec conflict, the default export will be the latest version of the abstract operation.
-All abstract operations will also be available under an `es5`/`es2015`/`es2016`/`es2017`/`es2018`/`es2019` entry point, and exported property, if you require a specific version.
+
+Every operation is available by edition/year and by name - for example, `es-abstract/2020/Call` gives you the `Call` operation from ES2020, `es-abstract/5/Type` gives you the `Type` operation from ES5.
+
+All abstract operations are also available under an `es5`/`es2015`/`es2016`/`es2017`/`es2018`/`es2019`/`es2020` entry point, and as a property on the `main` export, but using deep imports is highly encouraged for bundle size and performance reasons. Non-deep entry points will be removed in the next semver-major release.
 
 ## Example
 

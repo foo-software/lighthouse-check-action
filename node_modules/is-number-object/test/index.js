@@ -2,7 +2,7 @@
 
 var test = require('tape');
 var isNumber = require('../');
-var hasSymbols = require('has-symbols')();
+var hasSymbols = require('has-symbols/shams')();
 
 test('not Numbers', function (t) {
 	t.notOk(isNumber(), 'undefined is not Number');

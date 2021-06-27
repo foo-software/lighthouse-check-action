@@ -1,8 +1,8 @@
 /// <reference types="node" />
 import { EventEmitter } from 'events';
 import * as fsScandir from '@nodelib/fs.scandir';
-import Settings from '../settings';
-import { Entry, Errno } from '../types';
+import type Settings from '../settings';
+import type { Entry, Errno } from '../types';
 import Reader from './reader';
 declare type EntryEventCallback = (entry: Entry) => void;
 declare type ErrorEventCallback = (error: Errno) => void;
@@ -28,4 +28,3 @@ export default class AsyncReader extends Reader {
     private _emitEntry;
 }
 export {};
-//# sourceMappingURL=async.d.ts.map

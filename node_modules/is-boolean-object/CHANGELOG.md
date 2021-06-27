@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.1](https://github.com/inspect-js/is-boolean-object/compare/v1.1.0...v1.1.1) - 2021-05-07
+
+### Commits
+
+- [actions] use `node/install` instead of `node/run`; use `codecov` action [`7201c41`](https://github.com/inspect-js/is-boolean-object/commit/7201c41fc1fd9d64b51716b80fc63d95064a4a59)
+- [Tests] run tests with core-js as well [`9590e61`](https://github.com/inspect-js/is-boolean-object/commit/9590e6135505e2e3f69c6d8785a539fca1b1e594)
+- [meta] do not publish github action workflow files [`341472b`](https://github.com/inspect-js/is-boolean-object/commit/341472bbe9855030c7eda9340ee4284244f0a4ad)
+- [readme] update repo URLs; remove travis badge [`9fdbbc6`](https://github.com/inspect-js/is-boolean-object/commit/9fdbbc64b2a70ee93fcfd95fc6c94c7ec2bbedd4)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `aud`, `tape` [`1cd35c9`](https://github.com/inspect-js/is-boolean-object/commit/1cd35c9b9b0b4af203f20bda0d7fd60798e57f99)
+- [readme] add actions and codecov badges [`03769fe`](https://github.com/inspect-js/is-boolean-object/commit/03769feb1466f03b1345882ca0e4f8cacbbce9ce)
+- [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `tape` [`db6598c`](https://github.com/inspect-js/is-boolean-object/commit/db6598c4cabcd0ffd2ba9b4525b53907f8b2ff1f)
+- [Fix] do not use `Object.prototype.toString` when `Symbol.toStringTag` is shammed [`e0b8a9f`](https://github.com/inspect-js/is-boolean-object/commit/e0b8a9f0fc1290a0a29c75967d56bc1c17eb8d2d)
+- [readme] remove defunct testling badge [`986a621`](https://github.com/inspect-js/is-boolean-object/commit/986a6217da7385f7063e1d4e4bf5be2892d00c20)
+- [meta] use `prepublishOnly` script for npm 7+ [`7bb3b29`](https://github.com/inspect-js/is-boolean-object/commit/7bb3b2902008ca07af4185ca98bc41b3222d579f)
+- [Deps] update `call-bind` [`3af6a71`](https://github.com/inspect-js/is-boolean-object/commit/3af6a71e1004c79567630ac9944b9f2cc184ac77)
+- [meta] do not publish corejs test file [`d911f03`](https://github.com/inspect-js/is-boolean-object/commit/d911f0368b6922645d15b9e28f3ed92e1badcef4)
+- [actions] update workflows [`9bb3d90`](https://github.com/inspect-js/is-boolean-object/commit/9bb3d9015f377280324b162a3062d21936707216)
+
 ## [v1.1.0](https://github.com/inspect-js/is-boolean-object/compare/v1.0.1...v1.1.0) - 2020-12-05
 
 ### Commits
