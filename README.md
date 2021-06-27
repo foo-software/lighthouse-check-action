@@ -46,7 +46,7 @@ Simple configuration or choose from a variety of features below. See the [exampl
   - [Standard Example](#usage-standard-example)
   - [Failing Workflows by Enforcing Minimum Scores](#usage-failing-workflows-by-enforcing-minimum-scores)
   - [Foo's Automated Lighthouse Check API](#usage-foos-automated-lighthouse-check-api)
-  - [Example with ZEIT Now](#usage-zeit-now)
+  - [Example with Vercel](#usage-vercel)
 
 # Screenshots
 
@@ -497,11 +497,11 @@ jobs:
           # ... all your other inputs
 ```
 
-## Usage: ZEIT Now
+## Usage: Vercel
 
-> **Note**: This part of the docs is a bit outdated since the renaming to Vercel. Also it demonstrates how to use `amondnet/now-deployment` which is not a Vercel official GitHub Action. This example may still provide a relevant setup for similar deployments like Vercel and Netlify. Better documentation coming soon.
+> **Note**: This part of the docs is a bit outdated, written when Vercel was ZEIT Now. Also it demonstrates how to use `amondnet/now-deployment` which is not a Vercel official GitHub Action. This example may still provide a relevant setup for similar deployments like Vercel and Netlify. Better documentation coming soon.
 
-Runs audits on a ZEIT Now ephemeral instance, posts results as comments in a PR and [saves results on Foo's Automated Lighthouse Check](https://www.foo.software/lighthouse). The example would trigger on pushes to `master` and pull request changes when `master` is the base. Note the `urls` input can be used as explained in the [Trigger Audits on Only Certain Pages in an Account](trigger-audits-on-only-certain-pages-in-an-account) section, but extended with two colons like so to denote the page token and custom URL (which can be different than the one specified in the account): `{page token}::{custom url}`.
+Runs audits on a Vercel ephemeral instance, posts results as comments in a PR and [saves results on Foo's Automated Lighthouse Check](https://www.foo.software/lighthouse). The example would trigger on pushes to `master` and pull request changes when `master` is the base. Note the `urls` input can be used as explained in the [Trigger Audits on Only Certain Pages in an Account](trigger-audits-on-only-certain-pages-in-an-account) section, but extended with two colons like so to denote the page token and custom URL (which can be different than the one specified in the account): `{page token}::{custom url}`.
 
 ```yaml
 name: Lighthouse
