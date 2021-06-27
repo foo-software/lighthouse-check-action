@@ -6,14 +6,14 @@ This project provides **two ways of running audits** - "locally" by default in a
 
 <table>
   <tr>
-    <td align="center">
-      <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="280" />
+    <td align="center" style="width: 33.3333333333%">
+      <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" style="width: 80%" />
     </td>
-    <td align="center">
-      <img alt="AWS S3" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/aws-s3-logo.png" />
+    <td align="center" style="width: 33.3333333333%">
+      <img alt="AWS S3" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/aws-s3-logo.png" style="width: 80%" />
     </td>
-    <td align="center">
-      <img alt="Slack" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/slack-logo.png" />
+    <td align="center" style="width: 33.3333333333%">
+      <img alt="Slack" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/slack-logo.png" style="width: 80%" />
     </td>
   </tr>
 </table>
