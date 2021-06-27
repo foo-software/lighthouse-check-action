@@ -6,13 +6,13 @@ This project provides **two ways of running audits** - "locally" by default in a
 
 <table>
   <tr>
-    <td>
-      <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="400" />
+    <td align="center">
+      <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="280" />
     </td>
-    <td>
+    <td align="center">
       <img alt="AWS S3" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/aws-s3-logo.png" />
     </td>
-    <td>
+    <td align="center">
       <img alt="Slack" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/slack-logo.png" />
     </td>
   </tr>
@@ -22,15 +22,14 @@ This project provides **two ways of running audits** - "locally" by default in a
 
 Simple configuration or choose from a variety of features below. See the [example Lighthouse Check action implementation](#example-usage).
 
-- 💛 Lighthouse audit **multiple** URLs or just one.
-- 💛 Save a record of all your audits via [Foo's Automated Lighthouse Check](#usage-automated-lighthouse-check-api).
-- 💗 PR comments of audit scores.
-- 💗 Save HTML reports locally.
-- 💚 Upload HTML reports as artifacts.
-- 💙 Upload HTML reports to AWS S3.
-- ❤️ Fail a workflow when minimum scores aren't met. [Example at the bottom](#user-content-example-usage-failing-workflows-by-enforcing-minimum-scores).
-- 💜 **Slack** notifications.
-- 💖 Slack notifications **with Git info** (author, branch, PR, etc).
+- Lighthouse audit **multiple** URLs or just one.
+- Save a record of all your audits via [Foo's Automated Lighthouse Check](#usage-automated-lighthouse-check-api).
+- PR comments of audit scores.
+- Save HTML reports locally.
+- Upload HTML reports as artifacts.
+- Upload HTML reports to AWS S3.
+- Fail a workflow when minimum scores aren't met. [Example at the bottom](#user-content-example-usage-failing-workflows-by-enforcing-minimum-scores).
+- Slack notifications **with Git info** (author, branch, PR, etc).
 
 # Table of Contents
 
@@ -499,6 +498,8 @@ jobs:
 ```
 
 ## Usage: ZEIT Now
+
+> **Note**: This part of the docs is a bit outdated since the renaming to Vercel. Also it demonstrates how to use `amondnet/now-deployment` which is not a Vercel official GitHub Action. This example may still provide a relevant setup for similar deployments like Vercel and Netlify. Better documentation coming soon.
 
 Runs audits on a ZEIT Now ephemeral instance, posts results as comments in a PR and [saves results on Foo's Automated Lighthouse Check](https://www.foo.software/lighthouse). The example would trigger on pushes to `master` and pull request changes when `master` is the base. Note the `urls` input can be used as explained in the [Trigger Audits on Only Certain Pages in an Account](trigger-audits-on-only-certain-pages-in-an-account) section, but extended with two colons like so to denote the page token and custom URL (which can be different than the one specified in the account): `{page token}::{custom url}`.
 
