@@ -79,8 +79,15 @@ class CategoryRenderer {
 
     const titleEl = this.dom.find('.lh-audit__title', auditEl);
     titleEl.appendChild(this.dom.convertMarkdownCodeSnippets(audit.result.title));
-    this.dom.find('.lh-audit__description', auditEl)
-        .appendChild(this.dom.convertMarkdownLinkSnippets(audit.result.description));
+    const descEl = this.dom.find('.lh-audit__description', auditEl);
+    descEl.appendChild(this.dom.convertMarkdownLinkSnippets(audit.result.description));
+
+    for (const relevantMetric of audit.relevantMetrics || []) {
+      const adornEl = this.dom.createChildOf(descEl, 'span', 'lh-audit__adorn', {
+        title: `Relevant to ${relevantMetric.result.title}`,
+      });
+      adornEl.textContent = relevantMetric.acronym || relevantMetric.id;
+    }
 
     if (audit.stackPacks) {
       audit.stackPacks.forEach(pack => {

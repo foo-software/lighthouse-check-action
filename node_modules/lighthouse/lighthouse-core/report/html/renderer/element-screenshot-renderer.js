@@ -20,7 +20,8 @@
 /**
  * @typedef InstallOverlayFeatureParams
  * @property {DOM} dom
- * @property {Element} el
+ * @property {Element} reportEl
+ * @property {Element} overlayContainerEl
  * @property {ParentNode} templateContext
  * @property {LH.Artifacts.FullPageScreenshot} fullPageScreenshot
  */
@@ -139,16 +140,17 @@ class ElementScreenshotRenderer {
 
   /**
    * Installs the lightbox elements and wires up click listeners to all .lh-element-screenshot elements.
-   * @param {InstallOverlayFeatureParams} _
+   * @param {InstallOverlayFeatureParams} opts
    */
-  static installOverlayFeature({dom, el, templateContext, fullPageScreenshot}) {
+  static installOverlayFeature(opts) {
+    const {dom, reportEl, overlayContainerEl, templateContext, fullPageScreenshot} = opts;
     const screenshotOverlayClass = 'lh-screenshot-overlay--enabled';
     // Don't install the feature more than once.
-    if (el.classList.contains(screenshotOverlayClass)) return;
-    el.classList.add(screenshotOverlayClass);
+    if (reportEl.classList.contains(screenshotOverlayClass)) return;
+    reportEl.classList.add(screenshotOverlayClass);
 
     // Add a single listener to the provided element to handle all clicks within (event delegation).
-    el.addEventListener('click', e => {
+    reportEl.addEventListener('click', e => {
       const target = /** @type {?HTMLElement} */ (e.target);
       if (!target) return;
       // Only activate the overlay for clicks on the screenshot *preview* of an element, not the full-size too.
@@ -156,7 +158,7 @@ class ElementScreenshotRenderer {
       if (!el) return;
 
       const overlay = dom.createElement('div', 'lh-element-screenshot__overlay');
-      el.append(overlay);
+      overlayContainerEl.append(overlay);
 
       // The newly-added overlay has the dimensions we need.
       const maxLightboxSize = {

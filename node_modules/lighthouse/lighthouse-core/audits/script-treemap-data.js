@@ -79,6 +79,8 @@ class ScriptTreemapDataAudit extends Audit {
       // Strip off the shared root.
       const sourcePathSegments = source.replace(sourceRoot, '').split(/\/+/);
       sourcePathSegments.forEach((sourcePathSegment, i) => {
+        if (sourcePathSegment.length === 0) return;
+
         const isLeaf = i === sourcePathSegments.length - 1;
 
         let child = node.children && node.children.find(child => child.name === sourcePathSegment);
@@ -123,6 +125,17 @@ class ScriptTreemapDataAudit extends Audit {
       }
     }
     collapseAll(sourceRootNode);
+
+    // If sourceRootNode.name is falsy (no defined sourceRoot + no collapsed common prefix),
+    // collapse the sourceRootNode children into the scriptNode.
+    // Otherwise, we add another node.
+    if (!sourceRootNode.name) {
+      return {
+        ...sourceRootNode,
+        name: src,
+        children: sourceRootNode.children,
+      };
+    }
 
     // Script node should be just the script src.
     const scriptNode = {...sourceRootNode};
@@ -223,6 +236,17 @@ class ScriptTreemapDataAudit extends Audit {
           sourcesData[source] = sourceData;
         }
 
+        if (bundle.sizes.unmappedBytes) {
+          /** @type {SourceData} */
+          const sourceData = {
+            resourceBytes: bundle.sizes.unmappedBytes,
+          };
+          if (unusedJavascriptSummary.sourcesWastedBytes) {
+            sourceData.unusedBytes = unusedJavascriptSummary.sourcesWastedBytes['(unmapped)'];
+          }
+          sourcesData['(unmapped)'] = sourceData;
+        }
+
         node = this.makeScriptNode(scriptElement.src, bundle.rawMap.sourceRoot || '', sourcesData);
       } else {
         // No valid source map for this script, so we can only produce a single node.
@@ -246,13 +270,12 @@ class ScriptTreemapDataAudit extends Audit {
    * @return {Promise<LH.Audit.Product>}
    */
   static async audit(artifacts, context) {
-    const treemapData = await ScriptTreemapDataAudit.makeNodes(artifacts, context);
+    const nodes = await ScriptTreemapDataAudit.makeNodes(artifacts, context);
 
-    // TODO: when out of experimental should make a new detail type.
-    /** @type {LH.Audit.Details.DebugData} */
+    /** @type {LH.Audit.Details.TreemapData} */
     const details = {
-      type: 'debugdata',
-      treemapData,
+      type: 'treemap-data',
+      nodes,
     };
 
     return {

@@ -66,6 +66,7 @@ const RESOURCE_TYPES = {
   Manifest: 'Manifest',
   SignedExchange: 'SignedExchange',
   Ping: 'Ping',
+  Preflight: 'Preflight',
   CSPViolationReport: 'CSPViolationReport',
 };
 

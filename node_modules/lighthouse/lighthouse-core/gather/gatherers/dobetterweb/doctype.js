@@ -34,7 +34,7 @@ class Doctype extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    * @return {Promise<LH.Artifacts['Doctype']>}
    */
-  snapshot(passContext) {
+  getArtifact(passContext) {
     const driver = passContext.driver;
     return driver.executionContext.evaluate(getDoctype, {
       args: [],

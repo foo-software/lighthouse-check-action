@@ -42,10 +42,12 @@ class UnsizedImages extends Audit {
   /**
    * An img size attribute prevents layout shifts if it is a non-negative integer (incl zero!).
    * @url https://html.spec.whatwg.org/multipage/embedded-content-other.html#dimension-attributes
-   * @param {string} attrValue
+   * @param {string | null} attrValue
    * @return {boolean}
    */
   static doesHtmlAttrProvideExplicitSize(attrValue) {
+    if (!attrValue) return false;
+
     // First, superweird edge case of using the positive-sign. The spec _sorta_ says it's valid...
     // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#rules-for-parsing-integers
     //   > Otherwise, if the character is … (+): Advance position to the next character.
@@ -64,9 +66,9 @@ class UnsizedImages extends Audit {
    * @param {string | null} property
    * @return {boolean}
    */
-  static doesCssPropProvideExplicitSize(property) {
+  static isCssPropExplicitlySet(property) {
     if (!property) return false;
-    return property !== 'auto';
+    return !['auto', 'initial', 'unset', 'inherit'].includes(property);
   }
 
   /**
@@ -80,19 +82,23 @@ class UnsizedImages extends Audit {
     // We don't want to show the user a false positive, so we'll call it sized to give it as pass.
     // While this situation should only befall small-impact images, it means our analysis is incomplete. :(
     // Handwavey TODO: explore ways to avoid this.
-    if (image._privateCssSizing === undefined) return true;
+    if (image.cssEffectiveRules === undefined) return true;
 
     const attrWidth = image.attributeWidth;
     const attrHeight = image.attributeHeight;
-    const cssWidth = image._privateCssSizing.width;
-    const cssHeight = image._privateCssSizing.height;
+    const cssWidth = image.cssEffectiveRules.width;
+    const cssHeight = image.cssEffectiveRules.height;
+    const cssAspectRatio = image.cssEffectiveRules.aspectRatio;
     const htmlWidthIsExplicit = UnsizedImages.doesHtmlAttrProvideExplicitSize(attrWidth);
-    const cssWidthIsExplicit = UnsizedImages.doesCssPropProvideExplicitSize(cssWidth);
+    const cssWidthIsExplicit = UnsizedImages.isCssPropExplicitlySet(cssWidth);
     const htmlHeightIsExplicit = UnsizedImages.doesHtmlAttrProvideExplicitSize(attrHeight);
-    const cssHeightIsExplicit = UnsizedImages.doesCssPropProvideExplicitSize(cssHeight);
+    const cssHeightIsExplicit = UnsizedImages.isCssPropExplicitlySet(cssHeight);
+    const explicitAspectRatio = UnsizedImages.isCssPropExplicitlySet(cssAspectRatio);
     const explicitWidth = htmlWidthIsExplicit || cssWidthIsExplicit;
     const explicitHeight = htmlHeightIsExplicit || cssHeightIsExplicit;
-    return explicitWidth && explicitHeight;
+    return (explicitWidth && explicitHeight) ||
+      (explicitWidth && explicitAspectRatio) ||
+      (explicitHeight && explicitAspectRatio);
   }
 
   /**
@@ -118,7 +124,7 @@ class UnsizedImages extends Audit {
     for (const image of images) {
       // Fixed images are out of document flow and won't cause layout shifts
       const isFixedImage =
-        image.cssComputedPosition === 'fixed' || image.cssComputedPosition === 'absolute';
+        image.computedStyles.position === 'fixed' || image.computedStyles.position === 'absolute';
       if (isFixedImage) continue;
 
       // Non-network SVGs with dimensions don't cause layout shifts in practice, skip them.

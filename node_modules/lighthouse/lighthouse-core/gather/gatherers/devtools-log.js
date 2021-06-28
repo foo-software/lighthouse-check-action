@@ -35,7 +35,7 @@ class DevtoolsLog extends FRGatherer {
   /**
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    */
-  async beforeTimespan({driver}) {
+  async startSensitiveInstrumentation({driver}) {
     this._messageLog.reset();
     this._messageLog.beginRecording();
     driver.defaultSession.addProtocolMessageListener(this._onProtocolMessage);
@@ -47,13 +47,17 @@ class DevtoolsLog extends FRGatherer {
 
   /**
    * @param {LH.Gatherer.FRTransitionalContext} passContext
-   * @return {Promise<LH.Artifacts['DevtoolsLog']>}
    */
-  async afterTimespan({driver}) {
-    const messages = this._messageLog.messages;
+  async stopSensitiveInstrumentation({driver}) {
     this._messageLog.endRecording();
     driver.defaultSession.removeProtocolMessageListener(this._onProtocolMessage);
-    return messages;
+  }
+
+  /**
+   * @return {Promise<LH.Artifacts['DevtoolsLog']>}
+   */
+  async getArtifact() {
+    return this._messageLog.messages;
   }
 }
 

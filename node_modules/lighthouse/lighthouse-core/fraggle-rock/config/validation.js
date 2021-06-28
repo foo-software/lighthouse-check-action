@@ -14,12 +14,8 @@ function isFRGathererDefn(gathererDefn) {
 }
 
 /**
- * Determines if the artifact dependency direction is valid.
- * A timespan artifact cannot depend on a snapshot/navigation artifact because snapshot runs after timespan.
- * A snapshot artifact cannot depend on a navigation artifact because it might be run without a navigation.
- * A navigation artifact also cannot depend on a snapshot artifact because it is collected before snapshot.
- * In other words, the dependency's minimum supported mode must be less than or equal to the dependent's with
- * a special exclusion for navigation dependents.
+ * Determines if the artifact dependency direction is valid. The dependency's minimum supported mode
+ * must be less than or equal to the dependent's.
  *
  * @param {LH.Config.FRGathererDefn} dependent The artifact that depends on the other.
  * @param {LH.Config.FRGathererDefn} dependency The artifact that is being depended on by the other.
@@ -29,9 +25,13 @@ function isValidArtifactDependency(dependent, dependency) {
   const levels = {timespan: 0, snapshot: 1, navigation: 2};
   const dependentLevel = Math.min(...dependent.instance.meta.supportedModes.map(l => levels[l]));
   const dependencyLevel = Math.min(...dependency.instance.meta.supportedModes.map(l => levels[l]));
-  // Special case navigation.
-  if (dependentLevel === levels.navigation) return dependencyLevel !== levels.snapshot;
-  return dependencyLevel <= dependentLevel;
+
+  // A timespan artifact cannot depend on a snapshot/navigation artifact because it might run without a snapshot.
+  if (dependentLevel === levels.timespan) return dependencyLevel === levels.timespan;
+  // A snapshot artifact cannot depend on a timespan/navigation artifact because it might run without a timespan.
+  if (dependentLevel === levels.snapshot) return dependencyLevel === levels.snapshot;
+  // A navigation artifact can depend on anything.
+  return true;
 }
 
 /**

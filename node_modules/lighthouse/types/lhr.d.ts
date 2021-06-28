@@ -87,6 +87,10 @@ declare global {
         weight: number;
         /** Optional grouping within the category. Matches the key of a Result.Group. */
         group?: string;
+        /** The conventional acronym for the audit/metric. */
+        acronym?: string;
+        /** Any audit IDs closely relevant to this one. */
+        relevantAudits?: string[];
       }
 
       export interface ReportGroup {

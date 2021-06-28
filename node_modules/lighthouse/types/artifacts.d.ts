@@ -9,6 +9,7 @@ import _LanternSimulator = require('../lighthouse-core/lib/dependency-graph/simu
 import _NetworkRequest = require('../lighthouse-core/lib/network-request.js');
 import speedline = require('speedline-core');
 import TextSourceMap = require('../lighthouse-core/lib/cdt/generated/SourceMap.js');
+import _ArbitraryEqualityMap = require('../lighthouse-core/lib/arbitrary-equality-map.js');
 
 type _TaskNode = import('../lighthouse-core/lib/tracehouse/main-thread-tasks.js').TaskNode;
 
@@ -19,25 +20,12 @@ declare global {
     export interface Artifacts extends BaseArtifacts, GathererArtifacts {}
 
     export type FRArtifacts = StrictOmit<Artifacts,
-      | 'AnchorElements'
-      | 'CSSUsage'
       | 'Fonts'
-      | 'FullPageScreenshot'
       | 'HTTPRedirect'
-      | 'ImageElements'
-      | 'InspectorIssues'
-      | 'JsUsage'
-      | 'LinkElements'
-      | 'MainDocumentContent'
       | 'Manifest'
       | 'MixedContent'
-      | 'OptimizedImages'
-      | 'ResponseCompression'
       | 'ScriptElements'
       | 'ServiceWorker'
-      | 'SourceMaps'
-      | 'TagsBlockingFirstPaint'
-      | 'TraceElements'
       | keyof FRBaseArtifacts
     >;
 
@@ -115,7 +103,7 @@ declare global {
       /** All the link elements on the page or equivalently declared in `Link` headers. @see https://html.spec.whatwg.org/multipage/links.html */
       LinkElements: Artifacts.LinkElement[];
       /** The values of the <meta> elements in the head. */
-      MetaElements: Array<{name?: string, content?: string, property?: string, httpEquiv?: string, charset?: string}>;
+      MetaElements: Array<{name?: string, content?: string, property?: string, httpEquiv?: string, charset?: string, node: LH.Artifacts.NodeDetails}>;
       /** Information on all script elements in the page. Also contains the content of all requested scripts and the networkRecord requestId that contained their content. Note, HTML documents will have one entry per script tag, all with the same requestId. */
       ScriptElements: Array<Artifacts.ScriptElement>;
       /** The dimensions and devicePixelRatio of the loaded viewport. */
@@ -188,7 +176,13 @@ declare global {
       TraceElements: Artifacts.TraceElement[];
     }
 
+    export type ArbitraryEqualityMap = _ArbitraryEqualityMap;
+
     module Artifacts {
+      export type ComputedContext = Immutable<{
+        computedCache: Map<string, ArbitraryEqualityMap>;
+      }>;
+
       export type NetworkRequest = _NetworkRequest;
       export type TaskNode = _TaskNode;
       export type MetaElement = LH.Artifacts['MetaElements'][0];
@@ -439,6 +433,7 @@ declare global {
       }
 
       export interface ImageElement {
+        /** The resolved source URL of the image. Similar to `currentSrc`, but resolved for CSS images as well. */
         src: string;
         /** The srcset attribute value. @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/srcset */
         srcset: string;
@@ -446,37 +441,41 @@ declare global {
         displayedWidth: number;
         /** The displayed height of the image, uses img.height when available falling back to clientHeight. See https://codepen.io/patrickhulce/pen/PXvQbM for examples. */
         displayedHeight: number;
-        /** The natural width of the underlying image, uses img.naturalWidth. See https://codepen.io/patrickhulce/pen/PXvQbM for examples. */
-        naturalWidth?: number;
+        /** The raw width attribute of the image element. CSS images will be set to null. */
+        attributeWidth: string | null;
+        /** The raw height attribute of the image element. CSS images will be set to null. */
+        attributeHeight: string | null;
         /**
-         * The natural height of the underlying image, uses img.naturalHeight. See https://codepen.io/patrickhulce/pen/PXvQbM for examples.
-         * TODO: explore revising the shape of this data. https://github.com/GoogleChrome/lighthouse/issues/12077
+         * The natural width and height of the underlying image resource, uses img.naturalHeight/img.naturalWidth. See https://codepen.io/patrickhulce/pen/PXvQbM for examples.
+         * Set to `undefined` if the data could not be collected.
          */
-        naturalHeight?: number;
-        /** The raw width attribute of the image element. CSS images will be set to the empty string. */
-        attributeWidth: string;
-        /** The raw height attribute of the image element. CSS images will be set to the empty string. */
-        attributeHeight: string;
+        naturalDimensions?: {
+          width: number;
+          height: number;
+        };
         /**
-         * The CSS width property of the image element.
-         * TODO: explore deprecating this in favor of _privateCssSizing. https://github.com/GoogleChrome/lighthouse/issues/12077
+         * The width/height of the element as defined by matching CSS rules.
+         * These are distinct from the `computedStyles` properties in that they are the raw property value.
+         * e.g. `width` would be `"100vw"`, not the computed width in pixels.
+         * Set to `undefined` if the data was not collected.
          */
-        cssWidth?: string;
-        /**
-         * The CSS height property of the image element.
-         * TODO: explore deprecating this in favor of _privateCssSizing
-         */
-        cssHeight?: string;
-        /**
-         * The width/height of the element as defined by matching CSS rules. Set to `undefined` if the data was not collected.
-         * TODO: Finalize naming/shape of this data prior to Lighthouse 8. https://github.com/GoogleChrome/lighthouse/issues/12077
-         */
-        _privateCssSizing?: {
+        cssEffectiveRules?: {
           /** The width of the image as expressed by CSS rules. Set to `null` if there was no width set in CSS. */
           width: string | null;
           /** The height of the image as expressed by CSS rules. Set to `null` if there was no height set in CSS. */
           height: string | null;
-        }
+          /** The aspect ratio of the image as expressed by CSS rules. Set to `null` if there was no aspect ratio set in CSS. */
+          aspectRatio: string | null;
+        };
+        /** The computed styles as determined by `getComputedStyle`. */
+        computedStyles: {
+          /** CSS `position` property. */
+          position: string;
+          /** CSS `object-fit` property. */
+          objectFit: string;
+          /** CSS `image-rendering` propertry. */
+          imageRendering: string;
+        };
         /** The BoundingClientRect of the element. */
         clientRect: {
           top: number;
@@ -484,18 +483,12 @@ declare global {
           left: number;
           right: number;
         };
-        /** The CSS position attribute of the element */
-        cssComputedPosition: string;
         /** Flags whether this element was an image via CSS background-image rather than <img> tag. */
         isCss: boolean;
         /** Flags whether this element was contained within a <picture> tag. */
         isPicture: boolean;
         /** Flags whether this element was contained within a ShadowRoot */
         isInShadowDOM: boolean;
-        /** `object-fit` CSS property. */
-        cssComputedObjectFit: string;
-        /** `image-rendering` propertry. */
-        cssComputedImageRendering: string;
         /** The MIME type of the underlying image file. */
         mimeType?: string;
         /** Details for node in DOM for the image element */
@@ -740,24 +733,22 @@ declare global {
         largestContentfulPaintTs: number | undefined;
         largestContentfulPaintAllFrames: number | undefined;
         largestContentfulPaintAllFramesTs: number | undefined;
-        firstCPUIdle: number | undefined;
-        firstCPUIdleTs: number | undefined;
         interactive: number | undefined;
         interactiveTs: number | undefined;
         speedIndex: number | undefined;
         speedIndexTs: number | undefined;
-        estimatedInputLatency: number;
-        estimatedInputLatencyTs: number | undefined;
         maxPotentialFID: number | undefined;
         cumulativeLayoutShift: number | undefined;
-        cumulativeLayoutShiftAllFrames: number | undefined;
+        cumulativeLayoutShiftMainFrame: number | undefined;
+        totalCumulativeLayoutShift: number | undefined;
         totalBlockingTime: number;
         observedTimeOrigin: number;
         observedTimeOriginTs: number;
         observedNavigationStart: number;
         observedNavigationStartTs: number;
         observedCumulativeLayoutShift: number | undefined;
-        observedCumulativeLayoutShiftAllFrames: number | undefined;
+        observedCumulativeLayoutShiftMainFrame: number | undefined;
+        observedTotalCumulativeLayoutShift: number | undefined;
         observedFirstPaint: number | undefined;
         observedFirstPaintTs: number | undefined;
         observedFirstContentfulPaint: number;
@@ -782,11 +773,6 @@ declare global {
         observedLastVisualChangeTs: number;
         observedSpeedIndex: number;
         observedSpeedIndexTs: number;
-        layoutShiftAvgSessionGap5s: number,
-        layoutShiftMaxSessionGap1s: number,
-        layoutShiftMaxSessionGap1sLimit5s: number,
-        layoutShiftMaxSliding1s: number,
-        layoutShiftMaxSliding300ms: number,
       }
 
       export interface Form {

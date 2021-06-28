@@ -134,7 +134,7 @@ declare global {
       /** The unit of `numericValue`, used when the consumer wishes to convert numericValue to a display string. */
       numericUnit?: string;
       /** Extra information about the page provided by some types of audits, in one of several possible forms that can be rendered in the HTML report. */
-      details?: FormattedIcu<Audit.Details>;
+      details?: FormattedIcu<LH.Audit.Details>;
     }
 
     export interface Results {

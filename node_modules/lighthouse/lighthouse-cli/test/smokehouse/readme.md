@@ -174,6 +174,10 @@ Smokehouse comes with a core set of test definitions, but it can run any set of 
   };
   module.exports = expectations;
   ```
-- run smokehouse
+- with `lighthouse` installed as a dependency/peer dependency, run
 
-  `yarn smoke --tests-path plugin-tests.js`
+  `yarn smokehouse --tests-path plugin-tests.js`
+
+  or
+
+  `npx --no-install smokehouse --tests-path plugin-tests.js`

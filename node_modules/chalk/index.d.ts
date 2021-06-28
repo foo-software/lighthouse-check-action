@@ -1,3 +1,25 @@
+declare const enum LevelEnum {
+	/**
+	All colors disabled.
+	*/
+	None = 0,
+
+	/**
+	Basic 16 colors support.
+	*/
+	Basic = 1,
+
+	/**
+	ANSI 256 colors support.
+	*/
+	Ansi256 = 2,
+
+	/**
+	Truecolor 16 million colors support.
+	*/
+	TrueColor = 3
+}
+
 /**
 Basic foreground colors.
 
@@ -67,34 +89,22 @@ declare type Modifiers =
 	| 'visible';
 
 declare namespace chalk {
-	/**
-	Levels:
-	- `0` - All colors disabled.
-	- `1` - Basic 16 colors support.
-	- `2` - ANSI 256 colors support.
-	- `3` - Truecolor 16 million colors support.
-	*/
-	type Level = 0 | 1 | 2 | 3;
+	type Level = LevelEnum;
 
 	interface Options {
 		/**
 		Specify the color support for Chalk.
-
 		By default, color support is automatically detected based on the environment.
-
-		Levels:
-		- `0` - All colors disabled.
-		- `1` - Basic 16 colors support.
-		- `2` - ANSI 256 colors support.
-		- `3` - Truecolor 16 million colors support.
 		*/
 		level?: Level;
 	}
 
-	/**
-	Return a new Chalk instance.
-	*/
-	type Instance = new (options?: Options) => Chalk;
+	interface Instance {
+		/**
+		Return a new Chalk instance.
+		*/
+		new (options?: Options): Chalk;
+	}
 
 	/**
 	Detect whether the terminal supports color.
@@ -137,13 +147,6 @@ declare namespace chalk {
 		DISK: {rgb(255,131,0) ${disk.used / disk.total * 100}%}
 		`);
 		```
-
-		@example
-		```
-		import chalk = require('chalk');
-
-		log(chalk.red.bgBlack`2 + 3 = {bold ${2 + 3}}`)
-		```
 		*/
 		(text: TemplateStringsArray, ...placeholders: unknown[]): string;
 
@@ -158,14 +161,7 @@ declare namespace chalk {
 
 		/**
 		The color support for Chalk.
-
 		By default, color support is automatically detected based on the environment.
-
-		Levels:
-		- `0` - All colors disabled.
-		- `1` - Basic 16 colors support.
-		- `2` - ANSI 256 colors support.
-		- `3` - Truecolor 16 million colors support.
 		*/
 		level: Level;
 
@@ -404,7 +400,7 @@ This simply means that `chalk.red.yellow.green` is equivalent to `chalk.green`.
 */
 declare const chalk: chalk.Chalk & chalk.ChalkFunction & {
 	supportsColor: chalk.ColorSupport | false;
-	Level: chalk.Level;
+	Level: typeof LevelEnum;
 	Color: Color;
 	ForegroundColor: ForegroundColor;
 	BackgroundColor: BackgroundColor;

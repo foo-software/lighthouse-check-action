@@ -26,7 +26,7 @@ class TraceCompat extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext<'Trace'>} passContext
    * @return {Promise<LH.Artifacts['traces']>}
    */
-  async afterNavigation(passContext) {
+  async getArtifact(passContext) {
     return {
       defaultPass: passContext.dependencies.Trace,
     };

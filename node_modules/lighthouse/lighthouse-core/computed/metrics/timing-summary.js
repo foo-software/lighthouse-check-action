@@ -12,30 +12,27 @@ const FirstContentfulPaintAllFrames = require('./first-contentful-paint-all-fram
 const FirstMeaningfulPaint = require('./first-meaningful-paint.js');
 const LargestContentfulPaint = require('./largest-contentful-paint.js');
 const LargestContentfulPaintAllFrames = require('./largest-contentful-paint-all-frames.js');
-const FirstCPUIdle = require('./first-cpu-idle.js');
 const Interactive = require('./interactive.js');
 const CumulativeLayoutShift = require('./cumulative-layout-shift.js');
-const CumulativeLayoutShiftAllFrames = require('./cumulative-layout-shift-all-frames.js');
 const SpeedIndex = require('./speed-index.js');
-const EstimatedInputLatency = require('./estimated-input-latency.js');
 const MaxPotentialFID = require('./max-potential-fid.js');
 const TotalBlockingTime = require('./total-blocking-time.js');
-const LayoutShiftVariants = require('../layout-shift-variants.js');
 const makeComputedArtifact = require('../computed-artifact.js');
 
 class TimingSummary {
   /**
      * @param {LH.Trace} trace
      * @param {LH.DevtoolsLog} devtoolsLog
-     * @param {LH.Audit.Context} context
+     * @param {ImmutableObject<LH.Config.Settings>} settings
+     * @param {LH.Artifacts.ComputedContext} context
      * @return {Promise<{metrics: LH.Artifacts.TimingSummary, debugInfo: Record<string,boolean>}>}
      */
-  static async summarize(trace, devtoolsLog, context) {
-    const metricComputationData = {trace, devtoolsLog, settings: context.settings};
+  static async summarize(trace, devtoolsLog, settings, context) {
+    const metricComputationData = {trace, devtoolsLog, settings};
     /**
      * @template TArtifacts
      * @template TReturn
-     * @param {{request: (artifact: TArtifacts, context: LH.Audit.Context) => Promise<TReturn>}} Artifact
+     * @param {{request: (artifact: TArtifacts, context: LH.Artifacts.ComputedContext) => Promise<TReturn>}} Artifact
      * @param {TArtifacts} artifact
      * @return {Promise<TReturn|undefined>}
      */
@@ -50,21 +47,17 @@ class TimingSummary {
     const firstMeaningfulPaint = await FirstMeaningfulPaint.request(metricComputationData, context);
     const largestContentfulPaint = await requestOrUndefined(LargestContentfulPaint, metricComputationData); // eslint-disable-line max-len
     const largestContentfulPaintAllFrames = await requestOrUndefined(LargestContentfulPaintAllFrames, metricComputationData); // eslint-disable-line max-len
-    const firstCPUIdle = await requestOrUndefined(FirstCPUIdle, metricComputationData);
     const interactive = await requestOrUndefined(Interactive, metricComputationData);
-    const cumulativeLayoutShift = await requestOrUndefined(CumulativeLayoutShift, trace);
-    const cumulativeLayoutShiftAllFrames = await requestOrUndefined(CumulativeLayoutShiftAllFrames, trace); // eslint-disable-line max-len
+    const cumulativeLayoutShiftValues = await requestOrUndefined(CumulativeLayoutShift, trace);
     const maxPotentialFID = await requestOrUndefined(MaxPotentialFID, metricComputationData);
     const speedIndex = await requestOrUndefined(SpeedIndex, metricComputationData);
-    const estimatedInputLatency = await EstimatedInputLatency.request(metricComputationData, context); // eslint-disable-line max-len
     const totalBlockingTime = await TotalBlockingTime.request(metricComputationData, context); // eslint-disable-line max-len
-    const layoutShiftVariants = await LayoutShiftVariants.request(trace, context);
 
-    const cumulativeLayoutShiftValue = cumulativeLayoutShift &&
-      cumulativeLayoutShift.value !== null ?
-      cumulativeLayoutShift.value : undefined;
-    const cumulativeLayoutShiftAllFramesValue = cumulativeLayoutShiftAllFrames ?
-      cumulativeLayoutShiftAllFrames.value : undefined;
+    const {
+      cumulativeLayoutShift,
+      cumulativeLayoutShiftMainFrame,
+      totalCumulativeLayoutShift,
+    } = cumulativeLayoutShiftValues || {};
 
     /** @type {LH.Artifacts.TimingSummary} */
     const metrics = {
@@ -79,18 +72,15 @@ class TimingSummary {
       largestContentfulPaintTs: largestContentfulPaint && largestContentfulPaint.timestamp,
       largestContentfulPaintAllFrames: largestContentfulPaintAllFrames && largestContentfulPaintAllFrames.timing, // eslint-disable-line max-len
       largestContentfulPaintAllFramesTs: largestContentfulPaintAllFrames && largestContentfulPaintAllFrames.timestamp, // eslint-disable-line max-len
-      firstCPUIdle: firstCPUIdle && firstCPUIdle.timing,
-      firstCPUIdleTs: firstCPUIdle && firstCPUIdle.timestamp,
       interactive: interactive && interactive.timing,
       interactiveTs: interactive && interactive.timestamp,
       speedIndex: speedIndex && speedIndex.timing,
       speedIndexTs: speedIndex && speedIndex.timestamp,
-      estimatedInputLatency: estimatedInputLatency.timing,
-      estimatedInputLatencyTs: estimatedInputLatency.timestamp,
       totalBlockingTime: totalBlockingTime.timing,
       maxPotentialFID: maxPotentialFID && maxPotentialFID.timing,
-      cumulativeLayoutShift: cumulativeLayoutShiftValue,
-      cumulativeLayoutShiftAllFrames: cumulativeLayoutShiftAllFramesValue,
+      cumulativeLayoutShift,
+      cumulativeLayoutShiftMainFrame,
+      totalCumulativeLayoutShift,
 
       // Include all timestamps of interest from trace of tab
       observedTimeOrigin: traceOfTab.timings.timeOrigin,
@@ -117,8 +107,9 @@ class TimingSummary {
       observedLoadTs: traceOfTab.timestamps.load,
       observedDomContentLoaded: traceOfTab.timings.domContentLoaded,
       observedDomContentLoadedTs: traceOfTab.timestamps.domContentLoaded,
-      observedCumulativeLayoutShift: cumulativeLayoutShiftValue,
-      observedCumulativeLayoutShiftAllFrames: cumulativeLayoutShiftAllFramesValue,
+      observedCumulativeLayoutShift: cumulativeLayoutShift,
+      observedCumulativeLayoutShiftMainFrame: cumulativeLayoutShiftMainFrame,
+      observedTotalCumulativeLayoutShift: totalCumulativeLayoutShift,
 
       // Include some visual metrics from speedline
       observedFirstVisualChange: speedline.first,
@@ -127,13 +118,6 @@ class TimingSummary {
       observedLastVisualChangeTs: (speedline.complete + speedline.beginning) * 1000,
       observedSpeedIndex: speedline.speedIndex,
       observedSpeedIndexTs: (speedline.speedIndex + speedline.beginning) * 1000,
-
-      // Include experimental LayoutShift variants.
-      layoutShiftAvgSessionGap5s: layoutShiftVariants.avgSessionGap5s,
-      layoutShiftMaxSessionGap1s: layoutShiftVariants.maxSessionGap1s,
-      layoutShiftMaxSessionGap1sLimit5s: layoutShiftVariants.maxSessionGap1sLimit5s,
-      layoutShiftMaxSliding1s: layoutShiftVariants.maxSliding1s,
-      layoutShiftMaxSliding300ms: layoutShiftVariants.maxSliding300ms,
     };
     /** @type {Record<string,boolean>} */
     const debugInfo = {lcpInvalidated: traceOfTab.lcpInvalidated};
@@ -141,12 +125,12 @@ class TimingSummary {
     return {metrics, debugInfo};
   }
   /**
-   * @param {{trace: LH.Trace, devtoolsLog: LH.DevtoolsLog}} data
-   * @param {LH.Audit.Context} context
+   * @param {{trace: LH.Trace, devtoolsLog: LH.DevtoolsLog, settings: ImmutableObject<LH.Config.Settings>}} data
+   * @param {LH.Artifacts.ComputedContext} context
    * @return {Promise<{metrics: LH.Artifacts.TimingSummary, debugInfo: Record<string,boolean>}>}
    */
   static async compute_(data, context) {
-    return TimingSummary.summarize(data.trace, data.devtoolsLog, context);
+    return TimingSummary.summarize(data.trace, data.devtoolsLog, data.settings, context);
   }
 }
 

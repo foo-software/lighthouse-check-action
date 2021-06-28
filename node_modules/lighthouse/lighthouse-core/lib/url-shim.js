@@ -9,8 +9,6 @@
  * URL shim so we keep our code DRY
  */
 
-/* global URL */
-
 const Util = require('../report/html/renderer/util.js');
 
 /** @typedef {import('./network-request.js')} NetworkRequest */

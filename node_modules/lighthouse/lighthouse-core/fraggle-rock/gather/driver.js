@@ -7,6 +7,7 @@
 
 const ProtocolSession = require('./session.js');
 const ExecutionContext = require('../../gather/driver/execution-context.js');
+const Fetcher = require('../../gather/fetcher.js');
 
 /** @return {*} */
 const throwNotConnectedFn = () => {
@@ -37,6 +38,8 @@ class Driver {
     this._session = undefined;
     /** @type {ExecutionContext|undefined} */
     this._executionContext = undefined;
+    /** @type {Fetcher|undefined} */
+    this._fetcher = undefined;
 
     this.defaultSession = defaultSession;
   }
@@ -45,6 +48,12 @@ class Driver {
   get executionContext() {
     if (!this._executionContext) return throwNotConnectedFn();
     return this._executionContext;
+  }
+
+  /** @return {Fetcher} */
+  get fetcher() {
+    if (!this._fetcher) return throwNotConnectedFn();
+    return this._fetcher;
   }
 
   /** @return {Promise<string>} */
@@ -58,6 +67,7 @@ class Driver {
     const session = await this._page.target().createCDPSession();
     this._session = this.defaultSession = new ProtocolSession(session);
     this._executionContext = new ExecutionContext(this._session);
+    this._fetcher = new Fetcher(this._session, this._executionContext);
   }
 }
 

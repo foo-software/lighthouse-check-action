@@ -16,7 +16,6 @@ module.exports = {
     onlyAudits: [
       'first-meaningful-paint',
       'speed-index',
-      'first-cpu-idle',
       'interactive',
     ],
   },
@@ -127,8 +126,7 @@ The audits property controls which audits to run and include with your Lighthous
 ```js
 {
   audits: [
-    'first-meaningful-paint',
-    'first-cpu-idle',
+    'first-contentful-paint',
     'byte-efficiency/uses-optimized-images',
   ]
 }
@@ -150,7 +148,7 @@ The categories property controls how to score and organize the audit results in 
       description: 'This category judges your performance',
       auditRefs: [
         {id: 'first-meaningful-paint', weight: 2, group: 'metrics'},
-        {id: 'first-cpu-idle', weight: 3, group: 'metrics'},
+        {id: 'first-contentful-paint', weight: 3, group: 'metrics'},
         {id: 'interactive', weight: 5, group: 'metrics'},
       ],
     }
