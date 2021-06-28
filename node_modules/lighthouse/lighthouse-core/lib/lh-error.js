@@ -26,7 +26,7 @@ const UIStrings = {
   noFcp: 'The page did not paint any content. Please ensure you keep the browser window in the foreground during the load and try again. ({errorCode})',
   /**
    * @description Error message explaining that the page loaded too slowly to perform a Lighthouse run.
-   * @example {FMP_TOO_LATE_FOR_FCPUI} errorCode
+   * @example {NO_TTI_CPU_IDLE_PERIOD} errorCode
    * */
   pageLoadTookTooLong: 'Your page took too long to load. Please follow the opportunities in the report to reduce your page load time, and then try re-running Lighthouse. ({errorCode})',
   /** Error message explaining that Lighthouse could not load the requested URL and the steps that might be taken to fix the unreliability. */
@@ -286,8 +286,6 @@ const ERRORS = {
   },
 
   // TTI calculation failures
-  FMP_TOO_LATE_FOR_FCPUI: {code: 'FMP_TOO_LATE_FOR_FCPUI', message: UIStrings.pageLoadTookTooLong},
-  NO_FCPUI_IDLE_PERIOD: {code: 'NO_FCPUI_IDLE_PERIOD', message: UIStrings.pageLoadTookTooLong},
   NO_TTI_CPU_IDLE_PERIOD: {code: 'NO_TTI_CPU_IDLE_PERIOD', message: UIStrings.pageLoadTookTooLong},
   NO_TTI_NETWORK_IDLE_PERIOD: {
     code: 'NO_TTI_NETWORK_IDLE_PERIOD',

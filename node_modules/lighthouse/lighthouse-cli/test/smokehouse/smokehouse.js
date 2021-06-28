@@ -35,15 +35,16 @@ const DEFAULT_RETRIES = 0;
 /**
  * Runs the selected smoke tests. Returns whether all assertions pass.
  * @param {Array<Smokehouse.TestDfn>} smokeTestDefns
- * @param {Smokehouse.SmokehouseOptions=} smokehouseOptions
+ * @param {Smokehouse.SmokehouseOptions} smokehouseOptions
  * @return {Promise<{success: boolean, testResults: SmokehouseResult[]}>}
  */
-async function runSmokehouse(smokeTestDefns, smokehouseOptions = {}) {
+async function runSmokehouse(smokeTestDefns, smokehouseOptions) {
   const {
     isDebug,
     jobs = DEFAULT_CONCURRENT_RUNS,
     retries = DEFAULT_RETRIES,
     lighthouseRunner = cliLighthouseRunner,
+    takeNetworkRequestUrls,
   } = smokehouseOptions;
   assertPositiveInteger('jobs', jobs);
   assertNonNegativeInteger('retries', retries);
@@ -54,7 +55,7 @@ async function runSmokehouse(smokeTestDefns, smokehouseOptions = {}) {
   for (const testDefn of smokeTestDefns) {
     // If defn is set to `runSerially`, we'll run its tests in succession, not parallel.
     const concurrency = testDefn.runSerially ? 1 : jobs;
-    const options = {concurrency, lighthouseRunner, retries, isDebug};
+    const options = {concurrency, lighthouseRunner, retries, isDebug, takeNetworkRequestUrls};
     const result = runSmokeTestDefn(concurrentMapper, testDefn, options);
     smokePromises.push(result);
   }
@@ -110,21 +111,24 @@ function assertNonNegativeInteger(loggableName, value) {
  * once all are finished.
  * @param {ConcurrentMapper} concurrentMapper
  * @param {Smokehouse.TestDfn} smokeTestDefn
- * @param {{concurrency: number, retries: number, lighthouseRunner: Smokehouse.LighthouseRunner, isDebug?: boolean}} defnOptions
+ * @param {{concurrency: number, retries: number, lighthouseRunner: Smokehouse.LighthouseRunner, isDebug?: boolean, takeNetworkRequestUrls?: () => string[]}} defnOptions
  * @return {Promise<SmokehouseResult>}
  */
 async function runSmokeTestDefn(concurrentMapper, smokeTestDefn, defnOptions) {
   const {id, config: configJson, expectations} = smokeTestDefn;
-  const {concurrency, lighthouseRunner, retries, isDebug} = defnOptions;
+  const {concurrency, lighthouseRunner, retries, isDebug, takeNetworkRequestUrls} = defnOptions;
 
-  const individualTests = expectations.map(expectation => ({
-    requestedUrl: expectation.lhr.requestedUrl,
-    configJson,
-    expectation,
-    lighthouseRunner,
-    retries,
-    isDebug,
-  }));
+  const individualTests = expectations.map(expectation => {
+    return {
+      requestedUrl: expectation.lhr.requestedUrl,
+      configJson,
+      expectation,
+      lighthouseRunner,
+      retries,
+      isDebug,
+      takeNetworkRequestUrls,
+    };
+  });
 
   // Loop sequentially over expectations, comparing against Lighthouse run, and
   // reporting result.
@@ -171,14 +175,22 @@ function purpleify(str) {
 /**
  * Run Lighthouse in the selected runner. Returns `log`` for logging once
  * all tests in a defn are complete.
- * @param {{requestedUrl: string, configJson?: LH.Config.Json, expectation: Smokehouse.ExpectedRunnerResult, lighthouseRunner: Smokehouse.LighthouseRunner, retries: number, isDebug?: boolean}} testOptions
+ * @param {{requestedUrl: string, configJson?: LH.Config.Json, expectation: Smokehouse.ExpectedRunnerResult, lighthouseRunner: Smokehouse.LighthouseRunner, retries: number, isDebug?: boolean, takeNetworkRequestUrls?: () => string[]}} testOptions
  * @return {Promise<{passed: number, failed: number, log: string}>}
  */
 async function runSmokeTest(testOptions) {
   // Use a buffered LocalConsole to keep logged output so it's not interleaved
   // with other currently running tests.
   const localConsole = new LocalConsole();
-  const {requestedUrl, configJson, expectation, lighthouseRunner, retries, isDebug} = testOptions;
+  const {
+    requestedUrl,
+    configJson,
+    expectation,
+    lighthouseRunner,
+    retries,
+    isDebug,
+    takeNetworkRequestUrls,
+  } = testOptions;
 
   // Rerun test until there's a passing result or retries are exhausted to prevent flakes.
   let result;
@@ -192,7 +204,10 @@ async function runSmokeTest(testOptions) {
 
     // Run Lighthouse.
     try {
-      result = await lighthouseRunner(requestedUrl, configJson, {isDebug});
+      result = {
+        ...await lighthouseRunner(requestedUrl, configJson, {isDebug}),
+        networkRequests: takeNetworkRequestUrls ? takeNetworkRequestUrls() : undefined,
+      };
     } catch (e) {
       logChildProcessError(localConsole, e);
       continue; // Retry, if possible.

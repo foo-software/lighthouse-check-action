@@ -60,10 +60,10 @@ A Lighthouse plugin is just a node module with a name that starts with `lighthou
   "name": "lighthouse-plugin-cats",
   "main": "plugin.js",
   "peerDependencies": {
-    "lighthouse": "^7.3.0"
+    "lighthouse": "^8.0.0"
   },
   "devDependencies": {
-    "lighthouse": "^7.3.0"
+    "lighthouse": "^8.0.0"
   }
 }
 ```
@@ -368,7 +368,6 @@ Most artifacts will try to represent as truthfully as possible what was observed
 - [YouTube Embed](https://github.com/connorjclark/lighthouse-plugin-yt) - Identifies YouTube embeds
 - [Lighthouse Plugin Recipe](./recipes/lighthouse-plugin-example)
 - [Field Performance](https://github.com/treosh/lighthouse-plugin-field-performance) - A plugin to gather and display Chrome UX Report field data
-- [AMP Plugin](https://github.com/ampproject/amp-toolbox/tree/main/packages/lighthouse-plugin-amp) - Runs pages through the AMP validator.
 - [Publisher Ads Audits](https://github.com/googleads/pub-ads-lighthouse-plugin) - a well-written, but complex, plugin
 - [Green Web Foundation](https://github.com/thegreenwebfoundation/lighthouse-plugin-greenhouse) - A plugin to see which domains run on renewable power.
 - [requests-content-md5](https://www.npmjs.com/package/lighthouse-plugin-md5) - Generates MD5 hashes from the content of network requests..

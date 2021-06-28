@@ -14,6 +14,9 @@
 const FRGatherer = require('../../fraggle-rock/gather/base-gatherer.js');
 
 class Trace extends FRGatherer {
+  /** @type {LH.Trace} */
+  _trace = {traceEvents: []};
+
   static getDefaultTraceCategories() {
     return [
       // Exclude default categories. We'll be selective to minimize trace size
@@ -92,7 +95,7 @@ class Trace extends FRGatherer {
   /**
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    */
-  async beforeTimespan({driver}) {
+  async startSensitiveInstrumentation({driver}) {
     // TODO(FR-COMPAT): read additional trace categories from overall settings?
     // TODO(FR-COMPAT): check if CSS/DOM domains have been enabled in another session and warn?
     await driver.defaultSession.sendCommand('Page.enable');
@@ -104,10 +107,13 @@ class Trace extends FRGatherer {
 
   /**
    * @param {LH.Gatherer.FRTransitionalContext} passContext
-   * @return {Promise<LH.Artifacts['Trace']>}
    */
-  async afterTimespan({driver}) {
-    return Trace.endTraceAndCollectEvents(driver.defaultSession);
+  async stopSensitiveInstrumentation({driver}) {
+    this._trace = await Trace.endTraceAndCollectEvents(driver.defaultSession);
+  }
+
+  getArtifact() {
+    return this._trace;
   }
 }
 

@@ -163,7 +163,6 @@ function pruneExpectations(localConsole, lhr, expected) {
   const userAgentMatch = /Chrome\/(\d+)/.exec(userAgent); // Chrome/85.0.4174.0
   if (!userAgentMatch) throw new Error('Could not get chrome version.');
   const actualChromeVersion = Number(userAgentMatch[1]);
-
   /**
    * @param {*} obj
    */
@@ -199,6 +198,7 @@ function pruneExpectations(localConsole, lhr, expected) {
   }
 
   const cloned = cloneDeep(expected);
+
   pruneNewerChromeExpectations(cloned);
   return cloned;
 }
@@ -206,7 +206,7 @@ function pruneExpectations(localConsole, lhr, expected) {
 /**
  * Collate results into comparisons of actual and expected scores on each audit/artifact.
  * @param {LocalConsole} localConsole
- * @param {{lhr: LH.Result, artifacts: LH.Artifacts}} actual
+ * @param {{lhr: LH.Result, artifacts: LH.Artifacts, networkRequests?: string[]}} actual
  * @param {Smokehouse.ExpectedRunnerResult} expected
  * @return {Comparison[]}
  */
@@ -254,6 +254,16 @@ function collateResults(localConsole, actual, expected) {
     return makeComparison(auditName + ' audit', actualResult, expectedResult);
   });
 
+  /** @type {Comparison[]} */
+  const requestCountAssertion = [];
+  if (expected.networkRequests) {
+    requestCountAssertion.push(makeComparison(
+      'Requests',
+      actual.networkRequests,
+      expected.networkRequests
+    ));
+  }
+
   return [
     {
       name: 'final url',
@@ -263,6 +273,7 @@ function collateResults(localConsole, actual, expected) {
     },
     runtimeErrorAssertion,
     runWarningsAssertion,
+    ...requestCountAssertion,
     ...artifactAssertions,
     ...auditAssertions,
   ];
@@ -334,7 +345,7 @@ function assertLogString(count) {
 /**
  * Log all the comparisons between actual and expected test results, then print
  * summary. Returns count of passed and failed tests.
- * @param {{lhr: LH.Result, artifacts: LH.Artifacts}} actual
+ * @param {{lhr: LH.Result, artifacts: LH.Artifacts, networkRequests?: string[]}} actual
  * @param {Smokehouse.ExpectedRunnerResult} expected
  * @param {{isDebug?: boolean}=} reportOptions
  * @return {{passed: number, failed: number, log: string}}

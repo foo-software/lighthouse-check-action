@@ -74,6 +74,7 @@ class NetworkMonitor extends EventEmitter {
     this._session.on('Page.frameNavigated', this._onFrameNavigated);
     this._session.addProtocolMessageListener(this._onProtocolMessage);
 
+    await this._session.sendCommand('Page.enable');
     await this._session.sendCommand('Network.enable');
   }
 

@@ -22,13 +22,14 @@ const generateReport = require('./report/report-generator.js').generateReport;
 const LHError = require('./lib/lh-error.js');
 
 /** @typedef {import('./gather/connections/connection.js')} Connection */
+/** @typedef {import('./lib/arbitrary-equality-map.js')} ArbitraryEqualityMap */
 /** @typedef {LH.Config.Config} Config */
 
 class Runner {
   /**
    * @template {LH.Config.Config | LH.Config.FRConfig} TConfig
    * @param {(runnerData: {requestedUrl: string, config: TConfig, driverMock?: Driver}) => Promise<LH.Artifacts>} gatherFn
-   * @param {{config: TConfig, url?: string, driverMock?: Driver}} runOpts
+   * @param {{config: TConfig, computedCache: Map<string, ArbitraryEqualityMap>, url?: string, driverMock?: Driver}} runOpts
    * @return {Promise<LH.RunnerResult|undefined>}
    */
   static async run(gatherFn, runOpts) {
@@ -100,7 +101,7 @@ class Runner {
         throw new Error('No audits to evaluate.');
       }
       const auditResultsById = await Runner._runAudits(settings, runOpts.config.audits, artifacts,
-          lighthouseRunWarnings);
+          lighthouseRunWarnings, runOpts.computedCache);
 
       // LHR construction phase
       const resultsStatus = {msg: 'Generating results...', id: 'lh:runner:generate'};
@@ -217,7 +218,7 @@ class Runner {
   /**
    * Establish connection, load page and collect all required artifacts
    * @param {string} requestedUrl
-   * @param {{config: Config, driverMock?: Driver}} runnerOpts
+   * @param {{config: Config, computedCache: Map<string, ArbitraryEqualityMap>, driverMock?: Driver}} runnerOpts
    * @param {Connection} connection
    * @return {Promise<LH.Artifacts>}
    */
@@ -230,6 +231,7 @@ class Runner {
       driver,
       requestedUrl,
       settings: runnerOpts.config.settings,
+      computedCache: runnerOpts.computedCache,
     };
     const artifacts = await GatherRunner.run(runnerOpts.config.passes, gatherOpts);
     return artifacts;
@@ -241,9 +243,10 @@ class Runner {
    * @param {Array<LH.Config.AuditDefn>} audits
    * @param {LH.Artifacts} artifacts
    * @param {Array<string | LH.IcuMessage>} runWarnings
+   * @param {Map<string, ArbitraryEqualityMap>} computedCache
    * @return {Promise<Record<string, LH.RawIcu<LH.Audit.Result>>>}
    */
-  static async _runAudits(settings, audits, artifacts, runWarnings) {
+  static async _runAudits(settings, audits, artifacts, runWarnings, computedCache) {
     const status = {msg: 'Analyzing and running audits...', id: 'lh:runner:auditing'};
     log.time(status);
 
@@ -267,7 +270,7 @@ class Runner {
     // Members of LH.Audit.Context that are shared across all audits.
     const sharedAuditContext = {
       settings,
-      computedCache: new Map(),
+      computedCache,
     };
 
     // Run each audit sequentially

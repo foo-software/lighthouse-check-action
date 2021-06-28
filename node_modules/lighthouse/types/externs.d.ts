@@ -6,7 +6,25 @@
 
 import _Crdp from 'devtools-protocol/types/protocol';
 import _CrdpMappings from 'devtools-protocol/types/protocol-mapping';
-import {ParseSelector} from 'typed-query-selector/parser';
+import {ParseSelectorToTagNames} from 'typed-query-selector/parser';
+
+/** Merge properties of the types in union `T`. Where properties overlap, property types becomes the union of the two (or more) possible types. */
+type MergeTypes<T> = {
+  [K in (T extends unknown ? keyof T : never)]: T extends Record<K, infer U> ? U : never;
+};
+
+// Helper types for strict querySelector/querySelectorAll that includes the overlap
+// between HTML and SVG node names (<a>, <script>, etc).
+// see https://github.com/GoogleChrome/lighthouse/issues/12011
+type HtmlAndSvgElementTagNameMap = MergeTypes<HTMLElementTagNameMap|SVGElementTagNameMap> & {
+  // Fall back to Element (base of HTMLElement and SVGElement) if no specific tag name matches.
+  [id: string]: Element;
+};
+type QuerySelectorParse<I extends string> = ParseSelectorToTagNames<I> extends infer TagNames ?
+  TagNames extends Array<string> ?
+    HtmlAndSvgElementTagNameMap[TagNames[number]] :
+    Element: // Fall back for queries typed-query-selector fails to parse, e.g. `'[alt], [aria-label]'`.
+  never;
 
 declare global {
   // Augment Intl to include
@@ -66,6 +84,8 @@ declare global {
     T extends (arg1: infer P, ...args: any[]) => any ? P : never;
 
   type FlattenedPromise<A> = Promise<A extends Promise<infer X> ? X : A>;
+
+  type UnPromise<T> = T extends Promise<infer U> ? U : T
 
   /**
    * Split string `S` on delimiter `D`.
@@ -375,11 +395,11 @@ declare global {
 
   interface Window {
     // Cached native functions/objects for use in case the page overwrites them.
-    // See: `driver.cacheNatives`.
+    // See: `executionContext.cacheNativesOnNewDocument`.
     __nativePromise: PromiseConstructor;
-    __nativeURL: URL;
+    __nativePerformance: Performance;
+    __nativeURL: typeof URL;
     __ElementMatches: Element['matches'];
-    __perfNow: Performance['now'];
 
     /** Used for monitoring long tasks in the test page. */
     ____lastLongTask?: number;
@@ -394,7 +414,7 @@ declare global {
 
   // Stricter querySelector/querySelectorAll using typed-query-selector.
   interface ParentNode {
-    querySelector<S extends string>(selector: S): ParseSelector<S> | null;
-    querySelectorAll<S extends string>(selector: S): NodeListOf<ParseSelector<S>>;
+    querySelector<S extends string>(selector: S): QuerySelectorParse<S>;
+    querySelectorAll<S extends string>(selector: S): NodeListOf<QuerySelectorParse<S>>;
   }
 }

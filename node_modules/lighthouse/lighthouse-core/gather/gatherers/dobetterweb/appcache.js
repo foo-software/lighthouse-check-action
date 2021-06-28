@@ -19,7 +19,7 @@ class AppCacheManifest extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    * @return {Promise<LH.Artifacts['AppCacheManifest']>}
    */
-  snapshot(passContext) {
+  getArtifact(passContext) {
     const driver = passContext.driver;
 
     return driver.executionContext.evaluate(() => {

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * @license Copyright 2019 The Lighthouse Authors. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,13 +14,12 @@
 /* eslint-disable no-console */
 
 const path = require('path');
+const cloneDeep = require('lodash.clonedeep');
 const yargs = require('yargs');
 const log = require('lighthouse-logger');
-
 const {runSmokehouse} = require('../smokehouse.js');
-const {server, serverForOffline} = require('../../fixtures/static-server.js');
 
-const coreTestDefnsPath = require.resolve('../test-definitions/core-tests.js');
+const coreTestDefnsPath = path.join(__dirname, '../test-definitions/core-tests.js');
 
 /**
  * Possible Lighthouse runners. Loaded dynamically so e.g. a CLI run isn't
@@ -63,6 +63,44 @@ function getDefinitionsToRun(allTestDefns, requestedIds, {invertMatch}) {
   }
 
   return smokes;
+}
+
+/**
+ * Prune the `networkRequests` from the test expectations when `takeNetworkRequestUrls`
+ * is not defined. Custom servers may not have this method available in-process.
+ * Also asserts that any expectation with `networkRequests` is run serially. For core
+ * tests, we don't currently have a good way to map requests to test definitions if
+ * the tests are run in parallel.
+ * @param {Array<Smokehouse.TestDfn>} testDefns
+ * @param {Function|undefined} takeNetworkRequestUrls
+ * @return {Array<Smokehouse.TestDfn>}
+ */
+function pruneExpectedNetworkRequests(testDefns, takeNetworkRequestUrls) {
+  const pruneNetworkRequests = !takeNetworkRequestUrls;
+
+  const clonedDefns = cloneDeep(testDefns);
+  for (const {id, expectations, runSerially} of clonedDefns) {
+    for (const expectation of expectations) {
+      if (!runSerially && expectation.networkRequests) {
+        throw new Error(`'${id}' must be set to 'runSerially: true' to assert 'networkRequests'`);
+      }
+
+      if (pruneNetworkRequests && expectation.networkRequests) {
+        // eslint-disable-next-line max-len
+        const msg = `'networkRequests' cannot be asserted in test '${id}'. They should only be asserted on tests from an in-process server`;
+        if (process.env.CI) {
+          // If we're in CI, we require any networkRequests expectations to be asserted.
+          throw new Error(msg);
+        }
+
+        console.warn(log.redify('Warning:'),
+            `${msg}. Pruning expectation: ${JSON.stringify(expectation.networkRequests)}`);
+        expectation.networkRequests = undefined;
+      }
+    }
+  }
+
+  return clonedDefns;
 }
 
 /**
@@ -132,16 +170,27 @@ async function begin() {
   const invertMatch = argv.invertMatch;
   const testDefns = getDefinitionsToRun(allTestDefns, requestedTestIds, {invertMatch});
 
-  const options = {jobs, retries, isDebug: argv.debug, lighthouseRunner};
-
   let isPassing;
+  let server;
+  let serverForOffline;
+  let takeNetworkRequestUrls = undefined;
+
   try {
-    server.listen(10200, 'localhost');
-    serverForOffline.listen(10503, 'localhost');
-    isPassing = (await runSmokehouse(testDefns, options)).success;
+    // If running the core tests, spin up the test server.
+    if (testDefnPath === coreTestDefnsPath) {
+      ({server, serverForOffline} = require('../../fixtures/static-server.js'));
+      server.listen(10200, 'localhost');
+      serverForOffline.listen(10503, 'localhost');
+      takeNetworkRequestUrls = server.takeRequestUrls.bind(server);
+    }
+
+    const prunedTestDefns = pruneExpectedNetworkRequests(testDefns, takeNetworkRequestUrls);
+    const options = {jobs, retries, isDebug: argv.debug, lighthouseRunner, takeNetworkRequestUrls};
+
+    isPassing = (await runSmokehouse(prunedTestDefns, options)).success;
   } finally {
-    await server.close();
-    await serverForOffline.close();
+    if (server) await server.close();
+    if (serverForOffline) await serverForOffline.close();
   }
 
   const exitCode = isPassing ? 0 : 1;

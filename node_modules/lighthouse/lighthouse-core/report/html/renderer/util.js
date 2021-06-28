@@ -16,9 +16,9 @@
  */
 'use strict';
 
-/* globals self, URL */
+/* globals self */
 
-/** @typedef {import('./i18n')} I18n */
+/** @template T @typedef {import('./i18n')<T>} I18n */
 
 const ELLIPSIS = '\u2026';
 const NBSP = '\xa0';
@@ -102,10 +102,29 @@ class Util {
 
     // For convenience, smoosh all AuditResults into their auditRef (which has just weight & group)
     if (typeof clone.categories !== 'object') throw new Error('No categories provided.');
+
+    /** @type {Map<string, Array<LH.ReportResult.AuditRef>>} */
+    const relevantAuditToMetricsMap = new Map();
+
     for (const category of Object.values(clone.categories)) {
+      // Make basic lookup table for relevantAudits
+      category.auditRefs.forEach(metricRef => {
+        if (!metricRef.relevantAudits) return;
+        metricRef.relevantAudits.forEach(auditId => {
+          const arr = relevantAuditToMetricsMap.get(auditId) || [];
+          arr.push(metricRef);
+          relevantAuditToMetricsMap.set(auditId, arr);
+        });
+      });
+
       category.auditRefs.forEach(auditRef => {
         const result = clone.audits[auditRef.id];
         auditRef.result = result;
+
+        // Attach any relevantMetric auditRefs
+        if (relevantAuditToMetricsMap.has(auditRef.id)) {
+          auditRef.relevantMetrics = relevantAuditToMetricsMap.get(auditRef.id);
+        }
 
         // attach the stackpacks to the auditRef object
         if (clone.stackPacks) {
@@ -508,7 +527,7 @@ Util.getUniqueSuffix = (() => {
   };
 })();
 
-/** @type {I18n} */
+/** @type {I18n<typeof Util['UIStrings']>} */
 // @ts-expect-error: Is set in report renderer.
 Util.i18n = null;
 
@@ -520,6 +539,8 @@ Util.UIStrings = {
   varianceDisclaimer: 'Values are estimated and may vary. The [performance score is calculated](https://web.dev/performance-scoring/) directly from these metrics.',
   /** Text link pointing to an interactive calculator that explains Lighthouse scoring. The link text should be fairly short. */
   calculatorLink: 'See calculator.',
+  /** Label preceding a radio control for filtering the list of audits. The radio choices are various performance metrics (FCP, LCP, TBT), and if chosen, the audits in the report are hidden if they are not relevant to the selected metric. */
+  showRelevantAudits: 'Show audits relevant to:',
   /** Column heading label for the listing of opportunity audits. Each audit title represents an opportunity. There are only 2 columns, so no strict character limit.  */
   opportunityResourceColumnLabel: 'Opportunity',
   /** Column heading label for the estimated page load savings of opportunity audits. Estimated Savings is the total amount of time (in seconds) that Lighthouse computed could be reduced from the total page load time, if the suggested action is taken. There are only 2 columns, so no strict character limit. */
@@ -560,6 +581,8 @@ Util.UIStrings = {
 
   /** This label is for a checkbox above a table of items loaded by a web page. The checkbox is used to show or hide third-party (or "3rd-party") resources in the table, where "third-party resources" refers to items loaded by a web page from URLs that aren't controlled by the owner of the web page. */
   thirdPartyResourcesLabel: 'Show 3rd-party resources',
+  /** This label is for a button that opens a new tab to a webapp called "Treemap", which is a nested visual representation of a heierarchy of data releated to the reports (script bytes and coverage, resource breakdown, etc.) */
+  viewTreemapLabel: 'View Treemap',
 
   /** Option in a dropdown menu that opens a small, summary report in a print dialog.  */
   dropdownPrintSummary: 'Print Summary',
