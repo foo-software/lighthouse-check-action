@@ -59,7 +59,7 @@ class GlobalListeners extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    * @return {Promise<LH.Artifacts['GlobalListeners']>}
    */
-  async snapshot(passContext) {
+  async getArtifact(passContext) {
     const session = passContext.driver.defaultSession;
 
     // Get a RemoteObject handle to `window`.

@@ -37,7 +37,7 @@ class ViewportDimensions extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    * @return {Promise<LH.Artifacts.ViewportDimensions>}
    */
-  async snapshot(passContext) {
+  async getArtifact(passContext) {
     const driver = passContext.driver;
 
     const dimensions = await driver.executionContext.evaluate(getViewportDimensions, {

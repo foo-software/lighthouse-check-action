@@ -9,6 +9,8 @@ import _CPUNode = require('../lighthouse-core/lib/dependency-graph/cpu-node');
 import _Simulator = require('../lighthouse-core/lib/dependency-graph/simulator/simulator');
 import Driver = require('../lighthouse-core/gather/driver');
 import ExecutionContext = require('../lighthouse-core/gather/driver/execution-context');
+import Fetcher = require('../lighthouse-core/gather/fetcher');
+import ArbitraryEqualityMap = require('../lighthouse-core/lib/arbitrary-equality-map');
 
 declare global {
   module LH.Gatherer {
@@ -29,6 +31,7 @@ declare global {
     export interface FRTransitionalDriver {
       defaultSession: FRProtocolSession;
       executionContext: ExecutionContext;
+      fetcher: Fetcher;
     }
 
     /** The limited context interface shared between pre and post Fraggle Rock Lighthouse. */
@@ -39,10 +42,12 @@ declare global {
       gatherMode: GatherMode;
       /** The connection to the page being analyzed. */
       driver: FRTransitionalDriver;
+      /** The cached results of computed artifacts. */
+      computedCache: Map<string, ArbitraryEqualityMap>;
       /** The set of available dependencies requested by the current gatherer. */
-      dependencies: TDependencies extends DefaultDependenciesKey ?
-        {} :
-        Pick<GathererArtifacts, Exclude<TDependencies, DefaultDependenciesKey>>;
+      dependencies: Pick<GathererArtifacts, Exclude<TDependencies, DefaultDependenciesKey>>;
+      /** The settings used for gathering. */
+      settings: Config.Settings;
     }
 
     export interface PassContext {
@@ -52,6 +57,7 @@ declare global {
       driver: Driver;
       passConfig: Config.Pass
       settings: Config.Settings;
+      computedCache: Map<string, ArbitraryEqualityMap>
       /** Gatherers can push to this array to add top-level warnings to the LHR. */
       LighthouseRunWarnings: Array<string | IcuMessage>;
       baseArtifacts: BaseArtifacts;
@@ -68,7 +74,8 @@ declare global {
       LH.Artifacts['devtoolsLogs'] |
       LH.Artifacts['traces'] |
       LH.Artifacts['WebAppManifest'] |
-      LH.Artifacts['InstallabilityErrors'];
+      LH.Artifacts['InstallabilityErrors'] |
+      LH.Artifacts['Stacks'];
     export type PhaseResultNonPromise = void|PhaseArtifact
     export type PhaseResult = PhaseResultNonPromise | Promise<PhaseResultNonPromise>
 
@@ -107,14 +114,16 @@ declare global {
       afterPass(context: LH.Gatherer.PassContext, loadData: LH.Gatherer.LoadData): PhaseResult;
     }
 
+    export type FRGatherPhase = keyof Omit<LH.Gatherer.FRGathererInstance, 'name'|'meta'>
+
     export interface FRGathererInstance<TDependencies extends DependencyKey = DefaultDependenciesKey> {
       name: keyof LH.GathererArtifacts; // temporary COMPAT measure until artifact config support is available
       meta: GathererMeta<TDependencies>;
-      beforeNavigation(context: FRTransitionalContext<DefaultDependenciesKey>): Promise<void>|void;
-      beforeTimespan(context: FRTransitionalContext<DefaultDependenciesKey>): Promise<void>|void;
-      afterTimespan(context: FRTransitionalContext<TDependencies>): PhaseResult;
-      afterNavigation(context: FRTransitionalContext<TDependencies>): PhaseResult;
-      snapshot(context: FRTransitionalContext<TDependencies>): PhaseResult;
+      startInstrumentation(context: FRTransitionalContext<DefaultDependenciesKey>): Promise<void>|void;
+      startSensitiveInstrumentation(context: FRTransitionalContext<DefaultDependenciesKey>): Promise<void>|void;
+      stopSensitiveInstrumentation(context: FRTransitionalContext<TDependencies>): Promise<void>|void;
+      stopInstrumentation(context: FRTransitionalContext<TDependencies>): Promise<void>|void;
+      getArtifact(context: FRTransitionalContext<TDependencies>): PhaseResult;
     }
 
     namespace Simulation {

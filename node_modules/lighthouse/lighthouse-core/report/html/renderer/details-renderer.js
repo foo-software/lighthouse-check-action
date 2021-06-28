@@ -16,7 +16,7 @@
  */
 'use strict';
 
-/* globals self CriticalRequestChainRenderer SnippetRenderer ElementScreenshotRenderer Util URL */
+/* globals self CriticalRequestChainRenderer SnippetRenderer ElementScreenshotRenderer Util */
 
 /** @typedef {import('./dom.js')} DOM */
 
@@ -70,6 +70,7 @@ class DetailsRenderer {
       case 'screenshot':
       case 'debugdata':
       case 'full-page-screenshot':
+      case 'treemap-data':
         return null;
 
       default: {

@@ -34,7 +34,7 @@ class NetworkUserAgent extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext<'DevtoolsLog'>} context
    * @return {Promise<LH.Artifacts['NetworkUserAgent']>}
    */
-  async afterTimespan(context) {
+  async getArtifact(context) {
     return NetworkUserAgent.getNetworkUserAgent(context.dependencies.DevtoolsLog);
   }
 }

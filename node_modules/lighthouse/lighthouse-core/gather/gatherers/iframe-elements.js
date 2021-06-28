@@ -46,7 +46,7 @@ class IFrameElements extends FRGatherer {
    * @return {Promise<LH.Artifacts['IFrameElements']>}
    * @override
    */
-  async snapshot(passContext) {
+  async getArtifact(passContext) {
     const driver = passContext.driver;
 
     const iframeElements = await driver.executionContext.evaluate(collectIFrameElements, {

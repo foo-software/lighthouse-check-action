@@ -5,10 +5,11 @@
  */
 'use strict';
 
+/* global window, performance */
+
 const log = require('lighthouse-logger');
 const LHError = require('../../lib/lh-error.js');
 const ExecutionContext = require('./execution-context.js');
-const pageFunctions = require('../../lib/page-functions.js');
 
 /** @typedef {import('./network-monitor.js')} NetworkMonitor */
 /** @typedef {import('./network-monitor.js').NetworkMonitorEvent} NetworkMonitorEvent */
@@ -221,7 +222,7 @@ function waitForCPUIdle(session, waitForCPUQuiet) {
   async function checkForQuiet(executionContext, resolve) {
     if (canceled) return;
     const timeSinceLongTask =
-      await executionContext.evaluate(pageFunctions.checkTimeSinceLastLongTask, {args: []});
+      await executionContext.evaluate(checkTimeSinceLastLongTaskInPage, {args: []});
     if (canceled) return;
 
     if (typeof timeSinceLongTask === 'number') {
@@ -241,9 +242,12 @@ function waitForCPUIdle(session, waitForCPUQuiet) {
     throw new Error('waitForCPUIdle.cancel() called before it was defined');
   };
 
+  const executionContext = new ExecutionContext(session);
   /** @type {Promise<void>} */
   const promise = new Promise((resolve, reject) => {
-    checkForQuiet(new ExecutionContext(session), resolve).catch(reject);
+    executionContext.evaluate(registerPerformanceObserverInPage, {args: []})
+      .then(() => checkForQuiet(executionContext, resolve))
+      .catch(reject);
     cancel = () => {
       if (canceled) return;
       canceled = true;
@@ -257,6 +261,69 @@ function waitForCPUIdle(session, waitForCPUQuiet) {
     cancel,
   };
 }
+
+/* c8 ignore start */
+
+/**
+ * This function is executed in the page itself when the document is first loaded.
+ *
+ * Used by _waitForCPUIdle and executed in the context of the page, updates the ____lastLongTask
+ * property on window to the end time of the last long task.
+ */
+function registerPerformanceObserverInPage() {
+  // Do not re-register if we've already run this script.
+  if (window.____lastLongTask !== undefined) return;
+
+  window.____lastLongTask = performance.now();
+  const observer = new window.PerformanceObserver(entryList => {
+    const entries = entryList.getEntries();
+    for (const entry of entries) {
+      if (entry.entryType === 'longtask') {
+        const taskEnd = entry.startTime + entry.duration;
+        window.____lastLongTask = Math.max(window.____lastLongTask || 0, taskEnd);
+      }
+    }
+  });
+
+  observer.observe({type: 'longtask', buffered: true});
+}
+
+/**
+ * This function is executed in the page itself.
+ *
+ * Used by _waitForCPUIdle and executed in the context of the page, returns time since last long task.
+ * @return {Promise<number>}
+ */
+function checkTimeSinceLastLongTaskInPage() {
+  // This function attempts to return the time since the last long task occurred.
+  // `PerformanceObserver`s don't always immediately fire though, so we check twice with some time in
+  // between to make sure nothing has happened very recently.
+
+  // Chrome 88 introduced heavy throttling of timers which means our `setTimeout` will be executed
+  // at some point farish (several hundred ms) into the future and the time at which it executes isn't
+  // a reliable indicator of long task existence, instead we check if any information has changed.
+  // See https://developer.chrome.com/blog/timer-throttling-in-chrome-88/
+  return new Promise(resolve => {
+    const firstAttemptTs = performance.now();
+    const firstAttemptLastLongTaskTs = window.____lastLongTask || 0;
+
+    setTimeout(() => {
+      // We can't be sure a long task hasn't occurred since our first attempt, but if the `____lastLongTask`
+      // value is the same (i.e. the perf observer didn't have any new information), we can be pretty
+      // confident that the long task info was accurate *at the time of our first attempt*.
+      const secondAttemptLastLongTaskTs = window.____lastLongTask || 0;
+      const timeSinceLongTask =
+        firstAttemptLastLongTaskTs === secondAttemptLastLongTaskTs
+          ? // The time of the last long task hasn't changed, the information from our first attempt is accurate.
+            firstAttemptTs - firstAttemptLastLongTaskTs
+          : // The time of the last long task *did* change, we can't really trust the information we have.
+            0;
+      resolve(timeSinceLongTask);
+    }, 150);
+  });
+}
+
+/* c8 ignore stop */
 
 /**
  * Return a promise that resolves `pauseAfterLoadMs` after the load event
@@ -293,7 +360,6 @@ function waitForLoadEvent(session, pauseAfterLoadMs) {
     cancel,
   };
 }
-
 
 /**
  * Returns whether the page appears to be hung.

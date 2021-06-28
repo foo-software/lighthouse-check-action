@@ -53,7 +53,7 @@ declare global {
       }
 
       /** Supported timing metrics. */
-      export type TimingMetric = 'first-contentful-paint' | 'first-cpu-idle' | 'interactive' | 'first-meaningful-paint' | 'max-potential-fid' | 'estimated-input-latency' | 'total-blocking-time' | 'speed-index' | 'largest-contentful-paint' | 'cumulative-layout-shift';
+      export type TimingMetric = 'first-contentful-paint' | 'interactive' | 'first-meaningful-paint' | 'max-potential-fid' | 'total-blocking-time' | 'speed-index' | 'largest-contentful-paint' | 'cumulative-layout-shift';
 
       /** Supported values for the resourceType property of a ResourceBudget. */
       export type ResourceType = 'stylesheet' | 'image' | 'media' | 'font' | 'script' | 'document' | 'other' | 'total' | 'third-party';

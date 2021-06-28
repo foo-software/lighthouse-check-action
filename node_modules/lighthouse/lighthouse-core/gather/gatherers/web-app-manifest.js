@@ -92,7 +92,7 @@ class WebAppManifest extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext} context
    * @return {Promise<LH.Artifacts['WebAppManifest']>}
    */
-  snapshot(context) {
+  getArtifact(context) {
     const driver = context.driver;
 
     return WebAppManifest.getWebAppManifest(driver.defaultSession, context.url);

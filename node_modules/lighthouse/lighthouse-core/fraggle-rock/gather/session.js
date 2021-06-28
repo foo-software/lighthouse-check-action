@@ -107,4 +107,3 @@ class ProtocolSession {
 }
 
 module.exports = ProtocolSession;
-

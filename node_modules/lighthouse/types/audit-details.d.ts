@@ -9,6 +9,7 @@ declare global {
     export type Details =
       Details.CriticalRequestChain |
       Details.DebugData |
+      Details.TreemapData |
       Details.Filmstrip |
       Details.List |
       Details.Opportunity |
@@ -95,6 +96,11 @@ declare global {
       export interface DebugData {
         type: 'debugdata';
         [p: string]: any;
+      }
+
+      export interface TreemapData {
+        type: 'treemap-data';
+        nodes: LH.Treemap.Node[];
       }
 
       /** String enum of possible types of values found within table items. */

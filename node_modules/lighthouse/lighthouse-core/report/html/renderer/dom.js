@@ -16,9 +16,10 @@
  */
 'use strict';
 
-/* globals URL self Util */
+/* globals self Util */
 
 /** @typedef {HTMLElementTagNameMap & {[id: string]: HTMLElement}} HTMLElementByTagName */
+/** @template {string} T @typedef {import('typed-query-selector/parser').ParseSelector<T, Element>} ParseSelector */
 
 class DOM {
   /**
@@ -216,13 +217,18 @@ class DOM {
    * @template {string} T
    * @param {T} query
    * @param {ParentNode} context
+   * @return {ParseSelector<T>}
    */
   find(query, context) {
     const result = context.querySelector(query);
     if (result === null) {
       throw new Error(`query ${query} not found`);
     }
-    return result;
+
+    // Because we control the report layout and templates, use the simpler
+    // `typed-query-selector` types that don't require differentiating between
+    // e.g. HTMLAnchorElement and SVGAElement. See https://github.com/GoogleChrome/lighthouse/issues/12011
+    return /** @type {ParseSelector<T>} */ (result);
   }
 
   /**

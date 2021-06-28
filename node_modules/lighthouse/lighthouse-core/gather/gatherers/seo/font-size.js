@@ -317,7 +317,7 @@ class FontSize extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    * @return {Promise<LH.Artifacts.FontSize>} font-size analysis
    */
-  async snapshot(passContext) {
+  async getArtifact(passContext) {
     const session = passContext.driver.defaultSession;
 
     /** @type {Map<string, LH.Crdp.CSS.CSSStyleSheetHeader>} */

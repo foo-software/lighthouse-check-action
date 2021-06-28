@@ -90,11 +90,9 @@ Use the optional `timings` property to define budgets for time-based performance
 Supported timing metrics:
 
 - `first-contentful-paint`
-- `first-cpu-idle`
 - `interactive`
 - `first-meaningful-paint`
 - `max-potential-fid`
-- `estimated-input-latency`
 - `total-blocking-time`
 - `speed-index`
 - `largest-contentful-paint`

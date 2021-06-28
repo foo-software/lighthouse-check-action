@@ -16,6 +16,7 @@ import _PwaCategoryRenderer = require('../lighthouse-core/report/html/renderer/p
 import _ReportRenderer = require('../lighthouse-core/report/html/renderer/report-renderer.js');
 import _ReportUIFeatures = require('../lighthouse-core/report/html/renderer/report-ui-features.js');
 import _Util = require('../lighthouse-core/report/html/renderer/util.js');
+import _TextEncoding = require('../lighthouse-core/report/html/renderer/text-encoding.js');
 import _prepareLabData = require('../lighthouse-core/report/html/renderer/psi.js');
 import _FileNamer = require('../lighthouse-core/lib/file-namer.js');
 
@@ -33,7 +34,16 @@ declare global {
   var ReportRenderer: typeof _ReportRenderer;
   var ReportUIFeatures: typeof _ReportUIFeatures;
   var Util: typeof _Util;
+  var TextEncoding: typeof _TextEncoding;
   var prepareLabData: typeof _prepareLabData;
+  var CompressionStream: {
+    prototype: CompressionStream,
+    new (format: string): CompressionStream,
+  };
+
+  interface CompressionStream extends GenericTransformStream {
+    readonly format: string;
+  }
 
   interface Window {
     CategoryRenderer: typeof _CategoryRenderer;
@@ -65,6 +75,7 @@ declare global {
       export interface AuditRef extends Result.AuditRef {
         result: Audit.Result;
         stackPacks?: StackPackDescription[];
+        relevantMetrics?: LH.ReportResult.AuditRef[];
       }
 
       export interface StackPackDescription {

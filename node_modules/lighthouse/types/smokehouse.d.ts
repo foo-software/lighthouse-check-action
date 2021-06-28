@@ -19,6 +19,7 @@
   export type ExpectedRunnerResult = {
     lhr: ExpectedLHR,
     artifacts?: Partial<Record<keyof LH.Artifacts, any>>
+    networkRequests?: {length: number};
   }
 
   export interface TestDfn {
@@ -41,6 +42,8 @@
     retries?: number;
     /** A function that runs Lighthouse with the given options. Defaults to running Lighthouse via the CLI. */
     lighthouseRunner?: LighthouseRunner;
+    /** A function that gets a list of URLs requested to the server since the last fetch. */
+    takeNetworkRequestUrls?: () => string[];
   }
 
   export interface SmokehouseLibOptions extends SmokehouseOptions {

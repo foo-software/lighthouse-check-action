@@ -23,7 +23,7 @@
  * the report.
  */
 
-/* globals getFilenamePrefix Util ElementScreenshotRenderer */
+/* globals getFilenamePrefix Util TextEncoding ElementScreenshotRenderer */
 
 /** @typedef {import('./dom')} DOM */
 
@@ -151,6 +151,16 @@ class ReportUIFeatures {
       toggleInputEl.checked = true;
     }
 
+    const showTreemapApp =
+      this.json.audits['script-treemap-data'] && this.json.audits['script-treemap-data'].details;
+    if (showTreemapApp) {
+      this.addButton({
+        text: Util.i18n.strings.viewTreemapLabel,
+        icon: 'treemap',
+        onClick: () => ReportUIFeatures.openTreemap(this.json),
+      });
+    }
+
     // Fill in all i18n data.
     for (const node of this._dom.findAll('[data-i18n]', this._dom.document())) {
       // These strings are guaranteed to (at least) have a default English string in Util.UIStrings,
@@ -167,6 +177,33 @@ class ReportUIFeatures {
    */
   setTemplateContext(context) {
     this._templateContext = context;
+  }
+
+  /**
+   * @param {{container?: Element, text: string, icon?: string, onClick: () => void}} opts
+   */
+  addButton(opts) {
+    // report-ui-features doesn't have a reference to the root report el, and PSI has
+    // 2 reports on the page (and not even attached to DOM when installFeatures is called..)
+    // so we need a container option to specify where the element should go.
+    const metricsEl = this._document.querySelector('.lh-audit-group--metrics');
+    const containerEl = opts.container || metricsEl;
+    if (!containerEl) return;
+
+    let buttonsEl = containerEl.querySelector('.lh-buttons');
+    if (!buttonsEl) buttonsEl = this._dom.createChildOf(containerEl, 'div', 'lh-buttons');
+
+    const classes = [
+      'lh-button',
+    ];
+    if (opts.icon) {
+      classes.push('report-icon');
+      classes.push(`report-icon--${opts.icon}`);
+    }
+    const buttonEl = this._dom.createChildOf(buttonsEl, 'button', classes.join(' '));
+    buttonEl.textContent = opts.text;
+    buttonEl.addEventListener('click', opts.onClick);
+    return buttonEl;
   }
 
   /**
@@ -320,7 +357,8 @@ class ReportUIFeatures {
 
     ElementScreenshotRenderer.installOverlayFeature({
       dom: this._dom,
-      el,
+      reportEl: el,
+      overlayContainerEl: el,
       templateContext: this._templateContext,
       fullPageScreenshot,
     });
@@ -496,39 +534,56 @@ class ReportUIFeatures {
   }
 
   /**
+   * The popup's window.name is keyed by version+url+fetchTime, so we reuse/select tabs correctly.
+   * @param {LH.Result} json
+   * @protected
+   */
+  static computeWindowNameSuffix(json) {
+    // @ts-ignore - If this is a v2 LHR, use old `generatedTime`.
+    const fallbackFetchTime = /** @type {string} */ (json.generatedTime);
+    const fetchTime = json.fetchTime || fallbackFetchTime;
+    return `${json.lighthouseVersion}-${json.requestedUrl}-${fetchTime}`;
+  }
+
+  /**
    * Opens a new tab to the online viewer and sends the local page's JSON results
    * to the online viewer using postMessage.
    * @param {LH.Result} json
    * @protected
    */
   static openTabAndSendJsonReportToViewer(json) {
-    // The popup's window.name is keyed by version+url+fetchTime, so we reuse/select tabs correctly
-    // @ts-ignore - If this is a v2 LHR, use old `generatedTime`.
-    const fallbackFetchTime = /** @type {string} */ (json.generatedTime);
-    const fetchTime = json.fetchTime || fallbackFetchTime;
-    const windowName = `${json.lighthouseVersion}-${json.requestedUrl}-${fetchTime}`;
+    const windowName = 'viewer-' + this.computeWindowNameSuffix(json);
     const url = getAppsOrigin() + '/viewer/';
     ReportUIFeatures.openTabAndSendData({lhr: json}, url, windowName);
   }
 
   /**
-   * Opens a new tab to the treemap app and sends the JSON results using postMessage.
+   * Opens a new tab to the treemap app and sends the JSON results using URL.fragment
    * @param {LH.Result} json
    */
   static openTreemap(json) {
-    const treemapDebugData = /** @type {LH.Audit.Details.DebugData} */ (
-      json.audits['script-treemap-data'].details);
-    if (!treemapDebugData) {
+    const treemapData = json.audits['script-treemap-data'].details;
+    if (!treemapData) {
       throw new Error('no script treemap data found');
     }
 
-    const windowName = `treemap-${json.requestedUrl}`;
     /** @type {LH.Treemap.Options} */
     const treemapOptions = {
-      lhr: json,
+      lhr: {
+        requestedUrl: json.requestedUrl,
+        finalUrl: json.finalUrl,
+        audits: {
+          'script-treemap-data': json.audits['script-treemap-data'],
+        },
+        configSettings: {
+          locale: json.configSettings.locale,
+        },
+      },
     };
     const url = getAppsOrigin() + '/treemap/';
-    ReportUIFeatures.openTabAndSendData(treemapOptions, url, windowName);
+    const windowName = 'treemap-' + this.computeWindowNameSuffix(json);
+
+    ReportUIFeatures.openTabWithUrlData(treemapOptions, url, windowName);
   }
 
   /**
@@ -554,8 +609,24 @@ class ReportUIFeatures {
       }
     });
 
-    // The popup's window.name is keyed by version+url+fetchTime, so we reuse/select tabs correctly
     const popup = window.open(url, windowName);
+  }
+
+  /**
+   * Opens a new tab to an external page and sends data via base64 encoded url params.
+   * @param {{lhr: LH.Result} | LH.Treemap.Options} data
+   * @param {string} url_
+   * @param {string} windowName
+   * @protected
+   */
+  static async openTabWithUrlData(data, url_, windowName) {
+    const url = new URL(url_);
+    const gzip = Boolean(window.CompressionStream);
+    url.hash = await TextEncoding.toBase64(JSON.stringify(data), {
+      gzip,
+    });
+    if (gzip) url.searchParams.set('gzip', '1');
+    window.open(url.toString(), windowName);
   }
 
   /**

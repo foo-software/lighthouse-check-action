@@ -86,7 +86,7 @@ class DOMStats extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    * @return {Promise<LH.Artifacts['DOMStats']>}
    */
-  async snapshot(passContext) {
+  async getArtifact(passContext) {
     const driver = passContext.driver;
 
     await driver.defaultSession.sendCommand('DOM.enable');

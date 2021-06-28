@@ -95,7 +95,7 @@ class FormElements extends FRGatherer {
    * @param {LH.Gatherer.FRTransitionalContext} passContext
    * @return {Promise<LH.Artifacts['FormElements']>}
    */
-  async snapshot(passContext) {
+  async getArtifact(passContext) {
     const driver = passContext.driver;
 
     const formElements = await driver.executionContext.evaluate(collectFormElements, {
