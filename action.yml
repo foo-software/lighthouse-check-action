@@ -56,7 +56,7 @@ inputs:
   wait:
     description: 'If "true", for remote runs, waits for all audit results to be returned, otherwise URLs are only enqueued.'
 runs:
-  using: 'node14'
+  using: 'node12'
   main: 'index.js'
 branding:
   icon: 'zap'  
