@@ -2,11 +2,12 @@
   "name": "lighthouse-check-action",
   "version": "4.0.0",
   "description": "A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.",
-  "main": "dist/index.js",
+  "main": "compiled/index.js",
   "scripts": {
-    "build": "npm run clean && tsc -p tsconfig.release.json",
+    "build": "ncc build dist/index.js --license licenses.txt --out compiled",
+    "build:js": "npm run clean && tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist compiled",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:headers": "ts-node src/test/headerServer.ts"
   },
@@ -62,6 +63,7 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/lodash.get": "^4.4.6",
+    "@vercel/ncc": "^0.31.1",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
     "lint-staged": "^9.5.0",
