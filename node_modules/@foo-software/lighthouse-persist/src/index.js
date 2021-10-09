@@ -1,7 +1,7 @@
 import fs from 'fs';
 import get from 'lodash.get';
 import lighthouse from 'lighthouse';
-import ReportGenerator from 'lighthouse/report/generator/report-generator';
+import ReportGenerator from 'lighthouse-legacy/lighthouse-core/report/report-generator';
 import * as chromeLauncher from 'chrome-launcher';
 import AWS from 'aws-sdk';
 import config from './config';

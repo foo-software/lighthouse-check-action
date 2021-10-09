@@ -1,4 +1,4 @@
-import { Util } from 'lighthouse/report/renderer/util';
+import Util from 'lighthouse-legacy/lighthouse-core/report/html/renderer/util';
 export { Util };
 
 // inspired by:
