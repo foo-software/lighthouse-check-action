@@ -4,7 +4,8 @@
   "description": "A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.",
   "main": "compiled/index.js",
   "scripts": {
-    "build": "ncc build dist/index.js --license licenses.txt --out compiled",
+    "build": "npm run build:js && npm run build:compile",
+    "build:compile": "ncc build dist/index.js --license licenses.txt --out compiled",
     "build:js": "npm run clean && tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf dist compiled",
