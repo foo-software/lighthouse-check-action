@@ -1,7 +1,7 @@
 import fs from 'fs';
 import get from 'lodash.get';
 import lighthouse from 'lighthouse';
-import ReportGenerator from 'lighthouse/lighthouse-core/report/report-generator';
+import ReportGenerator from 'lighthouse/report/generator/report-generator';
 import * as chromeLauncher from 'chrome-launcher';
 import AWS from 'aws-sdk';
 import config from './config';
@@ -16,6 +16,8 @@ const createTimeout = time =>
   new Promise(resolve => {
     setTimeout(resolve, time, PROTOCOL_TIMEOUT);
   });
+
+export { ReportGenerator };
 
 // https://github.com/GoogleChrome/lighthouse/blob/master/docs/readme.md#using-programmatically
 export default async ({

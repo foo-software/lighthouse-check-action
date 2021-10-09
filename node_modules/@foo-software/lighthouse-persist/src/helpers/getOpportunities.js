@@ -1,4 +1,5 @@
-import Util from 'lighthouse/lighthouse-core/report/html/renderer/util';
+import { Util } from 'lighthouse/report/renderer/util';
+export { Util };
 
 // inspired by:
 // https://github.com/GoogleChrome/lighthouse/blob/2e9c3c9b5f7d75b39be9d1e2ba116d49cf811f81/lighthouse-core/report/html/renderer/performance-category-renderer.js#L97
