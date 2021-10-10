@@ -27,22 +27,22 @@ const formatInput = (input: string) => {
     const prApiUrl = get(github, 'context.payload.pull_request.url');
 
     const results = await lighthouseCheck({
-      author: formatInput(core.getInput('author')),
-      apiToken: formatInput(core.getInput('apiToken')),
+      author: formatInput(core.getInput('gitAuthor')),
+      apiToken: formatInput(core.getInput('fooApiToken')),
       awsAccessKeyId: formatInput(core.getInput('awsAccessKeyId')),
       awsBucket: formatInput(core.getInput('awsBucket')),
       awsRegion: formatInput(core.getInput('awsRegion')),
       awsSecretAccessKey: formatInput(core.getInput('awsSecretAccessKey')),
       branch: formatInput(core.getInput('branch')),
       configFile: formatInput(core.getInput('configFile')),
-      emulatedFormFactor: formatInput(core.getInput('emulatedFormFactor')),
+      device: formatInput(core.getInput('device')),
       extraHeaders: !extraHeaders ? undefined : JSON.parse(extraHeaders),
       locale: formatInput(core.getInput('locale')),
       help: formatInput(core.getInput('help')),
       outputDirectory: formatInput(core.getInput('outputDirectory')),
       overridesJsonFile: formatInput(core.getInput('overridesJsonFile')),
       pr: formatInput(core.getInput('pr')),
-      prCommentAccessToken: formatInput(core.getInput('accessToken')),
+      prCommentAccessToken: formatInput(core.getInput('gitHubAccessToken')),
       prCommentEnabled: formatInput(core.getInput('prCommentEnabled')),
       prCommentSaveOld: formatInput(core.getInput('prCommentSaveOld')),
       prCommentUrl:

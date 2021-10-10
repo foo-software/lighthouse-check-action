@@ -10,14 +10,14 @@ jobs:
     - name: Run Lighthouse
       uses: ./
       with:
-        accessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
-        author: ${{ github.actor }}
         awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
         awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
         awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
         awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
         branch: ${{ github.ref }}
         emulatedFormFactor: all
+        gitAuthor: ${{ github.actor }}
+        gitHubAccessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
         outputDirectory: /tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/tag/articles/'
         sha: ${{ github.sha }}
