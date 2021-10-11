@@ -2,12 +2,8 @@ import getUrlsFromJson from './getUrlsFromJson';
 
 describe('getUrlsFromJson', () => {
   it('should return parsed JSON', () => {
-    const urls = getUrlsFromJson('["https://www.foo.software", "https://www.foo.software/docs", "https://www.google.com"]');
-    expect(urls).toEqual([
-      'https://www.foo.software',
-      'https://www.foo.software/docs',
-      'https://www.google.com',
-    ]);
+    const urls = getUrlsFromJson('["https://www.foo.software", "https://www.google.com"]');
+    expect(urls).toEqual(['https://www.foo.software', 'https://www.google.com']);
   });
 
   it('should return parsed JSON correctly when tuples are defined', () => {
