@@ -1,22 +1,8 @@
 # Lighthouse Check Action
 
-> A GitHub Action for running Lighthouse audits automatically in a workflow with a rich set of extra features. Simple implementation or advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!
+<img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="20%" />
 
-This project provides **two ways of running audits** - "locally" by default in a dockerized GitHub environment or remotely via [Foo's Automated Lighthouse Check](https://www.foo.software/lighthouse) API. For basic usage, running locally will suffice, but if you'd like to maintain a historical record of Lighthouse audits and utilize other features, you can follow the [steps and examples](#usage-automated-lighthouse-check-api).
-
-<table>
-  <tr>
-    <td align="center" width="33.3333333333333%">
-      <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="60%" />
-    </td>
-    <td align="center" width="33.3333333333333%">
-      <img alt="AWS S3" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/aws-s3-logo.png" width="60%" />
-    </td>
-    <td align="center" width="33.3333333333333%">
-      <img alt="Slack" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/slack-logo.png" width="60%" />
-    </td>
-  </tr>
-</table>
+A GitHub Action for running Lighthouse audits automatically workflows. Lighthouse Check Action provides simple configuration and a long list of features for advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!
 
 ## How this Project Differs from Others
 
@@ -556,4 +542,4 @@ You can override default config and options by specifying `overridesJsonFile` op
 
 ## Credits
 
-> <img src="https://lighthouse-check.s3.amazonaws.com/images/logo-simple-blue-light-512.png" width="100" height="100" align="left" /> This package was brought to you by [Foo - a website performance monitoring tool](https://www.foo.software). Create a **free account** with standard performance testing. Automatic website performance testing, uptime checks, charts showing performance metrics by day, month, and year. Foo also provides real time notifications. Users can integrate email, Slack and PagerDuty notifications.
+> <img src="https://lighthouse-check.s3.amazonaws.com/images/logo-simple-blue-light-512.png" width="100" height="100" align="left" /> This package was brought to you by [Foo - a website quality monitoring tool](https://www.foo.software). Automatically test and monitor website performance, SEO and accessibility with Lighthouse. Analyze historical records of Lighthouse tests with automated monitoring. Report with confidence about SEO and performance improvements to stay on top of changes when they happen!
