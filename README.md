@@ -17,7 +17,7 @@ This project differes from others with its ease of use for simple cases and nume
 - 💎 Easily save a record of all your audits via Foo's free service.
 - 🤗 [Detailed documentation](https://www.foo.software/docs/lighthouse-check-github-action)!
 
-## Quick Start
+# Quick Start
 
 ```yaml
 name: Lighthouse
@@ -34,9 +34,46 @@ jobs:
         urls: 'https://www.foo.software,https://www.google.com'
 ```
 
-## Inputs and Advanced Configuration
+# Inputs and Advanced Configuration
 
 For detailed documentation of all inputs and advanced configuration - visit [the documentation](https://www.foo.software/docs/lighthouse-check-github-action)!
+
+# Screenshots
+
+<table>
+  <tr>
+    <td align="center" width="33.3333333333333%">
+      <figure>
+        <a href="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-output.png">
+          <img alt="Lighthouse Check GitHub action output" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-output.png" />
+        </a>
+        <figcaption>
+          Output
+        </figcaption>
+      </figure>
+    </td>
+    <td align="center" width="33.3333333333333%">
+      <figure>
+        <a href="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-artifacts.png">
+          <img alt="Lighthouse Check GitHub action save artifacts" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-artifacts.png" />
+        </a>
+        <figcaption>
+          Save HTML Reports as Artifacts
+        </figcaption>
+      </figure>
+    </td>
+    <td align="center" width="33.3333333333333%">
+      <figure>
+        <a href="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png">
+          <img alt="Lighthouse Check GitHub action HTML report" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png" />
+        </a>
+        <figcaption>
+          HTML Reports
+        </figcaption>
+      </figure>
+    </td>
+  </tr>
+</table>
 
 ## Credits
 
