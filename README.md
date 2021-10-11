@@ -9,15 +9,15 @@ Check out [the docs](https://www.foo.software/docs/lighthouse-check-github-actio
 
 This project differes with its ease of use for simple cases and numerous features for advanced needs.
 
-- Lighthouse audit **multiple** URLs or just one.
-- PR comments of audit scores.
-- Save HTML reports locally.
-- Upload HTML reports as artifacts.
-- Upload HTML reports to AWS S3.
-- Fail a workflow when minimum scores aren't met.
-- Slack notifications **with Git info** (author, branch, PR, etc).
-- Easily save a record of all your audits via Foo's free service.
-- [Detailed documentation](https://www.foo.software/docs/lighthouse-check-github-action)!
+- ✔ Lighthouse audit **multiple** URLs or just one.
+- 👌 PR comments of audit scores.
+- 🎉 Save HTML reports locally.
+- 💖 Upload HTML reports as artifacts.
+- 🙌 Upload HTML reports to AWS S3.
+- 🔥 Fail a workflow when minimum scores aren't met.
+- 🛎️ Slack notifications **with Git info** (author, branch, PR, etc).
+- 💎 Easily save a record of all your audits via Foo's free service.
+- 🤗 [Detailed documentation](https://www.foo.software/docs/lighthouse-check-github-action)!
 
 ## Quick Start
 
