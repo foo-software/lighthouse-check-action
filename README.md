@@ -1,8 +1,8 @@
 # Lighthouse Check Action
 
-<p>
+<p style="display: block">
   <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="20%" align="left" />
-  <span>A GitHub Action for running Lighthouse audits automatically workflows. Lighthouse Check Action provides simple configuration and a long list of features for advanced customization including **Slack** notifications, **AWS S3** HTML report uploads, and more!</span>
+  <span>A GitHub Action for running Lighthouse audits automatically workflows. Lighthouse Check Action provides simple configuration and a long list of features for advanced customization including <strong>Slack</strong> notifications, <strong>AWS S3</strong> HTML report uploads, and more!</span>
 </p>
 
 ## How this Project Differs from Others
