@@ -24,11 +24,12 @@ const formatInput = (input: string) => {
   try {
     const urlsSimple = formatInput(core.getInput('urls'));
     const urlsComplex = formatInput(core.getInput('urlsJson'));
-    const urls = typeof urlsSimple === 'string'
-      ? urlsSimple.split(',')
-      : typeof urlsComplex === 'string'
-      ? getUrlsFromJson(urlsComplex)
-      : undefined;
+    const urls =
+      typeof urlsSimple === 'string'
+        ? urlsSimple.split(',')
+        : typeof urlsComplex === 'string'
+        ? getUrlsFromJson(urlsComplex)
+        : undefined;
     const extraHeaders = core.getInput('extraHeaders');
     const commentUrl = core.getInput('commentUrl');
     const prApiUrl = get(github, 'context.payload.pull_request.url');
@@ -65,7 +66,7 @@ const formatInput = (input: string) => {
       wait: formatInput(core.getInput('wait')),
 
       // static
-      isGitHubAction: true
+      isGitHubAction: true,
     });
 
     // yikesers - only strings :(
