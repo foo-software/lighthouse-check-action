@@ -5,7 +5,7 @@
 
 ## How this Project Differs from Others
 
-This project differes with its ease of use for simple cases and numerous features for advanced needs.
+This project differes from others with its ease of use for simple cases and numerous features for advanced needs.
 
 - ✨ Lighthouse audit **multiple** URLs or just one.
 - 💬 PR comments of audit scores.
