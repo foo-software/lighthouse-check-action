@@ -9,8 +9,8 @@ Check out [the docs](https://www.foo.software/docs/lighthouse-check-github-actio
 
 This project differes with its ease of use for simple cases and numerous features for advanced needs.
 
-- ✔ Lighthouse audit **multiple** URLs or just one.
-- 👌 PR comments of audit scores.
+- ✨ Lighthouse audit **multiple** URLs or just one.
+- 💬 PR comments of audit scores.
 - 🎉 Save HTML reports locally.
 - 💖 Upload HTML reports as artifacts.
 - 🙌 Upload HTML reports to AWS S3.
