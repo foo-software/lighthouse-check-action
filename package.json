@@ -47,7 +47,7 @@
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
-      "prettier --single-quote --write && git add -A .",
+      "prettier --single-quote --write",
       "npm run lint"
     ]
   },
@@ -68,9 +68,9 @@
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-jest": "^23.20.0",
-    "husky": "^3.1.0",
+    "husky": "^7.0.2",
     "jest": "^27.2.5",
-    "lint-staged": "^9.5.0",
+    "lint-staged": "^11.2.3",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.5",
