@@ -49,6 +49,8 @@ inputs:
     description: 'Minutes to timeout for remote runs. If "wait" option is "true" (it is by default), we wait for results. If this timeout is met before results are received an error is thrown.'
   urls:
     description: 'A comma-separated list of URLs (or page API tokens if running remotely).'
+  urlsJson:
+    description: 'An alternative way of passing URLs to Lighthouse Check to fulfill more advanced cases in which URLs have commas or you need to associate a URL with a Foo page token.'
   verbose:
     description: 'If yes, logs output along each step.'
   wait:

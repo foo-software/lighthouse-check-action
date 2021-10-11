@@ -2,6 +2,7 @@ import core from '@actions/core';
 import get from 'lodash.get';
 import github from '@actions/github';
 import { lighthouseCheck } from '@foo-software/lighthouse-check';
+import getUrlsFromJson from './helpers/getUrlsFromJson';
 
 const formatInput = (input: string) => {
   if (input === 'true') {
@@ -21,7 +22,13 @@ const formatInput = (input: string) => {
 
 (async () => {
   try {
-    const urls = formatInput(core.getInput('urls'));
+    const urlsSimple = formatInput(core.getInput('urls'));
+    const urlsComplex = formatInput(core.getInput('urlsJson'));
+    const urls = typeof urlsSimple === 'string'
+      ? urlsSimple.split(',')
+      : typeof urlsComplex === 'string'
+      ? getUrlsFromJson(urlsComplex)
+      : undefined;
     const extraHeaders = core.getInput('extraHeaders');
     const commentUrl = core.getInput('commentUrl');
     const prApiUrl = get(github, 'context.payload.pull_request.url');
@@ -53,7 +60,7 @@ const formatInput = (input: string) => {
       timeout: formatInput(core.getInput('timeout')),
       throttling: formatInput(core.getInput('throttling')),
       throttlingMethod: formatInput(core.getInput('throttlingMethod')),
-      urls: typeof urls !== 'string' ? undefined : urls.split(','),
+      urls,
       verbose: formatInput(core.getInput('verbose')),
       wait: formatInput(core.getInput('wait')),
 
