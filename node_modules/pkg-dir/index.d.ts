@@ -1,5 +1,13 @@
 declare const pkgDir: {
 	/**
+	Synchronously find the root directory of a Node.js project or npm package.
+
+	@param cwd - Directory to start from. Default: `process.cwd()`.
+	@returns The project root path or `undefined` if it couldn't be found.
+	*/
+	sync: (cwd?: string) => string | undefined;
+
+	/**
 	Find the root directory of a Node.js project or npm package.
 
 	@param cwd - Directory to start from. Default: `process.cwd()`.
@@ -28,17 +36,6 @@ declare const pkgDir: {
 	```
 	*/
 	(cwd?: string): Promise<string | undefined>;
-
-	/**
-	Synchronously find the root directory of a Node.js project or npm package.
-
-	@param cwd - Directory to start from. Default: `process.cwd()`.
-	@returns The project root path or `undefined` if it couldn't be found.
-	*/
-	sync(cwd?: string): string | undefined;
-
-	// TODO: Remove this for the next major release
-	default: typeof pkgDir;
 };
 
 export = pkgDir;

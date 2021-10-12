@@ -40,7 +40,6 @@ Conversions for all of the basic types from the Web IDL specification are implem
 - [`DOMString`](https://heycam.github.io/webidl/#es-DOMString), which can additionally be provided the boolean option `{ treatNullAsEmptyString }` as a second parameter
 - [`ByteString`](https://heycam.github.io/webidl/#es-ByteString), [`USVString`](https://heycam.github.io/webidl/#es-USVString)
 - [`object`](https://heycam.github.io/webidl/#es-object)
-- [`Error`](https://heycam.github.io/webidl/#es-Error)
 - [Buffer source types](https://heycam.github.io/webidl/#es-buffer-source-types)
 
 Additionally, for convenience, the following derived type definitions are implemented:
@@ -77,4 +76,4 @@ And getting to that payoff is the goal of _this_ project—but for JavaScript im
 
 Seriously, why would you ever use this? You really shouldn't. Web IDL is … strange, and you shouldn't be emulating its semantics. If you're looking for a generic argument-processing library, you should find one with better rules than those from Web IDL. In general, your JavaScript should not be trying to become more like Web IDL; if anything, we should fix Web IDL to make it more like JavaScript.
 
-The _only_ people who should use this are those trying to create faithful implementations (or polyfills) of web platform interfaces defined in Web IDL. Its main consumer is the [jsdom](https://github.com/tmpvar/jsdom) project.
+The _only_ people who should use this are those trying to create faithful implementations (or polyfills) of web platform interfaces defined in Web IDL. Its main consumer is the [jsdom](https://github.com/jsdom/jsdom) project.
