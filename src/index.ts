@@ -41,7 +41,7 @@ const formatInput = (input: string) => {
       awsBucket: formatInput(core.getInput('awsBucket')),
       awsRegion: formatInput(core.getInput('awsRegion')),
       awsSecretAccessKey: formatInput(core.getInput('awsSecretAccessKey')),
-      branch: formatInput(core.getInput('branch')),
+      branch: formatInput(core.getInput('gitBranch')),
       configFile: formatInput(core.getInput('configFile')),
       device: formatInput(core.getInput('device')),
       extraHeaders: !extraHeaders ? undefined : JSON.parse(extraHeaders),
