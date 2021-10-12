@@ -96,7 +96,7 @@ For detailed documentation of all inputs and advanced configuration - visit [the
     </td>
     <td align="center" width="33.3333333333333%">
       <figure>
-        <a href="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png">
+        <a href="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action-pr-fail.png">
           <img alt="Lighthouse Check GitHub action fail if scores don't meet minimum requirement on a PR" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-status-action-pr-fail.png" />
         </a>
         <figcaption>
