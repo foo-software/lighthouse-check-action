@@ -1,0 +1,14 @@
+node_modules
+deploy/
+gulp_tasks/
+test/
+temp/
+
+.idea/
+
+.editorconfig
+.gitattributes
+.gitignore
+.travis.yml
+
+tslint.json

@@ -1,0 +1,15 @@
+// Compilation entry point for all tsc projects within Lighthouse.
+
+{
+  "references": [
+    {"path": "./"},
+    {"path": "./types/lhr/"},
+    {"path": "./report/"},
+    {"path": "./report/generator/"},
+    {"path": "./lighthouse-viewer/"},
+    {"path": "./lighthouse-treemap/"},
+    {"path": "./flow-report/"},
+  ],
+  "files": [],
+  "include": [],
+}
