@@ -14,7 +14,7 @@ jobs:
         awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
         awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
         awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
-        emulatedFormFactor: all
+        device: all
         gitAuthor: ${{ github.actor }}
         gitBranch: ${{ github.ref }}
         gitHubAccessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
