@@ -6,7 +6,7 @@ inputs:
   apiToken:
     description: 'Legacy field (use "fooApiToken"): The foo.software account API token found in the dashboard.'
   author:
-    description: 'Legacy field (use "gitAuthor"): Used in Slack notifications, linking the authoring user to their GitHub profile. In a GitHub context you could use 'github.actor'.'
+    description: 'Legacy field (use "gitAuthor"): Used in Slack notifications, linking the authoring user to their GitHub profile. In a GitHub context you could use "github.actor".'
   awsAccessKeyId:
     description: 'The AWS accessKeyId for an S3 bucket.'
   awsBucket:
