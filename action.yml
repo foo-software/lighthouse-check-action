@@ -1,6 +1,12 @@
 name: 'Lighthouse Check'
 description: 'GitHub Action for running one or multiple Lighthouse audits featuring PR comments, Slack notifications and more!'
 inputs:
+  accessToken:
+    description: 'Legacy field (use "gitHubAccessToken"): Access token of a user to post PR comments.'
+  apiToken:
+    description: 'Legacy field (use "fooApiToken"): The foo.software account API token found in the dashboard.'
+  author:
+    description: 'Legacy field (use "gitAuthor"): Used in Slack notifications, linking the authoring user to their GitHub profile. In a GitHub context you could use 'github.actor'.'
   awsAccessKeyId:
     description: 'The AWS accessKeyId for an S3 bucket.'
   awsBucket:
@@ -9,12 +15,16 @@ inputs:
     description: 'The AWS region for an S3 bucket.'
   awsSecretAccessKey:
     description: 'The AWS secretAccessKey for an S3 bucket.'
+  branch:
+    description: 'Legacy field (use "gitBranch"): Used in Slack notifications. In a GitHub context you could use 'github.ref'.'
   configFile:
     description: 'A configuration file path in JSON format which holds all options defined here. This file should be relative to the file being interpretted. In this case it will most likely be the root of the repo ("./")'
   commentUrl:
     description: "An endpoint to post comments to. This is only needed if you want to trigger comments on 'push'. A 'pull_request' trigger does not require this to be set. Typically this will be from GitHub's API. Example: https://api.github.com/repos/:owner/:repo/commits/:commit_sha/comments."
   device:
     description: 'The device in which to run Lighthouse (either "desktop" or "mobile")'
+  emulatedFormFactor:
+    description: 'Legacy field (use "device): The device in which to run Lighthouse (either "desktop" or "mobile")'
   extraHeaders:
     description: 'Stringified HTTP Header object key/value pairs to send in requests.'
   fooApiToken:
