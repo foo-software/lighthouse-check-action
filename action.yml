@@ -16,7 +16,7 @@ inputs:
   awsSecretAccessKey:
     description: 'The AWS secretAccessKey for an S3 bucket.'
   branch:
-    description: 'Legacy field (use "gitBranch"): Used in Slack notifications. In a GitHub context you could use 'github.ref'.'
+    description: 'Legacy field (use "gitBranch"): Used in Slack notifications. In a GitHub context you could use "github.ref".'
   configFile:
     description: 'A configuration file path in JSON format which holds all options defined here. This file should be relative to the file being interpretted. In this case it will most likely be the root of the repo ("./")'
   commentUrl:
