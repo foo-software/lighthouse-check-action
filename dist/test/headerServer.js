@@ -16,6 +16,7 @@ app.get('/', (req, res) => res.send(`
     ${Object.keys(req.headers)
     .reduce((accumulator, current) => [
     ...accumulator,
+    // if header includes with "x-test"
     ...(!current.includes('x-test')
         ? []
         : [
