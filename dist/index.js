@@ -41,6 +41,16 @@ const formatInput = (input) => {
 };
 (async () => {
     try {
+        const legacyGitHubAccessToken = core.getInput('accessToken');
+        const legacyFooApiToken = core.getInput('apiToken');
+        const legacyGitAuthor = core.getInput('author');
+        const legacyGitBranch = core.getInput('branch');
+        const legacyDevice = core.getInput('emulatedFormFactor');
+        const gitHubAccessToken = core.getInput('gitHubAccessToken');
+        const fooApiToken = core.getInput('fooApiToken');
+        const gitAuthor = core.getInput('gitAuthor');
+        const gitBranch = core.getInput('gitBranch');
+        const device = core.getInput('device');
         const urlsSimple = formatInput(core.getInput('urls'));
         const urlsComplex = formatInput(core.getInput('urlsJson'));
         const urls = typeof urlsSimple === 'string'
@@ -52,22 +62,22 @@ const formatInput = (input) => {
         const commentUrl = core.getInput('commentUrl');
         const prApiUrl = (0, lodash_get_1.default)(github, 'context.payload.pull_request.url');
         const results = await (0, lighthouse_check_1.lighthouseCheck)({
-            author: formatInput(core.getInput('gitAuthor')),
-            apiToken: formatInput(core.getInput('fooApiToken')),
+            author: gitAuthor || legacyGitAuthor,
+            apiToken: fooApiToken || legacyFooApiToken,
             awsAccessKeyId: formatInput(core.getInput('awsAccessKeyId')),
             awsBucket: formatInput(core.getInput('awsBucket')),
             awsRegion: formatInput(core.getInput('awsRegion')),
             awsSecretAccessKey: formatInput(core.getInput('awsSecretAccessKey')),
-            branch: formatInput(core.getInput('gitBranch')),
+            branch: gitBranch || legacyGitBranch,
             configFile: formatInput(core.getInput('configFile')),
-            device: formatInput(core.getInput('device')),
+            device: device || legacyDevice,
             extraHeaders: !extraHeaders ? undefined : JSON.parse(extraHeaders),
             locale: formatInput(core.getInput('locale')),
             help: formatInput(core.getInput('help')),
             outputDirectory: formatInput(core.getInput('outputDirectory')),
             overridesJsonFile: formatInput(core.getInput('overridesJsonFile')),
             pr: formatInput(core.getInput('pr')),
-            prCommentAccessToken: formatInput(core.getInput('gitHubAccessToken')),
+            prCommentAccessToken: gitHubAccessToken || legacyGitHubAccessToken,
             prCommentEnabled: formatInput(core.getInput('prCommentEnabled')),
             prCommentSaveOld: formatInput(core.getInput('prCommentSaveOld')),
             prCommentUrl: commentUrl || (!prApiUrl ? undefined : `${prApiUrl}/reviews`),

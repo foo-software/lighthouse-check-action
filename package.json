@@ -4,8 +4,8 @@
   "description": "A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "npm run build:js",
-    "build:js": "npm run clean && tsc -p tsconfig.release.json",
+    "build": "npm run clean && npm run build:js",
+    "build:js": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf dist",
     "jest": "jest",
@@ -47,7 +47,9 @@
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "prettier --single-quote --write",
-      "npm run lint"
+      "npm run lint",
+      "npm run clean",
+      "bash -c tsc -p tsconfig.release.json"
     ]
   },
   "dependencies": {
