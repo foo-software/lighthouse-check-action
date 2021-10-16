@@ -48,6 +48,11 @@ const formatInput = (input: string) => {
     const commentUrl = core.getInput('commentUrl');
     const prApiUrl = get(github, 'context.payload.pull_request.url');
 
+    console.log(
+      'extraHeaders',
+      !extraHeaders ? undefined : JSON.parse(extraHeaders),
+    );
+
     const results = await lighthouseCheck({
       author: gitAuthor || legacyGitAuthor,
       apiToken: fooApiToken || legacyFooApiToken,

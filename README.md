@@ -1,7 +1,7 @@
 # Lighthouse Check Action
 
 <img alt="Lighthouse" src="https://lighthouse-check.s3.amazonaws.com/images/lighthouse-600x600.png" width="10%" align="left" />
-<p>A GitHub Action for running Lighthouse audits automatically in CI workflows. Lighthouse Check Action provides simple configuration and a long list of features for advanced customization including <strong>Slack</strong> notifications, <strong>AWS S3</strong> HTML report uploads, and more! Check out <a href="https://www.foo.software/docs/lighthouse-check-github-action">the docs</a> to get started with advanced configurations or refer to the <a href="#quick-start">quick start section below</a>.</p>
+<p>A GitHub Action for running Lighthouse audits automatically in CI workflows. Lighthouse Check Action provides simple configuration and a long list of features for advanced customization including <strong>Slack</strong> notifications, <strong>AWS S3</strong> HTML report uploads, and more! Check out <a href="https://www.foo.software/docs/lighthouse-check-github-action/intro">the docs</a> to get started with advanced configurations or refer to the <a href="#quick-start">quick start section below</a>.</p>
 
 ## Features
 
@@ -15,7 +15,7 @@ This project differes from others with its ease of use for simple cases and nume
 - 🔥 Fail a workflow when minimum scores aren't met.
 - 🛎️ Slack notifications **with Git info** (author, branch, PR, etc).
 - 💎 Easily save a record of all your audits via Foo's free service.
-- 🤗 [Detailed documentation](https://www.foo.software/docs/lighthouse-check-github-action)!
+- 🤗 [Detailed documentation](https://www.foo.software/docs/lighthouse-check-github-action/intro)!
 
 # Quick Start
 
@@ -36,7 +36,7 @@ jobs:
 
 # Inputs and Advanced Configuration
 
-For detailed documentation of all inputs and advanced configuration - visit [the documentation](https://www.foo.software/docs/lighthouse-check-github-action)!
+For detailed documentation of all inputs and advanced configuration - visit [the documentation](https://www.foo.software/docs/lighthouse-check-github-action/intro)!
 
 # Screenshots
 
