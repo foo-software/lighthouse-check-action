@@ -46,7 +46,7 @@ inputs:
   prCommentSaveOld:
     description: 'If true and PR comment options are set, new comments will be posted on every change vs only updating once comment with most recent scores.'
   sha:
-    description: 'For Slack notifications: A version control sha, typically from GitHub.'
+    description: 'Used in Slack notifications. A git sha.'
   slackWebhookUrl:
     description: 'A Slack Incoming Webhook URL to send notifications to.'
   tag:
