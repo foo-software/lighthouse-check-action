@@ -1,11 +1,5 @@
 name: Test Overrides
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: [pull_request]
 
 jobs:
   lighthouse-check:

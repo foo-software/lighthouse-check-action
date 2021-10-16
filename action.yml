@@ -1,10 +1,12 @@
 name: 'Lighthouse Check'
 description: 'GitHub Action for running one or multiple Lighthouse audits featuring PR comments, Slack notifications and more!'
 inputs:
+  accessToken:
+    description: 'Legacy field (use "gitHubAccessToken"): Access token of a user to post PR comments.'
   apiToken:
-    description: 'The foo.software account API token found in the dashboard.'
+    description: 'Legacy field (use "fooApiToken"): The foo.software account API token found in the dashboard.'
   author:
-    description: 'For Slack notifications: A user handle, typically from GitHub.'
+    description: 'Legacy field (use "gitAuthor"): Used in Slack notifications, linking the authoring user to their GitHub profile. In a GitHub context you could use "github.actor".'
   awsAccessKeyId:
     description: 'The AWS accessKeyId for an S3 bucket.'
   awsBucket:
@@ -14,31 +16,37 @@ inputs:
   awsSecretAccessKey:
     description: 'The AWS secretAccessKey for an S3 bucket.'
   branch:
-    description: 'For Slack notifications: A version control branch, typically from GitHub.'
+    description: 'Legacy field (use "gitBranch"): Used in Slack notifications. In a GitHub context you could use "github.ref".'
   configFile:
     description: 'A configuration file path in JSON format which holds all options defined here. This file should be relative to the file being interpretted. In this case it will most likely be the root of the repo ("./")'
   commentUrl:
     description: "An endpoint to post comments to. This is only needed if you want to trigger comments on 'push'. A 'pull_request' trigger does not require this to be set. Typically this will be from GitHub's API. Example: https://api.github.com/repos/:owner/:repo/commits/:commit_sha/comments."
+  device:
+    description: 'The device in which to run Lighthouse (either "desktop" or "mobile")'
   emulatedFormFactor:
-    description: 'Lighthouse setting only used for local audits. See lighthouse-check NPM module for details.'
+    description: 'Legacy field (use "device): The device in which to run Lighthouse (either "desktop" or "mobile")'
   extraHeaders:
     description: 'Stringified HTTP Header object key/value pairs to send in requests.'
+  fooApiToken:
+    description: 'The foo.software account API token found in the dashboard.'
+  gitAuthor:
+    description: "Used in Slack notifications, linking the authoring user to their GitHub profile. In a GitHub context you could use 'github.actor'."
+  gitBranch:
+    description: "Used in Slack notifications. In a GitHub context you could use 'github.ref'."
+  gitHubAccessToken:
+    description: 'Access token of a user to post PR comments.'
   locale:
     description: 'A locale for Lighthouse reports. Example: ja'
   outputDirectory:
     description: 'An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.'
   overridesJsonFile:
-    description: 'A JSON file with config and option fields to overrides defaults.'
-  pr:
-    description: 'For Slack notifications: A version control pull request URL, typically from GitHub.'
+    description: 'A JSON file with config and option fields to override defaults.'
   prCommentEnabled:
-    description: 'If true and accessToken is set scores will be posted as comments.'
+    description: 'If true and gitHubAccessToken is set scores will be posted as comments.'
   prCommentSaveOld:
     description: 'If true and PR comment options are set, new comments will be posted on every change vs only updating once comment with most recent scores.'
-  accessToken:
-    description: 'Access token of a user to post PR comments.'
   sha:
-    description: 'For Slack notifications: A version control sha, typically from GitHub.'
+    description: 'Used in Slack notifications. A git sha.'
   slackWebhookUrl:
     description: 'A Slack Incoming Webhook URL to send notifications to.'
   tag:
@@ -51,10 +59,12 @@ inputs:
     description: 'Minutes to timeout for remote runs. If "wait" option is "true" (it is by default), we wait for results. If this timeout is met before results are received an error is thrown.'
   urls:
     description: 'A comma-separated list of URLs (or page API tokens if running remotely).'
+  urlsJson:
+    description: 'An alternative way of passing URLs to Lighthouse Check to fulfill more advanced cases in which URLs have commas or you need to associate a URL with a Foo page token.'
   verbose:
-    description: 'If yes, logs output along each step.'
+    description: 'If "true", print out steps and results to the console.'
   wait:
-    description: 'If "true", for remote runs, waits for all audit results to be returned, otherwise URLs are only enqueued.'
+    description: 'If "true", waits for all audit results to be returned, otherwise URLs are only enqueued.'
 runs:
   using: 'node12'
   main: 'dist/index.js'

@@ -290,16 +290,45 @@ function convertCallbackFunction(V, opts) {
     return V;
 }
 
+const abByteLengthGetter =
+    Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, "byteLength").get;
+
+function isArrayBuffer(V) {
+    try {
+        abByteLengthGetter.call(V);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+// I don't think we can reliably detect detached ArrayBuffers.
+exports.ArrayBuffer = (V, opts) => {
+    if (!isArrayBuffer(V)) {
+        throw new TypeError(_("is not a view on an ArrayBuffer object", opts));
+    }
+    return V;
+};
+
+const dvByteLengthGetter =
+    Object.getOwnPropertyDescriptor(DataView.prototype, "byteLength").get;
+exports.DataView = (V, opts) => {
+    try {
+        dvByteLengthGetter.call(V);
+        return V;
+    } catch (e) {
+        throw new TypeError(_("is not a view on an DataView object", opts));
+    }
+};
+
 [
-    Error,
-    ArrayBuffer, // The IsDetachedBuffer abstract operation is not exposed in JS
-    DataView, Int8Array, Int16Array, Int32Array, Uint8Array,
+    Int8Array, Int16Array, Int32Array, Uint8Array,
     Uint16Array, Uint32Array, Uint8ClampedArray, Float32Array, Float64Array
 ].forEach(func => {
     const name = func.name;
     const article = /^[AEIOU]/.test(name) ? "an" : "a";
     exports[name] = (V, opts) => {
-        if (!(V instanceof func)) {
+        if (!ArrayBuffer.isView(V) || V.constructor.name !== name) {
             throw new TypeError(_(`is not ${article} ${name} object`, opts));
         }
 
@@ -318,7 +347,7 @@ exports.ArrayBufferView = (V, opts) => {
 };
 
 exports.BufferSource = (V, opts) => {
-    if (!(ArrayBuffer.isView(V) || V instanceof ArrayBuffer)) {
+    if (!ArrayBuffer.isView(V) && !isArrayBuffer(V)) {
         throw new TypeError(_("is not an ArrayBuffer object or a view on one", opts));
     }
 

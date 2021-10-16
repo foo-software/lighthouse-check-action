@@ -1,11 +1,5 @@
 name: Test Extra Headers
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: [pull_request]
 
 jobs:
   lighthouse:
@@ -26,8 +20,9 @@ jobs:
         uses: ./
         with:
           extraHeaders: '{ "x-test-1": "hello world", "x-test-2": "foo" }'
-          urls: ${{ steps.now.outputs.preview-url }}
+          fooApiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
           outputDirectory: /tmp/artifacts
+          urlsJson: '[["cf8b27b3-ccb8-4477-83b6-ded2c375f977", "${{ steps.now.outputs.preview-url }}"]]'
       - name: Upload artifacts
         uses: actions/upload-artifact@master
         with:

@@ -4,11 +4,13 @@
   "description": "A GitHub Action for running multiple Lighthouse audits automatically in a workflow with a rich set of bonus features.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "npm run build:js",
-    "build:js": "npm run clean && tsc -p tsconfig.release.json",
+    "build": "npm run clean && npm run build:js",
+    "build:js": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf dist",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "jest": "jest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "test": "npm run jest",
     "test:headers": "ts-node src/test/headerServer.ts"
   },
   "repository": {
@@ -37,38 +39,40 @@
     "foo",
     "foo.software"
   ],
-  "jest": {
-    "modulePathIgnorePatterns": [
-      "<rootDir>/dist/"
-    ]
-  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+    "src/**/*.{ts,tsx}": [
       "prettier --single-quote --write",
-      "git add"
+      "npm run lint"
     ]
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
-    "@foo-software/lighthouse-check": "^4.0.2",
+    "@foo-software/lighthouse-check": "^4.0.3",
     "express": "^4.17.1",
     "lodash.get": "^4.4.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/jest": "^26.0.10",
     "@types/lodash.get": "^4.4.6",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
     "@vercel/ncc": "^0.31.1",
-    "husky": "^3.1.0",
-    "jest": "^24.9.0",
-    "lint-staged": "^9.5.0",
+    "eslint": "^7.7.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "husky": "^4.2.5",
+    "jest": "^27.2.5",
+    "lint-staged": "^10.2.11",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
   }
