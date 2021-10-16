@@ -61,7 +61,6 @@ const formatInput = (input) => {
         const extraHeaders = core.getInput('extraHeaders');
         const commentUrl = core.getInput('commentUrl');
         const prApiUrl = (0, lodash_get_1.default)(github, 'context.payload.pull_request.url');
-        console.log('extraHeaders', !extraHeaders ? undefined : JSON.parse(extraHeaders));
         const results = await (0, lighthouse_check_1.lighthouseCheck)({
             author: gitAuthor || legacyGitAuthor,
             apiToken: fooApiToken || legacyFooApiToken,
