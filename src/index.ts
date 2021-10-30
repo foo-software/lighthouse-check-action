@@ -36,6 +36,10 @@ const formatInput = (input: string) => {
     const gitBranch = core.getInput('gitBranch');
     const device = core.getInput('device');
 
+    const commentUrl = core.getInput('commentUrl');
+    const extraHeaders = core.getInput('extraHeaders');
+    const maxRetries = core.getInput('maxRetries');
+    const prApiUrl = get(github, 'context.payload.pull_request.url');
     const urlsSimple = formatInput(core.getInput('urls'));
     const urlsComplex = formatInput(core.getInput('urlsJson'));
     const urls =
@@ -44,9 +48,6 @@ const formatInput = (input: string) => {
         : typeof urlsComplex === 'string'
         ? getUrlsFromJson(urlsComplex)
         : undefined;
-    const extraHeaders = core.getInput('extraHeaders');
-    const commentUrl = core.getInput('commentUrl');
-    const prApiUrl = get(github, 'context.payload.pull_request.url');
 
     const results = await lighthouseCheck({
       author: gitAuthor || legacyGitAuthor,
@@ -61,6 +62,7 @@ const formatInput = (input: string) => {
       extraHeaders: !extraHeaders ? undefined : JSON.parse(extraHeaders),
       locale: formatInput(core.getInput('locale')),
       help: formatInput(core.getInput('help')),
+      maxRetries: !maxRetries ? 0 : Number(maxRetries),
       outputDirectory: formatInput(core.getInput('outputDirectory')),
       overridesJsonFile: formatInput(core.getInput('overridesJsonFile')),
       pr: formatInput(core.getInput('pr')),
