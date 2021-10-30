@@ -68,6 +68,10 @@ const defaultOptions = {
     type: 'boolean',
     value: undefined
   },
+  maxRetries: {
+    type: 'number',
+    value: 0
+  },
   maxWaitForLoad: {
     type: 'number',
     value: undefined

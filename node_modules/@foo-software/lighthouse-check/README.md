@@ -517,6 +517,14 @@ Below are options for the exported `lighthouseCheck` function or `lighthouse-che
     <td>no</td>
   </tr>
   <tr>
+    <td><code>maxRetries</code></td>
+    <td>The maximum number of times to retry.<strong>Note</strong>: This is not supported when running against Foo's API as retry logic is already in place.</td>
+    <td><code>number</code></td>
+    <td><code>local</code></td>
+    <td><code>0</code></td>
+    <td>no</td>
+  </tr>
+  <tr>
     <td><code>maxWaitForLoad</code></td>
     <td>The maximum amount of time to wait for a page to load in ms.</td>
     <td><code>number</code></td>

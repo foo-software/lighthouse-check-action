@@ -37,6 +37,8 @@ inputs:
     description: 'Access token of a user to post PR comments.'
   locale:
     description: 'A locale for Lighthouse reports. Example: ja'
+  maxRetries:
+    description: "The maximum number of times to retry. Note: This is not supported when running against Foo's API as retry logic is already in place."
   outputDirectory:
     description: 'An absolute directory path to output report. You can do this an an alternative or combined with an S3 upload.'
   overridesJsonFile:

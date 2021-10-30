@@ -120,6 +120,50 @@ export const localLighthouse = async ({
   };
 };
 
+export const getLocalLighthouseResultsWithRetries = async ({
+  auditConfig,
+  localLighthousePromise = localLighthouse,
+  maxRetries = 0,
+  retries = 0,
+  verbose = false
+}) => {
+  let lighthouseAuditResult;
+  try {
+    lighthouseAuditResult = await localLighthousePromise(auditConfig);
+    if (maxRetries && retries) {
+      console.log(`Succeeded on retry #${retries}.`);
+    }
+    return lighthouseAuditResult;
+  } catch (error) {
+    if (retries >= maxRetries) {
+      if (maxRetries) {
+        console.log(`Max retries of ${maxRetries} exhausted... failing now.`);
+      }
+      throw error;
+    } else {
+      if (verbose) {
+        console.log(
+          `${NAME}: Error below caught on retry ${retries} of ${maxRetries}.`,
+          error,
+          'Trying again...'
+        );
+      } else {
+        console.log(
+          `Error caught on retry ${retries} of ${maxRetries}.`,
+          'Trying again...'
+        );
+      }
+
+      return getLocalLighthouseResultsWithRetries({
+        auditConfig,
+        localLighthousePromise,
+        maxRetries,
+        retries: retries + 1
+      });
+    }
+  }
+};
+
 export default async ({
   awsAccessKeyId,
   awsBucket,
@@ -129,6 +173,7 @@ export default async ({
   extraHeaders,
   locale,
   overridesJsonFile,
+  maxRetries = 0,
   maxWaitForLoad,
   outputDirectory,
   throttling,
@@ -194,7 +239,12 @@ export default async ({
         `${NAME}: Auditing ${auditConfig.emulatedFormFactor} (${index}/${auditConfigs.length}): ${auditConfig.url}`
       );
     }
-    const lighthouseAuditResult = await localLighthouse(auditConfig);
+    const lighthouseAuditResult = await getLocalLighthouseResultsWithRetries({
+      auditConfig,
+      maxRetries,
+      retries: 0,
+      verbose
+    });
     auditResults.push(lighthouseAuditResult);
     index++;
   }
