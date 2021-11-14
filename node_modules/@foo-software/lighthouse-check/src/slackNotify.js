@@ -6,6 +6,7 @@ import { NAME } from './constants';
 export default async ({
   author,
   branch,
+  device,
   pr: prParam,
   results,
   sha,
@@ -41,7 +42,7 @@ export default async ({
       }
 
       await webhook.send({
-        text: result.url,
+        text: `${result.url} (${device})`,
         attachments: [
           {
             color: '#2091fa',
