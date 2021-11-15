@@ -122,7 +122,6 @@ export default ({
               await slackNotify({
                 author,
                 branch,
-                device: emulatedFormFactor,
                 pr,
                 results: auditResults,
                 sha,
@@ -201,7 +200,6 @@ export default ({
             await slackNotify({
               author,
               branch,
-              device: emulatedFormFactor,
               pr,
               results: lighthouseAudits,
               sha,
