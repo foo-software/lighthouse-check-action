@@ -15,7 +15,6 @@ jobs:
           zeit-token: ${{ secrets.ZEIT_NOW_TOKEN }}
           now-org-id: ${{ secrets.ZEIT_NOW_ORG_ID }}
           now-project-id: ${{ secrets.ZEIT_NOW_PROJECT_ID }}
-      - run: mkdir /tmp/artifacts
       - name: Run Lighthouse
         uses: ./
         with:
