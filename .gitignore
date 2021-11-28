@@ -1,2 +1,5 @@
 .vscode
 .now
+.DS_Store
+node_modules
+dist
