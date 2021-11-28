@@ -21,12 +21,21 @@
  * critical request chains network tree.
  */
 
-/** @typedef {import('./dom.js').DOM} DOM */
-/** @typedef {import('./details-renderer.js').DetailsRenderer} DetailsRenderer */
-
 import {Util} from './util.js';
 
-export class CriticalRequestChainRenderer {
+/** @typedef {import('./dom.js').DOM} DOM */
+/** @typedef {import('./details-renderer.js').DetailsRenderer} DetailsRenderer */
+/**
+ * @typedef CRCSegment
+ * @property {LH.Audit.Details.SimpleCriticalRequestNode[string]} node
+ * @property {boolean} isLastChild
+ * @property {boolean} hasChildren
+ * @property {number} startTime
+ * @property {number} transferSize
+ * @property {boolean[]} treeMarkers
+ */
+
+class CriticalRequestChainRenderer {
   /**
    * Create render context for critical-request-chain tree display.
    * @param {LH.Audit.Details.SimpleCriticalRequestNode} tree
@@ -191,12 +200,6 @@ export class CriticalRequestChainRenderer {
 // Alias b/c the name is really long.
 const CRCRenderer = CriticalRequestChainRenderer;
 
-/** @typedef {{
-      node: LH.Audit.Details.SimpleCriticalRequestNode[string],
-      isLastChild: boolean,
-      hasChildren: boolean,
-      startTime: number,
-      transferSize: number,
-      treeMarkers: Array<boolean>
-  }} CRCSegment
- */
+export {
+  CriticalRequestChainRenderer,
+};

@@ -5,9 +5,13 @@
  */
 'use strict';
 
-/** @fileoverview This file is a glorified call of prepareLabData. */
+/** @fileoverview This file exercises two LH reports within the same DOM. */
 
-/** @typedef {import('../clients/psi.js').PrepareLabDataResult} PrepareLabDataResult */
+/** @typedef {import('../clients/bundle.js')} lighthouseRenderer */
+
+/** @type {lighthouseRenderer} */
+// @ts-expect-error
+const lighthouseRenderer = window['report'];
 
 (async function __initPsiReports__() {
   // @ts-expect-error
@@ -22,22 +26,23 @@
   for (const [tabId, lhr] of Object.entries(lhrs)) {
     await distinguishLHR(lhr, tabId);
 
-    // @ts-expect-error
-    const pldd = /** @type {PrepareLabDataResult} */ (window.prepareLabData(lhr, document));
-    const {scoreGaugeEl, perfCategoryEl,
-      finalScreenshotDataUri, scoreScaleEl, installFeatures} = pldd;
-
-    const container = document.querySelector(`#${tabId} main`);
+    const container = document.querySelector(`section#${tabId}`);
     if (!container) throw new Error('Unexpected DOM. Bailing.');
-    container.append(scoreGaugeEl);
-    container.append(scoreScaleEl);
-    if (finalScreenshotDataUri) {
-      const imgEl = document.createElement('img');
-      imgEl.src = finalScreenshotDataUri;
-      container.append(imgEl);
+
+    try {
+      const reportRootEl = lighthouseRenderer.renderReport(lhr, {
+        omitTopbar: true,
+        disableAutoDarkModeAndFireworks: true,
+      });
+      // TODO: display warnings if appropriate.
+      for (const el of reportRootEl.querySelectorAll('.lh-warnings')) {
+        el.setAttribute('hidden', 'true');
+      }
+      container.append(reportRootEl);
+    } catch (e) {
+      console.error(e);
+      container.textContent = 'Error: LHR failed to render.';
     }
-    container.append(perfCategoryEl);
-    installFeatures(container);
   }
 })();
 
@@ -49,7 +54,6 @@
  * @param {string} tabId
  */
 async function distinguishLHR(lhr, tabId) {
-  lhr.categories.performance.title += ` ${tabId}`; // for easier identification
   if (tabId === 'desktop') {
     lhr.categories.performance.score = 0.81;
   }
@@ -78,15 +82,15 @@ async function decorateScreenshot(datauri, tabId) {
     img.src = datauri;
   });
   const c = document.createElement('canvas');
-  c.width = img.width;
-  c.height = img.height;
+  c.width = tabId === 'desktop' ? 280 : img.width;
+  c.height = tabId === 'desktop' ? 194 : img.height;
 
   const ctx = c.getContext('2d');
   if (!ctx) throw new Error();
-  ctx.drawImage(img, 0, 0);
-  ctx.font = `${img.width / 2}px serif`;
+  ctx.drawImage(img, 0, 0, c.width, c.height);
+  ctx.font = `${c.width / 2}px serif`;
   ctx.textAlign = 'center';
   ctx.globalAlpha = 0.7;
-  ctx.fillText(tabId === 'mobile' ? '📱' : '💻', img.width / 2, Math.min(img.height / 2, 700));
+  ctx.fillText(tabId === 'mobile' ? '📱' : '💻', c.width / 2, Math.min(c.height / 2, 700));
   return c.toDataURL();
 }

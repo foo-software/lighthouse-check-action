@@ -69,6 +69,8 @@ class InspectorIssues extends FRGatherer {
       heavyAds: [],
       /** @type {Array<LH.Crdp.Audits.ContentSecurityPolicyIssueDetails>} */
       contentSecurityPolicy: [],
+      /** @type {Array<LH.Crdp.Audits.DeprecationIssueDetails>} */
+      deprecations: [],
     };
 
     for (const issue of this._issues) {
@@ -104,6 +106,9 @@ class InspectorIssues extends FRGatherer {
       }
       if (issue.details.contentSecurityPolicyIssueDetails) {
         artifact.contentSecurityPolicy.push(issue.details.contentSecurityPolicyIssueDetails);
+      }
+      if (issue.details.deprecationIssueDetails) {
+        artifact.deprecations.push(issue.details.deprecationIssueDetails);
       }
     }
 

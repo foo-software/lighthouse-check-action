@@ -6,6 +6,7 @@
 'use strict';
 
 const Audit = require('./audit.js');
+const JsBundles = require('../computed/js-bundles.js');
 const i18n = require('./../lib/i18n/i18n.js');
 
 const UIStrings = {
@@ -29,21 +30,24 @@ class NoUnloadListeners extends Audit {
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
-      requiredArtifacts: ['GlobalListeners', 'JsUsage'],
+      requiredArtifacts: ['GlobalListeners', 'JsUsage', 'SourceMaps', 'ScriptElements'],
     };
   }
 
   /**
    * @param {LH.Artifacts} artifacts
-   * @return {LH.Audit.Product}
+   * @param {LH.Audit.Context} context
+   * @return {Promise<LH.Audit.Product>}
    */
-  static audit(artifacts) {
+  static async audit(artifacts, context) {
     const unloadListeners = artifacts.GlobalListeners.filter(l => l.type === 'unload');
     if (!unloadListeners.length) {
       return {
         score: 1,
       };
     }
+
+    const bundles = await JsBundles.request(artifacts, context);
 
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
@@ -74,14 +78,9 @@ class NoUnloadListeners extends Audit {
         };
       }
 
+      const bundle = bundles.find(bundle => bundle.script.src === url);
       return {
-        source: {
-          type: 'source-location',
-          url,
-          urlProvider: 'network',
-          line: listener.lineNumber,
-          column: listener.columnNumber,
-        },
+        source: Audit.makeSourceLocation(url, listener.lineNumber, listener.columnNumber, bundle),
       };
     });
 

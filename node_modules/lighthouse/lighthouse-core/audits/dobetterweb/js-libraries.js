@@ -61,7 +61,7 @@ class JsLibrariesAudit extends Audit {
     const details = Audit.makeTableDetails(headings, libDetails, {});
 
     const debugData = {
-      type: /** @type {'debugdata'} */ ('debugdata'),
+      type: /** @type {const} */ ('debugdata'),
       stacks: artifacts.Stacks.map(stack => {
         return {
           id: stack.id,

@@ -25,7 +25,6 @@ export interface Artifacts extends BaseArtifacts, GathererArtifacts {}
 
 export type FRArtifacts = StrictOmit<Artifacts,
   | 'Fonts'
-  | 'HTTPRedirect'
   | 'Manifest'
   | 'MixedContent'
   | keyof FRBaseArtifacts
@@ -123,8 +122,6 @@ export interface GathererArtifacts extends PublicGathererArtifacts,LegacyBaseArt
   Accessibility: Artifacts.Accessibility;
   /** Array of all anchors on the page. */
   AnchorElements: Artifacts.AnchorElement[];
-  /** The value of the page's <html> manifest attribute, or null if not defined */
-  AppCacheManifest: string | null;
   /** Array of all URLs cached in CacheStorage. */
   CacheContents: string[];
   /** CSS coverage information for styles used by page's final state. */
@@ -148,8 +145,6 @@ export interface GathererArtifacts extends PublicGathererArtifacts,LegacyBaseArt
   FullPageScreenshot: Artifacts.FullPageScreenshot | null;
   /** Information about event listeners registered on the global object. */
   GlobalListeners: Array<Artifacts.GlobalListener>;
-  /** Whether the page ended up on an HTTPS page after attempting to load the HTTP version. */
-  HTTPRedirect: {value: boolean};
   /** The issues surfaced in the devtools Issues panel */
   InspectorIssues: Artifacts.InspectorIssues;
   /** JS coverage information for code used during page load. Keyed by network URL. */
@@ -211,6 +206,7 @@ declare module Artifacts {
       target: Array<string>;
       failureSummary?: string;
       node: NodeDetails;
+      relatedNodes: NodeDetails[];
     }>;
     error?: RuleExecutionError;
   }
@@ -491,8 +487,6 @@ declare module Artifacts {
     isPicture: boolean;
     /** Flags whether this element was contained within a ShadowRoot */
     isInShadowDOM: boolean;
-    /** The MIME type of the underlying image file. */
-    mimeType?: string;
     /** Details for node in DOM for the image element */
     node: NodeDetails;
     /** The loading attribute of the image. */
@@ -564,6 +558,7 @@ declare module Artifacts {
     blockedByResponse: LH.Crdp.Audits.BlockedByResponseIssueDetails[];
     heavyAds: LH.Crdp.Audits.HeavyAdIssueDetails[];
     contentSecurityPolicy: LH.Crdp.Audits.ContentSecurityPolicyIssueDetails[];
+    deprecations: LH.Crdp.Audits.DeprecationIssueDetails[];
   }
 
   // Computed artifact types below.
@@ -875,6 +870,11 @@ declare module Artifacts {
   }
 
   type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleProtocolLog;
+
+  interface ImageElementRecord extends ImageElement {
+    /** The MIME type of the underlying image file. */
+    mimeType?: string;
+  }
 }
 
 export interface Trace {

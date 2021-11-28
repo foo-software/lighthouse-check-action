@@ -1,7 +1,7 @@
 # Terminology
 
 * **CTC format**: The [Chrome extension & Chrome app i18n format](https://developer.chrome.com/extensions/i18n-messages) with some minor changes. JSON with their specified model for declaring placeholders, examples, etc. Used as an interchange data format.
-* **LHL syntax** (Lighthouse Localizable syntax): The ICU-friendly string syntax that is used to author `UIStrings` and is seen in the locale files in `i18n/locales/*.json`. Lighthouse has a custom syntax these strings combines many ICU message features along with some markdown.
+* **LHL syntax** (Lighthouse Localizable syntax): The ICU-friendly string syntax that is used to author `UIStrings` and is seen in the locale files in `shared/localization/locales/*.json`. Lighthouse has a custom syntax these strings combines many ICU message features along with some markdown.
 * **ICU**: ICU (International Components for Unicode) is a localization project and standard defined by the Unicode consortium. In general, we refer to "ICU" as the [ICU message formatting](http://userguide.icu-project.org/formatparse/messages) syntax.
 
 # The Lighthouse i18n pipeline
@@ -12,11 +12,11 @@ The collection and translation pipeline:
 ```
  Source files:                                         Locale files:
 +---------------------------+                         +----------------------------------------------
-|                           ++                        | lighthouse-core/lib/i18n/locales/en-US.json |
-| const UIStrings = { ... };|-+                 +---> | lighthouse-core/lib/i18n/locales/en-XL.json |
+|                           ++                        | shared/localization/locales/en-US.json |
+| const UIStrings = { ... };|-+                 +---> | shared/localization/locales/en-XL.json |
 |                           |-|                 |     +----------------------------------------------+
 +-----------------------------|                 |     |                                             ||
- +----------------------------|                 |     | lighthouse-core/lib/i18n/locales/*.json     |-<+
+ +----------------------------|                 |     | shared/localization/locales/*.json     |-<+
   +---------------------------+                 |     |                                             || |
                            |                    |     +----------------------------------------------| |
   $ yarn                   |                    |      +---------------------------------------------+ |
@@ -218,7 +218,7 @@ CTC is a name that is distinct and identifies this as the Chrome translation for
 1.  String called in `.js` file, converted to `LH.IcuMessage` object.
 
 1.  Message object is replaced with the localized string via
-    `i18n.replaceIcuMessages` and `i18n.getFormatted`.
+    `format.replaceIcuMessages` and `format.getFormatted`.
 
 #### Example:
 
@@ -251,7 +251,7 @@ CTC is a name that is distinct and identifies this as the Chrome translation for
     }
     ```
 
-3.  Lookup in `i18n.replaceIcuMessages` and `i18n.getFormatted` will attempt to find the message in this order:
+3.  Lookup in `format.replaceIcuMessages` and `format.getFormatted` will attempt to find the message in this order:
 
     1.  `locales/{locale}.json` The best result. `icuMessage.i18nId` is found in the target locale and the resulting string should appear correct.
 

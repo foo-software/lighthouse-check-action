@@ -18,7 +18,7 @@
 /**
  * @typedef InstallOverlayFeatureParams
  * @property {DOM} dom
- * @property {Element} reportEl
+ * @property {Element} rootEl
  * @property {Element} overlayContainerEl
  * @property {LH.Audit.Details.FullPageScreenshot} fullPageScreenshot
  */
@@ -51,7 +51,7 @@ function clamp(value, min, max) {
 /**
  * @param {Rect} rect
  */
-function getRectCenterPoint(rect) {
+function getElementRectCenterPoint(rect) {
   return {
     x: rect.left + rect.width / 2,
     y: rect.top + rect.height / 2,
@@ -68,7 +68,7 @@ export class ElementScreenshotRenderer {
    * @param {Size} screenshotSize
    */
   static getScreenshotPositions(elementRectSC, elementPreviewSizeSC, screenshotSize) {
-    const elementRectCenter = getRectCenterPoint(elementRectSC);
+    const elementRectCenter = getElementRectCenterPoint(elementRectSC);
 
     // Try to center clipped region.
     const screenshotLeftVisibleEdge = clamp(
@@ -135,7 +135,7 @@ export class ElementScreenshotRenderer {
    * @param {LH.Audit.Details.FullPageScreenshot['screenshot']} screenshot
    */
   static installFullPageScreenshot(el, screenshot) {
-    el.style.setProperty('--element-screenshot-url', `url(${screenshot.data})`);
+    el.style.setProperty('--element-screenshot-url', `url('${screenshot.data}')`);
   }
 
   /**
@@ -143,14 +143,14 @@ export class ElementScreenshotRenderer {
    * @param {InstallOverlayFeatureParams} opts
    */
   static installOverlayFeature(opts) {
-    const {dom, reportEl, overlayContainerEl, fullPageScreenshot} = opts;
+    const {dom, rootEl, overlayContainerEl, fullPageScreenshot} = opts;
     const screenshotOverlayClass = 'lh-screenshot-overlay--enabled';
     // Don't install the feature more than once.
-    if (reportEl.classList.contains(screenshotOverlayClass)) return;
-    reportEl.classList.add(screenshotOverlayClass);
+    if (rootEl.classList.contains(screenshotOverlayClass)) return;
+    rootEl.classList.add(screenshotOverlayClass);
 
     // Add a single listener to the provided element to handle all clicks within (event delegation).
-    reportEl.addEventListener('click', e => {
+    rootEl.addEventListener('click', e => {
       const target = /** @type {?HTMLElement} */ (e.target);
       if (!target) return;
       // Only activate the overlay for clicks on the screenshot *preview* of an element, not the full-size too.

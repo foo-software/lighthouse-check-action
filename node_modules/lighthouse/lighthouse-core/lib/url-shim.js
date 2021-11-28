@@ -9,7 +9,7 @@
  * URL shim so we keep our code DRY
  */
 
-const Util = require('../util-commonjs.js');
+const {Util} = require('../util-commonjs.js');
 
 /** @typedef {import('./network-request.js')} NetworkRequest */
 

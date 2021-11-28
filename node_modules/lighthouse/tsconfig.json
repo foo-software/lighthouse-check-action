@@ -10,6 +10,7 @@
     {"path": "./types/lhr/"},
     {"path": "./report/"},
     {"path": "./report/generator/"},
+    {"path": "./shared/"},
   ],
   "include": [
     "root.js",
@@ -22,13 +23,13 @@
 
     // TODO(esmodules): JSON files included via resolveJsonModule. Removable on the switch to ES Modules.
     "package.json",
-    "lighthouse-core/lib/i18n/locales/en-US.json",
     "lighthouse-core/test/results/sample_v2.json",
     "lighthouse-core/lib/sd-validation/assets/*.json",
     "lighthouse-core/test/fixtures/unresolved-perflog.json",
     "lighthouse-core/test/fixtures/traces/lcp-m78.devtools.log.json",
     "third-party/snyk/snapshot.json",
     "lighthouse-core/audits/byte-efficiency/polyfill-graph-data.json",
+    "shared/localization/locales/en-US.json",
   ],
   "exclude": [
     "lighthouse-core/test/audits/**/*.js",
@@ -57,7 +58,6 @@
     "lighthouse-core/test/gather/gatherers/full-page-screenshot-test.js",
     "lighthouse-core/test/gather/gatherers/global-listeners-test.js",
     "lighthouse-core/test/gather/gatherers/html-without-javascript-test.js",
-    "lighthouse-core/test/gather/gatherers/http-redirect-test.js",
     "lighthouse-core/test/gather/gatherers/js-usage-test.js",
     "lighthouse-core/test/gather/gatherers/link-elements-test.js",
     "lighthouse-core/test/gather/gatherers/offline-test.js",
@@ -79,8 +79,6 @@
     "lighthouse-core/test/lib/dependency-graph/simulator/simulator-test.js",
     "lighthouse-core/test/lib/emulation-test.js",
     "lighthouse-core/test/lib/i18n/i18n-test.js",
-    "lighthouse-core/test/lib/i18n/locales-test.js",
-    "lighthouse-core/test/lib/i18n/swap-locale-test.js",
     "lighthouse-core/test/lib/icons-test.js",
     "lighthouse-core/test/lib/lh-element-test.js",
     "lighthouse-core/test/lib/manifest-parser-test.js",

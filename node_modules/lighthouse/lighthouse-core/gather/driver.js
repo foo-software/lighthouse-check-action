@@ -338,13 +338,9 @@ class Driver {
     let asyncTimeout;
     const timeoutPromise = new Promise((resolve, reject) => {
       if (timeout === Infinity) return;
-      asyncTimeout = setTimeout((() => {
-        const err = new LHError(
-          LHError.errors.PROTOCOL_TIMEOUT,
-          {protocolMethod: method}
-        );
-        reject(err);
-      }), timeout);
+      asyncTimeout = setTimeout(reject, timeout, new LHError(LHError.errors.PROTOCOL_TIMEOUT, {
+        protocolMethod: method,
+      }));
     });
 
     return Promise.race([

@@ -41,6 +41,6 @@ describe('TextEncoding', () => {
     await test('Some examples of emoji are 😃, 🧘🏻‍♂️, 🌍, 🍞, 🚗, 📞, 🎉, ♥️, 🍆, and 🏁.');
     await test('.'.repeat(125183));
     await test('😃'.repeat(125183));
-    await test(fs.readFileSync(LH_ROOT + '/lighthouse-treemap/app/debug.json', 'utf-8'));
+    await test(fs.readFileSync(LH_ROOT + '/treemap/app/debug.json', 'utf-8'));
   });
 });

@@ -13,26 +13,16 @@
 
 /* global ga */
 
-import {DOM} from '../renderer/dom.js';
+import {renderReport} from '../renderer/api.js';
 import {Logger} from '../renderer/logger.js';
-import {ReportRenderer} from '../renderer/report-renderer.js';
-import {ReportUIFeatures} from '../renderer/report-ui-features.js';
 
-// Used by standalone.html
-// eslint-disable-next-line no-unused-vars
 function __initLighthouseReport__() {
-  const dom = new DOM(document);
-  const renderer = new ReportRenderer(dom);
-  const container = dom.find('main', document);
-  /** @type {LH.ReportResult} */
+  /** @type {LH.Result} */
   // @ts-expect-error
   const lhr = window.__LIGHTHOUSE_JSON__;
-  renderer.renderReport(lhr, container);
 
-  // Hook in JS features and page-level event listeners after the report
-  // is in the document.
-  const features = new ReportUIFeatures(dom);
-  features.initFeatures(lhr);
+  const reportRootEl = renderReport(lhr);
+  document.body.append(reportRootEl);
 
   document.addEventListener('lh-analytics', /** @param {Event} e */ e => {
     // @ts-expect-error
@@ -40,7 +30,7 @@ function __initLighthouseReport__() {
   });
 
   document.addEventListener('lh-log', /** @param {Event} e */ e => {
-    const el = document.querySelector('#lh-log');
+    const el = document.querySelector('div#lh-log');
     if (!el) return;
 
     const logger = new Logger(el);

@@ -21,10 +21,43 @@
  */
 export class Logger {
   /**
-   * @param {Element} element
+   * @param {HTMLElement} element - expected to have id #lh-log
    */
   constructor(element) {
     this.el = element;
+    const styleEl = document.createElement('style');
+    styleEl.textContent = /* css */ `
+      #lh-log {
+        position: fixed;
+        background-color: #323232;
+        color: #fff;
+        min-height: 48px;
+        min-width: 288px;
+        padding: 16px 24px;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+        border-radius: 2px;
+        margin: 12px;
+        font-size: 14px;
+        cursor: default;
+        transition: transform 0.3s, opacity 0.3s;
+        transform: translateY(100px);
+        opacity: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 3;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      #lh-log.lh-show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    `;
+    if (!this.el.parentNode) throw new Error('element needs to be in the DOM');
+    this.el.parentNode.insertBefore(styleEl, this.el);
     this._id = undefined;
   }
 
@@ -71,6 +104,6 @@ export class Logger {
    */
   hide() {
     this._id && clearTimeout(this._id);
-    this.el.classList.remove('show');
+    this.el.classList.remove('lh-show');
   }
 }

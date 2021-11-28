@@ -18,6 +18,7 @@ Many developers today use different technologies (backend/CMS/JavaScript framewo
 * Angular
 * AMP
 * Magento
+* Next.js
 
 ## Contributing
 

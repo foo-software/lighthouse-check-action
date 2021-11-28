@@ -195,9 +195,7 @@ class Fetcher {
     /** @type {NodeJS.Timeout} */
     let timeoutHandle;
     const timeoutPromise = new Promise((_, reject) => {
-      timeoutHandle = setTimeout(() => {
-        reject(new Error('Timed out fetching resource'));
-      }, options.timeout);
+      timeoutHandle = setTimeout(reject, options.timeout, new Error('Timed out fetching resource'));
     });
 
     const responsePromise = this._loadNetworkResource(url);
@@ -283,17 +281,16 @@ class Fetcher {
     /* c8 ignore stop */
 
     /** @type {NodeJS.Timeout} */
-    let timeoutHandle;
+    let asyncTimeout;
     /** @type {Promise<never>} */
     const timeoutPromise = new Promise((_, reject) => {
-      const errorMessage = 'Timed out fetching resource.';
-      timeoutHandle = setTimeout(() => reject(new Error(errorMessage)), options.timeout);
+      asyncTimeout = setTimeout(reject, options.timeout, new Error('Timed out fetching resource.'));
     });
 
     const racePromise = Promise.race([
       timeoutPromise,
       requestInterceptionPromise,
-    ]).finally(() => clearTimeout(timeoutHandle));
+    ]).finally(() => clearTimeout(asyncTimeout));
 
     // Temporarily disable auto-attaching for this iframe.
     await this.session.sendCommand('Target.setAutoAttach', {

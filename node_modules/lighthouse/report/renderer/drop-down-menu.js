@@ -36,11 +36,11 @@ export class DropDownMenu {
    * @param {function(MouseEvent): any} menuClickHandler
    */
   setup(menuClickHandler) {
-    this._toggleEl = this._dom.find('button.lh-tools__button', this._dom.document());
+    this._toggleEl = this._dom.find('.lh-topbar button.lh-tools__button', this._dom.rootEl);
     this._toggleEl.addEventListener('click', this.onToggleClick);
     this._toggleEl.addEventListener('keydown', this.onToggleKeydown);
 
-    this._menuEl = this._dom.find('div.lh-tools__dropdown', this._dom.document());
+    this._menuEl = this._dom.find('.lh-topbar div.lh-tools__dropdown', this._dom.rootEl);
     this._menuEl.addEventListener('keydown', this.onMenuKeydown);
     this._menuEl.addEventListener('click', menuClickHandler);
   }

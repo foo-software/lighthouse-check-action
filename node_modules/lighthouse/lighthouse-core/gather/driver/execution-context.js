@@ -166,7 +166,7 @@ class ExecutionContext {
    * @param {{args: T, useIsolation?: boolean, deps?: Array<Function|string>}} options `args` should
    *   match the args of `mainFn`, and can be any serializable value. `deps` are functions that must be
    *   defined for `mainFn` to work.
-   * @return {FlattenedPromise<R>}
+   * @return {Promise<Awaited<R>>}
    */
   evaluate(mainFn, options) {
     const argsSerialized = ExecutionContext.serializeArguments(options.args);

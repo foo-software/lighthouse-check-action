@@ -5,6 +5,7 @@
  */
 'use strict';
 
+const log = require('lighthouse-logger');
 const ProtocolSession = require('./session.js');
 const ExecutionContext = require('../../gather/driver/execution-context.js');
 const Fetcher = require('../../gather/fetcher.js');
@@ -68,10 +69,13 @@ class Driver {
   /** @return {Promise<void>} */
   async connect() {
     if (this._session) return;
+    const status = {msg: 'Connecting to browser', id: 'lh:driver:connect'};
+    log.time(status);
     const session = await this._page.target().createCDPSession();
     this._session = this.defaultSession = new ProtocolSession(session);
     this._executionContext = new ExecutionContext(this._session);
     this._fetcher = new Fetcher(this._session, this._executionContext);
+    log.timeEnd(status);
   }
 
   /** @return {Promise<void>} */

@@ -10,6 +10,7 @@ const ComputedMetric = require('./metric.js');
 const TraceProcessor = require('../../lib/tracehouse/trace-processor.js');
 const LanternTotalBlockingTime = require('./lantern-total-blocking-time.js');
 const TimetoInteractive = require('./interactive.js');
+const {calculateSumOfBlockingTime} = require('./tbt-utils.js');
 
 /**
  * @fileoverview This audit determines Total Blocking Time.
@@ -25,57 +26,6 @@ const TimetoInteractive = require('./interactive.js');
  * to smaller improvements to main thread responsiveness.
  */
 class TotalBlockingTime extends ComputedMetric {
-  /**
-   * @return {number}
-   */
-  static get BLOCKING_TIME_THRESHOLD() {
-    return 50;
-  }
-
-  /**
-   * @param {Array<{start: number, end: number, duration: number}>} topLevelEvents
-   * @param {number} startTimeMs
-   * @param {number} endTimeMs
-   * @return {number}
-   */
-  static calculateSumOfBlockingTime(topLevelEvents, startTimeMs, endTimeMs) {
-    if (endTimeMs <= startTimeMs) return 0;
-
-    const threshold = TotalBlockingTime.BLOCKING_TIME_THRESHOLD;
-    let sumBlockingTime = 0;
-    for (const event of topLevelEvents) {
-      // Early exit for small tasks, which should far outnumber long tasks.
-      if (event.duration < threshold) continue;
-
-      // We only want to consider tasks that fall in our time range (FCP and TTI for navigations).
-      // FCP is picked as the lower bound because there is little risk of user input happening
-      // before FCP so Long Queuing Qelay regions do not harm user experience. Developers should be
-      // optimizing to reach FCP as fast as possible without having to worry about task lengths.
-      if (event.end < startTimeMs) continue;
-
-      // TTI is picked as the upper bound because we want a well defined end point for page load.
-      if (event.start > endTimeMs) continue;
-
-      // We first perform the clipping, and then calculate Blocking Region. So if we have a 150ms
-      // task [0, 150] and FCP happens midway at 50ms, we first clip the task to [50, 150], and then
-      // calculate the Blocking Region to be [100, 150]. The rational here is that tasks before FCP
-      // are unimportant, so we care whether the main thread is busy more than 50ms at a time only
-      // after FCP.
-      const clippedStart = Math.max(event.start, startTimeMs);
-      const clippedEnd = Math.min(event.end, endTimeMs);
-      const clippedDuration = clippedEnd - clippedStart;
-      if (clippedDuration < threshold) continue;
-
-      // The duration of the task beyond 50ms at the beginning is considered the Blocking Region.
-      // Example:
-      //   [              250ms Task                   ]
-      //   | First 50ms |   Blocking Region (200ms)    |
-      sumBlockingTime += clippedDuration - threshold;
-    }
-
-    return sumBlockingTime;
-  }
-
   /**
    * @param {LH.Artifacts.MetricComputationData} data
    * @param {LH.Artifacts.ComputedContext} context
@@ -100,7 +50,7 @@ class TotalBlockingTime extends ComputedMetric {
       const interactiveTimeMs = (await TimetoInteractive.request(metricData, context)).timing;
 
       return {
-        timing: TotalBlockingTime.calculateSumOfBlockingTime(
+        timing: calculateSumOfBlockingTime(
           events,
           firstContentfulPaint,
           interactiveTimeMs
@@ -108,7 +58,7 @@ class TotalBlockingTime extends ComputedMetric {
       };
     } else {
       return {
-        timing: TotalBlockingTime.calculateSumOfBlockingTime(
+        timing: calculateSumOfBlockingTime(
           events,
           0,
           data.processedTrace.timestamps.traceEnd

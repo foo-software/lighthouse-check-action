@@ -16,7 +16,10 @@ const Metrics = require('./traces/pwmetrics-events.js');
 const NetworkAnalysisComputed = require('../computed/network-analysis.js');
 const LoadSimulatorComputed = require('../computed/load-simulator.js');
 const LHError = require('../lib/lh-error.js');
-const pipeline = promisify(stream.pipeline);
+// TODO(esmodules): Rollup does not support `promisfy` or `stream.pipeline`. Bundled files
+// don't need anything in this file except for `stringifyReplacer`, so a check for
+// truthiness before using is enough.
+const pipeline = promisify && promisify(stream.pipeline);
 
 const artifactsFilename = 'artifacts.json';
 const traceSuffix = '.trace.json';
@@ -235,9 +238,9 @@ async function saveTrace(traceData, traceFilename) {
   const traceIter = traceJsonGenerator(traceData);
   const writeStream = fs.createWriteStream(traceFilename);
 
-  // TODO: Can remove Readable.from() in Node 13, promisify(pipeline) in Node 15.
+  // TODO: Can remove promisify(pipeline) in Node 15.
   // https://nodejs.org/api/stream.html#stream_stream_pipeline_streams_callback
-  return pipeline(stream.Readable.from(traceIter), writeStream);
+  return pipeline(traceIter, writeStream);
 }
 
 /**
@@ -250,7 +253,7 @@ function saveDevtoolsLog(devtoolsLog, devtoolLogFilename) {
   const logIter = arrayOfObjectsJsonGenerator(devtoolsLog);
   const writeStream = fs.createWriteStream(devtoolLogFilename);
 
-  return pipeline(stream.Readable.from(logIter), writeStream);
+  return pipeline(logIter, writeStream);
 }
 
 /**

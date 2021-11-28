@@ -128,7 +128,7 @@ class UnusedJavaScript extends ByteEfficiencyAudit {
           })
           .filter(d => d.unused >= bundleSourceUnusedThreshold);
 
-        const commonSourcePrefix = commonPrefix([...bundle.map._sourceInfos.keys()]);
+        const commonSourcePrefix = commonPrefix([...bundle.map.sourceInfos.keys()]);
         item.subItems = {
           type: 'subitems',
           items: topUnusedSourceSizes.map(({source, unused, total}) => {

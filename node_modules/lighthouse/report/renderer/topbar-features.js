@@ -24,15 +24,13 @@ export class TopbarFeatures {
     this.lhr; // eslint-disable-line no-unused-expressions
     this._reportUIFeatures = reportUIFeatures;
     this._dom = dom;
-    /** @type {Document} */
-    this._document = this._dom.document();
     this._dropDownMenu = new DropDownMenu(this._dom);
     this._copyAttempt = false;
     /** @type {HTMLElement} */
     this.topbarEl; // eslint-disable-line no-unused-expressions
     /** @type {HTMLElement} */
-    this.scoreScaleEl; // eslint-disable-line no-unused-expressions
-    /** @type {HTMLElement} */
+    this.categoriesEl; // eslint-disable-line no-unused-expressions
+    /** @type {HTMLElement?} */
     this.stickyHeaderEl; // eslint-disable-line no-unused-expressions
     /** @type {HTMLElement} */
     this.highlightEl; // eslint-disable-line no-unused-expressions
@@ -40,7 +38,6 @@ export class TopbarFeatures {
     this.onKeyUp = this.onKeyUp.bind(this);
     this.onCopy = this.onCopy.bind(this);
     this.collapseAllDetails = this.collapseAllDetails.bind(this);
-    this._updateStickyHeaderOnScroll = this._updateStickyHeaderOnScroll.bind(this);
   }
 
   /**
@@ -48,33 +45,15 @@ export class TopbarFeatures {
    */
   enable(lhr) {
     this.lhr = lhr;
-    this._document.addEventListener('keyup', this.onKeyUp);
-    this._document.addEventListener('copy', this.onCopy);
+    this._dom.rootEl.addEventListener('keyup', this.onKeyUp);
+    this._dom.document().addEventListener('copy', this.onCopy);
     this._dropDownMenu.setup(this.onDropDownMenuClick);
     this._setUpCollapseDetailsAfterPrinting();
 
-    const topbarLogo = this._dom.find('.lh-topbar__logo', this._document);
+    const topbarLogo = this._dom.find('.lh-topbar__logo', this._dom.rootEl);
     topbarLogo.addEventListener('click', () => toggleDarkTheme(this._dom));
 
-    // There is only a sticky header when at least 2 categories are present.
-    if (Object.keys(this.lhr.categories).length >= 2) {
-      this._setupStickyHeaderElements();
-      const containerEl = this._dom.find('.lh-container', this._document);
-      const elToAddScrollListener = this._getScrollParent(containerEl);
-      elToAddScrollListener.addEventListener('scroll', this._updateStickyHeaderOnScroll);
-
-      // Use ResizeObserver where available.
-      // TODO: there is an issue with incorrect position numbers and, as a result, performance
-      // issues due to layout thrashing.
-      // See https://github.com/GoogleChrome/lighthouse/pull/9023/files#r288822287 for details.
-      // For now, limit to DevTools.
-      if (this._dom.isDevTools()) {
-        const resizeObserver = new window.ResizeObserver(this._updateStickyHeaderOnScroll);
-        resizeObserver.observe(containerEl);
-      } else {
-        window.addEventListener('resize', this._updateStickyHeaderOnScroll);
-      }
-    }
+    this._setupStickyHeader();
   }
 
   /**
@@ -112,7 +91,7 @@ export class TopbarFeatures {
         try {
           this._reportUIFeatures._saveFile(new Blob([htmlStr], {type: 'text/html'}));
         } catch (e) {
-          this._dom.fireEventOn('lh-log', this._document, {
+          this._dom.fireEventOn('lh-log', this._dom.document(), {
             cmd: 'error', msg: 'Could not export as HTML. ' + e.message,
           });
         }
@@ -152,7 +131,7 @@ export class TopbarFeatures {
       e.preventDefault();
       e.clipboardData.setData('text/plain', JSON.stringify(this.lhr, null, 2));
 
-      this._dom.fireEventOn('lh-log', this._document, {
+      this._dom.fireEventOn('lh-log', this._dom.document(), {
         cmd: 'log', msg: 'Report JSON copied to clipboard',
       });
     }
@@ -164,28 +143,28 @@ export class TopbarFeatures {
    * Copies the report JSON to the clipboard (if supported by the browser).
    */
   onCopyButtonClick() {
-    this._dom.fireEventOn('lh-analytics', this._document, {
+    this._dom.fireEventOn('lh-analytics', this._dom.document(), {
       cmd: 'send',
       fields: {hitType: 'event', eventCategory: 'report', eventAction: 'copy'},
     });
 
     try {
-      if (this._document.queryCommandSupported('copy')) {
+      if (this._dom.document().queryCommandSupported('copy')) {
         this._copyAttempt = true;
 
         // Note: In Safari 10.0.1, execCommand('copy') returns true if there's
         // a valid text selection on the page. See http://caniuse.com/#feat=clipboard.
-        if (!this._document.execCommand('copy')) {
+        if (!this._dom.document().execCommand('copy')) {
           this._copyAttempt = false; // Prevent event handler from seeing this as a copy attempt.
 
-          this._dom.fireEventOn('lh-log', this._document, {
+          this._dom.fireEventOn('lh-log', this._dom.document(), {
             cmd: 'warn', msg: 'Your browser does not support copy to clipboard.',
           });
         }
       }
     } catch (e) {
       this._copyAttempt = false;
-      this._dom.fireEventOn('lh-log', this._document, {cmd: 'log', msg: e.message});
+      this._dom.fireEventOn('lh-log', this._dom.document(), {cmd: 'log', msg: e.message});
     }
   }
 
@@ -206,7 +185,7 @@ export class TopbarFeatures {
    * open a `<details>` element.
    */
   expandAllDetails() {
-    const details = this._dom.findAll('.lh-categories details', this._document);
+    const details = this._dom.findAll('.lh-categories details', this._dom.rootEl);
     details.map(detail => detail.open = true);
   }
 
@@ -215,7 +194,7 @@ export class TopbarFeatures {
    * open a `<details>` element.
    */
   collapseAllDetails() {
-    const details = this._dom.findAll('.lh-categories details', this._document);
+    const details = this._dom.findAll('.lh-categories details', this._dom.rootEl);
     details.map(detail => detail.open = false);
   }
 
@@ -235,7 +214,7 @@ export class TopbarFeatures {
   /**
    * Finds the first scrollable ancestor of `element`. Falls back to the document.
    * @param {Element} element
-   * @return {Node}
+   * @return {Element | Document}
    */
   _getScrollParent(element) {
     const {overflowY} = window.getComputedStyle(element);
@@ -273,24 +252,50 @@ export class TopbarFeatures {
     }
   }
 
-  _setupStickyHeaderElements() {
-    this.topbarEl = this._dom.find('div.lh-topbar', this._document);
-    this.scoreScaleEl = this._dom.find('div.lh-scorescale', this._document);
-    this.stickyHeaderEl = this._dom.find('div.lh-sticky-header', this._document);
+  _setupStickyHeader() {
+    // Cache these elements to avoid qSA on each onscroll.
+    this.topbarEl = this._dom.find('div.lh-topbar', this._dom.rootEl);
+    this.categoriesEl = this._dom.find('div.lh-categories', this._dom.rootEl);
 
-    // Highlighter will be absolutely positioned at first gauge, then transformed on scroll.
-    this.highlightEl = this._dom.createChildOf(this.stickyHeaderEl, 'div', 'lh-highlighter');
+    // Defer behind rAF to avoid forcing layout.
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      // Only present in the DOM if it'll be used (>=2 categories)
+      try {
+        this.stickyHeaderEl = this._dom.find('div.lh-sticky-header', this._dom.rootEl);
+      } catch {
+        return;
+      }
+
+      // Highlighter will be absolutely positioned at first gauge, then transformed on scroll.
+      this.highlightEl = this._dom.createChildOf(this.stickyHeaderEl, 'div', 'lh-highlighter');
+
+      // Update sticky header visibility and highlight when page scrolls/resizes.
+      const scrollParent = this._getScrollParent(
+        this._dom.find('.lh-container', this._dom.rootEl));
+      // The 'scroll' handler must be should be on {Element | Document}...
+      scrollParent.addEventListener('scroll', () => this._updateStickyHeader());
+      // However resizeObserver needs an element, *not* the document.
+      const resizeTarget = scrollParent instanceof window.Document
+        ? document.documentElement
+        : scrollParent;
+      new window.ResizeObserver(() => this._updateStickyHeader()).observe(resizeTarget);
+    }));
   }
 
-  _updateStickyHeaderOnScroll() {
-    // Show sticky header when the score scale begins to go underneath the topbar.
+  /**
+   * Toggle visibility and update highlighter position
+   */
+  _updateStickyHeader() {
+    if (!this.stickyHeaderEl) return;
+
+    // Show sticky header when the main 5 gauges clear the topbar.
     const topbarBottom = this.topbarEl.getBoundingClientRect().bottom;
-    const scoreScaleTop = this.scoreScaleEl.getBoundingClientRect().top;
-    const showStickyHeader = topbarBottom >= scoreScaleTop;
+    const categoriesTop = this.categoriesEl.getBoundingClientRect().top;
+    const showStickyHeader = topbarBottom >= categoriesTop;
 
     // Highlight mini gauge when section is in view.
     // In view = the last category that starts above the middle of the window.
-    const categoryEls = Array.from(this._document.querySelectorAll('.lh-category'));
+    const categoryEls = Array.from(this._dom.rootEl.querySelectorAll('.lh-category'));
     const categoriesAboveTheMiddle =
       categoryEls.filter(el => el.getBoundingClientRect().top - window.innerHeight / 2 < 0);
     const highlightIndex =

@@ -11,9 +11,12 @@
  * Currently uses `lighthouse-dt-bundle.js`.
  */
 
+import fs from 'fs';
+
 import ChromeLauncher from 'chrome-launcher';
 
 import ChromeProtocol from '../../../../lighthouse-core/gather/connections/cri.js';
+import {LH_ROOT} from '../../../../root.js';
 
 const originalRequire = global.require;
 if (typeof globalThis === 'undefined') {
@@ -22,8 +25,7 @@ if (typeof globalThis === 'undefined') {
 }
 
 // Load bundle, which creates a `global.runBundledLighthouse`.
-// @ts-ignore - file exists if `yarn build-all` is run, but not used for types anyways.
-import '../../../../dist/lighthouse-dt-bundle.js'; // eslint-disable-line
+eval(fs.readFileSync(LH_ROOT + '/dist/lighthouse-dt-bundle.js', 'utf-8'));
 
 global.require = originalRequire;
 

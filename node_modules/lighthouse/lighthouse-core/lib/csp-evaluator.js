@@ -18,6 +18,7 @@ const {Directive} = require('csp_evaluator/dist/csp.js');
 
 const log = require('lighthouse-logger');
 const i18n = require('../lib/i18n/i18n.js');
+const {isIcuMessage} = require('../../shared/localization/format.js');
 
 const UIStrings = {
   /** Message shown when a CSP does not have a base-uri directive. Shown in a table with a list of other CSP vulnerabilities and suggestions. "CSP" stands for "Content Security Policy". "base-uri", "'none'", and "'self'" do not need to be translated. */
@@ -130,7 +131,7 @@ function getTranslatedDescription(finding) {
   }
 
   // Return if translated result found.
-  if (i18n.isIcuMessage(result)) return result;
+  if (isIcuMessage(result)) return result;
 
   // If result was not translated, that means `finding.value` is included in the UI string.
   if (typeof result === 'string') return str_(result, {keyword: finding.value || ''});

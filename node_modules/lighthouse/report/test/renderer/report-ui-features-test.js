@@ -10,6 +10,7 @@
 import {strict as assert} from 'assert';
 
 import jsdom from 'jsdom';
+import {jest} from '@jest/globals';
 
 import reportAssets from '../../generator/report-assets.js';
 import {Util} from '../../renderer/util.js';
@@ -33,13 +34,15 @@ describe('ReportUIFeatures', () => {
     const categoryRenderer = new CategoryRenderer(dom, detailsRenderer);
     const renderer = new ReportRenderer(dom, categoryRenderer);
     const reportUIFeatures = new ReportUIFeatures(dom);
-    const container = dom.find('main', dom._document);
+    const container = dom.find('body', dom.document());
     renderer.renderReport(lhr, container);
     reportUIFeatures.initFeatures(lhr);
     return container;
   }
 
   beforeAll(() => {
+    global.console.warn = jest.fn();
+
     // Stub out matchMedia for Node.
     global.matchMedia = function() {
       return {
@@ -59,11 +62,16 @@ describe('ReportUIFeatures', () => {
     global.HTMLInputElement = document.window.HTMLInputElement;
 
     global.window = document.window;
+    global.window.requestAnimationFrame = fn => fn();
     global.window.getComputedStyle = function() {
       return {
         marginTop: '10px',
         height: '10px',
       };
+    };
+    global.window.ResizeObserver = class ResizeObserver {
+      observe() { }
+      unobserve() { }
     };
 
     dom = new DOM(document.window.document);
@@ -256,17 +264,15 @@ describe('ReportUIFeatures', () => {
           .toThrowError('query #uses-rel-preconnect .lh-3p-filter-input not found');
       });
 
-      it('filter is disabled and checked for when just third party resources', () => {
-        const filterCheckbox =
-          dom.find('#render-blocking-resources .lh-3p-filter-input', container);
-        expect(filterCheckbox.disabled).toEqual(true);
-        expect(filterCheckbox.checked).toEqual(true);
+      it('filter is hidden when just third party resources', () => {
+        const filterControl =
+          dom.find('#render-blocking-resources .lh-3p-filter', container);
+        expect(filterControl.hidden).toEqual(true);
       });
 
-      it('filter is disabled and not checked for just first party resources', () => {
-        const filterCheckbox = dom.find('#uses-text-compression .lh-3p-filter-input', container);
-        expect(filterCheckbox.disabled).toEqual(true);
-        expect(filterCheckbox.checked).toEqual(false);
+      it('filter is hidden for just first party resources', () => {
+        const filterControl = dom.find('#uses-text-compression .lh-3p-filter', container);
+        expect(filterControl.hidden).toEqual(true);
       });
     });
   });
@@ -515,6 +521,9 @@ describe('ReportUIFeatures', () => {
       expect(render(lhr).querySelector('.lh-button.lh-report-icon--treemap')).toBeTruthy();
 
       delete lhr.audits['script-treemap-data'];
+      const newAuditRefs = lhr.categories['performance'].auditRefs
+        .filter(a => a.id !== 'script-treemap-data');
+      lhr.categories['performance'].auditRefs = newAuditRefs;
       expect(render(lhr).querySelector('.lh-button.lh-report-icon--treemap')).toBeNull();
     });
   });

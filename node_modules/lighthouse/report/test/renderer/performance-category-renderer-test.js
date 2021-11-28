@@ -67,12 +67,35 @@ describe('PerfCategoryRenderer', () => {
     const timelineElements = metricsSection.querySelectorAll('.lh-metric');
     const nontimelineElements = metricsSection.querySelectorAll('.lh-audit');
     assert.equal(timelineElements.length + nontimelineElements.length, metricAudits.length);
+    assert.deepStrictEqual(
+      Array.from(timelineElements).map(el => el.id),
+      [
+        'first-contentful-paint',
+        'interactive',
+        'speed-index',
+        'total-blocking-time',
+        'largest-contentful-paint',
+        'cumulative-layout-shift',
+      ]
+    );
+  });
+
+  it('does not render metrics section if no metric group audits', () => {
+    // Remove metrics from category
+    const newCategory = JSON.parse(JSON.stringify(category));
+    newCategory.auditRefs = category.auditRefs.filter(audit => audit.group !== 'metrics');
+
+    const categoryDOM = renderer.render(newCategory, sampleResults.categoryGroups);
+    const sections = categoryDOM.querySelectorAll('.lh-category > .lh-audit-group');
+    const metricSection = categoryDOM.querySelector('.lh-audit-group--metrics');
+    assert.ok(!metricSection);
+    assert.equal(sections.length, 4);
   });
 
   it('renders the metrics variance disclaimer as markdown', () => {
     const categoryDOM = renderer.render(category, sampleResults.categoryGroups);
     const disclaimerEl =
-        categoryDOM.querySelector('.lh-audit-group--metrics > .lh-metrics__disclaimer');
+        categoryDOM.querySelector('.lh-category-header__description > .lh-metrics__disclaimer');
 
     assert.ok(disclaimerEl.textContent.includes('Values are estimated'));
     const disclamerLink = disclaimerEl.querySelector('a');
@@ -84,11 +107,23 @@ describe('PerfCategoryRenderer', () => {
     assert.strictEqual(new URL(calcLink.href).hostname, 'googlechrome.github.io');
   });
 
+  it('ignores hidden audits', () => {
+    const categoryDOM = renderer.render(category, sampleResults.categoryGroups);
+
+    const hiddenAudits = category.auditRefs.filter(audit => audit.group === 'hidden');
+    const auditElements = [...categoryDOM.querySelectorAll('.lh-audit')];
+    const matchingElements = auditElements
+      .filter(el => hiddenAudits.some(audit => audit.id === el.id));
+    expect(matchingElements).toHaveLength(0);
+  });
+
   it('renders the failing performance opportunities', () => {
     const categoryDOM = renderer.render(category, sampleResults.categoryGroups);
 
-    const oppAudits = category.auditRefs.filter(audit => audit.group === 'load-opportunities' &&
-        !Util.showAsPassed(audit.result));
+    const oppAudits = category.auditRefs.filter(audit =>
+      audit.result.details &&
+      audit.result.details.type === 'opportunity' &&
+      !Util.showAsPassed(audit.result));
     const oppElements = [...categoryDOM.querySelectorAll('.lh-audit--load-opportunity')];
     expect(oppElements.map(e => e.id).sort()).toEqual(oppAudits.map(a => a.id).sort());
     expect(oppElements.length).toBeGreaterThan(0);
@@ -108,10 +143,14 @@ describe('PerfCategoryRenderer', () => {
   it('renders performance opportunities with an errorMessage', () => {
     const auditWithError = {
       score: 0,
-      group: 'load-opportunities',
       result: {
         score: null, scoreDisplayMode: 'error', errorMessage: 'Yikes!!', title: 'Bug #2',
         description: '',
+        details: {
+          overallSavingsMs: 0,
+          items: [],
+          type: 'opportunity',
+        },
       },
     };
 
@@ -125,10 +164,14 @@ describe('PerfCategoryRenderer', () => {
   it('renders performance opportunities\' explanation', () => {
     const auditWithExplanation = {
       score: 0,
-      group: 'load-opportunities',
       result: {
         score: 0, scoreDisplayMode: 'numeric',
         numericValue: 100, explanation: 'Yikes!!', title: 'Bug #2', description: '',
+        details: {
+          overallSavingsMs: 0,
+          items: [],
+          type: 'opportunity',
+        },
       },
     };
 
@@ -147,7 +190,9 @@ describe('PerfCategoryRenderer', () => {
         '.lh-category > .lh-audit-group.lh-audit-group--diagnostics');
 
     const diagnosticAuditIds = category.auditRefs.filter(audit => {
-      return audit.group === 'diagnostics' && !Util.showAsPassed(audit.result);
+      return !audit.group &&
+        !(audit.result.details && audit.result.details.type === 'opportunity') &&
+        !Util.showAsPassed(audit.result);
     }).map(audit => audit.id).sort();
     assert.ok(diagnosticAuditIds.length > 0);
 
@@ -158,11 +203,11 @@ describe('PerfCategoryRenderer', () => {
 
   it('renders the passed audits', () => {
     const categoryDOM = renderer.render(category, sampleResults.categoryGroups);
-    const passedSection = categoryDOM.querySelector('.lh-category > .lh-clump--passed');
+    const passedSection = categoryDOM.querySelector('.lh-clump--passed');
 
     const passedAudits = category.auditRefs.filter(audit =>
-      audit.group && audit.group !== 'metrics' && audit.id !== 'performance-budget'
-        && Util.showAsPassed(audit.result));
+      !audit.group &&
+      Util.showAsPassed(audit.result));
     const passedElements = passedSection.querySelectorAll('.lh-audit');
     assert.equal(passedElements.length, passedAudits.length);
   });
@@ -175,10 +220,14 @@ describe('PerfCategoryRenderer', () => {
     it('handles erroring opportunities', () => {
       const auditWithDebug = {
         score: 0,
-        group: 'load-opportunities',
         result: {
           error: true, score: 0,
           numericValue: 100, explanation: 'Yikes!!', title: 'Bug #2',
+          details: {
+            overallSavingsMs: 0,
+            items: [],
+            type: 'opportunity',
+          },
         },
       };
       const wastedMs = renderer._getWastedMs(auditWithDebug);
@@ -244,10 +293,10 @@ describe('PerfCategoryRenderer', () => {
       expect(url.hash.split('&')).toMatchInlineSnapshot(`
 Array [
   "#FCP=6844",
-  "SI=8114",
-  "LCP=6844",
   "TTI=8191",
+  "SI=8114",
   "TBT=1221",
+  "LCP=6844",
   "CLS=0",
   "FMP=6844",
 ]
@@ -265,10 +314,10 @@ Array [
         expect(url.hash.split('&')).toMatchInlineSnapshot(`
 Array [
   "#FCP=6844",
-  "SI=8114",
-  "LCP=6844",
   "TTI=8191",
+  "SI=8114",
   "TBT=1221",
+  "LCP=6844",
   "CLS=0.14",
   "FMP=6844",
   "device=mobile",

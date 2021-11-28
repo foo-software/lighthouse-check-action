@@ -12,7 +12,6 @@
 const log = require('lighthouse-logger');
 const FRGatherer = require('../../fraggle-rock/gather/base-gatherer.js');
 const pageFunctions = require('../../lib/page-functions.js');
-const URL = require('../../lib/url-shim.js');
 const FontSize = require('./seo/font-size.js');
 
 /* global window, getElementsInDocument, Image, getNodeDetails, ShadowRoot */
@@ -310,8 +309,6 @@ class ImageElements extends FRGatherer {
     let skippedCount = 0;
 
     for (const element of elements) {
-      element.mimeType = URL.guessMimeType(element.src);
-
       if (reachedGatheringBudget) {
         skippedCount++;
         continue;

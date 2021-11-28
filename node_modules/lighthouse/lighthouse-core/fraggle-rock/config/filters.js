@@ -163,6 +163,23 @@ function filterAuditsByGatherMode(audits, mode) {
 }
 
 /**
+ * Optional `supportedModes` property can explicitly exclude a category even if some audits are available.
+ *
+ * @param {LH.Config.Config['categories']} categories
+ * @param {LH.Gatherer.GatherMode} mode
+ * @return {LH.Config.Config['categories']}
+ */
+function filterCategoriesByGatherMode(categories, mode) {
+  if (!categories) return null;
+
+  const categoriesToKeep = Object.entries(categories)
+    .filter(([_, category]) => {
+      return !category.supportedModes || category.supportedModes.includes(mode);
+    });
+  return Object.fromEntries(categoriesToKeep);
+}
+
+/**
  * Filters a categories object and their auditRefs down to the specified category ids.
  *
  * @param {LH.Config.Config['categories']} categories
@@ -225,9 +242,10 @@ function filterCategoriesByAvailableAudits(categories, availableAudits) {
  */
 function filterConfigByGatherMode(config, mode) {
   const artifacts = filterArtifactsByGatherMode(config.artifacts, mode);
-  const availableAudits = filterAuditsByAvailableArtifacts(config.audits, artifacts || []);
-  const audits = filterAuditsByGatherMode(availableAudits, mode);
-  const categories = filterCategoriesByAvailableAudits(config.categories, audits || []);
+  const supportedAudits = filterAuditsByGatherMode(config.audits, mode);
+  const audits = filterAuditsByAvailableArtifacts(supportedAudits, artifacts || []);
+  const supportedCategories = filterCategoriesByGatherMode(config.categories, mode);
+  const categories = filterCategoriesByAvailableAudits(supportedCategories, audits || []);
 
   return {
     ...config,
@@ -291,4 +309,5 @@ module.exports = {
   filterAuditsByGatherMode,
   filterCategoriesByAvailableAudits,
   filterCategoriesByExplicitFilters,
+  filterCategoriesByGatherMode,
 };

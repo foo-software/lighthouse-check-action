@@ -4,65 +4,203 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import fs from 'fs';
-import {dirname} from 'path';
-import {fileURLToPath} from 'url';
-
+import {FunctionComponent} from 'preact';
 import {render} from '@testing-library/preact';
 
 import {SummaryTooltip} from '../../src/summary/category';
-import {Util} from '../../../report/renderer/util';
+import {flowResult} from '../sample-flow';
+import {I18nProvider} from '../../src/i18n/i18n';
+import {FlowResultContext} from '../../src/util';
 
-const flowResult: LH.FlowResult = JSON.parse(
-  fs.readFileSync(
-    // eslint-disable-next-line max-len
-    `${dirname(fileURLToPath(import.meta.url))}/../../../lighthouse-core/test/fixtures/fraggle-rock/reports/sample-lhrs.json`,
-    'utf-8'
-  )
-);
+let wrapper: FunctionComponent;
+
+beforeEach(() => {
+  // Include sample flowResult for locale in I18nProvider.
+  wrapper = ({children}) => (
+    <FlowResultContext.Provider value={flowResult}>
+      <I18nProvider>
+        {children}
+      </I18nProvider>
+    </FlowResultContext.Provider>
+  );
+});
 
 describe('SummaryTooltip', () => {
   it('renders tooltip with rating', async () => {
-    // Snapshot SEO
-    const reportResult = Util.prepareReportResult(flowResult.steps[2].lhr);
-    const category = reportResult.categories['seo'];
+    const category: any = {
+      id: 'performance',
+      score: 1,
+      auditRefs: [
+        /* eslint-disable max-len */
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 1'}, weight: 1, group: 'diagnostics'},
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 2'}, weight: 1, group: 'diagnostics'},
+        {result: {score: 0, scoreDisplayMode: 'binary', title: 'Audit 3'}, weight: 1, group: 'diagnostics'},
+        /* eslint-enable max-len */
+      ],
+    };
 
     const root = render(
-      <SummaryTooltip category={category} gatherMode={reportResult.gatherMode}/>
+      <SummaryTooltip category={category} gatherMode="snapshot" url="https://example.com"/>,
+      {wrapper}
     );
 
-    const rating = root.getByTestId('SummaryTooltip__rating');
-    expect(rating.classList).toContain('SummaryTooltip__rating--average');
-
-    expect(root.getByText('9 audits passed / 11 audits run')).toBeTruthy();
+    expect(root.getByText('Average')).toBeTruthy();
+    expect(() => root.getByText(/^[0-9]+$/)).toThrow();
+    expect(root.getByText('2 audits passed')).toBeTruthy();
+    expect(root.getByText('3 passable audits')).toBeTruthy();
+    expect(root.getByText('https://example.com')).toBeTruthy();
   });
 
   it('renders tooltip without rating', async () => {
-    // Snapshot performance
-    const reportResult = Util.prepareReportResult(flowResult.steps[2].lhr);
-    const category = reportResult.categories['performance'];
+    const category: any = {
+      id: 'performance',
+      score: 1,
+      auditRefs: [
+        /* eslint-disable max-len */
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 1'}, weight: 0, group: 'diagnostics'},
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 2'}, weight: 0, group: 'diagnostics'},
+        {result: {score: 0, scoreDisplayMode: 'binary', title: 'Audit 3'}, weight: 0, group: 'diagnostics'},
+        /* eslint-enable max-len */
+      ],
+    };
 
     const root = render(
-      <SummaryTooltip category={category} gatherMode={reportResult.gatherMode}/>
+      <SummaryTooltip category={category} gatherMode="snapshot" url="https://example.com"/>,
+      {wrapper}
     );
 
-    expect(() => root.getByTestId('SummaryTooltip__rating')).toThrow();
-    expect(root.getByText('2 audits passed / 4 audits run')).toBeTruthy();
+    expect(() => root.getByText(/^(Average|Good|Poor)$/)).toThrow();
+    expect(() => root.getByText(/^[0-9]+$/)).toThrow();
+    expect(root.getByText('2 audits passed')).toBeTruthy();
+    expect(root.getByText('3 passable audits')).toBeTruthy();
+    expect(root.getByText('https://example.com')).toBeTruthy();
   });
 
   it('renders scored category tooltip with score', async () => {
-    // Navigation performance
-    const reportResult = Util.prepareReportResult(flowResult.steps[0].lhr);
-    const category = reportResult.categories['performance'];
+    const category: any = {
+      id: 'performance',
+      score: 1,
+      auditRefs: [
+        /* eslint-disable max-len */
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 1'}, weight: 1, group: 'diagnostics'},
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 2'}, weight: 1, group: 'diagnostics'},
+        {result: {score: 0, scoreDisplayMode: 'binary', title: 'Audit 3'}, weight: 1, group: 'diagnostics'},
+        /* eslint-enable max-len */
+      ],
+    };
 
     const root = render(
-      <SummaryTooltip category={category} gatherMode={reportResult.gatherMode}/>
+      <SummaryTooltip category={category} gatherMode="navigation" url="https://example.com"/>,
+      {wrapper}
     );
 
-    const rating = root.getByTestId('SummaryTooltip__rating');
-    expect(rating.classList).toContain('SummaryTooltip__rating--pass');
-    expect(rating.textContent).toEqual('Good · 94');
+    expect(root.getByText('Good')).toBeTruthy();
+    expect(root.getByText('100')).toBeTruthy();
+    expect(root.getByText('2 audits passed')).toBeTruthy();
+    expect(root.getByText('3 passable audits')).toBeTruthy();
+    expect(root.getByText('https://example.com')).toBeTruthy();
+  });
 
-    expect(root.getByText('41 audits passed / 58 audits run')).toBeTruthy();
+  it('renders informative audit count if any', async () => {
+    const category: any = {
+      id: 'performance',
+      score: 1,
+      auditRefs: [
+        /* eslint-disable max-len */
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 1'}, weight: 1, group: 'diagnostics'},
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 2'}, weight: 1, group: 'diagnostics'},
+        {result: {score: null, scoreDisplayMode: 'informative', title: 'Audit 3'}, weight: 1, group: 'diagnostics'},
+        /* eslint-enable max-len */
+      ],
+    };
+
+    const root = render(
+      <SummaryTooltip category={category} gatherMode="navigation" url="https://example.com"/>,
+      {wrapper}
+    );
+
+    expect(root.getByText('Good')).toBeTruthy();
+    expect(root.getByText('100')).toBeTruthy();
+    expect(root.getByText('2 audits passed')).toBeTruthy();
+    expect(root.getByText('2 passable audits')).toBeTruthy();
+    expect(root.getByText('1 informative audit')).toBeTruthy();
+    expect(root.getByText('https://example.com')).toBeTruthy();
+  });
+
+  it('renders highest impact audits', async () => {
+    const category: any = {
+      id: 'seo',
+      score: 1,
+      auditRefs: [
+        /* eslint-disable max-len */
+        {result: {score: 0, scoreDisplayMode: 'binary', title: 'Audit 1'}, weight: 1, group: 'group'},
+        {result: {score: 0, scoreDisplayMode: 'binary', title: 'Audit 2'}, weight: 2, group: 'group'},
+        {result: {score: 0, scoreDisplayMode: 'binary', title: 'Audit 3'}, weight: 3, group: 'group'},
+        /* eslint-enable max-len */
+      ],
+    };
+
+    const root = render(
+      <SummaryTooltip category={category} gatherMode="navigation" url="https://example.com"/>,
+      {wrapper}
+    );
+
+    const audits = root.getAllByText(/^Audit [0-9]$/);
+
+    expect(root.getByText('Highest impact')).toBeTruthy();
+    expect(audits.map(a => a.textContent)).toEqual([
+      'Audit 3',
+      'Audit 2',
+    ]);
+  });
+
+  it('renders highest impact audits in performance', async () => {
+    const category: any = {
+      id: 'performance',
+      score: 0.75,
+      auditRefs: [
+        /* eslint-disable max-len */
+        {result: {score: 0.75, scoreDisplayMode: 'numeric', title: 'Metric 1'}, weight: 1, group: 'metrics'},
+        {result: {score: 0, scoreDisplayMode: 'numeric', title: 'Audit 1', details: {type: 'opportunity', overallSavingsMs: 500}}, weight: 0, group: 'opportunities'},
+        {result: {score: 0, scoreDisplayMode: 'numeric', title: 'Audit 2', details: {type: 'opportunity', overallSavingsMs: 1000}}, weight: 0, group: 'opportunities'},
+        {result: {score: 0, scoreDisplayMode: 'numeric', title: 'Audit 3', details: {type: 'opportunity', overallSavingsMs: 100}}, weight: 0, group: 'opportunities'},
+        /* eslint-enable max-len */
+      ],
+    };
+
+    const root = render(
+      <SummaryTooltip category={category} gatherMode="navigation" url="https://example.com"/>,
+      {wrapper}
+    );
+
+    const audits = root.getAllByText(/^(Audit|Metric) [0-9]$/);
+
+    expect(root.getByText('Highest impact')).toBeTruthy();
+    expect(audits.map(a => a.textContent)).toEqual([
+      'Audit 2',
+      'Audit 1',
+    ]);
+  });
+
+  it('hides highest impact if nothing to show', async () => {
+    const category: any = {
+      id: 'performance',
+      score: 1,
+      auditRefs: [
+        /* eslint-disable max-len */
+        {result: {score: 1, scoreDisplayMode: 'binary', title: 'Audit 1'}, weight: 1, group: 'diagnostics'},
+        {result: {score: 0, scoreDisplayMode: 'binary', title: 'Audit 2'}, weight: 1, group: 'hidden'},
+        {result: {score: null, scoreDisplayMode: 'informative', title: 'Audit 3'}, weight: 1, group: 'diagnostics'},
+        /* eslint-enable max-len */
+      ],
+    };
+
+    const root = render(
+      <SummaryTooltip category={category} gatherMode="navigation" url="https://example.com"/>,
+      {wrapper}
+    );
+
+    expect(() => root.getByText('Highest impact')).toThrow();
+    expect(() => root.getByText(/^Audit [0-9]$/)).toThrow();
   });
 });

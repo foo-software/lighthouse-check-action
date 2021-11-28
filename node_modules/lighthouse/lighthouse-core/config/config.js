@@ -8,7 +8,7 @@
 const defaultConfigPath = './default-config.js';
 const defaultConfig = require('./default-config.js');
 const constants = require('./constants.js');
-const i18n = require('./../lib/i18n/i18n.js');
+const format = require('../../shared/localization/format.js');
 const validation = require('./../fraggle-rock/config/validation.js');
 
 const log = require('lighthouse-logger');
@@ -248,7 +248,7 @@ class Config {
     }
 
     // Printed config is more useful with localized strings.
-    i18n.replaceIcuMessages(jsonConfig, jsonConfig.settings.locale);
+    format.replaceIcuMessages(jsonConfig, jsonConfig.settings.locale);
 
     return JSON.stringify(jsonConfig, null, 2);
   }

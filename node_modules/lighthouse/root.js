@@ -5,6 +5,24 @@
  */
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
+
+// import {dirname} from 'path';
+// import {fileURLToPath} from 'url';
+
 module.exports = {
   LH_ROOT: __dirname,
+  /**
+   * Return parsed json object.
+   * Resolves path relative to importMeta.url (if provided) or LH_ROOT (if not provided).
+   * @param {string} filePath Can be an absolute or relative path.
+   * @param {ImportMeta=} importMeta
+   */
+  readJson(filePath, importMeta) {
+    const dir = importMeta ? path.dirname(url.fileURLToPath(importMeta.url)) : __dirname;
+    filePath = path.resolve(dir, filePath);
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  },
 };

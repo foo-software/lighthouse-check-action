@@ -176,11 +176,11 @@ declare module Details {
 
   interface OpportunityColumnHeading {
     /**
-    * The name of the property within items being described.
-      * If null, subItemsHeading must be defined, and the first table row in this column for
-      * every item will be empty.
-      * See legacy-javascript for an example.
-      */
+     * The name of the property within items being described.
+     * If null, subItemsHeading must be defined, and the first table row in this column for
+     * every item will be empty.
+     * See legacy-javascript for an example.
+     */
     key: string|null;
     /** Readable text label of the field. */
     label: IcuMessage | string;
@@ -263,6 +263,7 @@ declare module Details {
     urlProvider: 'network' | 'comment';
     /** Zero-indexed. */
     line: number;
+    /** Zero-indexed. */
     column: number;
     /** The original file location from the source map. */
     original?: {

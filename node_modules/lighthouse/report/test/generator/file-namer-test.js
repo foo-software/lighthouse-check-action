@@ -7,7 +7,7 @@
 
 const assert = require('assert').strict;
 
-const getFilenamePrefix = require('../../generator/file-namer.js').getFilenamePrefix;
+const getLhrFilenamePrefix = require('../../generator/file-namer.js').getLhrFilenamePrefix;
 
 /* eslint-env jest */
 describe('file-namer helper', () => {
@@ -16,7 +16,7 @@ describe('file-namer helper', () => {
       finalUrl: 'https://testexample.com',
       fetchTime: '2017-01-06T02:34:56.217Z',
     };
-    const str = getFilenamePrefix(results);
+    const str = getLhrFilenamePrefix(results);
     // we want the filename to match user timezone, however these tests will run on multiple TZs
     assert.ok(str.startsWith('testexample.com'), 'hostname is missing');
     assert.ok(str.includes('2017-'), 'full year is missing');

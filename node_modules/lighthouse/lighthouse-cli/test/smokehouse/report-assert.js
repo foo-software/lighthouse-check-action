@@ -200,26 +200,42 @@ function pruneExpectations(localConsole, lhr, expected, reportOptions) {
           JSON.stringify(value, null, 2),
           `Actual Chromium version: ${getChromeVersion()}`,
         ].join(' '));
-        delete obj[key];
+        if (Array.isArray(obj)) {
+          obj.splice(Number(key), 1);
+        } else {
+          delete obj[key];
+        }
       } else if (value._legacyOnly && isFraggleRock) {
         localConsole.log([
           `[${key}] marked legacy only but run is Fraggle Rock, pruning expectation:`,
           JSON.stringify(value, null, 2),
         ].join(' '));
-        delete obj[key];
+        if (Array.isArray(obj)) {
+          obj.splice(Number(key), 1);
+        } else {
+          delete obj[key];
+        }
       } else if (value._fraggleRockOnly && !isFraggleRock) {
         localConsole.log([
           `[${key}] marked Fraggle Rock only but run is legacy, pruning expectation:`,
           JSON.stringify(value, null, 2),
           `Actual channel: ${lhr.configSettings.channel}`,
         ].join(' '));
-        delete obj[key];
+        if (Array.isArray(obj)) {
+          obj.splice(Number(key), 1);
+        } else {
+          delete obj[key];
+        }
       } else if (value._skipInBundled && !isBundled) {
         localConsole.log([
           `[${key}] marked as skip in bundled and runner is bundled, pruning expectation:`,
           JSON.stringify(value, null, 2),
         ].join(' '));
-        delete obj[key];
+        if (Array.isArray(obj)) {
+          obj.splice(Number(key), 1);
+        } else {
+          delete obj[key];
+        }
       } else {
         pruneRecursively(value);
       }

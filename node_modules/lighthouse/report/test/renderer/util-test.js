@@ -155,6 +155,28 @@ describe('util helpers', () => {
         const preparedResult = Util.prepareReportResult(clonedSampleResult);
         assert.deepStrictEqual(preparedResult.audits, sampleResult.audits);
       });
+
+      it('corrects performance category without hidden group', () => {
+        const clonedSampleResult = JSON.parse(JSON.stringify(sampleResult));
+
+        clonedSampleResult.lighthouseVersion = '8.6.0';
+        delete clonedSampleResult.categoryGroups['hidden'];
+        for (const auditRef of clonedSampleResult.categories['performance'].auditRefs) {
+          if (auditRef.group === 'hidden') {
+            delete auditRef.group;
+          } else if (!auditRef.group) {
+            auditRef.group = 'diagnostics';
+          }
+        }
+        assert.notDeepStrictEqual(clonedSampleResult.categories, sampleResult.categories);
+        assert.notDeepStrictEqual(clonedSampleResult.categoryGroups, sampleResult.categoryGroups);
+
+        // Original audit results should be restored.
+        const clonedPreparedResult = Util.prepareReportResult(clonedSampleResult);
+        const preparedResult = Util.prepareReportResult(sampleResult);
+        assert.deepStrictEqual(clonedPreparedResult.categories, preparedResult.categories);
+        assert.deepStrictEqual(clonedPreparedResult.categoryGroups, preparedResult.categoryGroups);
+      });
     });
 
     it('appends stack pack descriptions to auditRefs', () => {
@@ -399,17 +421,59 @@ describe('util helpers', () => {
   describe('#calculateCategoryFraction', () => {
     it('returns passed audits and total audits', () => {
       const category = {
+        id: 'performance',
         auditRefs: [
-          {weight: 3, result: {score: 1, scoreDisplayMode: 'binary'}},
-          {weight: 2, result: {score: 1, scoreDisplayMode: 'binary'}},
-          {weight: 0, result: {score: 1, scoreDisplayMode: 'binary'}},
-          {weight: 1, result: {score: 0, scoreDisplayMode: 'binary'}},
+          {weight: 3, result: {score: 1, scoreDisplayMode: 'binary'}, group: 'metrics'},
+          {weight: 2, result: {score: 1, scoreDisplayMode: 'binary'}, group: 'metrics'},
+          {weight: 0, result: {score: 1, scoreDisplayMode: 'binary'}, group: 'metrics'},
+          {weight: 1, result: {score: 0, scoreDisplayMode: 'binary'}, group: 'metrics'},
         ],
       };
-      const {numPassed, numAudits, totalWeight} = Util.calculateCategoryFraction(category);
-      expect(numPassed).toEqual(3);
-      expect(numAudits).toEqual(4);
-      expect(totalWeight).toEqual(6);
+      const fraction = Util.calculateCategoryFraction(category);
+      expect(fraction).toEqual({
+        numPassableAudits: 4,
+        numPassed: 3,
+        numInformative: 0,
+        totalWeight: 6,
+      });
+    });
+
+    it('ignores manual audits, N/A audits, and hidden audits', () => {
+      const category = {
+        id: 'performance',
+        auditRefs: [
+          {weight: 1, result: {score: 1, scoreDisplayMode: 'binary'}, group: 'metrics'},
+          {weight: 1, result: {score: 1, scoreDisplayMode: 'binary'}, group: 'hidden'},
+          {weight: 1, result: {score: 0, scoreDisplayMode: 'manual'}, group: 'metrics'},
+          {weight: 1, result: {score: 0, scoreDisplayMode: 'notApplicable'}, group: 'metrics'},
+        ],
+      };
+      const fraction = Util.calculateCategoryFraction(category);
+      expect(fraction).toEqual({
+        numPassableAudits: 1,
+        numPassed: 1,
+        numInformative: 0,
+        totalWeight: 1,
+      });
+    });
+
+    it('tracks informative audits separately', () => {
+      const category = {
+        id: 'performance',
+        auditRefs: [
+          {weight: 1, result: {score: 1, scoreDisplayMode: 'binary'}, group: 'metrics'},
+          {weight: 1, result: {score: 1, scoreDisplayMode: 'binary'}, group: 'metrics'},
+          {weight: 0, result: {score: 1, scoreDisplayMode: 'informative'}, group: 'metrics'},
+          {weight: 1, result: {score: 0, scoreDisplayMode: 'informative'}, group: 'metrics'},
+        ],
+      };
+      const fraction = Util.calculateCategoryFraction(category);
+      expect(fraction).toEqual({
+        numPassableAudits: 2,
+        numPassed: 2,
+        numInformative: 2,
+        totalWeight: 2,
+      });
     });
   });
 });

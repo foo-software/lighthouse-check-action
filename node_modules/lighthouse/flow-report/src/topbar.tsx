@@ -5,8 +5,20 @@
  */
 
 import {FunctionComponent, JSX} from 'preact';
+import {useState} from 'preact/hooks';
 
-import {HamburgerIcon} from './icons';
+import {HelpDialog} from './help-dialog';
+import {getFlowResultFilenamePrefix} from '../../report/generator/file-namer';
+import {useLocalizedStrings} from './i18n/i18n';
+import {HamburgerIcon, InfoIcon} from './icons';
+import {useFlowResult, useOptions} from './util';
+import {saveFile} from '../../report/renderer/api';
+
+function saveHtml(flowResult: LH.FlowResult, htmlStr: string) {
+  const blob = new Blob([htmlStr], {type: 'text/html'});
+  const filename = getFlowResultFilenamePrefix(flowResult);
+  saveFile(blob, filename);
+}
 
 /* eslint-disable max-len */
 const Logo: FunctionComponent = () => {
@@ -44,17 +56,65 @@ const Logo: FunctionComponent = () => {
 };
 /* eslint-enable max-len */
 
-export const Topbar: FunctionComponent<{onMenuClick: JSX.MouseEventHandler<HTMLDivElement>}> =
+const TopbarButton: FunctionComponent<{
+  onClick: JSX.MouseEventHandler<HTMLButtonElement>,
+  label: string,
+}> =
+({onClick, label, children}) => {
+  return (
+    <button className="TopbarButton" onClick={onClick} aria-label={label}>
+      {children}
+    </button>
+  );
+};
+
+export const Topbar: FunctionComponent<{onMenuClick: JSX.MouseEventHandler<HTMLButtonElement>}> =
 ({onMenuClick}) => {
+  const flowResult = useFlowResult();
+  const strings = useLocalizedStrings();
+  const [showHelpDialog, setShowHelpDialog] = useState(false);
+  const {getReportHtml, saveAsGist} = useOptions();
+
   return (
     <div className="Topbar">
-      <div className="Topbar__menu" onClick={onMenuClick} role="button">
+      <TopbarButton onClick={onMenuClick} label="Button that opens and closes the sidebar">
         <HamburgerIcon/>
-      </div>
+      </TopbarButton>
       <div className="Topbar__logo">
         <Logo/>
       </div>
-      <div className="Topbar__title">Lighthouse User Flow Report</div>
+      <div className="Topbar__title">{strings.title}</div>
+      {
+        getReportHtml &&
+          <TopbarButton
+            onClick={() => {
+              const htmlStr = getReportHtml(flowResult);
+              saveHtml(flowResult, htmlStr);
+            }}
+            label="Button that saves the report as HTML"
+          >{strings.save}</TopbarButton>
+      }
+      {
+        saveAsGist &&
+          <TopbarButton
+            onClick={() => saveAsGist(flowResult)}
+            label="Button that saves the report to a gist"
+          >{strings.dropdownSaveGist}</TopbarButton>
+      }
+      <div style={{flexGrow: 1}} />
+      <TopbarButton
+        onClick={() => setShowHelpDialog(previous => !previous)}
+        label="Button that toggles the help dialog"
+      >
+        <div className="Topbar__help-label">
+          <InfoIcon/>
+          {strings.helpLabel}
+        </div>
+      </TopbarButton>
+      {showHelpDialog ?
+        <HelpDialog onClose={() => setShowHelpDialog(false)} /> :
+        null
+      }
     </div>
   );
 };

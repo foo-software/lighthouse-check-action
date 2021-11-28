@@ -10,7 +10,8 @@
   },
   "references": [
     {"path": "../types/lhr/"},
-    {"path": "./generator/"}
+    {"path": "./generator/"},
+    {"path": "../shared/"}
   ],
   "include": [
     "**/*.js",

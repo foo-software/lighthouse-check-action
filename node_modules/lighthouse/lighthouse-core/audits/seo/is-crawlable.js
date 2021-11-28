@@ -126,9 +126,9 @@ class IsCrawlable extends Audit {
             const line = robotsTxt.getMatchingLineNumber(mainResource.url) || 1;
             blockingDirectives.push({
               source: {
-                type: /** @type {'source-location'} */ ('source-location'),
+                type: /** @type {const} */ ('source-location'),
                 url: robotsFileUrl.href,
-                urlProvider: /** @type {'network'} */ ('network'),
+                urlProvider: /** @type {const} */ ('network'),
                 line: line - 1,
                 column: 0,
               },

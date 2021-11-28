@@ -19,6 +19,6 @@
 
     // "listFiles": true,
     // "noErrorTruncation": true,
-    "extendedDiagnostics": true,
+    // "extendedDiagnostics": true,
   },
 }

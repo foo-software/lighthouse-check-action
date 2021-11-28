@@ -14,8 +14,10 @@
   "references": [
     {"path": "../types/lhr/"},
     {"path": "../report"},
+    {"path": "../shared"},
   ],
   "include": [
+    "**/*.js",
     "**/*.ts",
     "**/*.tsx",
     "./types",

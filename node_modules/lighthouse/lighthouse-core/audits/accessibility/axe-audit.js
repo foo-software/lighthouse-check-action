@@ -79,12 +79,18 @@ class AxeAudit extends Audit {
           ...Audit.makeNodeItem(axeNode.node),
           explanation: axeNode.failureSummary,
         },
+        subItems: axeNode.relatedNodes.length ? {
+          type: 'subitems',
+          items: axeNode.relatedNodes.map(node => ({relatedNode: Audit.makeNodeItem(node)})),
+        } : undefined,
       }));
     }
 
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
-      {key: 'node', itemType: 'node', text: str_(UIStrings.failingElementsHeader)},
+      /* eslint-disable max-len */
+      {key: 'node', itemType: 'node', subItemsHeading: {key: 'relatedNode', itemType: 'node'}, text: str_(UIStrings.failingElementsHeader)},
+      /* eslint-enable max-len */
     ];
 
     /** @type {LH.Audit.Details.DebugData|undefined} */

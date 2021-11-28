@@ -10,18 +10,6 @@ const stackPacks = require('lighthouse-stack-packs');
 const i18n = require('./i18n/i18n.js');
 
 /**
- * Resolve a module on web and node
- * @param {string} module
- */
-function resolve(module) {
-  if (!require.resolve) {
-    return `node_modules/${module}`;
-  }
-
-  return require.resolve(module);
-}
-
-/**
  * Pairs consisting of a stack pack's ID and the set of stacks needed to be
  * detected in a page to display that pack's advice.
  * @type {Array<{packId: string, requiredStacks: Array<string>}>}
@@ -34,14 +22,6 @@ const stackPacksToInclude = [
   {
     packId: 'drupal',
     requiredStacks: ['js:drupal'],
-  },
-  {
-    packId: 'react',
-    requiredStacks: ['js:react'],
-  },
-  {
-    packId: 'angular',
-    requiredStacks: ['js:@angular/core'],
   },
   {
     packId: 'amp',
@@ -58,6 +38,18 @@ const stackPacksToInclude = [
   {
     packId: 'joomla',
     requiredStacks: ['js:joomla'],
+  },
+  {
+    packId: 'next.js',
+    requiredStacks: ['js:next'],
+  },
+  {
+    packId: 'angular',
+    requiredStacks: ['js:@angular/core'],
+  },
+  {
+    packId: 'react',
+    requiredStacks: ['js:react'],
   },
 ];
 
@@ -87,7 +79,7 @@ function getStackPacks(pageStacks) {
 
     // Create i18n handler to get translated strings.
     const str_ = i18n.createMessageInstanceIdFn(
-      resolve(`lighthouse-stack-packs/packs/${matchedPack.id}`),
+      `node_modules/lighthouse-stack-packs/packs/${matchedPack.id}.js`,
       matchedPack.UIStrings
     );
 

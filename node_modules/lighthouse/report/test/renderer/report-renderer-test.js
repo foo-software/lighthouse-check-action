@@ -10,6 +10,7 @@
 import {strict as assert} from 'assert';
 
 import jsdom from 'jsdom';
+import {jest} from '@jest/globals';
 
 import {Util} from '../../renderer/util.js';
 import URL from '../../../lighthouse-core/lib/url-shim.js';
@@ -26,6 +27,8 @@ describe('ReportRenderer', () => {
   let sampleResults;
 
   beforeAll(() => {
+    global.console.warn = jest.fn();
+
     // Stub out matchMedia for Node.
     global.matchMedia = function() {
       return {
@@ -50,7 +53,7 @@ describe('ReportRenderer', () => {
 
   describe('renderReport', () => {
     it('should render a report', () => {
-      const container = renderer._dom._document.body;
+      const container = renderer._dom.document().body;
       const output = renderer.renderReport(sampleResults, container);
       assert.ok(output.querySelector('.lh-header-container'), 'has a header');
       assert.ok(output.querySelector('.lh-report'), 'has report body');
@@ -60,7 +63,7 @@ describe('ReportRenderer', () => {
     });
 
     it('renders additional reports by replacing the existing one', () => {
-      const container = renderer._dom._document.body;
+      const container = renderer._dom.document().body;
       const oldReport = Array.from(renderer.renderReport(sampleResults, container).children);
       const newReport = Array.from(renderer.renderReport(sampleResults, container).children);
       assert.ok(!oldReport.find(node => container.contains(node)), 'old report was removed');
@@ -86,11 +89,11 @@ describe('ReportRenderer', () => {
         auditRefs: [],
       };
 
-      const container = renderer._dom._document.body;
+      const container = renderer._dom.document().body;
       const output = renderer.renderReport(sampleResultsCopy, container);
 
       function isPWAGauge(el) {
-        return el.querySelector('.lh-gauge__label').textContent === 'Progressive Web App';
+        return el.querySelector('.lh-gauge__label').textContent === 'PWA';
       }
       function isPluginGauge(el) {
         return el.querySelector('.lh-gauge__label').textContent === 'Some Plugin';
@@ -119,6 +122,35 @@ describe('ReportRenderer', () => {
       }
     });
 
+    it('renders score gauges with custom callback', () => {
+      const sampleResultsCopy = JSON.parse(JSON.stringify(sampleResults));
+
+      const opts = {
+        onPageAnchorRendered: link => {
+          const id = link.hash.substring(1);
+          link.hash = `#index=0&anchor=${id}`;
+        },
+      };
+      const container = renderer._dom.document().body;
+      const output = renderer.renderReport(sampleResultsCopy, container, opts);
+      const anchors = output.querySelectorAll('a.lh-gauge__wrapper, a.lh-fraction__wrapper');
+      const hashes = Array.from(anchors).map(anchor => anchor.hash).filter(hash => hash);
+
+      // One set for the sticky header, on set for the gauges at the top.
+      assert.deepStrictEqual(hashes, [
+        '#index=0&anchor=performance',
+        '#index=0&anchor=accessibility',
+        '#index=0&anchor=best-practices',
+        '#index=0&anchor=seo',
+        '#index=0&anchor=pwa',
+        '#index=0&anchor=performance',
+        '#index=0&anchor=accessibility',
+        '#index=0&anchor=best-practices',
+        '#index=0&anchor=seo',
+        '#index=0&anchor=pwa',
+      ]);
+    });
+
     it('renders plugin score gauge', () => {
       const sampleResultsCopy = JSON.parse(JSON.stringify(sampleResults));
       sampleResultsCopy.categories['lighthouse-plugin-someplugin'] = {
@@ -126,7 +158,7 @@ describe('ReportRenderer', () => {
         title: 'Some Plugin',
         auditRefs: [],
       };
-      const container = renderer._dom._document.body;
+      const container = renderer._dom.document().body;
       const output = renderer.renderReport(sampleResultsCopy, container);
       const scoresHeaderElem = output.querySelector('.lh-scores-header');
 
@@ -140,7 +172,7 @@ describe('ReportRenderer', () => {
     });
 
     it('should not mutate a report object', () => {
-      const container = renderer._dom._document.body;
+      const container = renderer._dom.document().body;
       const originalResults = JSON.parse(JSON.stringify(sampleResults));
       renderer.renderReport(sampleResults, container);
       assert.deepStrictEqual(sampleResults, originalResults);
@@ -148,13 +180,13 @@ describe('ReportRenderer', () => {
 
     it('renders no warning section when no lighthouseRunWarnings occur', () => {
       const warningResults = Object.assign({}, sampleResults, {runWarnings: []});
-      const container = renderer._dom._document.body;
+      const container = renderer._dom.document().body;
       const output = renderer.renderReport(warningResults, container);
       assert.strictEqual(output.querySelector('.lh-warnings--toplevel'), null);
     });
 
     it('renders a warning section', () => {
-      const container = renderer._dom._document.body;
+      const container = renderer._dom.document().body;
       const output = renderer.renderReport(sampleResults, container);
 
       const warningEls = output.querySelectorAll('.lh-warnings--toplevel > ul > li');
@@ -165,7 +197,7 @@ describe('ReportRenderer', () => {
       const warningResults = Object.assign({}, sampleResults, {
         runWarnings: ['[I am a link](https://example.com/)'],
       });
-      const container = renderer._dom._document.body;
+      const container = renderer._dom.document().body;
       const output = renderer.renderReport(warningResults, container);
 
       const warningEls = output.querySelectorAll('.lh-warnings--toplevel ul li a');
@@ -179,17 +211,15 @@ describe('ReportRenderer', () => {
       assert.ok(/Generated by Lighthouse \d/.test(footerContent), 'includes lh version');
       assert.ok(footerContent.match(TIMESTAMP_REGEX), 'includes timestamp');
 
-      // Check runtime settings were populated.
-      const names = Array.from(footer.querySelectorAll('.lh-env__name'));
-      const descriptions = Array.from(footer.querySelectorAll('.lh-env__description'));
-      assert.ok(names.length >= 3);
-      assert.ok(descriptions.length >= 3);
+      // Check env items were populated.
+      const items = Array.from(footer.querySelectorAll('.lh-meta__item'));
+      expect(items.length).toBeGreaterThanOrEqual(6);
 
-      const descriptionsTxt = descriptions.map(el => el.textContent).join('\n');
-      expect(descriptionsTxt).toContain('Moto G4');
-      expect(descriptionsTxt).toContain('RTT');
-      expect(descriptionsTxt).toMatch(/\dx/);
-      expect(descriptionsTxt).toContain(sampleResults.userAgent);
+      const itemsTxt = items.map(el => `${el.textContent} ${el.title}`).join('\n');
+      expect(itemsTxt).toContain('Moto G4');
+      expect(itemsTxt).toContain('RTT');
+      expect(itemsTxt).toMatch(/\dx/);
+      expect(itemsTxt).toContain(sampleResults.environment.networkUserAgent);
     });
   });
 
@@ -198,7 +228,7 @@ describe('ReportRenderer', () => {
     // Make sure we have a channel in the LHR.
     assert.ok(lhrChannel.length > 2);
 
-    const container = renderer._dom._document.body;
+    const container = renderer._dom.document().body;
     const output = renderer.renderReport(sampleResults, container);
 
     const DOCS_ORIGINS = ['https://developers.google.com', 'https://web.dev'];
@@ -227,65 +257,10 @@ describe('ReportRenderer', () => {
 
     assert.ok(notApplicableCount > 20); // Make sure something's being tested.
 
-    const container = renderer._dom._document.body;
+    const container = renderer._dom.document().body;
     const reportElement = renderer.renderReport(sampleResults, container);
     const notApplicableElementCount = reportElement
       .querySelectorAll('.lh-audit--notapplicable').length;
     assert.strictEqual(notApplicableCount, notApplicableElementCount);
-  });
-
-  describe('axe-core', () => {
-    let axe;
-
-    beforeAll(async () =>{
-      // Needed by axe-core
-      // https://github.com/dequelabs/axe-core/blob/581c441c/doc/examples/jsdom/test/a11y.js#L24
-      global.window = global.self;
-      global.Node = global.self.Node;
-      global.Element = global.self.Element;
-
-      // axe-core must be imported after the global polyfills
-      axe = (await import('axe-core')).default;
-    });
-
-    afterAll(() => {
-      global.window = undefined;
-      global.Node = undefined;
-      global.Element = undefined;
-    });
-
-    it('renders without axe violations', () => {
-      const container = renderer._dom._document.createElement('main');
-      const output = renderer.renderReport(sampleResults, container);
-      renderer._dom._document.body.appendChild(container);
-
-      const config = {
-        rules: {
-          // Reports may have duplicate ids
-          // https://github.com/GoogleChrome/lighthouse/issues/9432
-          'duplicate-id': {enabled: false},
-          'duplicate-id-aria': {enabled: false},
-          'landmark-no-duplicate-contentinfo': {enabled: false},
-          // The following rules are disable for axe-core + jsdom compatibility
-          // https://github.com/dequelabs/axe-core/tree/b573b1c1/doc/examples/jest_react#to-run-the-example
-          'color-contrast': {enabled: false},
-          'link-in-text-block': {enabled: false},
-          // Report has empty links prior to i18n-ing.
-          'link-name': {enabled: false},
-          // May not be a real issue. https://github.com/dequelabs/axe-core/issues/2958
-          'nested-interactive': {enabled: false},
-        },
-      };
-
-      return new Promise(resolve => {
-        axe.run(output, config, (error, {violations}) => {
-          expect(error).toBeNull();
-          expect(violations).toEqual([]);
-          resolve();
-        });
-      });
-    // This test takes 40s on fast hardware, and 50-60s on GHA.
-    // https://github.com/dequelabs/axe-core/tree/b573b1c1/doc/examples/jest_react#timeout-issues
-    }, /* timeout= */ 100 * 1000);
   });
 });

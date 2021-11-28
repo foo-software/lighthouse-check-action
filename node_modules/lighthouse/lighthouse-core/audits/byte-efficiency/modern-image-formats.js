@@ -103,6 +103,8 @@ class ModernImageFormats extends ByteEfficiencyAudit {
     const items = [];
     const warnings = [];
     for (const image of images) {
+      const imageElement = imageElementsByURL.get(image.url);
+
       if (image.failed) {
         warnings.push(`Unable to decode ${URL.getURLDisplayName(image.url)}`);
         continue;
@@ -120,7 +122,6 @@ class ModernImageFormats extends ByteEfficiencyAudit {
       let fromProtocol = true;
 
       if (typeof webpSize === 'undefined') {
-        const imageElement = imageElementsByURL.get(image.url);
         if (!imageElement) {
           warnings.push(`Unable to locate resource ${URL.getURLDisplayName(image.url)}`);
           continue;
@@ -155,6 +156,7 @@ class ModernImageFormats extends ByteEfficiencyAudit {
       const isCrossOrigin = !URL.originsMatch(pageURL, image.url);
 
       items.push({
+        node: imageElement ? ByteEfficiencyAudit.makeNodeItem(imageElement.node) : undefined,
         url,
         fromProtocol,
         isCrossOrigin,
@@ -166,7 +168,7 @@ class ModernImageFormats extends ByteEfficiencyAudit {
 
     /** @type {LH.Audit.Details.Opportunity['headings']} */
     const headings = [
-      {key: 'url', valueType: 'thumbnail', label: ''},
+      {key: 'node', valueType: 'node', label: ''},
       {key: 'url', valueType: 'url', label: str_(i18n.UIStrings.columnURL)},
       {key: 'totalBytes', valueType: 'bytes', label: str_(i18n.UIStrings.columnResourceSize)},
       {key: 'wastedBytes', valueType: 'bytes', label: str_(i18n.UIStrings.columnWastedBytes)},

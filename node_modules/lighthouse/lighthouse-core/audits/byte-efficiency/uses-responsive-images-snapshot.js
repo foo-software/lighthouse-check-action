@@ -70,6 +70,7 @@ class UsesResponsiveImagesSnapshot extends Audit {
       if (actualPixels - usedPixels > IGNORE_THRESHOLD_IN_PIXELS) score = 0;
 
       items.push({
+        node: Audit.makeNodeItem(image.node),
         url: URL.elideDataURI(image.src),
         displayedDimensions: `${displayed.width}x${displayed.height}`,
         actualDimensions: `${actual.width}x${actual.height}`,
@@ -79,7 +80,7 @@ class UsesResponsiveImagesSnapshot extends Audit {
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
       /* eslint-disable max-len */
-      {key: 'url', itemType: 'thumbnail', text: ''},
+      {key: 'node', itemType: 'node', text: ''},
       {key: 'url', itemType: 'url', text: str_(i18n.UIStrings.columnURL)},
       {key: 'displayedDimensions', itemType: 'text', text: str_(UIStrings.columnDisplayedDimensions)},
       {key: 'actualDimensions', itemType: 'text', text: str_(UIStrings.columnActualDimensions)},

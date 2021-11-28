@@ -11,15 +11,14 @@
  */
 
 /**
- * Generate a filenamePrefix of hostname_YYYY-MM-DD_HH-MM-SS
+ * Generate a filenamePrefix of name_YYYY-MM-DD_HH-MM-SS
  * Date/time uses the local timezone, however Node has unreliable ICU
  * support, so we must construct a YYYY-MM-DD date format manually. :/
- * @param {{finalUrl: string, fetchTime: string}} lhr
- * @return {string}
+ * @param {string} name
+ * @param {string|undefined} fetchTime
  */
-function getFilenamePrefix(lhr) {
-  const hostname = new URL(lhr.finalUrl).hostname;
-  const date = (lhr.fetchTime && new Date(lhr.fetchTime)) || new Date();
+function getFilenamePrefix(name, fetchTime) {
+  const date = fetchTime ? new Date(fetchTime) : new Date();
 
   const timeStr = date.toLocaleTimeString('en-US', {hour12: false});
   const dateParts = date.toLocaleDateString('en-US', {
@@ -29,9 +28,30 @@ function getFilenamePrefix(lhr) {
   dateParts.unshift(dateParts.pop());
   const dateStr = dateParts.join('-');
 
-  const filenamePrefix = `${hostname}_${dateStr}_${timeStr}`;
+  const filenamePrefix = `${name}_${dateStr}_${timeStr}`;
   // replace characters that are unfriendly to filenames
   return filenamePrefix.replace(/[/?<>\\:*|"]/g, '-');
 }
 
-module.exports = {getFilenamePrefix};
+/**
+ * Generate a filenamePrefix of hostname_YYYY-MM-DD_HH-MM-SS.
+ * @param {{finalUrl: string, fetchTime: string}} lhr
+ * @return {string}
+ */
+function getLhrFilenamePrefix(lhr) {
+  const hostname = new URL(lhr.finalUrl).hostname;
+  return getFilenamePrefix(hostname, lhr.fetchTime);
+}
+
+/**
+ * Generate a filenamePrefix of name_YYYY-MM-DD_HH-MM-SS.
+ * @param {{name: string, steps: Array<{lhr: {fetchTime: string}}>}} flowResult
+ * @return {string}
+ */
+function getFlowResultFilenamePrefix(flowResult) {
+  const lhr = flowResult.steps[0].lhr;
+  const name = flowResult.name.replace(/\s/g, '-');
+  return getFilenamePrefix(name, lhr.fetchTime);
+}
+
+module.exports = {getLhrFilenamePrefix, getFilenamePrefix, getFlowResultFilenamePrefix};

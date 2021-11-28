@@ -38,17 +38,18 @@ class GeolocationOnStart extends ViolationAudit {
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
       supportedModes: ['navigation'],
-      requiredArtifacts: ['ConsoleMessages'],
+      requiredArtifacts: ['ConsoleMessages', 'SourceMaps', 'ScriptElements'],
     };
   }
 
   /**
    * @param {LH.Artifacts} artifacts
-   * @return {LH.Audit.Product}
+   * @param {LH.Audit.Context} context
+   * @return {Promise<LH.Audit.Product>}
    */
-  static audit(artifacts) {
+  static async audit(artifacts, context) {
     // 'Only request geolocation information in response to a user gesture.'
-    const results = ViolationAudit.getViolationResults(artifacts, /geolocation/);
+    const results = await ViolationAudit.getViolationResults(artifacts, context, /geolocation/);
 
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [

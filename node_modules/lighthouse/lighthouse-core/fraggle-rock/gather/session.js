@@ -150,10 +150,9 @@ class ProtocolSession {
     const timeoutPromise = new Promise((resolve, reject) => {
       if (timeoutMs === Infinity) return;
 
-      timeout = setTimeout((() => {
-        const err = new LHError(LHError.errors.PROTOCOL_TIMEOUT, {protocolMethod: method});
-        reject(err);
-      }), timeoutMs);
+      timeout = setTimeout(reject, timeoutMs, new LHError(LHError.errors.PROTOCOL_TIMEOUT, {
+        protocolMethod: method,
+      }));
     });
 
     const resultPromise = this._session.send(method, ...params);

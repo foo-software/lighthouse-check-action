@@ -134,6 +134,7 @@ declare module Config {
     auditRefs: AuditRefJson[];
     description?: string | IcuMessage;
     manualDescription?: string | IcuMessage;
+    supportedModes?:  Gatherer.GatherMode[];
   }
 
   interface GroupJson {

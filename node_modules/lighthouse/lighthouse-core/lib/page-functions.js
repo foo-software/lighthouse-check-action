@@ -208,7 +208,8 @@ function computeBenchmarkIndex() {
 
     while (Date.now() - start < 500) {
       let s = '';
-      for (let j = 0; j < 10000; j++) s += 'a'; // eslint-disable-line no-unused-vars
+      for (let j = 0; j < 10000; j++) s += 'a';
+      if (s.length === 1) throw new Error('will never happen, but prevents compiler optimizations');
 
       iterations++;
     }
@@ -530,8 +531,8 @@ module.exports = {
   getElementsInDocument,
   getElementsInDocumentString: getElementsInDocument.toString(),
   getOuterHTMLSnippetString: getOuterHTMLSnippet.toString(),
-  getOuterHTMLSnippet: getOuterHTMLSnippet,
-  computeBenchmarkIndex: computeBenchmarkIndex,
+  getOuterHTMLSnippet,
+  computeBenchmarkIndex,
   computeBenchmarkIndexString: computeBenchmarkIndex.toString(),
   getMaxTextureSize,
   getNodeDetailsString,
@@ -539,8 +540,8 @@ module.exports = {
   getNodePathString: getNodePath.toString(),
   getNodeSelectorString: getNodeSelector.toString(),
   getNodePath,
-  getNodeSelector: getNodeSelector,
-  getNodeLabel: getNodeLabel,
+  getNodeSelector,
+  getNodeLabel,
   getNodeLabelString: getNodeLabel.toString(),
   isPositionFixedString: isPositionFixed.toString(),
   wrapRequestIdleCallback,

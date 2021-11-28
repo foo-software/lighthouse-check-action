@@ -6,6 +6,7 @@
 'use strict';
 
 const legacyDefaultConfig = require('../../config/default-config.js');
+const {deepClone} = require('../../config/config-helpers.js');
 
 /** @type {LH.Config.AuditJson[]} */
 const frAudits = [
@@ -15,14 +16,15 @@ const frAudits = [
 /** @type {Record<string, LH.Config.AuditRefJson[]>} */
 const frCategoryAuditRefExtensions = {
   'performance': [
-    {id: 'uses-responsive-images-snapshot', weight: 0, group: 'diagnostics'},
+    {id: 'uses-responsive-images-snapshot', weight: 0},
   ],
 };
 
 /** @return {LH.Config.Json['categories']} */
 function mergeCategories() {
   if (!legacyDefaultConfig.categories) return {};
-  const categories = legacyDefaultConfig.categories;
+  // Don't modify original default config.
+  const categories = deepClone(legacyDefaultConfig.categories);
   for (const key of Object.keys(frCategoryAuditRefExtensions)) {
     if (!categories[key]) continue;
     categories[key].auditRefs.push(...frCategoryAuditRefExtensions[key]);
@@ -37,7 +39,6 @@ const artifacts = {
   Trace: '',
   Accessibility: '',
   AnchorElements: '',
-  AppCacheManifest: '',
   CacheContents: '',
   ConsoleMessages: '',
   CSSUsage: '',
@@ -88,7 +89,6 @@ const defaultConfig = {
     /* eslint-disable max-len */
     {id: artifacts.Accessibility, gatherer: 'accessibility'},
     {id: artifacts.AnchorElements, gatherer: 'anchor-elements'},
-    {id: artifacts.AppCacheManifest, gatherer: 'dobetterweb/appcache'},
     {id: artifacts.CacheContents, gatherer: 'cache-contents'},
     {id: artifacts.ConsoleMessages, gatherer: 'console-messages'},
     {id: artifacts.CSSUsage, gatherer: 'css-usage'},
@@ -141,7 +141,6 @@ const defaultConfig = {
 
         artifacts.Accessibility,
         artifacts.AnchorElements,
-        artifacts.AppCacheManifest,
         artifacts.CacheContents,
         artifacts.ConsoleMessages,
         artifacts.CSSUsage,

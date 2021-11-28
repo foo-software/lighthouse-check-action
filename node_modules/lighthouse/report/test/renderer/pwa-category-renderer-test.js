@@ -107,12 +107,12 @@ describe('PwaCategoryRenderer', () => {
       const clone = JSON.parse(JSON.stringify(sampleResults));
       const category = clone.categories.pwa;
 
-      // Set everything to passing, except redirects-http set to n/a (as it is on localhost)
+      // Set everything to passing, except for one. (themed-omnibox chosen randomly)
       for (const auditRef of category.auditRefs) {
         auditRef.result.score = 1;
         auditRef.result.scoreDisplayMode = 'binary';
       }
-      const audit = category.auditRefs.find(ref => ref.id === 'redirects-http');
+      const audit = category.auditRefs.find(ref => ref.id === 'themed-omnibox');
       audit.result.scoreDisplayMode = 'notApplicable';
       audit.result.score = null;
 
@@ -249,10 +249,10 @@ describe('PwaCategoryRenderer', () => {
     });
   });
 
-  describe('#renderScoreGauge', () => {
+  describe('#renderCategoryScore', () => {
     it('renders an error score gauge in case of category error', () => {
       category.score = null;
-      const badgeGauge = pwaRenderer.renderScoreGauge(category, sampleResults.categoryGroups);
+      const badgeGauge = pwaRenderer.renderCategoryScore(category, sampleResults.categoryGroups);
 
       // Not a PWA gauge.
       assert.strictEqual(badgeGauge.querySelector('.lh-gauge--pwa__wrapper'), null);
@@ -263,11 +263,11 @@ describe('PwaCategoryRenderer', () => {
     });
 
     it('renders score gauges with unique ids for items in <defs>', () => {
-      const gauge1 = pwaRenderer.renderScoreGauge(category, sampleResults.categoryGroups);
+      const gauge1 = pwaRenderer.renderCategoryScore(category, sampleResults.categoryGroups);
       const gauge1Ids = [...gauge1.querySelectorAll('defs [id]')].map(el => el.id);
       assert.ok(gauge1Ids.length > 2);
 
-      const gauge2 = pwaRenderer.renderScoreGauge(category, sampleResults.categoryGroups);
+      const gauge2 = pwaRenderer.renderCategoryScore(category, sampleResults.categoryGroups);
       const gauge2Ids = [...gauge2.querySelectorAll('defs [id]')].map(el => el.id);
       assert.ok(gauge2Ids.length === gauge1Ids.length);
 

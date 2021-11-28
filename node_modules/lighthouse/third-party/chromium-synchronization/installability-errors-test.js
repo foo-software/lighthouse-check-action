@@ -11,6 +11,8 @@ const InstallableManifestAudit = require('../../lighthouse-core/audits/installab
 
 /* eslint-env jest */
 
+jest.setTimeout(20_000);
+
 describe('installabilityErrors', () => {
   let chromiumErrorIds;
 

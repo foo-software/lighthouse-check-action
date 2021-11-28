@@ -142,11 +142,16 @@ async function prepareDeviceEmulationAndAsyncStacks(driver, settings) {
  * @param {LH.Config.Settings} settings
  */
 async function prepareTargetForTimespanMode(driver, settings) {
+  const status = {msg: 'Preparing target for timespan mode', id: 'lh:prepare:timespanMode'};
+  log.time(status);
+
   await prepareDeviceEmulationAndAsyncStacks(driver, settings);
   await prepareThrottlingAndNetwork(driver.defaultSession, settings, {
     disableThrottling: false,
     blockedUrlPatterns: undefined,
   });
+
+  log.timeEnd(status);
 }
 
 /**
@@ -159,6 +164,9 @@ async function prepareTargetForTimespanMode(driver, settings) {
  * @param {LH.Config.Settings} settings
  */
 async function prepareTargetForNavigationMode(driver, settings) {
+  const status = {msg: 'Preparing target for navigation mode', id: 'lh:prepare:navigationMode'};
+  log.time(status);
+
   await prepareDeviceEmulationAndAsyncStacks(driver, settings);
 
   // Automatically handle any JavaScript dialogs to prevent a hung renderer.
@@ -171,6 +179,8 @@ async function prepareTargetForNavigationMode(driver, settings) {
   if (settings.throttlingMethod === 'simulate') {
     await shimRequestIdleCallbackOnNewDocument(driver, settings);
   }
+
+  log.timeEnd(status);
 }
 
 /**
@@ -184,6 +194,9 @@ async function prepareTargetForNavigationMode(driver, settings) {
  * @return {Promise<{warnings: Array<LH.IcuMessage>}>}
  */
 async function prepareTargetForIndividualNavigation(session, settings, navigation) {
+  const status = {msg: 'Preparing target for navigation', id: 'lh:prepare:navigation'};
+  log.time(status);
+
   /** @type {Array<LH.IcuMessage>} */
   const warnings = [];
 
@@ -195,6 +208,7 @@ async function prepareTargetForIndividualNavigation(session, settings, navigatio
 
   await prepareThrottlingAndNetwork(session, settings, navigation);
 
+  log.timeEnd(status);
   return {warnings};
 }
 

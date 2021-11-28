@@ -110,7 +110,7 @@ class ValidSourceMaps extends Audit {
           scriptUrl: scriptElement.src,
           sourceMapUrl: sourceMap && sourceMap.sourceMapUrl,
           subItems: {
-            type: /** @type {'subitems'} */ ('subitems'),
+            type: /** @type {const} */ ('subitems'),
             items: errors,
           },
         });

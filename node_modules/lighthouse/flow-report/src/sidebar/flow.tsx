@@ -7,7 +7,7 @@
 import {FunctionComponent} from 'preact';
 
 import {FlowSegment} from '../common';
-import {classNames, useCurrentLhr, useFlowResult} from '../util';
+import {classNames, useHashState, useFlowResult} from '../util';
 import {Separator} from '../common';
 
 const SidebarFlowStep: FunctionComponent<{
@@ -41,15 +41,13 @@ const SidebarFlowSeparator: FunctionComponent = () => {
 
 export const SidebarFlow: FunctionComponent = () => {
   const flowResult = useFlowResult();
-  const currentLhr = useCurrentLhr();
+  const hashState = useHashState();
 
   return (
     <div className="SidebarFlow">
       {
         flowResult.steps.map((step, index) => {
           const {lhr, name} = step;
-          const url = new URL(location.href);
-          url.hash = `#index=${index}`;
           return <>
             {
               lhr.gatherMode === 'navigation' && index !== 0 ?
@@ -59,9 +57,9 @@ export const SidebarFlow: FunctionComponent = () => {
             <SidebarFlowStep
               key={lhr.fetchTime}
               mode={lhr.gatherMode}
-              href={url.href}
+              href={`#index=${index}`}
               label={name}
-              isCurrent={index === (currentLhr && currentLhr.index)}
+              isCurrent={index === (hashState && hashState.index)}
             />
           </>;
         })

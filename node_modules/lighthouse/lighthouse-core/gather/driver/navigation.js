@@ -5,6 +5,7 @@
  */
 'use strict';
 
+const log = require('lighthouse-logger');
 const NetworkMonitor = require('./network-monitor.js');
 const {waitForFullyLoaded, waitForFrameNavigated, waitForUserToContinue} = require('./wait-for-condition.js'); // eslint-disable-line max-len
 const constants = require('../../config/constants.js');
@@ -82,6 +83,9 @@ function resolveWaitForFullyLoadedOptions(options) {
  * @return {Promise<{finalUrl: string, warnings: Array<LH.IcuMessage>}>}
  */
 async function gotoURL(driver, url, options) {
+  const status = {msg: `Navigating to ${url}`, id: 'lh:driver:navigate'};
+  log.time(status);
+
   const session = driver.defaultSession;
   const networkMonitor = new NetworkMonitor(driver.defaultSession);
 
@@ -125,6 +129,7 @@ async function gotoURL(driver, url, options) {
     await waitForUserToContinue(driver);
   }
 
+  log.timeEnd(status);
   return {
     finalUrl,
     warnings: getNavigationWarnings({timedOut, finalUrl, requestedUrl: url}),

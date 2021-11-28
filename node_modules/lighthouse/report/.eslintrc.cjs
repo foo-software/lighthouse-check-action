@@ -29,5 +29,7 @@ module.exports = {
       ],
       'newlines-between': 'always',
     }],
+    'import/group-exports': 2,
+    'import/exports-last': 2,
   },
 };

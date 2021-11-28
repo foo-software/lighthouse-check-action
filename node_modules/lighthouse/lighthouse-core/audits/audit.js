@@ -7,7 +7,7 @@
 
 const {isUnderTest} = require('../lib/lh-env.js');
 const statistics = require('../lib/statistics.js');
-const Util = require('../util-commonjs.js');
+const {Util} = require('../util-commonjs.js');
 
 const DEFAULT_PASS = 'defaultPass';
 
@@ -233,19 +233,51 @@ class Audit {
   }
 
   /**
-   * @param {LH.Artifacts.ConsoleMessage} entry
-   * @return {LH.Audit.Details.SourceLocationValue | undefined}
+   * @param {LH.Artifacts.Bundle} bundle
+   * @param {number} generatedLine
+   * @param {number} generatedColumn
+   * @return {LH.Audit.Details.SourceLocationValue['original']}
    */
-  static makeSourceLocationFromConsoleMessage(entry) {
-    if (!entry.url) return;
+  static _findOriginalLocation(bundle, generatedLine, generatedColumn) {
+    const entry = bundle?.map.findEntry(generatedLine, generatedColumn);
+    if (!entry) return;
 
     return {
-      type: 'source-location',
-      url: entry.url,
-      urlProvider: 'network',
-      line: entry.lineNumber || 0,
-      column: entry.columnNumber || 0,
+      file: entry.sourceURL || '',
+      line: entry.sourceLineNumber || 0,
+      column: entry.sourceColumnNumber || 0,
     };
+  }
+
+  /**
+   * @param {string} url
+   * @param {number} line 0-indexed
+   * @param {number} column 0-indexed
+   * @param {LH.Artifacts.Bundle=} bundle
+   * @return {LH.Audit.Details.SourceLocationValue}
+   */
+  static makeSourceLocation(url, line, column, bundle) {
+    return {
+      type: 'source-location',
+      url,
+      urlProvider: 'network',
+      line,
+      column,
+      original: bundle && this._findOriginalLocation(bundle, line, column),
+    };
+  }
+
+  /**
+   * @param {LH.Artifacts.ConsoleMessage} entry
+   * @param {LH.Artifacts.Bundle=} bundle
+   * @return {LH.Audit.Details.SourceLocationValue | undefined}
+   */
+  static makeSourceLocationFromConsoleMessage(entry, bundle) {
+    if (!entry.url) return;
+
+    const line = entry.lineNumber || 0;
+    const column = entry.columnNumber || 0;
+    return this.makeSourceLocation(entry.url, line, column, bundle);
   }
 
   /**

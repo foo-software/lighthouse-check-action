@@ -106,13 +106,14 @@ class PreloadLCPImageAudit extends Audit {
 
   /**
    * Computes the estimated effect of preloading the LCP image.
+   * @param {LH.Artifacts.TraceElement|undefined} lcpElement
    * @param {LH.Gatherer.Simulation.GraphNetworkNode|undefined} lcpNode
    * @param {LH.Gatherer.Simulation.GraphNode} graph
    * @param {LH.Gatherer.Simulation.Simulator} simulator
-   * @return {{wastedMs: number, results: Array<{url: string, wastedMs: number}>}}
+   * @return {{wastedMs: number, results: Array<{node: LH.Audit.Details.NodeValue, url: string, wastedMs: number}>}}
    */
-  static computeWasteWithGraph(lcpNode, graph, simulator) {
-    if (!lcpNode) {
+  static computeWasteWithGraph(lcpElement, lcpNode, graph, simulator) {
+    if (!lcpElement || !lcpNode) {
       return {
         wastedMs: 0,
         results: [],
@@ -185,6 +186,7 @@ class PreloadLCPImageAudit extends Audit {
     return {
       wastedMs,
       results: [{
+        node: Audit.makeNodeItem(lcpElement.node),
         url: lcpNode.record.url,
         wastedMs,
       }],
@@ -216,11 +218,11 @@ class PreloadLCPImageAudit extends Audit {
     const lcpNode = PreloadLCPImageAudit.getLCPNodeToPreload(mainResource, graph, lcpElement, artifacts.ImageElements);
 
     const {results, wastedMs} =
-      PreloadLCPImageAudit.computeWasteWithGraph(lcpNode, graph, simulator);
+      PreloadLCPImageAudit.computeWasteWithGraph(lcpElement, lcpNode, graph, simulator);
 
     /** @type {LH.Audit.Details.Opportunity['headings']} */
     const headings = [
-      {key: 'url', valueType: 'thumbnail', label: ''},
+      {key: 'node', valueType: 'node', label: ''},
       {key: 'url', valueType: 'url', label: str_(i18n.UIStrings.columnURL)},
       {key: 'wastedMs', valueType: 'timespanMs', label: str_(i18n.UIStrings.columnWastedMs)},
     ];

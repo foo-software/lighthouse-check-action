@@ -9,7 +9,6 @@ import {strict as assert} from 'assert';
 
 import {Util} from '../../renderer/util.js';
 import {I18n} from '../../renderer/i18n.js';
-import {isNode12SmallIcu} from '../../../lighthouse-core/test/test-utils.js';
 
 // Require i18n to make sure Intl is polyfilled in Node without full-icu for testing.
 // When Util is run in a browser, Intl will be supplied natively (IE11+).
@@ -108,9 +107,6 @@ describe('util helpers', () => {
   });
 
   it('formats numbers based on locale', () => {
-    // COMPAT: Node 12 only has 'en' by default.
-    if (isNode12SmallIcu()) return;
-
     // Requires full-icu or Intl polyfill.
     const number = 12346.858558;
 
@@ -122,9 +118,6 @@ describe('util helpers', () => {
   });
 
   it('uses decimal comma with en-XA test locale', () => {
-    // COMPAT: Node 12 only has 'en' by default.
-    if (isNode12SmallIcu()) return;
-
     // Requires full-icu or Intl polyfill.
     const number = 12346.858558;
 

@@ -140,7 +140,7 @@ function resolveArtifactsToDefns(artifacts, configDir) {
 
     const gatherer = resolveGathererToDefn(gathererJson, coreGathererList, configDir);
     if (!isFRGathererDefn(gatherer)) {
-      throw new Error(`${gatherer.instance.name} gatherer does not support Fraggle Rock`);
+      throw new Error(`${gatherer.instance.name} gatherer does not have a Fraggle Rock meta obj`);
     }
 
     /** @type {LH.Config.AnyArtifactDefn} */

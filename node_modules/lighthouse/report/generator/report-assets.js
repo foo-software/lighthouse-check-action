@@ -12,15 +12,12 @@ const flowReportAssets = require('./flow-report-assets.js');
 const REPORT_TEMPLATE = fs.readFileSync(__dirname + '/../assets/standalone-template.html',
     'utf8');
 const REPORT_JAVASCRIPT = fs.readFileSync(__dirname + '/../../dist/report/standalone.js', 'utf8');
-const REPORT_CSS = fs.readFileSync(__dirname + '/../assets/styles.css', 'utf8');
 
-// Changes to this export interface should be reflected in build/build-dt-report-resources.js
-// and clients/devtools-report-assets.js
 module.exports = {
   REPORT_TEMPLATE,
   REPORT_JAVASCRIPT,
-  REPORT_CSS,
   // Flow report assets are not needed for every bundle.
-  // Ignoring flow-report-assets.js (e.g. `browserify.ignore`) will remove the flow assets from the bundle.
+  // Replacing/ignoring flow-report-assets.js (e.g. `rollupPlugins.shim`) will
+  // remove the flow assets from the bundle.
   ...flowReportAssets,
 };

@@ -90,7 +90,7 @@ async function openTabWithUrlData(data, url_, windowName) {
  * @param {LH.Result} lhr
  * @protected
  */
-export async function openViewer(lhr) {
+async function openViewer(lhr) {
   const windowName = 'viewer-' + computeWindowNameSuffix(lhr);
   const url = getAppsOrigin() + '/viewer/';
   await openTabWithUrlData({lhr}, url, windowName);
@@ -101,7 +101,7 @@ export async function openViewer(lhr) {
  * @param {LH.Result} lhr
  * @protected
  */
-export async function openViewerAndSendData(lhr) {
+async function openViewerAndSendData(lhr) {
   const windowName = 'viewer-' + computeWindowNameSuffix(lhr);
   const url = getAppsOrigin() + '/viewer/';
   openTabAndSendData({lhr}, url, windowName);
@@ -111,7 +111,7 @@ export async function openViewerAndSendData(lhr) {
  * Opens a new tab to the treemap app and sends the JSON results using URL.fragment
  * @param {LH.Result} json
  */
-export function openTreemap(json) {
+function openTreemap(json) {
   const treemapData = json.audits['script-treemap-data'].details;
   if (!treemapData) {
     throw new Error('no script treemap data found');
@@ -135,3 +135,9 @@ export function openTreemap(json) {
 
   openTabWithUrlData(treemapOptions, url, windowName);
 }
+
+export {
+  openViewer,
+  openViewerAndSendData,
+  openTreemap,
+};

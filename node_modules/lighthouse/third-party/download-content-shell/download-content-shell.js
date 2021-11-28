@@ -85,7 +85,7 @@ function deleteOldContentShells() {
   const remainingNumberOfContentShells = MAX_CONTENT_SHELLS / 2;
   const oldContentShellDirs = files.slice(remainingNumberOfContentShells);
   for (let i = 0; i < oldContentShellDirs.length; i++) {
-    utils.removeRecursive(path.resolve(CACHE_PATH, oldContentShellDirs[i]));
+    fs.rmSync(path.resolve(CACHE_PATH, oldContentShellDirs[i]), {recursive: true, force: true});
   }
   console.log(`Removed old content shells: ${oldContentShellDirs}`);
 }
@@ -126,7 +126,7 @@ function findPreviousUploadedPosition(commitPosition) {
 async function prepareContentShellDirectory(folder) {
   const contentShellPath = path.join(CACHE_PATH, folder);
   if (utils.isDir(contentShellPath)) {
-    utils.removeRecursive(contentShellPath);
+    fs.rmSync(contentShellPath, {recursive: true, force: true});
   }
   fs.mkdirSync(contentShellPath);
   return folder;

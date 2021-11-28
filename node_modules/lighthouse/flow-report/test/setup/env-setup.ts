@@ -9,17 +9,24 @@ import {JSDOM} from 'jsdom';
 
 /**
  * The jest environment "jsdom" does not work when preact is combined with the report renderer.
+ * This sets up our own environment with JSDOM globals.
  */
-export function setupJsDom() {
+beforeEach(() => {
   const {window} = new JSDOM(undefined, {
     url: 'file:///Users/example/report.html/',
   });
   global.window = window as any;
   global.document = window.document;
   global.location = window.location;
+  global.self = global.window;
 
-  // Function not implemented in JSDOM.
+  // Use JSDOM types as necessary.
+  global.Blob = window.Blob;
+  global.HTMLInputElement = window.HTMLInputElement;
+
+  // Functions not implemented in JSDOM.
   window.Element.prototype.scrollIntoView = jest.fn();
-}
-
-global.beforeEach(setupJsDom);
+  global.self.matchMedia = jest.fn<any, any>(() => ({
+    addListener: jest.fn(),
+  }));
+});

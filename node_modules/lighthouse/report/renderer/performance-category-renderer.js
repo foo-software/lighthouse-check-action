@@ -153,52 +153,74 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
   }
 
   /**
+   * For performance, audits with no group should be a diagnostic or opportunity.
+   * The audit details type will determine which of the two groups an audit is in.
+   *
+   * @param {LH.ReportResult.AuditRef} audit
+   * @return {'load-opportunity'|'diagnostic'|null}
+   */
+  _classifyPerformanceAudit(audit) {
+    if (audit.group) return null;
+    if (audit.result.details && audit.result.details.type === 'opportunity') {
+      return 'load-opportunity';
+    }
+    return 'diagnostic';
+  }
+
+  /**
    * @param {LH.ReportResult.Category} category
    * @param {Object<string, LH.Result.ReportGroup>} groups
-   * @param {{gatherMode: LH.Result.GatherMode, environment?: 'PSI'}=} options
+   * @param {{gatherMode: LH.Result.GatherMode}=} options
    * @return {Element}
    * @override
    */
   render(category, groups, options) {
     const strings = Util.i18n.strings;
     const element = this.dom.createElement('div', 'lh-category');
-    if (options && options.environment === 'PSI') {
-      const gaugeEl = this.dom.createElement('div', 'lh-score__gauge');
-      gaugeEl.appendChild(this.renderCategoryScore(category, groups, options));
-      element.appendChild(gaugeEl);
-    } else {
-      this.createPermalinkSpan(element, category.id);
-      element.appendChild(this.renderCategoryHeader(category, groups, options));
-    }
+    element.id = category.id;
+    element.appendChild(this.renderCategoryHeader(category, groups, options));
 
     // Metrics.
-    const metricAuditsEl = this.renderAuditGroup(groups.metrics);
-
-    // Metric descriptions toggle.
-    const toggleTmpl = this.dom.createComponent('metricsToggle');
-    const _toggleEl = this.dom.find('.lh-metrics-toggle', toggleTmpl);
-    metricAuditsEl.append(..._toggleEl.childNodes);
-
     const metricAudits = category.auditRefs.filter(audit => audit.group === 'metrics');
-    const metricsBoxesEl = this.dom.createChildOf(metricAuditsEl, 'div', 'lh-metrics-container');
+    if (metricAudits.length) {
+      const [metricsGroupEl, metricsFooterEl] = this.renderAuditGroup(groups.metrics);
 
-    metricAudits.forEach(item => {
-      metricsBoxesEl.appendChild(this._renderMetric(item));
-    });
+      // Metric descriptions toggle.
+      const checkboxEl = this.dom.createElement('input', 'lh-metrics-toggle__input');
+      const checkboxId = `lh-metrics-toggle${Util.getUniqueSuffix()}`;
+      checkboxEl.setAttribute('aria-label', 'Toggle the display of metric descriptions');
+      checkboxEl.type = 'checkbox';
+      checkboxEl.id = checkboxId;
+      metricsGroupEl.prepend(checkboxEl);
+      const metricHeaderEl = this.dom.find('.lh-audit-group__header', metricsGroupEl);
+      const labelEl = this.dom.createChildOf(metricHeaderEl, 'label', 'lh-metrics-toggle__label');
+      labelEl.htmlFor = checkboxId;
+      const showEl = this.dom.createChildOf(labelEl, 'span', 'lh-metrics-toggle__labeltext--show');
+      const hideEl = this.dom.createChildOf(labelEl, 'span', 'lh-metrics-toggle__labeltext--hide');
+      showEl.textContent = Util.i18n.strings.expandView;
+      hideEl.textContent = Util.i18n.strings.collapseView;
 
-    const estValuesEl = this.dom.createChildOf(metricAuditsEl, 'div', 'lh-metrics__disclaimer');
-    const disclaimerEl = this.dom.convertMarkdownLinkSnippets(strings.varianceDisclaimer);
-    estValuesEl.appendChild(disclaimerEl);
+      const metricsBoxesEl = this.dom.createElement('div', 'lh-metrics-container');
+      metricsGroupEl.insertBefore(metricsBoxesEl, metricsFooterEl);
+      metricAudits.forEach(item => {
+        metricsBoxesEl.appendChild(this._renderMetric(item));
+      });
 
-    // Add link to score calculator.
-    const calculatorLink = this.dom.createChildOf(estValuesEl, 'a', 'lh-calclink');
-    calculatorLink.target = '_blank';
-    calculatorLink.textContent = strings.calculatorLink;
-    this.dom.safelySetHref(calculatorLink, this._getScoringCalculatorHref(category.auditRefs));
+      const descriptionEl = this.dom.find('.lh-category-header__description', element);
+      const estValuesEl = this.dom.createChildOf(descriptionEl, 'div', 'lh-metrics__disclaimer');
+      const disclaimerEl = this.dom.convertMarkdownLinkSnippets(strings.varianceDisclaimer);
+      estValuesEl.appendChild(disclaimerEl);
+
+      // Add link to score calculator.
+      const calculatorLink = this.dom.createChildOf(estValuesEl, 'a', 'lh-calclink');
+      calculatorLink.target = '_blank';
+      calculatorLink.textContent = strings.calculatorLink;
+      this.dom.safelySetHref(calculatorLink, this._getScoringCalculatorHref(category.auditRefs));
 
 
-    metricAuditsEl.classList.add('lh-audit-group--metrics');
-    element.appendChild(metricAuditsEl);
+      metricsGroupEl.classList.add('lh-audit-group--metrics');
+      element.appendChild(metricsGroupEl);
+    }
 
     // Filmstrip
     const timelineEl = this.dom.createChildOf(element, 'div', 'lh-filmstrip-container');
@@ -212,9 +234,9 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
 
     // Opportunities
     const opportunityAudits = category.auditRefs
-        .filter(audit => audit.group === 'load-opportunities' && !Util.showAsPassed(audit.result))
+        .filter(audit => this._classifyPerformanceAudit(audit) === 'load-opportunity')
+        .filter(audit => !Util.showAsPassed(audit.result))
         .sort((auditA, auditB) => this._getWastedMs(auditB) - this._getWastedMs(auditA));
-
 
     const filterableMetrics = metricAudits.filter(a => !!a.relevantAudits);
     // TODO: only add if there are opportunities & diagnostics rendered.
@@ -228,7 +250,7 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
       const wastedMsValues = opportunityAudits.map(audit => this._getWastedMs(audit));
       const maxWaste = Math.max(...wastedMsValues);
       const scale = Math.max(Math.ceil(maxWaste / 1000) * 1000, minimumScale);
-      const groupEl = this.renderAuditGroup(groups['load-opportunities']);
+      const [groupEl, footerEl] = this.renderAuditGroup(groups['load-opportunities']);
       const tmpl = this.dom.createComponent('opportunityHeader');
 
       this.dom.find('.lh-load-opportunity__col--one', tmpl).textContent =
@@ -237,15 +259,17 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
         strings.opportunitySavingsColumnLabel;
 
       const headerEl = this.dom.find('.lh-load-opportunity__header', tmpl);
-      groupEl.appendChild(headerEl);
-      opportunityAudits.forEach(item => groupEl.appendChild(this._renderOpportunity(item, scale)));
+      groupEl.insertBefore(headerEl, footerEl);
+      opportunityAudits.forEach(item =>
+        groupEl.insertBefore(this._renderOpportunity(item, scale), footerEl));
       groupEl.classList.add('lh-audit-group--load-opportunities');
       element.appendChild(groupEl);
     }
 
     // Diagnostics
     const diagnosticAudits = category.auditRefs
-        .filter(audit => audit.group === 'diagnostics' && !Util.showAsPassed(audit.result))
+        .filter(audit => this._classifyPerformanceAudit(audit) === 'diagnostic')
+        .filter(audit => !Util.showAsPassed(audit.result))
         .sort((a, b) => {
           const scoreA = a.result.scoreDisplayMode === 'informative' ? 100 : Number(a.result.score);
           const scoreB = b.result.scoreDisplayMode === 'informative' ? 100 : Number(b.result.score);
@@ -253,16 +277,15 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
         });
 
     if (diagnosticAudits.length) {
-      const groupEl = this.renderAuditGroup(groups['diagnostics']);
-      diagnosticAudits.forEach(item => groupEl.appendChild(this.renderAudit(item)));
+      const [groupEl, footerEl] = this.renderAuditGroup(groups['diagnostics']);
+      diagnosticAudits.forEach(item => groupEl.insertBefore(this.renderAudit(item), footerEl));
       groupEl.classList.add('lh-audit-group--diagnostics');
       element.appendChild(groupEl);
     }
 
     // Passed audits
     const passedAudits = category.auditRefs
-        .filter(audit => (audit.group === 'load-opportunities' || audit.group === 'diagnostics') &&
-            Util.showAsPassed(audit.result));
+        .filter(audit => this._classifyPerformanceAudit(audit) && Util.showAsPassed(audit.result));
 
     if (!passedAudits.length) return element;
 
@@ -282,16 +305,16 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
         const table = this.detailsRenderer.render(audit.result.details);
         if (table) {
           table.id = id;
-          table.classList.add('lh-audit');
+          table.classList.add('lh-details', 'lh-details--budget', 'lh-audit');
           budgetTableEls.push(table);
         }
       }
     });
     if (budgetTableEls.length > 0) {
-      const budgetsGroupEl = this.renderAuditGroup(groups.budgets);
-      budgetTableEls.forEach(table => budgetsGroupEl.appendChild(table));
-      budgetsGroupEl.classList.add('lh-audit-group--budgets');
-      element.appendChild(budgetsGroupEl);
+      const [groupEl, footerEl] = this.renderAuditGroup(groups.budgets);
+      budgetTableEls.forEach(table => groupEl.insertBefore(table, footerEl));
+      groupEl.classList.add('lh-audit-group--budgets');
+      element.appendChild(groupEl);
     }
 
     return element;

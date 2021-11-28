@@ -17,7 +17,7 @@ import open from 'open';
 
 import * as Printer from './printer.js';
 import lighthouse from '../lighthouse-core/index.js';
-import {getFilenamePrefix} from '../report/generator/file-namer.js';
+import {getLhrFilenamePrefix} from '../report/generator/file-namer.js';
 import * as assetSaver from '../lighthouse-core/lib/asset-saver.js';
 import URL from '../lighthouse-core/lib/url-shim.js';
 
@@ -137,7 +137,7 @@ async function saveResults(runnerResult, flags) {
   // Use the output path as the prefix for all generated files.
   // If no output path is set, generate a file prefix using the URL and date.
   const configuredPath = !flags.outputPath || flags.outputPath === 'stdout' ?
-      getFilenamePrefix(lhr) :
+      getLhrFilenamePrefix(lhr) :
       flags.outputPath.replace(/\.\w{2,4}$/, '');
   const resolvedPath = path.resolve(cwd, configuredPath);
 
@@ -175,7 +175,7 @@ async function potentiallyKillChrome(launchedChrome) {
   /** @type {NodeJS.Timeout} */
   let timeout;
   const timeoutPromise = new Promise((_, reject) => {
-    timeout = setTimeout(() => reject(new Error('Timed out waiting to kill Chrome')), 5000);
+    timeout = setTimeout(reject, 5000, new Error('Timed out waiting to kill Chrome'));
   });
 
   return Promise.race([

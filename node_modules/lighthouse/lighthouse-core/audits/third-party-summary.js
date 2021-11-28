@@ -216,12 +216,12 @@ class ThirdPartySummary extends Audit {
         return {
           ...stats,
           entity: {
-            type: /** @type {'link'} */ ('link'),
+            type: /** @type {const} */ ('link'),
             text: entity.name,
             url: entity.homepage || '',
           },
           subItems: {
-            type: /** @type {'subitems'} */ ('subitems'),
+            type: /** @type {const} */ ('subitems'),
             items: ThirdPartySummary.makeSubItems(entity, summaries, stats),
           },
         };
