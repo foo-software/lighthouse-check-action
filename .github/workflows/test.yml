@@ -7,6 +7,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - run: mkdir -p ${{ env.GITHUB_WORKSPACE }}/tmp/artifacts
+    - run: echo 'my workspace ${{ env.GITHUB_WORKSPACE }}'
     - name: Run Lighthouse
       uses: ./
       with:
