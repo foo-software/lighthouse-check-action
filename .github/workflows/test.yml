@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
     - name: Run Lighthouse
       uses: ./
       with:
@@ -18,7 +19,7 @@ jobs:
         gitBranch: ${{ github.ref }}
         gitHubAccessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
         maxRetries: 1
-        outputDirectory: /tmp/artifacts
+        outputDirectory: ${{ github.workspace }}/tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/tag/articles/'
         sha: ${{ github.sha }}
         slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
@@ -26,4 +27,4 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: Lighthouse reports
-        path: /tmp/artifacts
+        path: ${{ github.workspace }}/tmp/artifacts

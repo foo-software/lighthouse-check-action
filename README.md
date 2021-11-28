@@ -65,7 +65,7 @@ For detailed documentation of all inputs and advanced configuration - visit [the
     <td align="center" width="33.3333333333333%">
       <figure>
         <a href="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png">
-          <img alt="Lighthouse Check GitHub action HTML report" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/github-action-lighthouse-check-lighthouse-report.png" />
+          <img alt="Lighthouse Check GitHub action HTML report" src="https://lighthouse-check.s3.amazonaws.com/images/github-actions/lighthouse-report.png" />
         </a>
         <figcaption>
           HTML Reports

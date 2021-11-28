@@ -8,6 +8,7 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
       - uses: actions/checkout@master
+      - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
       - uses: amondnet/now-deployment@master
         id: now
         with:
@@ -20,10 +21,10 @@ jobs:
         with:
           extraHeaders: '{ "x-test-1": "hello world", "x-test-2": "foo" }'
           fooApiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
-          outputDirectory: /tmp/artifacts
+          outputDirectory: ${{ github.workspace }}/tmp/artifacts
           urlsJson: '[["cf8b27b3-ccb8-4477-83b6-ded2c375f977", "${{ steps.now.outputs.preview-url }}"]]'
       - name: Upload artifacts
         uses: actions/upload-artifact@master
         with:
           name: Lighthouse reports
-          path: /tmp/artifacts
+          path: ${{ github.workspace }}/tmp/artifacts
