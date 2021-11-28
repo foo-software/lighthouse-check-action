@@ -8,6 +8,7 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
       - uses: actions/checkout@master
+      - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
       - uses: amondnet/now-deployment@master
         id: now
         with:
