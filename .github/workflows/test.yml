@@ -18,7 +18,7 @@ jobs:
         gitBranch: ${{ github.ref }}
         gitHubAccessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
         maxRetries: 1
-        outputDirectory: ${{ $GITHUB_WORKSPACE }}/tmp/artifacts
+        outputDirectory: ${{ env.GITHUB_WORKSPACE }}/tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/tag/articles/'
         sha: ${{ github.sha }}
         slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
@@ -26,4 +26,4 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: Lighthouse reports
-        path: ${{ $GITHUB_WORKSPACE }}/tmp/artifacts
+        path: ${{ env.GITHUB_WORKSPACE }}/tmp/artifacts
