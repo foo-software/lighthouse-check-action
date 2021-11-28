@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - run: mkdir ${{ env.GITHUB_WORKSPACE }}/tmp/artifacts
     - name: Run Lighthouse
       uses: ./
       with:
