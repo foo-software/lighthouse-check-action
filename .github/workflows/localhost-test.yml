@@ -38,7 +38,7 @@ jobs:
         minPerformanceScore: "80"
         minSeoScore: "80"
     - name: Upload artifacts
-        uses: actions/upload-artifact@master
-        with:
-          name: Lighthouse reports
-          path: ${{ github.workspace }}/tmp/artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: Lighthouse reports
+        path: ${{ github.workspace }}/tmp/artifacts
