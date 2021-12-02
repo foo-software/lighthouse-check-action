@@ -10,24 +10,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
-    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    
     - name: Change Directory
       run: cd test-app
-    
     - name: Install Dependencies
       run: npm install
-
     - name: Build App
       run: npm run build
-
     - name: Start App
       run: npm run start &
-
     - name: Lighthouse
       uses: foo-software/lighthouse-check-action@v5.1.2
       id: lighthouseCheck
@@ -35,7 +29,6 @@ jobs:
         urls: 'http://localhost:3000'
         device: "desktop"
         outputDirectory: ${{ github.workspace }}/tmp/artifacts
-  
     - name: Verify Lighthouse Check results
       uses: foo-software/lighthouse-check-status-action@master
       with:
@@ -44,7 +37,6 @@ jobs:
         minBestPracticesScore: "80"
         minPerformanceScore: "80"
         minSeoScore: "80"
-
     - name: Upload artifacts
         uses: actions/upload-artifact@master
         with:
