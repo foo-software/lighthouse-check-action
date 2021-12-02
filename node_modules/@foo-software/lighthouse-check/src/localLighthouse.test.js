@@ -1,0 +1,75 @@
+import { getLocalLighthouseResultsWithRetries } from './localLighthouse';
+
+describe('getLocalLighthouseResultsWithRetries', () => {
+  it('should retry based on params and throw when all retries have been exhausted', async () => {
+    const localLighthousePromise = jest.fn(async () => {
+      throw Error('uh ohhhhh');
+    });
+
+    await expect(
+      getLocalLighthouseResultsWithRetries({
+        auditConfig: {},
+        localLighthousePromise,
+        maxRetries: 3,
+        retries: 0
+      })
+    ).rejects.toHaveProperty('message', 'uh ohhhhh');
+
+    expect(localLighthousePromise).toHaveBeenCalledTimes(4);
+  });
+
+  it('should retry based on params and return data when a retry succeeds', async () => {
+    const localLighthousePromise = jest
+      .fn(() => 'default')
+      .mockImplementationOnce(async () => {
+        throw Error('uh ohhhhh');
+      })
+      .mockImplementationOnce(async () => {
+        throw Error('uh ohhhhh');
+      })
+      .mockImplementationOnce(async () => {
+        return { data: true };
+      });
+
+    await expect(
+      getLocalLighthouseResultsWithRetries({
+        auditConfig: {},
+        localLighthousePromise,
+        maxRetries: 3,
+        retries: 0
+      })
+    ).resolves.toEqual({ data: true });
+
+    expect(localLighthousePromise).toHaveBeenCalledTimes(3);
+  });
+
+  it(`should function as usual when 'maxRetries' is not defined`, async () => {
+    const localLighthousePromise = jest.fn(async () => {
+      return { data: true };
+    });
+
+    await expect(
+      getLocalLighthouseResultsWithRetries({
+        auditConfig: {},
+        localLighthousePromise
+      })
+    ).resolves.toEqual({ data: true });
+
+    expect(localLighthousePromise).toHaveBeenCalledTimes(1);
+  });
+
+  it(`should function as usual when 'maxRetries' is not defined and an error is thrown`, async () => {
+    const localLighthousePromise = jest.fn(async () => {
+      throw Error('uh ohhhhh');
+    });
+
+    await expect(
+      getLocalLighthouseResultsWithRetries({
+        auditConfig: {},
+        localLighthousePromise
+      })
+    ).rejects.toHaveProperty('message', 'uh ohhhhh');
+
+    expect(localLighthousePromise).toHaveBeenCalledTimes(1);
+  });
+});
