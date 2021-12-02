@@ -1,4 +1,4 @@
-import config from './lighthouseConfig';
+import * as config from './lighthouseConfig';
 
 describe('config', () => {
   it('should match snapshot', () => {

@@ -1,10 +1,15 @@
 import fs from 'fs';
 import get from 'lodash.get';
 import lighthousePersist from '@foo-software/lighthouse-persist';
-import lighthouseDefaultConfig, { throttling } from './lighthouseConfig';
+import { desktop, mobile, throttling } from './lighthouseConfig';
 import options from './lighthouseOptions';
 import writeResults from './helpers/writeResults';
 import { NAME } from './constants';
+
+const defaultLighthouseConfigs = {
+  desktop,
+  mobile
+};
 
 const getScoresFromFloat = scores =>
   Object.keys(scores).reduce(
@@ -39,6 +44,8 @@ export const localLighthouse = async ({
     emulatedFormFactor === 'desktop' && !throttlingParam
       ? 'desktopDense4G'
       : throttlingParam;
+
+  const lighthouseDefaultConfig = defaultLighthouseConfigs[emulatedFormFactor];
 
   // the default config combined with overriding query params
   const fullConfig = {
