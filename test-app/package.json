@@ -14,7 +14,7 @@
   "scripts": {
     "start": "react-scripts start",
     "start:production": "serve -s build",
-    "build": "react-scripts build",
+    "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
