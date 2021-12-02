@@ -24,7 +24,7 @@ jobs:
       uses: ./
       id: lighthouseCheck
       with:
-        urls: 'http://localhost:3000'
+        urls: 'http://host.docker.internal:3000'
         device: "desktop"
         outputDirectory: ${{ github.workspace }}/tmp/artifacts
     - name: Verify Lighthouse Check results
