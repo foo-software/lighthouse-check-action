@@ -1,0 +1,44 @@
+name: Localhost Test
+on: [pull_request]
+
+jobs:
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14]
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Change Directory
+      run: cd test-app
+    
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build App
+      run: npm run build
+
+    - name: Start App
+      run: npm run start &
+
+    - name: Lighthouse
+      uses: foo-software/lighthouse-check-action@v5.1.2
+      id: lighthouseCheck
+      with:
+        urls: 'http://localhost:3000'
+        device: "desktop"
+  
+    - name: Verify Lighthouse Check results
+      uses: foo-software/lighthouse-check-status-action@master
+      with:
+        lighthouseCheckResults: ${{ steps.lighthouseCheck.outputs.lighthouseCheckResults }}
+        minAccessibilityScore: "80"
+        minBestPracticesScore: "80"
+        minPerformanceScore: "80"
+        minSeoScore: "80"
