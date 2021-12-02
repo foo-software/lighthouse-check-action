@@ -14,14 +14,12 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Change Directory
-      run: cd test-app
-    - name: Install Dependencies
-      run: npm install
-    - name: Build App
-      run: npm run build
-    - name: Start App
-      run: npm run start &
+    - name: Run Test App
+      run: |
+        cd test-app
+        npm install
+        npm run build
+        npm run start:production
     - name: Lighthouse
       uses: foo-software/lighthouse-check-action@v5.1.2
       id: lighthouseCheck
