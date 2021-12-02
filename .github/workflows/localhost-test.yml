@@ -19,7 +19,7 @@ jobs:
         cd test-app
         npm install
         npm run build
-        npm run start:production
+        npm run start:production &
     - name: Lighthouse
       uses: foo-software/lighthouse-check-action@v5.1.2
       id: lighthouseCheck
