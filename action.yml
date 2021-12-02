@@ -70,6 +70,8 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - 'network="host"'
 branding:
   icon: 'zap'  
   color: 'green'
