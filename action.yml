@@ -68,10 +68,8 @@ inputs:
   wait:
     description: 'If "true", waits for all audit results to be returned, otherwise URLs are only enqueued.'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - '--network=host'
+  using: 'node16'
+  main: 'dist/index.js'
 branding:
   icon: 'zap'  
   color: 'green'
