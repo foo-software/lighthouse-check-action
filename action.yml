@@ -71,8 +71,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - '--network'
-    - 'host'
+    - '--network=host'
 branding:
   icon: 'zap'  
   color: 'green'
