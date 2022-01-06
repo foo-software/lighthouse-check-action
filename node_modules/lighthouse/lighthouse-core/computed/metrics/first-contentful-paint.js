@@ -34,4 +34,7 @@ class FirstContentfulPaint extends NavigationMetric {
   }
 }
 
-module.exports = makeComputedArtifact(FirstContentfulPaint);
+module.exports = makeComputedArtifact(
+  FirstContentfulPaint,
+  ['devtoolsLog', 'gatherContext', 'settings', 'simulator', 'trace']
+);

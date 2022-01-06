@@ -45,7 +45,7 @@ class TraceElements extends FRGatherer {
   meta = {
     supportedModes: ['timespan', 'navigation'],
     dependencies: {Trace: Trace.symbol},
-  }
+  };
 
   /** @type {Map<string, string>} */
   animationIdToName = new Map();

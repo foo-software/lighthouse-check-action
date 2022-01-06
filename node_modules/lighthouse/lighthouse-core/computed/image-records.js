@@ -59,5 +59,5 @@ class ImageRecords {
   }
 }
 
-module.exports = makeComputedArtifact(ImageRecords);
+module.exports = makeComputedArtifact(ImageRecords, ['ImageElements', 'networkRecords']);
 

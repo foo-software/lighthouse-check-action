@@ -68,4 +68,7 @@ class TotalBlockingTime extends ComputedMetric {
   }
 }
 
-module.exports = makeComputedArtifact(TotalBlockingTime);
+module.exports = makeComputedArtifact(
+  TotalBlockingTime,
+  ['devtoolsLog', 'gatherContext', 'settings', 'simulator', 'trace']
+);

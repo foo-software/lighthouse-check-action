@@ -39,4 +39,7 @@ class MaxPotentialFID extends NavigationMetric {
   }
 }
 
-module.exports = makeComputedArtifact(MaxPotentialFID);
+module.exports = makeComputedArtifact(
+  MaxPotentialFID,
+  ['devtoolsLog', 'gatherContext', 'settings', 'simulator', 'trace']
+);

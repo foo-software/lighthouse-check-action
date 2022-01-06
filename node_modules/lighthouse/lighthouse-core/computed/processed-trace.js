@@ -18,4 +18,4 @@ class ProcessedTrace {
   }
 }
 
-module.exports = makeComputedArtifact(ProcessedTrace);
+module.exports = makeComputedArtifact(ProcessedTrace, null);

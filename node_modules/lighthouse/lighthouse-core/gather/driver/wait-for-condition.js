@@ -5,7 +5,7 @@
  */
 'use strict';
 
-/* global window, performance */
+/* global window */
 
 const log = require('lighthouse-logger');
 const LHError = require('../../lib/lh-error.js');

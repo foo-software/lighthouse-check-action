@@ -169,4 +169,7 @@ class UnusedJavascriptSummary {
   }
 }
 
-module.exports = makeComputedArtifact(UnusedJavascriptSummary);
+module.exports = makeComputedArtifact(
+  UnusedJavascriptSummary,
+  ['bundle', 'scriptCoverages', 'url']
+);

@@ -1,7 +1,9 @@
-import { Operator } from '../Operator';
-import { Subscriber } from '../Subscriber';
-import { Observable } from '../Observable';
 import { OperatorFunction } from '../types';
+import { map } from './map';
+
+export function mapTo<R>(value: R): OperatorFunction<any, R>;
+/** @deprecated Do not specify explicit type parameters. Signatures with type parameters that cannot be inferred will be removed in v8. */
+export function mapTo<T, R>(value: R): OperatorFunction<T, R>;
 
 /**
  * Emits the given constant value on the output Observable every time the source
@@ -29,44 +31,10 @@ import { OperatorFunction } from '../types';
  *
  * @see {@link map}
  *
- * @param {any} value The value to map each source value to.
- * @return {Observable} An Observable that emits the given `value` every time
- * the source Observable emits something.
- * @method mapTo
- * @owner Observable
+ * @param value The value to map each source value to.
+ * @return A function that returns an Observable that emits the given `value`
+ * every time the source Observable emits.
  */
-export function mapTo<T, R>(value: R): OperatorFunction<T, R> {
-  return (source: Observable<T>) => source.lift(new MapToOperator(value));
-}
-
-class MapToOperator<T, R> implements Operator<T, R> {
-
-  value: R;
-
-  constructor(value: R) {
-    this.value = value;
-  }
-
-  call(subscriber: Subscriber<R>, source: any): any {
-    return source.subscribe(new MapToSubscriber(subscriber, this.value));
-  }
-}
-
-/**
- * We need this JSDoc comment for affecting ESDoc.
- * @ignore
- * @extends {Ignored}
- */
-class MapToSubscriber<T, R> extends Subscriber<T> {
-
-  value: R;
-
-  constructor(destination: Subscriber<R>, value: R) {
-    super(destination);
-    this.value = value;
-  }
-
-  protected _next(x: T) {
-    this.destination.next(this.value);
-  }
+export function mapTo<R>(value: R): OperatorFunction<any, R> {
+  return map(() => value);
 }

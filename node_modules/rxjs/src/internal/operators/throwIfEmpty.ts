@@ -1,8 +1,7 @@
 import { EmptyError } from '../util/EmptyError';
-import { Observable } from '../Observable';
-import { Operator } from '../Operator';
-import { Subscriber } from '../Subscriber';
-import { TeardownLogic, MonoTypeOperatorFunction } from '../types';
+import { MonoTypeOperatorFunction } from '../types';
+import { operate } from '../util/lift';
+import { OperatorSubscriber } from './OperatorSubscriber';
 
 /**
  * If the source observable completes without emitting a value, it will emit
@@ -33,47 +32,23 @@ import { TeardownLogic, MonoTypeOperatorFunction } from '../types';
  * @param errorFactory A factory function called to produce the
  * error to be thrown when the source observable completes without emitting a
  * value.
+ * @return A function that returns an Observable that throws an error if the
+ * source Observable completed without emitting.
  */
-export function throwIfEmpty <T>(errorFactory: (() => any) = defaultErrorFactory): MonoTypeOperatorFunction<T> {
-  return (source: Observable<T>) => {
-    return source.lift(new ThrowIfEmptyOperator(errorFactory));
-  };
-}
-
-class ThrowIfEmptyOperator<T> implements Operator<T, T> {
-  constructor(private errorFactory: () => any) {
-  }
-
-  call(subscriber: Subscriber<T>, source: any): TeardownLogic {
-    return source.subscribe(new ThrowIfEmptySubscriber(subscriber, this.errorFactory));
-  }
-}
-
-class ThrowIfEmptySubscriber<T> extends Subscriber<T> {
-  private hasValue: boolean = false;
-
-  constructor(destination: Subscriber<T>, private errorFactory: () => any) {
-    super(destination);
-  }
-
-  protected _next(value: T): void {
-    this.hasValue = true;
-    this.destination.next(value);
-  }
-
-  protected _complete() {
-    if (!this.hasValue) {
-      let err: any;
-      try {
-        err = this.errorFactory();
-      } catch (e) {
-        err = e;
-      }
-      this.destination.error(err);
-    } else {
-        return this.destination.complete();
-    }
-  }
+export function throwIfEmpty<T>(errorFactory: () => any = defaultErrorFactory): MonoTypeOperatorFunction<T> {
+  return operate((source, subscriber) => {
+    let hasValue = false;
+    source.subscribe(
+      new OperatorSubscriber(
+        subscriber,
+        (value) => {
+          hasValue = true;
+          subscriber.next(value);
+        },
+        () => (hasValue ? subscriber.complete() : subscriber.error(errorFactory()))
+      )
+    );
+  });
 }
 
 function defaultErrorFactory() {

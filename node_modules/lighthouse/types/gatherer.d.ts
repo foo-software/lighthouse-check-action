@@ -153,6 +153,7 @@ declare module Gatherer {
     interface Options {
       rtt?: number;
       throughput?: number;
+      observedThroughput: number;
       maximumConcurrentRequests?: number;
       cpuSlowdownMultiplier?: number;
       layoutTaskMultiplier?: number;

@@ -116,4 +116,4 @@ class JSBundles {
   }
 }
 
-module.exports = makeComputedArtifact(JSBundles);
+module.exports = makeComputedArtifact(JSBundles, ['ScriptElements', 'SourceMaps']);

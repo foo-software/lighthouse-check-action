@@ -43,10 +43,9 @@
   position: relative;
   display: inline-block;
   padding: 15px 55px 15px;
-  border: 1px solid transparent;
-  border-bottom: 0;
   cursor: pointer;
   font-weight: 600;
+  border-bottom: 3px solid transparent;
 }
 
 .tabset > label:hover {
@@ -59,51 +58,111 @@
 }
 
 .tabset > input:checked + label {
-  border-color: #ccc;
-  border-bottom: 1px solid #fff;
   margin-bottom: -1px;
   background: white;
+  border-bottom: 3px solid blue;
 }
 
 .tab-panel {
-  border-top: 1px solid #ccc;
+  border: 1px solid #ccc;
+  padding: 24px;
+  row-gap: calc(8px*2);
+  border-radius: calc(8px/2);
 }
 
-body {
-  padding: 30px;
-}
 
 .tabset {
-  max-width: 65em;
-  background: #eee;
+
 }
 
 .tab-panels {
   background: white;
 }
 
-/* extra styles */
 body {
-  background: hsl(217deg 89% 61%);
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  color: rgba(0,0,0,0.87);
+  font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  margin: 0;
+  text-size-adjust: 100%;
+  bottom: auto;
+  right: auto;
+  width: auto;
+  overflow: visible;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
 }
+.page {
+  max-width: 960px;
+  width: calc(100% - 24px*2);
+  margin: auto;
+  padding: 24px;
+  padding-top: calc(24px*2);
+  min-width: calc(360px -  8px *2);
+}
+@media screen and (max-width: 768px) {
+  .page {
+    padding:8px;
+    width: calc(100% - 8px*2);
+    padding-top: calc(24px/2)
+  }
+  .tab-panel {
+    padding:unset;
+    border-width: 0;
+  }
+}
+.hrefbar {
+  background: hsl(210deg 17% 98%);
+  border: 1px solid hsl(0deg 0% 85%);
+  border-width: 1px 0;
+  padding: 4px;
+}
+button {
+  background-color: hsl(216deg 100% 50%);
+  border-radius: 4px;
+  color: white;
+  padding: 13px;
+  border: 0;
+  cursor: pointer;
+  float: right;
+}
+
   </style>
 </head>
 <body >
   <noscript>PSI requires JavaScript. Please enable.</noscript>
+  <div class="page">
+    <button type=button>Reanalyze</button>
+    <div class="tabset">
+      <input type="radio" name="tabset" id="tab1" aria-controls="mobile" checked />
+      <label for="tab1">Mobile</label>
 
-  <div class="tabset">
+      <input type="radio" name="tabset" id="tab2" aria-controls="desktop" />
+      <label for="tab2">Desktop</label>
 
-    <input type="radio" name="tabset" id="tab1" aria-controls="mobile" checked>
-    <label for="tab1">Mobile</label>
+      <div class="tab-panels">
+        <section id="mobile" class="tab-panel">
+          <h2>Diagnose performance issues</h2>
+          <h4>
+            See detailed analysis and recommendations from loading your site in a simulated
+            environment.
+          </h4>
+          <div class="hrefbar">🔗 http://thisurl.com</div>
+          <div class="reportContainer"></div>
+        </section>
 
-    <input type="radio" name="tabset" id="tab2" aria-controls="desktop">
-    <label for="tab2">Desktop</label>
-
-    <div class="tab-panels">
-      <section id="mobile" class="tab-panel"></section>
-
-      <section id="desktop" class="tab-panel"></section>
-
+        <section id="desktop" class="tab-panel">
+          <h2>Diagnose performance issues</h2>
+          <h4>
+            See detailed analysis and recommendations from loading your site in a simulated
+            environment.
+          </h4>
+          <div class="hrefbar">🔗 http://thisurl.com</div>
+          <div class="reportContainer"></div>
+        </section>
+      </div>
     </div>
   </div>
 

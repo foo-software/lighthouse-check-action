@@ -70,6 +70,8 @@ declare global {
       urlFilterRegex?: RegExp;
       skip?: (test: TestDfn, expectation: ExpectedRunnerResult) => string | false;
       modify?: (test: TestDfn, expectation: ExpectedRunnerResult) => void;
+      /** String of form `shardNumber/shardTotal`, e.g. `'1/4'`. */
+      shardArg: string | undefined;
     }
   }
 }

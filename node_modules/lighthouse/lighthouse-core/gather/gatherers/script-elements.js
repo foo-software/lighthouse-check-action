@@ -70,7 +70,7 @@ class ScriptElements extends FRGatherer {
   meta = {
     supportedModes: ['timespan', 'navigation'],
     dependencies: {DevtoolsLog: DevtoolsLog.symbol},
-  }
+  };
 
   /**
    * @param {LH.Gatherer.FRTransitionalContext} context

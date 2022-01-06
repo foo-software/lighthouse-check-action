@@ -18,4 +18,4 @@ class ProcessedNavigation {
   }
 }
 
-module.exports = makeComputedArtifact(ProcessedNavigation);
+module.exports = makeComputedArtifact(ProcessedNavigation, null);

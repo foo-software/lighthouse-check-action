@@ -18,7 +18,7 @@ class GlobalListeners extends FRGatherer {
   /** @type {LH.Gatherer.GathererMeta} */
   meta = {
     supportedModes: ['snapshot', 'timespan', 'navigation'],
-  }
+  };
 
   /**
    * @param {LH.Crdp.DOMDebugger.EventListener} listener

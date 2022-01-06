@@ -111,4 +111,4 @@ class ResourceSummary {
   }
 }
 
-module.exports = makeComputedArtifact(ResourceSummary);
+module.exports = makeComputedArtifact(ResourceSummary, ['URL', 'devtoolsLog', 'budgets']);

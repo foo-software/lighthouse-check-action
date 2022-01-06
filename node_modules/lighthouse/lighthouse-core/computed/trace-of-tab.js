@@ -26,5 +26,5 @@ class TraceOfTab {
 }
 
 log.warn(`trace-of-tab`, `trace-of-tab is deprecated, use processed-trace / processed-navigation instead`); // eslint-disable-line max-len
-module.exports = makeComputedArtifact(TraceOfTab);
+module.exports = makeComputedArtifact(TraceOfTab, null);
 

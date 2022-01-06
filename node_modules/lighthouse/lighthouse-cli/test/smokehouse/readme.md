@@ -2,7 +2,7 @@
 
 Smokehouse is the Lighthouse end-to-end/smoke test runner. It takes in a set of URLs (usually pointing to custom-built test sites), runs Lighthouse on them, and compares the results against a set of expectations.
 
-By default this is done using the Lighthouse CLI (to exercise the full pipeline) with the tests listed in [`smokehouse/test-definitions/core-tests.js`](./test-definitions/core-tests.js).
+By default this is done using the Lighthouse CLI (to exercise the full pipeline) with the tests listed in [`smokehouse/core-tests.js`](./core-tests.js).
 
 ## Options
 

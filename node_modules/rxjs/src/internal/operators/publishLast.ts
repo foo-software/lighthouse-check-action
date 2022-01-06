@@ -1,6 +1,5 @@
 import { Observable } from '../Observable';
 import { AsyncSubject } from '../AsyncSubject';
-import { multicast } from './multicast';
 import { ConnectableObservable } from '../observable/ConnectableObservable';
 import { UnaryFunction } from '../types';
 
@@ -56,12 +55,21 @@ import { UnaryFunction } from '../types';
  * @see {@link publishReplay}
  * @see {@link publishBehavior}
  *
- * @return {ConnectableObservable} An observable sequence that contains the elements of a
+ * @return A function that returns an Observable that emits elements of a
  * sequence produced by multicasting the source sequence.
- * @method publishLast
- * @owner Observable
+ * @deprecated Will be removed in v8. To create a connectable observable with an
+ * {@link AsyncSubject} under the hood, use {@link connectable}.
+ * `source.pipe(publishLast())` is equivalent to
+ * `connectable(source, { connector: () => new AsyncSubject(), resetOnDisconnect: false })`.
+ * If you're using {@link refCount} after `publishLast`, use the {@link share} operator instead.
+ * `source.pipe(publishLast(), refCount())` is equivalent to
+ * `source.pipe(share({ connector: () => new AsyncSubject(), resetOnError: false, resetOnComplete: false, resetOnRefCountZero: false }))`.
+ * Details: https://rxjs.dev/deprecations/multicasting
  */
-
 export function publishLast<T>(): UnaryFunction<Observable<T>, ConnectableObservable<T>> {
-  return (source: Observable<T>) => multicast(new AsyncSubject<T>())(source);
+  // Note that this has *never* supported a selector function like `publish` and `publishReplay`.
+  return (source) => {
+    const subject = new AsyncSubject<T>();
+    return new ConnectableObservable(source, () => subject);
+  };
 }

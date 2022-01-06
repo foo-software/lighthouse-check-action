@@ -1,12 +1,19 @@
 import { concatMap } from './concatMap';
 import { ObservableInput, OperatorFunction, ObservedValueOf } from '../types';
+import { isFunction } from '../util/isFunction';
 
 /* tslint:disable:max-line-length */
-export function concatMapTo<T, O extends ObservableInput<any>>(observable: O): OperatorFunction<T, ObservedValueOf<O>>;
-/** @deprecated */
-export function concatMapTo<T, O extends ObservableInput<any>>(observable: O, resultSelector: undefined): OperatorFunction<T, ObservedValueOf<O>>;
-/** @deprecated */
-export function concatMapTo<T, R, O extends ObservableInput<any>>(observable: O, resultSelector: (outerValue: T, innerValue: ObservedValueOf<O>, outerIndex: number, innerIndex: number) => R): OperatorFunction<T, R>;
+export function concatMapTo<O extends ObservableInput<unknown>>(observable: O): OperatorFunction<any, ObservedValueOf<O>>;
+/** @deprecated The `resultSelector` parameter will be removed in v8. Use an inner `map` instead. Details: https://rxjs.dev/deprecations/resultSelector */
+export function concatMapTo<O extends ObservableInput<unknown>>(
+  observable: O,
+  resultSelector: undefined
+): OperatorFunction<any, ObservedValueOf<O>>;
+/** @deprecated The `resultSelector` parameter will be removed in v8. Use an inner `map` instead. Details: https://rxjs.dev/deprecations/resultSelector */
+export function concatMapTo<T, R, O extends ObservableInput<unknown>>(
+  observable: O,
+  resultSelector: (outerValue: T, innerValue: ObservedValueOf<O>, outerIndex: number, innerIndex: number) => R
+): OperatorFunction<T, R>;
 /* tslint:enable:max-line-length */
 
 /**
@@ -59,15 +66,13 @@ export function concatMapTo<T, R, O extends ObservableInput<any>>(observable: O,
  *
  * @param {ObservableInput} innerObservable An Observable to replace each value from
  * the source Observable.
- * @return {Observable} An observable of values merged together by joining the
- * passed observable with itself, one after the other, for each value emitted
- * from the source.
- * @method concatMapTo
- * @owner Observable
+ * @return A function that returns an Observable of values merged together by
+ * joining the passed Observable with itself, one after the other, for each
+ * value emitted from the source.
  */
-export function concatMapTo<T, R, O extends ObservableInput<any>>(
+export function concatMapTo<T, R, O extends ObservableInput<unknown>>(
   innerObservable: O,
   resultSelector?: (outerValue: T, innerValue: ObservedValueOf<O>, outerIndex: number, innerIndex: number) => R
-): OperatorFunction<T, ObservedValueOf<O>|R> {
-  return concatMap(() => innerObservable, resultSelector);
+): OperatorFunction<T, ObservedValueOf<O> | R> {
+  return isFunction(resultSelector) ? concatMap(() => innerObservable, resultSelector) : concatMap(() => innerObservable);
 }

@@ -32,6 +32,8 @@
  * @property {Run[]} runs
  */
 
+import {strict as assert} from 'assert';
+
 import log from 'lighthouse-logger';
 
 import {runLighthouse as cliLighthouseRunner} from './lighthouse-runners/cli.js';
@@ -227,6 +229,54 @@ function getAssertionLog(count) {
   return `${count} assertion${plural}`;
 }
 
+/**
+ * Parses the cli `shardArg` flag into `shardNumber/shardTotal`. Splits
+ * `testDefns` into `shardTotal` shards and returns the `shardNumber`th shard.
+ * Shards will differ in size by at most 1.
+ * Shard params must be 1 ≤ shardNumber ≤ shardTotal.
+ * @param {Array<Smokehouse.TestDfn>} testDefns
+ * @param {string=} shardArg
+ * @return {Array<Smokehouse.TestDfn>}
+ */
+function getShardedDefinitions(testDefns, shardArg) {
+  if (!shardArg) return testDefns;
+
+  // eslint-disable-next-line max-len
+  const errorMessage = `'shard' must be of the form 'n/d' and n and d must be positive integers with 1 ≤ n ≤ d. Got '${shardArg}'`;
+  const match = /^(?<shardNumber>\d+)\/(?<shardTotal>\d+)$/.exec(shardArg);
+  assert(match && match.groups, errorMessage);
+  const shardNumber = Number(match.groups.shardNumber);
+  const shardTotal = Number(match.groups.shardTotal);
+  assert(shardNumber > 0 && Number.isInteger(shardNumber), errorMessage);
+  assert(shardTotal > 0 && Number.isInteger(shardTotal));
+  assert(shardNumber <= shardTotal, errorMessage);
+
+  // Array is sharded with `Math.ceil(length / shardTotal)` shards first
+  // and then the remaining `Math.floor(length / shardTotal) shards.
+  // e.g. `[0, 1, 2, 3]` split into 3 shards is `[[0, 1], [2], [3]]`.
+  const baseSize = Math.floor(testDefns.length / shardTotal);
+  const biggerSize = baseSize + 1;
+  const biggerShardCount = testDefns.length % shardTotal;
+
+  // Since we don't have tests for this file, construct all shards so correct
+  // structure can be asserted.
+  const shards = [];
+  let index = 0;
+  for (let i = 0; i < shardTotal; i++) {
+    const shardSize = i < biggerShardCount ? biggerSize : baseSize;
+    shards.push(testDefns.slice(index, index + shardSize));
+    index += shardSize;
+  }
+  assert.equal(shards.length, shardTotal);
+  assert.deepEqual(shards.flat(), testDefns);
+
+  const shardDefns = shards[shardNumber - 1];
+  console.log(`In this shard (${shardArg}), running: ${shardDefns.map(d => d.id).join(' ')}\n`);
+  return shardDefns;
+}
+
+
 export {
   runSmokehouse,
+  getShardedDefinitions,
 };

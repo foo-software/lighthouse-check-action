@@ -15,14 +15,14 @@
 
 import cloneDeep from 'lodash.clonedeep';
 
-import smokeTests from '../test-definitions/core-tests.js';
-import {runSmokehouse} from '../smokehouse.js';
+import smokeTests from '../core-tests.js';
+import {runSmokehouse, getShardedDefinitions} from '../smokehouse.js';
 
 /**
  * @param {Smokehouse.SmokehouseLibOptions} options
  */
 async function smokehouse(options) {
-  const {urlFilterRegex, skip, modify, ...smokehouseOptions} = options;
+  const {urlFilterRegex, skip, modify, shardArg, ...smokehouseOptions} = options;
 
   const clonedTests = cloneDeep(smokeTests);
   const modifiedTests = [];
@@ -41,7 +41,9 @@ async function smokehouse(options) {
     modifiedTests.push(test);
   }
 
-  return runSmokehouse(modifiedTests, smokehouseOptions);
+  const shardedTests = getShardedDefinitions(modifiedTests, shardArg);
+
+  return runSmokehouse(shardedTests, smokehouseOptions);
 }
 
 export {smokehouse};

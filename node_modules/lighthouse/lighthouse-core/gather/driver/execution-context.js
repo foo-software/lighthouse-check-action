@@ -211,6 +211,7 @@ class ExecutionContext {
       window.__nativePromise = window.Promise;
       window.__nativeURL = window.URL;
       window.__nativePerformance = window.performance;
+      window.__nativeFetch = window.fetch;
       window.__ElementMatches = window.Element.prototype.matches;
       // Ensure the native `performance.now` is not overwritable.
       const performance = window.performance;
@@ -232,6 +233,7 @@ class ExecutionContext {
     'const Promise = globalThis.__nativePromise || globalThis.Promise',
     'const URL = globalThis.__nativeURL || globalThis.URL',
     'const performance = globalThis.__nativePerformance || globalThis.performance',
+    'const fetch = globalThis.__nativeFetch || globalThis.fetch',
   ].join(';\n');
 
   /**

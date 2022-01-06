@@ -1,7 +1,6 @@
-import { Operator } from '../Operator';
-import { Observable } from '../Observable';
-import { Subscriber } from '../Subscriber';
 import { OperatorFunction } from '../types';
+import { operate } from '../util/lift';
+import { OperatorSubscriber } from './OperatorSubscriber';
 
 /**
  * Groups pairs of consecutive emissions together and emits them as an array of
@@ -41,47 +40,20 @@ import { OperatorFunction } from '../types';
  * @see {@link buffer}
  * @see {@link bufferCount}
  *
- * @return {Observable<Array<T>>} An Observable of pairs (as arrays) of
+ * @return A function that returns an Observable of pairs (as arrays) of
  * consecutive values from the source Observable.
- * @method pairwise
- * @owner Observable
  */
 export function pairwise<T>(): OperatorFunction<T, [T, T]> {
-  return (source: Observable<T>) => source.lift(new PairwiseOperator());
-}
-
-class PairwiseOperator<T> implements Operator<T, [T, T]> {
-  call(subscriber: Subscriber<[T, T]>, source: any): any {
-    return source.subscribe(new PairwiseSubscriber(subscriber));
-  }
-}
-
-/**
- * We need this JSDoc comment for affecting ESDoc.
- * @ignore
- * @extends {Ignored}
- */
-class PairwiseSubscriber<T> extends Subscriber<T> {
-  private prev: T;
-  private hasPrev: boolean = false;
-
-  constructor(destination: Subscriber<[T, T]>) {
-    super(destination);
-  }
-
-  _next(value: T): void {
-    let pair: [T, T] | undefined;
-
-    if (this.hasPrev) {
-      pair = [this.prev, value];
-    } else {
-      this.hasPrev = true;
-    }
-
-    this.prev = value;
-
-    if (pair) {
-      this.destination.next(pair);
-    }
-  }
+  return operate((source, subscriber) => {
+    let prev: T;
+    let hasPrev = false;
+    source.subscribe(
+      new OperatorSubscriber(subscriber, (value) => {
+        const p = prev;
+        prev = value;
+        hasPrev && subscriber.next([p, value]);
+        hasPrev = true;
+      })
+    );
+  });
 }

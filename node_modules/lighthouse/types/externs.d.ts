@@ -20,6 +20,7 @@ declare global {
     // See: `executionContext.cacheNativesOnNewDocument`.
     __nativePromise: PromiseConstructor;
     __nativePerformance: Performance;
+    __nativeFetch: typeof fetch,
     __nativeURL: typeof URL;
     __ElementMatches: Element['matches'];
 

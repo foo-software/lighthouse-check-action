@@ -77,4 +77,7 @@ class LanternFirstMeaningfulPaint extends LanternMetric {
   }
 }
 
-module.exports = makeComputedArtifact(LanternFirstMeaningfulPaint);
+module.exports = makeComputedArtifact(
+  LanternFirstMeaningfulPaint,
+  ['devtoolsLog', 'gatherContext', 'settings', 'simulator', 'trace']
+);
