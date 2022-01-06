@@ -80,4 +80,4 @@ class UserTimings {
   }
 }
 
-module.exports = makeComputedArtifact(UserTimings);
+module.exports = makeComputedArtifact(UserTimings, null);

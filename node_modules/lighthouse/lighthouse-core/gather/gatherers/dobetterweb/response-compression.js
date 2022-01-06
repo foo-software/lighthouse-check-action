@@ -43,7 +43,7 @@ class ResponseCompression extends FRGatherer {
   meta = {
     supportedModes: ['timespan', 'navigation'],
     dependencies: {DevtoolsLog: DevtoolsLog.symbol},
-  }
+  };
 
   /**
    * @param {LH.Artifacts.NetworkRequest[]} networkRecords

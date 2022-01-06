@@ -1,3 +1,50 @@
+<a name="9.2.0"></a>
+# 9.2.0 (2021-12-15)
+[Full Changelog](https://github.com/GoogleChrome/lighthouse/compare/v9.1.0...v9.2.0)
+
+We expect this release to ship in the DevTools of [Chrome 99](https://chromiumdash.appspot.com/schedule), and to PageSpeed Insights within 2 weeks.
+
+## Notable Changes
+
+* move no-unload-listeners to perf category ([#13497](https://github.com/GoogleChrome/lighthouse/pull/13497))
+
+## Core
+
+* font-size: fix CSS selector regex ([#13455](https://github.com/GoogleChrome/lighthouse/pull/13455))
+* fcp: handle negative request `endTime` ([#13452](https://github.com/GoogleChrome/lighthouse/pull/13452))
+* legacy-javascript: update polyfilling, drop some signals ([#13482](https://github.com/GoogleChrome/lighthouse/pull/13482), [#13442](https://github.com/GoogleChrome/lighthouse/pull/13442))
+* cache fetch to avoid bad polyfills ([#13476](https://github.com/GoogleChrome/lighthouse/pull/13476))
+* check equality of computed artifacts using dependency keys ([#13430](https://github.com/GoogleChrome/lighthouse/pull/13430))
+
+## ⛏️👷 Fraggle Rock
+
+  Support for auditing user flows ([#11313](https://github.com/GoogleChrome/lighthouse/issues/11313))
+
+* compute timespan saving with observed throughput ([#13478](https://github.com/GoogleChrome/lighthouse/pull/13478))
+* option to skip about:blank jumps ([#13375](https://github.com/GoogleChrome/lighthouse/pull/13375))
+
+## Report
+
+* psi: update styles for tighter fit in narrow viewports ([#13355](https://github.com/GoogleChrome/lighthouse/pull/13355))
+
+## Deps
+
+* bump eslint and related items ([#13484](https://github.com/GoogleChrome/lighthouse/pull/13484))
+* axe-core: upgrade to 4.3.5 ([#13441](https://github.com/GoogleChrome/lighthouse/pull/13441))
+
+## Tests
+
+* smoke: fix chromestatus url ([#13475](https://github.com/GoogleChrome/lighthouse/pull/13475))
+* split smoke tests into one test per file ([#13461](https://github.com/GoogleChrome/lighthouse/pull/13461))
+* fix devtools build command ([#13457](https://github.com/GoogleChrome/lighthouse/pull/13457))
+* move sharding higher so smokehouse-bundle can also shard ([#13387](https://github.com/GoogleChrome/lighthouse/pull/13387))
+* port axe test to pptr ([#13450](https://github.com/GoogleChrome/lighthouse/pull/13450))
+
+## Misc
+
+* build: build test flow report to same path as sample-reports ([#13324](https://github.com/GoogleChrome/lighthouse/pull/13324))
+* treemap: add `lang` to html tag ([#13454](https://github.com/GoogleChrome/lighthouse/pull/13454))
+
 <a name="9.1.0"></a>
 # 9.1.0 (2021-11-24)
 [Full Changelog](https://github.com/GoogleChrome/lighthouse/compare/v9.0.0...v9.1.0)
@@ -6,7 +53,7 @@ We expect this release to ship in the DevTools of [Chrome 98](https://chromiumda
 
 ## New Contributors
 
-Thanks to our new contributors 👽🐷🐰🐯🐻! 
+Thanks to our new contributors 👽🐷🐰🐯🐻!
 
 - @whitep4nth3r
 - Adam Read @adamread
@@ -78,7 +125,7 @@ See the [What's new in Lighthouse 9.0 blog post](https://developer.chrome.com/bl
 
 ## New Contributors
 
-Thanks to our new contributors 👽🐷🐰🐯🐻! 
+Thanks to our new contributors 👽🐷🐰🐯🐻!
 
 - Sergii Bondarenko @BR0kEN-
 - Prerana Nawar @prerana1821
@@ -197,7 +244,7 @@ We expect this release to ship in the DevTools of [Chrome 97](https://chromiumda
 
 ## New Contributors
 
-Thanks to our new contributors 👽🐷🐰🐯🐻! 
+Thanks to our new contributors 👽🐷🐰🐯🐻!
 
 - meehawk @meehawk
 - Edwin Gustafson @edwingustafson
@@ -4973,7 +5020,7 @@ There were 128 PRs landed for this release. These are their stories.
   <img width="630" alt="screen shot 2017-02-09 at 23 43 49" src="https://cloud.githubusercontent.com/assets/316891/22818588/dd3994aa-ef22-11e6-8fee-7469a8866aa6.png">
 - **Report Chrome's deprecated API warnings** - #1470
 
-  Lists console warnings from Chrome if your page is using deprecated APIs or features that have [interventions](https://www.chromestatus.com/features#intervention):
+  Lists console warnings from Chrome if your page is using deprecated APIs or features that have [interventions](https://chromestatus.com/features#intervention):
 
   <img width="675" alt="screen shot 2017-02-10 at 00 05 25" src="https://cloud.githubusercontent.com/assets/316891/22818969/b317e9d6-ef24-11e6-89db-9ee596ba8539.png">
 - **Responsive image sizing** - #1497

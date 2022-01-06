@@ -126,4 +126,4 @@ class CumulativeLayoutShift {
   }
 }
 
-module.exports = makeComputedArtifact(CumulativeLayoutShift);
+module.exports = makeComputedArtifact(CumulativeLayoutShift, null);

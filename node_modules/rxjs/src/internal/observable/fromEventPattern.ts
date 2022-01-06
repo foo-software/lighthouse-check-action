@@ -1,13 +1,18 @@
 import { Observable } from '../Observable';
-import { isArray } from '../util/isArray';
 import { isFunction } from '../util/isFunction';
 import { NodeEventHandler } from './fromEvent';
-import { map } from '../operators/map';
+import { mapOneOrManyArgs } from '../util/mapOneOrManyArgs';
 
 /* tslint:disable:max-line-length */
-export function fromEventPattern<T>(addHandler: (handler: NodeEventHandler) => any, removeHandler?: (handler: NodeEventHandler, signal?: any) => void): Observable<T>;
-/** @deprecated resultSelector no longer supported, pipe to map instead */
-export function fromEventPattern<T>(addHandler: (handler: NodeEventHandler) => any, removeHandler?: (handler: NodeEventHandler, signal?: any) => void, resultSelector?: (...args: any[]) => T): Observable<T>;
+export function fromEventPattern<T>(
+  addHandler: (handler: NodeEventHandler) => any,
+  removeHandler?: (handler: NodeEventHandler, signal?: any) => void
+): Observable<T>;
+export function fromEventPattern<T>(
+  addHandler: (handler: NodeEventHandler) => any,
+  removeHandler?: (handler: NodeEventHandler, signal?: any) => void,
+  resultSelector?: (...args: any[]) => T
+): Observable<T>;
 /* tslint:enable:max-line-length */
 
 /**
@@ -32,7 +37,7 @@ export function fromEventPattern<T>(addHandler: (handler: NodeEventHandler) => a
  * After registration, every time an event that we listen to happens,
  * Observable returned by `fromEventPattern` will emit value that event handler
  * function was called with. Note that if event handler was called with more
- * then one argument, second and following arguments will not appear in the Observable.
+ * than one argument, second and following arguments will not appear in the Observable.
  *
  * If API you are using allows to unregister event handlers as well, you can pass to `fromEventPattern`
  * another function - `removeHandler` - as a second parameter. It will be injected
@@ -133,37 +138,19 @@ export function fromEventPattern<T>(addHandler: (handler: NodeEventHandler) => a
  * @return {Observable<T>} Observable which, when an event happens, emits first parameter
  * passed to registered event handler. Alternatively it emits whatever project function returns
  * at that moment.
- * @static true
- * @name fromEventPattern
- * @owner Observable
  */
-
-export function fromEventPattern<T>(addHandler: (handler: NodeEventHandler) => any,
-                                    removeHandler?: (handler: NodeEventHandler, signal?: any) => void,
-                                    resultSelector?: (...args: any[]) => T): Observable<T | T[]> {
-
+export function fromEventPattern<T>(
+  addHandler: (handler: NodeEventHandler) => any,
+  removeHandler?: (handler: NodeEventHandler, signal?: any) => void,
+  resultSelector?: (...args: any[]) => T
+): Observable<T | T[]> {
   if (resultSelector) {
-    // DEPRECATED PATH
-    return fromEventPattern<T>(addHandler, removeHandler).pipe(
-      map(args => isArray(args) ? resultSelector(...args) : resultSelector(args))
-    );
+    return fromEventPattern<T>(addHandler, removeHandler).pipe(mapOneOrManyArgs(resultSelector));
   }
 
-  return new Observable<T | T[]>(subscriber => {
+  return new Observable<T | T[]>((subscriber) => {
     const handler = (...e: T[]) => subscriber.next(e.length === 1 ? e[0] : e);
-
-    let retValue: any;
-    try {
-      retValue = addHandler(handler);
-    } catch (err) {
-      subscriber.error(err);
-      return undefined;
-    }
-
-    if (!isFunction(removeHandler)) {
-      return undefined;
-    }
-
-    return () => removeHandler(handler, retValue) ;
+    const retValue = addHandler(handler);
+    return isFunction(removeHandler) ? () => removeHandler(handler, retValue) : undefined;
   });
 }

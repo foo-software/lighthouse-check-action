@@ -19,7 +19,7 @@ class InspectorIssues extends FRGatherer {
   meta = {
     supportedModes: ['timespan', 'navigation'],
     dependencies: {DevtoolsLog: DevtoolsLog.symbol},
-  }
+  };
 
   constructor() {
     super();

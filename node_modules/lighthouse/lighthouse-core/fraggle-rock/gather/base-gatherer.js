@@ -17,7 +17,7 @@
  */
 class FRGatherer {
   /** @type {LH.Gatherer.GathererMeta} */
-  meta = {supportedModes: []}
+  meta = {supportedModes: []};
 
   /**
    * Method to start observing a page for an arbitrary period of time.

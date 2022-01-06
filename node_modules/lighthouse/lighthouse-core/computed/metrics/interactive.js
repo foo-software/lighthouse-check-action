@@ -181,7 +181,10 @@ class Interactive extends NavigationMetric {
   }
 }
 
-module.exports = makeComputedArtifact(Interactive);
+module.exports = makeComputedArtifact(
+  Interactive,
+  ['devtoolsLog', 'gatherContext', 'settings', 'simulator', 'trace']
+);
 
 /**
  * @typedef TimePeriod

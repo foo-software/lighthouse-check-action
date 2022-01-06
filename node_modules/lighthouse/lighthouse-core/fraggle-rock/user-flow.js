@@ -59,19 +59,23 @@ class UserFlow {
    */
   _getNextNavigationOptions(url, stepOptions) {
     const options = {url, ...this.options, ...stepOptions};
+    const configContext = {...options.configContext};
+    const settingsOverrides = {...configContext.settingsOverrides};
+
+    if (configContext.skipAboutBlank === undefined) {
+      configContext.skipAboutBlank = true;
+    }
 
     // On repeat navigations, we want to disable storage reset by default (i.e. it's not a cold load).
     const isSubsequentNavigation = this.steps.some(step => step.lhr.gatherMode === 'navigation');
     if (isSubsequentNavigation) {
-      const configContext = {...options.configContext};
-      const settingsOverrides = {...configContext.settingsOverrides};
       if (settingsOverrides.disableStorageReset === undefined) {
         settingsOverrides.disableStorageReset = true;
       }
-
-      configContext.settingsOverrides = settingsOverrides;
-      options.configContext = configContext;
     }
+
+    configContext.settingsOverrides = settingsOverrides;
+    options.configContext = configContext;
 
     return options;
   }

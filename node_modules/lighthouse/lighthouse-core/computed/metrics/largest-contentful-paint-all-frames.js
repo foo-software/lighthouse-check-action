@@ -39,4 +39,7 @@ class LargestContentfulPaintAllFrames extends NavigationMetric {
   }
 }
 
-module.exports = makeComputedArtifact(LargestContentfulPaintAllFrames);
+module.exports = makeComputedArtifact(
+  LargestContentfulPaintAllFrames,
+  ['devtoolsLog', 'gatherContext', 'settings', 'simulator', 'trace']
+);

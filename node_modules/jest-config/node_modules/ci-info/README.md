@@ -49,6 +49,7 @@ Officially supported CI servers:
 | [Codeship](https://codeship.com)                                                | `ci.CODESHIP`        | 🚫   |
 | [Drone](https://drone.io)                                                       | `ci.DRONE`           | ✅   |
 | [dsari](https://github.com/rfinnie/dsari)                                       | `ci.DSARI`           | 🚫   |
+| [Expo Application Services](https://expo.dev/eas)                               | `ci.EAS_BUILD`       | 🚫   |
 | [GitHub Actions](https://github.com/features/actions/)                          | `ci.GITHUB_ACTIONS`  | ✅   |
 | [GitLab CI](https://about.gitlab.com/gitlab-ci/)                                | `ci.GITLAB`          | ✅   |
 | [GoCD](https://www.go.cd/)                                                      | `ci.GOCD`            | 🚫   |

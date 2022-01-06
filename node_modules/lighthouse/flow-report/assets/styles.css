@@ -297,7 +297,7 @@
 
 .SummaryFlow {
   display: grid;
-  max-width: var(--report-content-width);
+  max-width: var(--report-content-max-width);
   grid-auto-rows: min-content;
   grid-template-columns: min-content min-content minmax(var(--min-text-width), max-content) 1fr 1fr 1fr 1fr;
   align-items: center;

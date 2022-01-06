@@ -120,4 +120,7 @@ class LanternTotalBlockingTime extends LanternMetric {
   }
 }
 
-module.exports = makeComputedArtifact(LanternTotalBlockingTime);
+module.exports = makeComputedArtifact(
+  LanternTotalBlockingTime,
+  ['devtoolsLog', 'gatherContext', 'settings', 'simulator', 'trace']
+);

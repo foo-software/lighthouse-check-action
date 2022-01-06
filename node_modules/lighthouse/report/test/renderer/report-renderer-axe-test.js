@@ -7,78 +7,73 @@
 
 /* eslint-env jest */
 
-import jsdom from 'jsdom';
-import {jest} from '@jest/globals';
+import puppeteer from 'puppeteer';
 
-import {Util} from '../../renderer/util.js';
-import {DOM} from '../../renderer/dom.js';
-import {DetailsRenderer} from '../../renderer/details-renderer.js';
-import {CategoryRenderer} from '../../renderer/category-renderer.js';
-import {ReportRenderer} from '../../renderer/report-renderer.js';
-import sampleResultsOrig from '../../../lighthouse-core/test/results/sample_v2.json';
+import sampleResults from '../../../lighthouse-core/test/results/sample_v2.json';
+import reportGenerator from '../../generator/report-generator.js';
+import axeLib from '../../../lighthouse-core/lib/axe.js';
 
 describe('ReportRendererAxe', () => {
   describe('with aXe', () => {
-    let axe;
-    let renderer;
-    let sampleResults;
+    let browser;
 
     beforeAll(async () => {
-      global.console.warn = jest.fn();
-
-      const {window} = new jsdom.JSDOM();
-      const dom = new DOM(window.document);
-      const detailsRenderer = new DetailsRenderer(dom);
-      const categoryRenderer = new CategoryRenderer(dom, detailsRenderer);
-      renderer = new ReportRenderer(dom, categoryRenderer);
-      sampleResults = Util.prepareReportResult(sampleResultsOrig);
-
-      // Needed by axe-core
-      // https://github.com/dequelabs/axe-core/blob/581c441c/doc/examples/jsdom/test/a11y.js#L24
-      global.window = global.self = window;
-      global.Node = global.self.Node;
-      global.Element = global.self.Element;
-
-      // axe-core must be imported after the global polyfills
-      axe = (await import('axe-core')).default;
+      browser = await puppeteer.launch();
     });
 
-    afterAll(() => {
-      global.window = undefined;
-      global.Node = undefined;
-      global.Element = undefined;
+    afterAll(async () => {
+      await browser.close();
     });
 
     it('renders without axe violations', async () => {
-      const container = renderer._dom.document().createElement('main');
-      const output = renderer.renderReport(sampleResults, container);
+      const page = await browser.newPage();
+      const htmlReport = reportGenerator.generateReportHtml(sampleResults);
+      await page.setContent(htmlReport);
 
-      renderer._dom.document().body.appendChild(container);
-
+      // Superset of Lighthouse's aXe config
       const config = {
+        runOnly: {
+          type: 'tag',
+          values: [
+            'wcag2a',
+            'wcag2aa',
+          ],
+        },
+        resultTypes: ['violations', 'inapplicable'],
         rules: {
-          // Reports may have duplicate ids
-          // https://github.com/GoogleChrome/lighthouse/issues/9432
-          'duplicate-id': {enabled: false},
-          'duplicate-id-aria': {enabled: false},
-          'landmark-no-duplicate-contentinfo': {enabled: false},
-          // The following rules are disable for axe-core + jsdom compatibility
-          // https://github.com/dequelabs/axe-core/tree/b573b1c1/doc/examples/jest_react#to-run-the-example
-          'color-contrast': {enabled: false},
-          'link-in-text-block': {enabled: false},
-          // Report has empty links prior to i18n-ing.
-          'link-name': {enabled: false},
-          // May not be a real issue. https://github.com/dequelabs/axe-core/issues/2958
-          'nested-interactive': {enabled: false},
+          'tabindex': {enabled: true},
+          'accesskeys': {enabled: true},
+          'heading-order': {enabled: true},
+          'meta-viewport': {enabled: true},
+          'aria-treeitem-name': {enabled: true},
         },
       };
 
-      const axeResults = await axe.run(output, config);
-      expect(axeResults.violations).toEqual([]);
+      await page.evaluate(axeLib.source);
+      // eslint-disable-next-line no-undef
+      const axeResults = await page.evaluate(config => axe.run(config), config);
+
+      expect(axeResults.violations).toMatchObject([
+        // Color contrast failure only pops up if this pptr is run headfully.
+        // There are currently 27 problematic nodes, primarily audit display text and explanations.
+        // TODO: fix these failures, regardless.
+        // {
+        //   id: 'color-contrast',
+        // },
+        {
+          id: 'duplicate-id',
+          nodes: [
+            // We use these audits in multiple categories. Makes sense.
+            {html: '<div class="lh-audit lh-audit--binary lh-audit--pass" id="viewport">'},
+            {html: '<div class="lh-audit lh-audit--binary lh-audit--fail" id="image-alt">'},
+            {html: '<div class="lh-audit lh-audit--binary lh-audit--pass" id="document-title">'},
+          ],
+        },
+      ]);
     },
-    // This test takes 40s on fast hardware, and 50-60s on GHA (but can take longer).
+    // This test takes 10s on fast hardware, but can take longer in CI.
     // https://github.com/dequelabs/axe-core/tree/b573b1c1/doc/examples/jest_react#timeout-issues
-    /* timeout= */ process.env.CI ? 200_000 : 60_000
+    /* timeout= */ 20_000
     );
   });
 });

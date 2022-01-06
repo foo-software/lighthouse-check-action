@@ -144,4 +144,7 @@ class TimingSummary {
   }
 }
 
-module.exports = makeComputedArtifact(TimingSummary);
+module.exports = makeComputedArtifact(
+  TimingSummary,
+  ['devtoolsLog', 'gatherContext', 'settings', 'trace']
+);

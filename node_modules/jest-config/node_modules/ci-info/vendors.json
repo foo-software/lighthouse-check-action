@@ -85,6 +85,11 @@
     "env": "DSARI"
   },
   {
+    "name": "Expo Application Services",
+    "constant": "EAS",
+    "env": "EAS_BUILD"
+  },
+  {
     "name": "GitHub Actions",
     "constant": "GITHUB_ACTIONS",
     "env": "GITHUB_ACTIONS",

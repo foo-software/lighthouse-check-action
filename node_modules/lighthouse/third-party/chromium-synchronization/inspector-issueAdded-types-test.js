@@ -36,6 +36,7 @@ describe('issueAdded types', () => {
 Array [
   "attributionReportingIssueDetails",
   "blockedByResponseIssueDetails",
+  "clientHintIssueDetails",
   "contentSecurityPolicyIssueDetails",
   "corsIssueDetails",
   "deprecationIssueDetails",

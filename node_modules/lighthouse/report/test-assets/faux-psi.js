@@ -8,12 +8,22 @@
 /** @fileoverview This file exercises two LH reports within the same DOM. */
 
 /** @typedef {import('../clients/bundle.js')} lighthouseRenderer */
-
 /** @type {lighthouseRenderer} */
 // @ts-expect-error
 const lighthouseRenderer = window['report'];
 
+const wait = (ms = 100) => new Promise(resolve => setTimeout(resolve, ms));
+
+
 (async function __initPsiReports__() {
+  renderLHReport();
+
+  document.querySelector('button')?.addEventListener('click', () => {
+    renderLHReport();
+  });
+})();
+
+async function renderLHReport() {
   // @ts-expect-error
   const mobileLHR = window.__LIGHTHOUSE_JSON__;
   const desktopLHR = JSON.parse(JSON.stringify(mobileLHR));
@@ -26,25 +36,49 @@ const lighthouseRenderer = window['report'];
   for (const [tabId, lhr] of Object.entries(lhrs)) {
     await distinguishLHR(lhr, tabId);
 
-    const container = document.querySelector(`section#${tabId}`);
+    const container = document.querySelector(`section#${tabId} .reportContainer`);
     if (!container) throw new Error('Unexpected DOM. Bailing.');
 
     try {
+      container.textContent = 'Analyzing…';
+      await wait(500);
+      for (const el of container.childNodes) el.remove();
+
       const reportRootEl = lighthouseRenderer.renderReport(lhr, {
         omitTopbar: true,
         disableAutoDarkModeAndFireworks: true,
       });
       // TODO: display warnings if appropriate.
-      for (const el of reportRootEl.querySelectorAll('.lh-warnings')) {
+      for (const el of reportRootEl.querySelectorAll('.lh-warnings--toplevel')) {
         el.setAttribute('hidden', 'true');
       }
+
+      // Move env block
+      const metaItemsEl = reportRootEl.querySelector('.lh-meta__items');
+      if (metaItemsEl) {
+        reportRootEl.querySelector('.lh-metrics-container')?.parentNode?.insertBefore(
+          metaItemsEl,
+          reportRootEl.querySelector('.lh-buttons')
+        );
+      }
+
       container.append(reportRootEl);
+
+      // Override some LH styles. (To find .lh-vars we must descend from reportRootEl's parent)
+      for (const el of container.querySelectorAll('article.lh-vars')) {
+        // Ensure these css var names are not stale.
+        el.style.setProperty('--report-content-max-width', '100%');
+        el.style.setProperty('--edge-gap-padding', '0');
+      }
+      for (const el of reportRootEl.querySelectorAll('footer.lh-footer')) {
+        el.style.display = 'none';
+      }
     } catch (e) {
       console.error(e);
       container.textContent = 'Error: LHR failed to render.';
     }
   }
-})();
+}
 
 
 /**
@@ -59,13 +93,15 @@ async function distinguishLHR(lhr, tabId) {
   }
 
   const finalSSDetails = lhr.audits['final-screenshot'] && lhr.audits['final-screenshot'].details;
-  if (!finalSSDetails || finalSSDetails.type !== 'screenshot') throw new Error();
-  finalSSDetails.data = await decorateScreenshot(finalSSDetails.data, tabId);
+  if (finalSSDetails && finalSSDetails.type === 'screenshot') {
+    finalSSDetails.data = await decorateScreenshot(finalSSDetails.data, tabId);
+  }
 
   const fpSSDetails = lhr.audits['full-page-screenshot'] &&
       lhr.audits['full-page-screenshot'].details;
-  if (!fpSSDetails || fpSSDetails.type !== 'full-page-screenshot') throw new Error();
-  fpSSDetails.screenshot.data = await decorateScreenshot(fpSSDetails.screenshot.data, tabId);
+  if (fpSSDetails && fpSSDetails.type === 'full-page-screenshot') {
+    fpSSDetails.screenshot.data = await decorateScreenshot(fpSSDetails.screenshot.data, tabId);
+  }
 }
 
 /**

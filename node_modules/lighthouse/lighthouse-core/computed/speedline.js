@@ -51,4 +51,4 @@ class Speedline {
   }
 }
 
-module.exports = makeComputedArtifact(Speedline);
+module.exports = makeComputedArtifact(Speedline, null);

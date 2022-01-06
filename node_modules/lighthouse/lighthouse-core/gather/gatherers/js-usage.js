@@ -14,7 +14,7 @@ class JsUsage extends FRGatherer {
   /** @type {LH.Gatherer.GathererMeta} */
   meta = {
     supportedModes: ['snapshot', 'timespan', 'navigation'],
-  }
+  };
 
   constructor() {
     super();

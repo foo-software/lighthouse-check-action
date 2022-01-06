@@ -31,4 +31,7 @@ class FirstContentfulPaintAllFrames extends NavigationMetric {
   }
 }
 
-module.exports = makeComputedArtifact(FirstContentfulPaintAllFrames);
+module.exports = makeComputedArtifact(
+  FirstContentfulPaintAllFrames,
+  ['devtoolsLog', 'gatherContext', 'settings', 'simulator', 'trace']
+);

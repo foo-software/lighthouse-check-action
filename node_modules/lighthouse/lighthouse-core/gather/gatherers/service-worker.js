@@ -12,7 +12,7 @@ class ServiceWorker extends FRGatherer {
   /** @type {LH.Gatherer.GathererMeta} */
   meta = {
     supportedModes: ['navigation'],
-  }
+  };
 
   /**
    * @param {LH.Gatherer.PassContext} passContext

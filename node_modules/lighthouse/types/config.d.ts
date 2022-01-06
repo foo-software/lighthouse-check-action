@@ -65,6 +65,7 @@ declare module Config {
     gatherMode?: Gatherer.GatherMode;
     configPath?: string;
     settingsOverrides?: SharedFlagsSettings & Pick<LH.Flags, 'plugins'>;
+    skipAboutBlank?: boolean;
   }
 
   interface SharedPassNavigationJson {

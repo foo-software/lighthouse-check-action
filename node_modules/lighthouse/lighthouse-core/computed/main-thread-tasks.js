@@ -21,4 +21,4 @@ class MainThreadTasks {
   }
 }
 
-module.exports = makeComputedArtifact(MainThreadTasks);
+module.exports = makeComputedArtifact(MainThreadTasks, null);

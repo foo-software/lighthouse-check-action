@@ -146,5 +146,7 @@
   "white",
   "whitesmoke",
   "yellow",
-  "yellowgreen"
+  "yellowgreen",
+  "transparent",
+  "currentcolor"
 ]
