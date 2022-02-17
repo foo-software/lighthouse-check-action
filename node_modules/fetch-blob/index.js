@@ -5,16 +5,14 @@
 
 import './streams.cjs'
 
-/** @typedef {import('buffer').Blob} NodeBlob} */
-
 // 64 KiB (same size chrome slice theirs blob into Uint8array's)
 const POOL_SIZE = 65536
 
-/** @param {(Blob | NodeBlob | Uint8Array)[]} parts */
+/** @param {(Blob | Uint8Array)[]} parts */
 async function * toIterator (parts, clone = true) {
   for (const part of parts) {
     if ('stream' in part) {
-      yield * part.stream()
+      yield * (/** @type {AsyncIterableIterator<Uint8Array>} */ (part.stream()))
     } else if (ArrayBuffer.isView(part)) {
       if (clone) {
         let position = part.byteOffset
@@ -28,17 +26,16 @@ async function * toIterator (parts, clone = true) {
       } else {
         yield part
       }
+    /* c8 ignore next 10 */
     } else {
-      /* c8 ignore start */
       // For blobs that have arrayBuffer but no stream method (nodes buffer.Blob)
-      let position = 0
-      while (position !== part.size) {
-        const chunk = part.slice(position, Math.min(part.size, position + POOL_SIZE))
+      let position = 0, b = (/** @type {Blob} */ (part))
+      while (position !== b.size) {
+        const chunk = b.slice(position, Math.min(b.size, position + POOL_SIZE))
         const buffer = await chunk.arrayBuffer()
         position += buffer.byteLength
         yield new Uint8Array(buffer)
       }
-      /* c8 ignore end */
     }
   }
 }
@@ -48,6 +45,7 @@ const _Blob = class Blob {
   #parts = []
   #type = ''
   #size = 0
+  #endings = 'transparent'
 
   /**
    * The Blob() constructor returns a new Blob object. The content
@@ -55,7 +53,7 @@ const _Blob = class Blob {
    * in the parameter array.
    *
    * @param {*} blobParts
-   * @param {{ type?: string }} [options]
+   * @param {{ type?: string, endings?: string }} [options]
    */
   constructor (blobParts = [], options = {}) {
     if (typeof blobParts !== 'object' || blobParts === null) {
@@ -82,15 +80,15 @@ const _Blob = class Blob {
       } else if (element instanceof Blob) {
         part = element
       } else {
-        part = encoder.encode(element)
+        part = encoder.encode(`${element}`)
       }
 
       this.#size += ArrayBuffer.isView(part) ? part.byteLength : part.size
       this.#parts.push(part)
     }
 
+    this.#endings = `${options.endings === undefined ? 'transparent' : options.endings}`
     const type = options.type === undefined ? '' : String(options.type)
-
     this.#type = /^[\x20-\x7E]*$/.test(type) ? type : ''
   }
 
@@ -156,6 +154,7 @@ const _Blob = class Blob {
     const it = toIterator(this.#parts, true)
 
     return new globalThis.ReadableStream({
+      // @ts-ignore
       type: 'bytes',
       async pull (ctrl) {
         const chunk = await it.next()

@@ -121,7 +121,7 @@ class ExecutionContext {
         new Error('Runtime.evaluate response did not contain a "result" object'));
     }
     const value = response.result.value;
-    if (value && value.__failedInBrowser) {
+    if (value?.__failedInBrowser) {
       return Promise.reject(Object.assign(new Error(), value));
     } else {
       return value;

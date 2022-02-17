@@ -49,7 +49,7 @@ function assertValidPluginName(configJSON, pluginName) {
     throw new Error(`plugin name '${pluginName}' does not start with 'lighthouse-plugin-'`);
   }
 
-  if (configJSON.categories && configJSON.categories[pluginName]) {
+  if (configJSON.categories?.[pluginName]) {
     throw new Error(`plugin name '${pluginName}' not allowed because it is the id of a category already found in config`); // eslint-disable-line max-len
   }
 }
@@ -123,7 +123,7 @@ function assertValidFRNavigations(navigationsDefn) {
 function assertValidAudit(auditDefinition) {
   const {implementation, path: auditPath} = auditDefinition;
   const auditName = auditPath ||
-    (implementation && implementation.meta && implementation.meta.id) ||
+    implementation?.meta?.id ||
     'Unknown audit';
 
   if (typeof implementation.audit !== 'function' || implementation.audit === Audit.audit) {

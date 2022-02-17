@@ -390,7 +390,7 @@ class NetworkAnalyzer {
     // downloading those bytes. We slice up all the network records into start/end boundaries, so
     // it's easier to deal with the gaps in downloading.
     const timeBoundaries = networkRecords.reduce((boundaries, record) => {
-      const scheme = record.parsedURL && record.parsedURL.scheme;
+      const scheme = record.parsedURL?.scheme;
       // Requests whose bodies didn't come over the network or didn't completely finish will mess
       // with the computation, just skip over them.
       if (scheme === 'data' || record.failed || !record.finished ||

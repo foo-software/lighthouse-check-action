@@ -133,7 +133,7 @@ async function internalRun(url, tmpPath, configJson, options) {
 
   // There should either be both an error exitCode and a lhr.runtimeError or neither.
   if (Boolean(exitCode) !== Boolean(lhr.runtimeError)) {
-    const runtimeErrorCode = lhr.runtimeError && lhr.runtimeError.code;
+    const runtimeErrorCode = lhr.runtimeError?.code;
     throw new ChildProcessError(`Lighthouse did not exit with an error correctly, exiting with ${exitCode} but with runtimeError '${runtimeErrorCode}'`, // eslint-disable-line max-len
         localConsole.getLog());
   }

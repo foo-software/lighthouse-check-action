@@ -55,7 +55,7 @@ class ResourceSummary {
     const budget = Budget.getMatchingBudget(budgets, mainResourceURL);
     /** @type {ReadonlyArray<string>} */
     let firstPartyHosts = [];
-    if (budget && budget.options && budget.options.firstPartyHostnames) {
+    if (budget?.options?.firstPartyHostnames) {
       firstPartyHosts = budget.options.firstPartyHostnames;
     } else {
       const rootDomain = Util.getRootDomain(mainResourceURL);

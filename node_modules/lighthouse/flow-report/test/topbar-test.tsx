@@ -56,7 +56,7 @@ it('save button opens save dialog for HTML file', async () => {
 
   expect(mockSaveFile).toHaveBeenCalledWith(
     expect.any(Blob),
-    'User-flow_2021-09-14_22-24-22'
+    'User-flow_2021-09-14_22-24-22.html'
   );
 });
 

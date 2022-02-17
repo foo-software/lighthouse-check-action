@@ -24,7 +24,6 @@ import url from 'url';
 import module from 'module';
 
 import log from 'lighthouse-logger';
-import updateNotifier from 'update-notifier';
 
 import * as commands from './commands/commands.js';
 import * as Printer from './printer.js';
@@ -51,9 +50,6 @@ function isDev() {
  * @return {Promise<LH.RunnerResult|void>}
  */
 async function begin() {
-  // Tell user if there's a newer version of LH.
-  updateNotifier({pkg}).notify();
-
   const cliFlags = getFlags();
 
   // Process terminating command
@@ -141,12 +137,9 @@ async function begin() {
       url: urlUnderTest,
       flags: cliFlags,
       environmentData: {
-        name: 'redacted', // prevent sentry from using hostname
+        serverName: 'redacted', // prevent sentry from using hostname
         environment: isDev() ? 'development' : 'production',
         release: pkg.version,
-        tags: {
-          channel: 'cli',
-        },
       },
     });
   }

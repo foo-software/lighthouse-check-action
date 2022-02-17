@@ -510,7 +510,7 @@ class NetworkRequest {
 
     const reasonHeader = record.responseHeaders
       .find(header => header.name === 'Non-Authoritative-Reason');
-    const reason = reasonHeader && reasonHeader.value;
+    const reason = reasonHeader?.value;
     return reason === 'HSTS' && NetworkRequest.isSecureRequest(destination);
   }
 

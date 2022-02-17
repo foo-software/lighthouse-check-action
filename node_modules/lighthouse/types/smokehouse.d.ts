@@ -20,6 +20,9 @@ declare global {
         code?: any;
         message?: any;
       };
+      timing?: {
+        entries?: any
+      }
     }
 
     export type ExpectedRunnerResult = {

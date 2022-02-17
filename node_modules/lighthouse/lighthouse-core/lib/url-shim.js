@@ -10,6 +10,7 @@
  */
 
 const {Util} = require('../util-commonjs.js');
+const LHError = require('../lib/lh-error.js');
 
 /** @typedef {import('./network-request.js')} NetworkRequest */
 
@@ -247,6 +248,20 @@ class URLShim extends URL {
     if (ext === 'svg') return 'image/svg+xml';
     if (ext === 'jpg') return 'image/jpeg';
     return `image/${ext}`;
+  }
+
+  /**
+   * @param {string|undefined} url
+   * @return {string}
+   */
+  static normalizeUrl(url) {
+    // Verify the url is valid and that protocol is allowed
+    if (url && this.isValid(url) && this.isProtocolAllowed(url)) {
+      // Use canonicalized URL (with trailing slashes and such)
+      return new URL(url).href;
+    } else {
+      throw new LHError(LHError.errors.INVALID_URL);
+    }
   }
 }
 

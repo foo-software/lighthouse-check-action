@@ -40,6 +40,7 @@ Array [
   "contentSecurityPolicyIssueDetails",
   "corsIssueDetails",
   "deprecationIssueDetails",
+  "federatedAuthRequestIssueDetails",
   "genericIssueDetails",
   "heavyAdIssueDetails",
   "lowTextContrastIssueDetails",
@@ -49,7 +50,6 @@ Array [
   "sameSiteCookieIssueDetails",
   "sharedArrayBufferIssueDetails",
   "twaQualityEnforcementDetails",
-  "wasmCrossOriginModuleSharingIssue",
 ]
 `);
   });

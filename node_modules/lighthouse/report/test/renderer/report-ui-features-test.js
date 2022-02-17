@@ -27,15 +27,16 @@ describe('ReportUIFeatures', () => {
 
   /**
    * @param {LH.JSON} lhr
+   * @param {LH.Renderer.Options=} opts
    * @return {HTMLElement}
    */
-  function render(lhr) {
+  function render(lhr, opts) {
     const detailsRenderer = new DetailsRenderer(dom);
     const categoryRenderer = new CategoryRenderer(dom, detailsRenderer);
     const renderer = new ReportRenderer(dom, categoryRenderer);
-    const reportUIFeatures = new ReportUIFeatures(dom);
+    const reportUIFeatures = new ReportUIFeatures(dom, opts);
     const container = dom.find('body', dom.document());
-    renderer.renderReport(lhr, container);
+    renderer.renderReport(lhr, container, opts);
     reportUIFeatures.initFeatures(lhr);
     return container;
   }
@@ -60,6 +61,7 @@ describe('ReportUIFeatures', () => {
 
     global.HTMLElement = document.window.HTMLElement;
     global.HTMLInputElement = document.window.HTMLInputElement;
+    global.CustomEvent = document.window.CustomEvent;
 
     global.window = document.window;
     global.window.requestAnimationFrame = fn => fn();
@@ -83,6 +85,7 @@ describe('ReportUIFeatures', () => {
     global.window = undefined;
     global.HTMLElement = undefined;
     global.HTMLInputElement = undefined;
+    global.CustomEvent = undefined;
   });
 
   describe('initFeatures', () => {
@@ -275,6 +278,22 @@ describe('ReportUIFeatures', () => {
         expect(filterControl.hidden).toEqual(true);
       });
     });
+
+    it('save-html option enabled if callback present', () => {
+      let container = render(sampleResults);
+      const getSaveEl = () => dom.find('a[data-action="save-html"]', container);
+      expect(getSaveEl().classList.contains('lh-hidden')).toBeTruthy();
+
+      const getHtmlMock = jest.fn();
+      container = render(sampleResults, {
+        getStandaloneReportHTML: getHtmlMock,
+      });
+      expect(getSaveEl().classList.contains('lh-hidden')).toBeFalsy();
+
+      expect(getHtmlMock).not.toBeCalled();
+      getSaveEl().click();
+      expect(getHtmlMock).toBeCalled();
+    });
   });
 
   describe('fireworks', () => {
@@ -350,7 +369,6 @@ describe('ReportUIFeatures', () => {
       dropDown._toggleEl.click();
       assert.ok(!dropDown._toggleEl.classList.contains('lh-active'));
     });
-
 
     it('Escape key removes active class', () => {
       dropDown._toggleEl.click();

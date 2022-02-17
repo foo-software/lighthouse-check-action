@@ -25,7 +25,7 @@ const NO_CPU_THROTTLE_METRICS = {
  */
 function parseUseragentIntoMetadata(userAgent, formFactor) {
   const match = userAgent.match(/Chrome\/([\d.]+)/); // eg 'Chrome/(71.0.3577.0)'
-  const fullVersion = (match && match[1]) || '99.0.1234.0';
+  const fullVersion = match?.[1] || '99.0.1234.0';
   const [version] = fullVersion.split('.', 1);
   const brands = [
     {brand: 'Chromium', version},

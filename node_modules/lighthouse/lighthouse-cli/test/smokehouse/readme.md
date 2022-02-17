@@ -64,11 +64,15 @@ Individual elements of an array can be asserted by using numeric properties in a
 
 However, if an array literal is used as the expectation, an extra condition is enforced that the actual array _must_ have the same length as the provided expected array.
 
+Arrays can be checked against a subset of elements using the special `_includes` property. The value of `_includes` _must_ be an array. Each assertion in `_includes` will remove the matching item from consideration for the rest.
+
 **Examples**:
 | Actual | Expected | Result |
 | -- | -- | -- |
 | `[{url: 'http://badssl.com'}, {url: 'http://example.com'}]` | `{1: {url: 'http://example.com'}}` | ✅ PASS |
 | `[{timeInMs: 5}, {timeInMs: 15}]` | `{length: 2}` | ✅ PASS |
+| `[{timeInMs: 5}, {timeInMs: 15}]` | `{_includes: [{timeInMs: 5}]}` | ✅ PASS |
+| `[{timeInMs: 5}, {timeInMs: 15}]` | `{_includes: [{timeInMs: 5}, {timeInMs: 5}]}` | ❌ FAIL |
 | `[{timeInMs: 5}, {timeInMs: 15}]` | `[{timeInMs: 5}]` | ❌ FAIL |
 
 ### Special environment checks
@@ -118,14 +122,15 @@ Smokehouse Frontends                                        Lighthouse Runners
 |            |    |            |               |   <lhr   |   +--------------+
 +------------+    |            +-------+-------+          |   |              |
                   |                    ^                  +-->+   bundle.js  |
-+------------+    |                    |                      |              |
-|            |    |                    |                      +--------------+
-|   lib.js   +----+                    v
-|            |                +--------+--------+
-+------------+                |                 |
-                              |  report/assert  |
-                              |                 |
-                              +-----------------+
++------------+    |                    |                  |   |              |
+|            |    |                    |                  |   +--------------+
+|   lib.js   +----+                    v                  |
+|            |                +--------+--------+         |
++------------+                |                 |         |   +--------------+
+                              |  report/assert  |         |   |              |
+                              |                 |         +-->+  devtools.js |
+                              +-----------------+             |              |
+                                                              +--------------+
 ```
 
 ### Smokehouse frontends
@@ -142,6 +147,7 @@ Smokehouse Frontends                                        Lighthouse Runners
 
 - `lighthouse-runners/cli.js` - the original test runner, exercising the Lighthouse CLI from command-line argument parsing to the results written to disk on completion.
 - `lighthouse-runners/bundle.js` - a smoke test runner that operates on an already-bundled version of Lighthouse for end-to-end testing of that version.
+- `lighthouse-runners/devtools.js` - a smoke test runner that operates on Lighthouse running from inside DevTools.
 
 ## Custom smoke tests (for plugins et al.)
 

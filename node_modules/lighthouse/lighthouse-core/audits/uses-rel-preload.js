@@ -257,9 +257,8 @@ class UsesRelPreloadAudit extends Audit {
    * @return {Promise<LH.Audit.Product>}
    */
   static async audit() {
-    // Preload advice is dangerous until https://bugs.chromium.org/p/chromium/issues/detail?id=788757
-    // has been fixed and validated. All preload audits are on hold until then.
-    // See https://github.com/GoogleChrome/lighthouse/issues/11960 for more discussion.
+    // Preload advice is on hold until https://github.com/GoogleChrome/lighthouse/issues/11960
+    // is resolved.
     return {score: 1, notApplicable: true, details: Audit.makeOpportunityDetails([], [], 0)};
   }
 }

@@ -572,7 +572,7 @@ class GatherRunner {
       driver.defaultSession,
       passContext.settings,
       {
-        url: passContext.url,
+        requestor: passContext.url,
         disableStorageReset: !passConfig.useThrottling,
         disableThrottling: !passConfig.useThrottling,
         blockedUrlPatterns: passConfig.blockedUrlPatterns,

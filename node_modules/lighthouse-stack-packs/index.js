@@ -2,6 +2,7 @@ const stackPacks = [
   require('./packs/amp.js'),
   require('./packs/angular.js'),
   require('./packs/drupal.js'),
+  require('./packs/ezoic.js'),
   require('./packs/joomla.js'),
   require('./packs/magento.js'),
   require('./packs/next.js'),

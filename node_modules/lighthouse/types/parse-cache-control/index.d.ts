@@ -12,6 +12,7 @@ declare module 'parse-cache-control' {
     'no-cache'?: boolean;
     'no-store'?: boolean;
     'private'?: boolean;
+    'stale-while-revalidate'?: boolean;
   }
 
   function ParseCacheControl(headers?: string): CacheHeaders | null;

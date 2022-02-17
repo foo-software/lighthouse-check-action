@@ -37,6 +37,11 @@ const _File = class File extends Blob {
   get [Symbol.toStringTag] () {
     return 'File'
   }
+
+  static [Symbol.hasInstance] (object) {
+    return !!object && object instanceof Blob &&
+      /^(File)$/.test(object[Symbol.toStringTag])
+  }
 }
 
 /** @type {typeof globalThis.File} */// @ts-ignore

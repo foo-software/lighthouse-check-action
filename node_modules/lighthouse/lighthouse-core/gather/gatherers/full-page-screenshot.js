@@ -5,11 +5,13 @@
  */
 'use strict';
 
-/* globals window document getBoundingClientRect */
+/* globals window document getBoundingClientRect requestAnimationFrame */
 
 const FRGatherer = require('../../fraggle-rock/gather/base-gatherer.js');
 const emulation = require('../../lib/emulation.js');
 const pageFunctions = require('../../lib/page-functions.js');
+const NetworkMonitor = require('../driver/network-monitor.js');
+const {waitForNetworkIdle} = require('../driver/wait-for-condition.js');
 
 // JPEG quality setting
 // Exploration and examples of reports using different quality settings: https://docs.google.com/document/d/1ZSffucIca9XDW2eEwfoevrk-OTl7WQFeMf0CgeJAA8M/edit#
@@ -25,7 +27,6 @@ function kebabCaseToCamelCase(str) {
 
 /* c8 ignore start */
 
-// eslint-disable-next-line no-inner-declarations
 function getObservedDeviceMetrics() {
   // Convert the Web API's kebab case (landscape-primary) to camel case (landscapePrimary).
   const screenOrientationType = kebabCaseToCamelCase(window.screen.orientation.type);
@@ -38,6 +39,12 @@ function getObservedDeviceMetrics() {
     },
     deviceScaleFactor: window.devicePixelRatio,
   };
+}
+
+function waitForDoubleRaf() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
 }
 
 /* c8 ignore stop */
@@ -53,7 +60,7 @@ class FullPageScreenshot extends FRGatherer {
    * @return {Promise<number>}
    * @see https://bugs.chromium.org/p/chromium/issues/detail?id=770769
    */
-  async getMaxScreenshotHeight(context) {
+  async getMaxTextureSize(context) {
     return await context.driver.executionContext.evaluate(pageFunctions.getMaxTextureSize, {
       args: [],
       useIsolation: true,
@@ -67,7 +74,7 @@ class FullPageScreenshot extends FRGatherer {
    */
   async _takeScreenshot(context) {
     const session = context.driver.defaultSession;
-    const maxScreenshotHeight = await this.getMaxScreenshotHeight(context);
+    const maxTextureSize = await this.getMaxTextureSize(context);
     const metrics = await session.sendCommand('Page.getLayoutMetrics');
 
     // Width should match emulated width, without considering content overhang.
@@ -76,8 +83,19 @@ class FullPageScreenshot extends FRGatherer {
     // Note: If the page is zoomed, many assumptions fail.
     //
     // Height should be as tall as the content. So we use contentSize.height
-    const width = Math.min(metrics.layoutViewport.clientWidth, maxScreenshotHeight);
-    const height = Math.min(metrics.contentSize.height, maxScreenshotHeight);
+    const width = Math.min(metrics.layoutViewport.clientWidth, maxTextureSize);
+    const height = Math.min(metrics.contentSize.height, maxTextureSize);
+
+    // Setup network monitor before we change the viewport.
+    const networkMonitor = new NetworkMonitor(session);
+    const waitForNetworkIdleResult = waitForNetworkIdle(session, networkMonitor, {
+      pretendDCLAlreadyFired: true,
+      networkQuietThresholdMs: 1000,
+      busyEvent: 'network-critical-busy',
+      idleEvent: 'network-critical-idle',
+      isIdle: recorder => recorder.isCriticalIdle(),
+    });
+    await networkMonitor.enable();
 
     await session.sendCommand('Emulation.setDeviceMetricsOverride', {
       // If we're gathering with mobile screenEmulation on (overlay scrollbars, etc), continue to use that for this screenshot.
@@ -89,9 +107,17 @@ class FullPageScreenshot extends FRGatherer {
       screenOrientation: {angle: 0, type: 'portraitPrimary'},
     });
 
-    // TODO: elements collected earlier in gathering are likely to have been shifted by now.
-    // The lower in the page, the more likely (footer elements especially).
-    // https://github.com/GoogleChrome/lighthouse/issues/11118
+    // Now that the viewport is taller, give the page some time to fetch new resources that
+    // are now in view.
+    await Promise.race([
+      new Promise(resolve => setTimeout(resolve, 1000 * 5)),
+      waitForNetworkIdleResult.promise,
+    ]);
+    waitForNetworkIdleResult.cancel();
+    await networkMonitor.disable();
+
+    // Now that new resources are (probably) fetched, wait long enough for a layout.
+    await context.driver.executionContext.evaluate(waitForDoubleRaf, {args: []});
 
     const result = await session.sendCommand('Page.captureScreenshot', {
       format: 'jpeg',

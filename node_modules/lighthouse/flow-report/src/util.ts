@@ -44,8 +44,7 @@ function getScreenDimensions(reportResult: LH.Result) {
 function getFullPageScreenshot(reportResult: LH.Result) {
   const fullPageScreenshotAudit = reportResult.audits['full-page-screenshot'];
   const fullPageScreenshot =
-    fullPageScreenshotAudit &&
-    fullPageScreenshotAudit.details &&
+    fullPageScreenshotAudit?.details &&
     fullPageScreenshotAudit.details.type === 'full-page-screenshot' &&
     fullPageScreenshotAudit.details;
 
