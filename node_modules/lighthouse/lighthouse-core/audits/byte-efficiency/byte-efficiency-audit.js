@@ -109,7 +109,7 @@ class UnusedBytes extends Audit {
     const gatherContext = artifacts.GatherContext;
     const trace = artifacts.traces[Audit.DEFAULT_PASS];
     const devtoolsLog = artifacts.devtoolsLogs[Audit.DEFAULT_PASS];
-    const settings = context && context.settings || {};
+    const settings = context?.settings || {};
     const simulatorOptions = {
       devtoolsLog,
       settings,

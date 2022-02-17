@@ -111,7 +111,7 @@ class LanternMetricArtifact {
     const processedTrace = await ProcessedTrace.request(trace, context);
     const processedNavigation = await ProcessedNavigation.request(processedTrace, context);
     const simulator = data.simulator ||
-        await LoadSimulator.request({devtoolsLog, settings}, context);
+        (await LoadSimulator.request({devtoolsLog, settings}, context));
 
     const optimisticGraph = this.getOptimisticGraph(graph, processedNavigation);
     const pessimisticGraph = this.getPessimisticGraph(graph, processedNavigation);

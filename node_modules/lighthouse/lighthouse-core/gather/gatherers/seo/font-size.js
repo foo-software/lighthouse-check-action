@@ -355,7 +355,7 @@ class FontSize extends FRGatherer {
     // For the nodes whose computed style we could attribute to a stylesheet, assign
     // the stylsheet to the data.
     analyzedFailingNodesData
-      .filter(data => data.cssRule && data.cssRule.styleSheetId)
+      .filter(data => data.cssRule?.styleSheetId)
       // @ts-expect-error - guaranteed to exist from the filter immediately above
       .forEach(data => (data.cssRule.stylesheet = stylesheets.get(data.cssRule.styleSheetId)));
 

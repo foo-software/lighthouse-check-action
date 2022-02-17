@@ -127,7 +127,7 @@ class DuplicatedJavascript extends ByteEfficiencyAudit {
    */
   static async audit_(artifacts, networkRecords, context) {
     const ignoreThresholdInBytes =
-      context.options && context.options.ignoreThresholdInBytes || IGNORE_THRESHOLD_IN_BYTES;
+      context.options?.ignoreThresholdInBytes || IGNORE_THRESHOLD_IN_BYTES;
     const duplication =
       await DuplicatedJavascript._getDuplicationGroupedByNodeModules(artifacts, context);
     const mainDocumentRecord = NetworkAnalyzer.findOptionalMainDocument(networkRecords);

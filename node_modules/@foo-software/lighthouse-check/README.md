@@ -188,7 +188,7 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
 
 (async () => {
   const response = await lighthouseCheck({
-    slackWebhookUrl: 'https://www.my-slack-webhook-url.com'
+    slackWebhookUrl: 'https://www.my-slack-webhook-url.com',
     urls: [
       'https://www.foo.software/lighthouse',
       'https://www.foo.software/contact'

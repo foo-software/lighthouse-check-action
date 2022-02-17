@@ -169,7 +169,7 @@ class InstallableManifest extends Audit {
        * If there is an argument value, get it.
        * We only expect a `minimum-icon-size-in-pixels` errorArg[0] for two errorIds, currently.
        */
-      const value0 = err.errorArguments && err.errorArguments.length && err.errorArguments[0].value;
+      const value0 = err.errorArguments?.length && err.errorArguments[0].value;
 
       if (matchingString && err.errorArguments.length !== UIStringArguments.length) {
         // Matching string, but have the incorrect number of arguments for the message.

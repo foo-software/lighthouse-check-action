@@ -32,7 +32,7 @@
  * @property {Run[]} runs
  */
 
-import {strict as assert} from 'assert';
+import assert from 'assert';
 
 import log from 'lighthouse-logger';
 
@@ -244,7 +244,7 @@ function getShardedDefinitions(testDefns, shardArg) {
   // eslint-disable-next-line max-len
   const errorMessage = `'shard' must be of the form 'n/d' and n and d must be positive integers with 1 ≤ n ≤ d. Got '${shardArg}'`;
   const match = /^(?<shardNumber>\d+)\/(?<shardTotal>\d+)$/.exec(shardArg);
-  assert(match && match.groups, errorMessage);
+  assert(match?.groups, errorMessage);
   const shardNumber = Number(match.groups.shardNumber);
   const shardTotal = Number(match.groups.shardTotal);
   assert(shardNumber > 0 && Number.isInteger(shardNumber), errorMessage);
@@ -267,14 +267,13 @@ function getShardedDefinitions(testDefns, shardArg) {
     shards.push(testDefns.slice(index, index + shardSize));
     index += shardSize;
   }
-  assert.equal(shards.length, shardTotal);
-  assert.deepEqual(shards.flat(), testDefns);
+  assert.strictEqual(shards.length, shardTotal);
+  assert.deepStrictEqual(shards.flat(), testDefns);
 
   const shardDefns = shards[shardNumber - 1];
   console.log(`In this shard (${shardArg}), running: ${shardDefns.map(d => d.id).join(' ')}\n`);
   return shardDefns;
 }
-
 
 export {
   runSmokehouse,

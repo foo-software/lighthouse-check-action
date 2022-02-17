@@ -627,6 +627,10 @@ const UIStrings = {
   thirdPartyResourcesLabel: 'Show 3rd-party resources',
   /** This label is for a button that opens a new tab to a webapp called "Treemap", which is a nested visual representation of a heierarchy of data related to the reports (script bytes and coverage, resource breakdown, etc.) */
   viewTreemapLabel: 'View Treemap',
+  /** This label is for a button that will show the user a trace of the page. */
+  viewTraceLabel: 'View Trace',
+  /** This label is for a button that will show the user a trace of the page. */
+  viewOriginalTraceLabel: 'View Original Trace',
 
   /** Option in a dropdown menu that opens a small, summary report in a print dialog.  */
   dropdownPrintSummary: 'Print Summary',

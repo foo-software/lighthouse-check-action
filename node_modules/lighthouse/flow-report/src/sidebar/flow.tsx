@@ -59,7 +59,7 @@ export const SidebarFlow: FunctionComponent = () => {
               mode={lhr.gatherMode}
               href={`#index=${index}`}
               label={name}
-              isCurrent={index === (hashState && hashState.index)}
+              isCurrent={index === hashState?.index}
             />
           </>;
         })

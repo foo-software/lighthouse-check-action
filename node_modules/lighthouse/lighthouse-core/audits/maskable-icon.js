@@ -62,7 +62,7 @@ class MaskableIcon extends Audit {
     }
     const maskableIconCheck = manifestValues.allChecks.find(i => i.id === 'hasMaskableIcon');
     return {
-      score: (maskableIconCheck && maskableIconCheck.passing) ? 1 : 0,
+      score: maskableIconCheck?.passing ? 1 : 0,
     };
   }
 }

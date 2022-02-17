@@ -199,7 +199,11 @@ export class TopbarFeatures {
   }
 
   _print() {
-    self.print();
+    if (this._reportUIFeatures._opts.onPrintOverride) {
+      this._reportUIFeatures._opts.onPrintOverride(this._dom.rootEl);
+    } else {
+      self.print();
+    }
   }
 
   /**

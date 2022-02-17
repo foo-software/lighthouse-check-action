@@ -93,7 +93,7 @@ const FlowStepThumbnail: FunctionComponent<{
   }
 
   let thumbnail;
-  if (frames && frames.length) {
+  if (frames?.length) {
     thumbnail = frames[frames.length - 1].data;
     if (lhr.gatherMode === 'timespan') {
       return <FlowStepAnimatedThumbnail frames={frames} width={width} height={height} />;

@@ -161,7 +161,7 @@ class Config {
   constructor(configJSON, flags) {
     const status = {msg: 'Create config', id: 'lh:init:config'};
     log.time(status, 'verbose');
-    let configPath = flags && flags.configPath;
+    let configPath = flags?.configPath;
 
     if (!configJSON) {
       configJSON = defaultConfig;

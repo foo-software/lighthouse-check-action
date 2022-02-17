@@ -39,7 +39,7 @@ class ImageRecords {
 
     for (const element of data.ImageElements) {
       const networkRecord = indexedNetworkRecords[element.src];
-      const mimeType = networkRecord && networkRecord.mimeType;
+      const mimeType = networkRecord?.mimeType;
 
       // Don't change the guessed mime type if no mime type was found.
       imageRecords.push({

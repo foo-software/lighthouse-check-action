@@ -6,7 +6,8 @@
 'use strict';
 
 const Audit = require('../audit.js');
-const robotsParser = require('robots-parser');
+// TODO(esmodules): cast can be removed when this switches to import.
+const robotsParser = /** @type {typeof import('robots-parser').default} */ (/** @type {unknown} */(require('robots-parser'))); // eslint-disable-line max-len
 const URL = require('../../lib/url-shim.js');
 const MainResource = require('../../computed/main-resource.js');
 const BLOCKLIST = new Set([

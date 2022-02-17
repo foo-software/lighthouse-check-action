@@ -101,7 +101,7 @@ class ThemedOmnibox extends MultiCheckAudit {
     return {
       failures,
       manifestValues,
-      themeColor: (themeColorMeta && themeColorMeta.content) || null,
+      themeColor: themeColorMeta?.content || null,
     };
   }
 }

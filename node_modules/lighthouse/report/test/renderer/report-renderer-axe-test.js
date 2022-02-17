@@ -53,23 +53,44 @@ describe('ReportRendererAxe', () => {
       // eslint-disable-next-line no-undef
       const axeResults = await page.evaluate(config => axe.run(config), config);
 
-      expect(axeResults.violations).toMatchObject([
-        // Color contrast failure only pops up if this pptr is run headfully.
-        // There are currently 27 problematic nodes, primarily audit display text and explanations.
-        // TODO: fix these failures, regardless.
-        // {
-        //   id: 'color-contrast',
-        // },
-        {
-          id: 'duplicate-id',
-          nodes: [
-            // We use these audits in multiple categories. Makes sense.
-            {html: '<div class="lh-audit lh-audit--binary lh-audit--pass" id="viewport">'},
-            {html: '<div class="lh-audit lh-audit--binary lh-audit--fail" id="image-alt">'},
-            {html: '<div class="lh-audit lh-audit--binary lh-audit--pass" id="document-title">'},
-          ],
-        },
-      ]);
+      // Color contrast failure only pops up if this pptr is run headfully.
+      // There are currently 27 problematic nodes, primarily audit display text and explanations.
+      // TODO: fix these failures, regardless.
+      // {
+      //   id: 'color-contrast',
+      // },
+
+      expect(axeResults.violations.find(v => v.id === 'duplicate-id')).toMatchObject({
+        id: 'duplicate-id',
+        nodes: [
+          // We use these audits in multiple categories. Makes sense.
+          {html: '<div class="lh-audit lh-audit--binary lh-audit--pass" id="viewport">'},
+          {html: '<div class="lh-audit lh-audit--binary lh-audit--fail" id="image-alt">'},
+          {html: '<div class="lh-audit lh-audit--binary lh-audit--pass" id="document-title">'},
+        ],
+      });
+
+      const axeSummary = axeResults.violations.map((v) => {
+        return {
+          id: v.id,
+          message: v.nodes.map((n) => n.failureSummary).join('\n'),
+        };
+      });
+      expect(axeSummary).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "id": "duplicate-id",
+    "message": "Fix any of the following:
+  Document has multiple static elements with the same id attribute: viewport
+Fix any of the following:
+  Document has multiple static elements with the same id attribute: image-alt
+Fix any of the following:
+  Document has multiple static elements with the same id attribute: document-title",
+  },
+]
+`);
+
+      expect(axeResults.violations).toMatchSnapshot();
     },
     // This test takes 10s on fast hardware, but can take longer in CI.
     // https://github.com/dequelabs/axe-core/tree/b573b1c1/doc/examples/jest_react#timeout-issues

@@ -5,14 +5,23 @@
  */
 
 import { Result as AuditResult } from "../../types/lhr/audit-result";
+import { ReportUIFeatures } from "../renderer/report-ui-features.js";
 
 declare module Renderer {
   function renderReport(lhr: AuditResult, options?: Options): HTMLElement;
 
   interface Options {
     /**
-     * Don't automatically apply dark-mode to dark based on (prefers-color-scheme: dark). (DevTools and PSI don't want this.)
-     * Also, the fireworks easter-egg will want to flip to dark, so this setting will also disable chance of fireworks. */
+     * Disables automatically applying dark mode based on `prefers-color-scheme: dark`. Dark mode can still
+     * be manually applied by assigning the class `lh-dark` to the report element.
+     */
+    disableDarkMode?: boolean;
+    /** Disables the fireworks animation that plays when all core categories have a 100 score. */
+    disableFireworks?: boolean;
+    /**
+     * Disable dark mode and fireworks.
+     * @deprecated Use `disableDarkMode` and `disableFireworks` instead.
+     */
     disableAutoDarkModeAndFireworks?: boolean;
 
     /** Disable the topbar UI component */
@@ -24,6 +33,18 @@ declare module Renderer {
      * Flow report uses this to convert `#seo` to `#index=0&anchor=seo`.
      */
     onPageAnchorRendered?: (link: HTMLAnchorElement) => void;
+    /** If defined, `Save as HTML` option is shown in dropdown menu. */
+    getStandaloneReportHTML?: () => string;
+    /** If defined, renderer will call this instead of `self.print()` */
+    onPrintOverride?: (rootEl: HTMLElement) => Promise<void>;
+    /** If defined, renderer will call this instead of using a `<a download>.click()>` to trigger a JSON/HTML download. Blob will be either json or html. */
+    onSaveFileOverride?: (blob: Blob, suggestedFilename: string) => Promise<void>;
+    /**
+     * If defined, adds a `View Trace` button to the report, and calls this callback when clicked.
+     * The callback should do something to present the user with a visualization of the trace
+     * data, which can be gotten from the artifacts.
+     */
+    onViewTrace?: () => void;
   }
 }
 

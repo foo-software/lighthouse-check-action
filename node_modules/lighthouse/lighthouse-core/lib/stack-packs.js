@@ -19,6 +19,11 @@ const stackPacksToInclude = [
     packId: 'wordpress',
     requiredStacks: ['js:wordpress'],
   },
+  // waiting for https://github.com/johnmichel/Library-Detector-for-Chrome/pull/193
+  // {
+  //   packId: 'ezoic',
+  //   requiredStacks: ['js:ezoic'],
+  // },
   {
     packId: 'drupal',
     requiredStacks: ['js:drupal'],

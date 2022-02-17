@@ -15,10 +15,9 @@ const getScoresFromFloat = scores =>
   Object.keys(scores).reduce(
     (accumulator, current) => ({
       ...accumulator,
-      [current]:
-        typeof scores[current] !== 'number'
-          ? 0
-          : Math.floor(scores[current] * 100)
+      ...(typeof scores[current] === 'number' && {
+        [current]: Math.floor(scores[current] * 100)
+      })
     }),
     {}
   );

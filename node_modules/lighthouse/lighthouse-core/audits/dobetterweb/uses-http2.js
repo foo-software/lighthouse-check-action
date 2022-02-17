@@ -227,7 +227,7 @@ class UsesHTTP2Audit extends Audit {
       };
     }
 
-    const settings = context && context.settings || {};
+    const settings = context?.settings || {};
     const simulatorOptions = {
       devtoolsLog,
       settings,

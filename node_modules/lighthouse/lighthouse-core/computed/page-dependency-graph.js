@@ -205,7 +205,7 @@ class PageDependencyGraph {
           networkNode.startTime <= cpuNode.startTime) return;
       const {record} = networkNode;
       const resourceType = record.resourceType ||
-        record.redirectDestination && record.redirectDestination.resourceType;
+        record.redirectDestination?.resourceType;
       if (!linkableResourceTypes.has(resourceType)) {
         // We only link some resources to CPU nodes because we observe LCP simulation
         // regressions when including images, etc.
@@ -405,7 +405,7 @@ class PageDependencyGraph {
 
     // The root request is the earliest request in the main document redirect chain.
     // Will be undefined if there were no redirects.
-    const rootRequest = mainDocumentNode.record.redirects && mainDocumentNode.record.redirects[0];
+    const rootRequest = mainDocumentNode.record.redirects?.[0];
 
     let rootNode;
     if (rootRequest) {

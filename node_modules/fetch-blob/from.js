@@ -1,17 +1,11 @@
 import { statSync, createReadStream, promises as fs } from 'node:fs'
 import { basename } from 'node:path'
-import { MessageChannel } from 'node:worker_threads'
+import DOMException from 'node-domexception'
 
 import File from './file.js'
 import Blob from './index.js'
 
 const { stat } = fs
-
-const DOMException = globalThis.DOMException || (() => {
-  const port = new MessageChannel().port1
-  const ab = new ArrayBuffer(0)
-  try { port.postMessage(ab, [ab, ab]) } catch (err) { return err.constructor }
-})()
 
 /**
  * @param {string} path filepath on the disk
@@ -22,12 +16,14 @@ const blobFromSync = (path, type) => fromBlob(statSync(path), path, type)
 /**
  * @param {string} path filepath on the disk
  * @param {string} [type] mimetype to use
+ * @returns {Promise<Blob>}
  */
 const blobFrom = (path, type) => stat(path).then(stat => fromBlob(stat, path, type))
 
 /**
  * @param {string} path filepath on the disk
  * @param {string} [type] mimetype to use
+ * @returns {Promise<File>}
  */
 const fileFrom = (path, type) => stat(path).then(stat => fromFile(stat, path, type))
 
@@ -80,7 +76,7 @@ class BlobDataItem {
       path: this.#path,
       lastModified: this.lastModified,
       size: end - start,
-      start
+      start: this.#start + start
     })
   }
 

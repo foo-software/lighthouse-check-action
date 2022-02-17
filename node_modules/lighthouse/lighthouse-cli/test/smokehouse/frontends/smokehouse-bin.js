@@ -36,6 +36,7 @@ const coreTestDefnsPath =
 const runnerPaths = {
   cli: '../lighthouse-runners/cli.js',
   bundle: '../lighthouse-runners/bundle.js',
+  devtools: '../lighthouse-runners/devtools.js',
 };
 
 /**
@@ -151,7 +152,7 @@ async function begin() {
       },
       'runner': {
         default: 'cli',
-        choices: ['cli', 'bundle'],
+        choices: ['cli', 'bundle', 'devtools'],
         describe: 'The method of running Lighthouse',
       },
       'tests-path': {
@@ -174,7 +175,8 @@ async function begin() {
 
   // Augmenting yargs type with auto-camelCasing breaks in tsc@4.1.2 and @types/yargs@15.0.11,
   // so for now cast to add yarg's camelCase properties to type.
-  const argv = /** @type {typeof rawArgv & CamelCasify<typeof rawArgv>} */ (rawArgv);
+  const argv =
+    /** @type {Awaited<typeof rawArgv> & CamelCasify<Awaited<typeof rawArgv>>} */ (rawArgv);
 
   const jobs = Number.isFinite(argv.jobs) ? argv.jobs : undefined;
   const retries = Number.isFinite(argv.retries) ? argv.retries : undefined;

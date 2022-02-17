@@ -425,7 +425,7 @@ class Driver {
    * @return {Promise<void>}
    */
   async beginTrace(settings) {
-    const additionalCategories = (settings && settings.additionalTraceCategories &&
+    const additionalCategories = (settings?.additionalTraceCategories &&
         settings.additionalTraceCategories.split(',')) || [];
     const traceCategories = TraceGatherer.getDefaultTraceCategories().concat(additionalCategories);
 

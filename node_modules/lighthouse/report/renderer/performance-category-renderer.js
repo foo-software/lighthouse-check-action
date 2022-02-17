@@ -225,8 +225,8 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
     // Filmstrip
     const timelineEl = this.dom.createChildOf(element, 'div', 'lh-filmstrip-container');
     const thumbnailAudit = category.auditRefs.find(audit => audit.id === 'screenshot-thumbnails');
-    const thumbnailResult = thumbnailAudit && thumbnailAudit.result;
-    if (thumbnailResult && thumbnailResult.details) {
+    const thumbnailResult = thumbnailAudit?.result;
+    if (thumbnailResult?.details) {
       timelineEl.id = thumbnailResult.id;
       const filmstripEl = this.detailsRenderer.render(thumbnailResult.details);
       filmstripEl && timelineEl.appendChild(filmstripEl);
@@ -301,7 +301,7 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
     const budgetTableEls = [];
     ['performance-budget', 'timing-budget'].forEach((id) => {
       const audit = category.auditRefs.find(audit => audit.id === id);
-      if (audit && audit.result.details) {
+      if (audit?.result.details) {
         const table = this.detailsRenderer.render(audit.result.details);
         if (table) {
           table.id = id;
@@ -347,7 +347,7 @@ export class PerformanceCategoryRenderer extends CategoryRenderer {
 
       const labelEl = this.dom.createChildOf(metricFilterEl, 'label', 'lh-metricfilter__label');
       labelEl.htmlFor = elemId;
-      labelEl.title = metric.result && metric.result.title;
+      labelEl.title = metric.result?.title;
       labelEl.textContent = metric.acronym || metric.id;
 
       if (metric.acronym === 'All') {

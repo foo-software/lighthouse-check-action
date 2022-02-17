@@ -6,7 +6,8 @@
  */
 
 import Stream, {PassThrough} from 'node:stream';
-import {types, deprecate} from 'node:util';
+import {types, deprecate, promisify} from 'node:util';
+import {Buffer} from 'node:buffer';
 
 import Blob from 'fetch-blob';
 import {FormData, formDataToBlob} from 'formdata-polyfill/esm.min.js';
@@ -15,6 +16,7 @@ import {FetchError} from './errors/fetch-error.js';
 import {FetchBaseError} from './errors/base.js';
 import {isBlob, isURLSearchParameters} from './utils/is.js';
 
+const pipeline = promisify(Stream.pipeline);
 const INTERNALS = Symbol('Body internals');
 
 /**
@@ -130,7 +132,7 @@ export default class Body {
 	 */
 	async blob() {
 		const ct = (this.headers && this.headers.get('content-type')) || (this[INTERNALS].body && this[INTERNALS].body.type) || '';
-		const buf = await this.buffer();
+		const buf = await this.arrayBuffer();
 
 		return new Blob([buf], {
 			type: ct
@@ -176,7 +178,10 @@ Object.defineProperties(Body.prototype, {
 	arrayBuffer: {enumerable: true},
 	blob: {enumerable: true},
 	json: {enumerable: true},
-	text: {enumerable: true}
+	text: {enumerable: true},
+	data: {get: deprecate(() => {},
+		'data doesn\'t exist, use json(), text(), arrayBuffer(), or body instead',
+		'https://github.com/node-fetch/node-fetch/issues/1000 (response)')}
 });
 
 /**
@@ -379,14 +384,14 @@ export const getTotalBytes = request => {
  *
  * @param {Stream.Writable} dest The stream to write to.
  * @param obj.body Body object from the Body instance.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export const writeToStream = (dest, {body}) => {
+export const writeToStream = async (dest, {body}) => {
 	if (body === null) {
 		// Body is null
 		dest.end();
 	} else {
 		// Body is stream
-		body.pipe(dest);
+		await pipeline(body, dest);
 	}
 };

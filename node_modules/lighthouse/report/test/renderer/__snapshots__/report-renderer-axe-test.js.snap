@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReportRendererAxe with aXe renders without axe violations 2`] = `
+Array [
+  Object {
+    "description": "Ensures every id attribute value is unique",
+    "help": "id attribute value must be unique",
+    "helpUrl": "https://dequeuniversity.com/rules/axe/4.3/duplicate-id?application=axeAPI",
+    "id": "duplicate-id",
+    "impact": "minor",
+    "nodes": Array [
+      Object {
+        "all": Array [],
+        "any": Array [
+          Object {
+            "data": "viewport",
+            "id": "duplicate-id",
+            "impact": "minor",
+            "message": "Document has multiple static elements with the same id attribute: viewport",
+            "relatedNodes": Array [
+              Object {
+                "html": "<div class=\\"lh-audit lh-audit--binary lh-audit--pass\\" id=\\"viewport\\">",
+                "target": Array [
+                  "#seo > .lh-audit-group:nth-child(4) > .lh-clump--passed.lh-clump > .lh-audit--binary.lh-audit--pass.lh-audit:nth-child(2)",
+                ],
+              },
+              Object {
+                "html": "<div class=\\"lh-audit lh-audit--binary lh-audit--pass\\" id=\\"viewport\\">",
+                "target": Array [
+                  ".lh-audit-group--pwa-optimized > .lh-audit--binary.lh-audit--pass.lh-audit:nth-child(6)",
+                ],
+              },
+            ],
+          },
+        ],
+        "failureSummary": "Fix any of the following:
+  Document has multiple static elements with the same id attribute: viewport",
+        "html": "<div class=\\"lh-audit lh-audit--binary lh-audit--pass\\" id=\\"viewport\\">",
+        "impact": "minor",
+        "none": Array [],
+        "target": Array [
+          ".lh-audit--binary.lh-audit--pass.lh-audit:nth-child(20)",
+        ],
+      },
+      Object {
+        "all": Array [],
+        "any": Array [
+          Object {
+            "data": "image-alt",
+            "id": "duplicate-id",
+            "impact": "minor",
+            "message": "Document has multiple static elements with the same id attribute: image-alt",
+            "relatedNodes": Array [
+              Object {
+                "html": "<div class=\\"lh-audit lh-audit--binary lh-audit--fail\\" id=\\"image-alt\\">",
+                "target": Array [
+                  ".lh-audit-group--seo-content > .lh-audit--fail.lh-audit--binary.lh-audit:nth-child(3)",
+                ],
+              },
+            ],
+          },
+        ],
+        "failureSummary": "Fix any of the following:
+  Document has multiple static elements with the same id attribute: image-alt",
+        "html": "<div class=\\"lh-audit lh-audit--binary lh-audit--fail\\" id=\\"image-alt\\">",
+        "impact": "minor",
+        "none": Array [],
+        "target": Array [
+          ".lh-audit-group--a11y-names-labels > .lh-audit--fail.lh-audit--binary.lh-audit:nth-child(2)",
+        ],
+      },
+      Object {
+        "all": Array [],
+        "any": Array [
+          Object {
+            "data": "document-title",
+            "id": "duplicate-id",
+            "impact": "minor",
+            "message": "Document has multiple static elements with the same id attribute: document-title",
+            "relatedNodes": Array [
+              Object {
+                "html": "<div class=\\"lh-audit lh-audit--binary lh-audit--pass\\" id=\\"document-title\\">",
+                "target": Array [
+                  "#seo > .lh-audit-group:nth-child(4) > .lh-clump--passed.lh-clump > .lh-audit--binary.lh-audit--pass.lh-audit:nth-child(3)",
+                ],
+              },
+            ],
+          },
+        ],
+        "failureSummary": "Fix any of the following:
+  Document has multiple static elements with the same id attribute: document-title",
+        "html": "<div class=\\"lh-audit lh-audit--binary lh-audit--pass\\" id=\\"document-title\\">",
+        "impact": "minor",
+        "none": Array [],
+        "target": Array [
+          ".lh-audit--binary.lh-audit--pass.lh-audit:nth-child(13)",
+        ],
+      },
+    ],
+    "tags": Array [
+      "cat.parsing",
+      "wcag2a",
+      "wcag411",
+    ],
+  },
+]
+`;

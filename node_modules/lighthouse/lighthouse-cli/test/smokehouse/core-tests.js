@@ -10,12 +10,11 @@ import byteEfficiency from './test-definitions/byte-efficiency.js';
 import byteGzip from './test-definitions/byte-gzip.js';
 import cspAllowAll from './test-definitions/csp-allow-all.js';
 import cspBlockAll from './test-definitions/csp-block-all.js';
-import cspBlockAllM91 from './test-definitions/csp-block-all-m91.js';
 import dbw from './test-definitions/dobetterweb.js';
 import errorsExpiredSsl from './test-definitions/errors-expired-ssl.js';
 import errorsIframeExpiredSsl from './test-definitions/errors-iframe-expired-ssl.js';
 import errorsInfiniteLoop from './test-definitions/errors-infinite-loop.js';
-// import formsAutoComplete from './test-definitions/forms-autocomplete.js';
+import formsAutoComplete from './test-definitions/forms-autocomplete.js';
 import issuesMixedContent from './test-definitions/issues-mixed-content.js';
 import lanternFetch from './test-definitions/lantern-fetch.js';
 import lanternIdleCallbackLong from './test-definitions/lantern-idle-callback-long.js';
@@ -60,6 +59,7 @@ import seoPassing from './test-definitions/seo-passing.js';
 import seoStatus403 from './test-definitions/seo-status-403.js';
 import seoTapTargets from './test-definitions/seo-tap-targets.js';
 import sourceMaps from './test-definitions/source-maps.js';
+import timing from './test-definitions/timing.js';
 
 /** @type {ReadonlyArray<Smokehouse.TestDfn>} */
 const smokeTests = [
@@ -68,13 +68,11 @@ const smokeTests = [
   byteGzip,
   cspAllowAll,
   cspBlockAll,
-  cspBlockAllM91,
   dbw,
   errorsExpiredSsl,
   errorsIframeExpiredSsl,
   errorsInfiniteLoop,
-  // TODO: restore when --enable-features=AutofillShowTypePredictions is not needed.
-  // formsAutoComplete,
+  formsAutoComplete,
   issuesMixedContent,
   lanternOnline,
   lanternSetTimeout,
@@ -119,6 +117,7 @@ const smokeTests = [
   seoStatus403,
   seoTapTargets,
   sourceMaps,
+  timing,
 ];
 
 export default smokeTests;
