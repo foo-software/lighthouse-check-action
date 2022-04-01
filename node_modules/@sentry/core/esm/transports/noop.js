@@ -8,7 +8,7 @@ var NoopTransport = /** @class */ (function () {
      */
     NoopTransport.prototype.sendEvent = function (_) {
         return resolvedSyncPromise({
-            reason: "NoopTransport: Event has been skipped because no Dsn is configured.",
+            reason: 'NoopTransport: Event has been skipped because no Dsn is configured.',
             status: 'skipped',
         });
     };

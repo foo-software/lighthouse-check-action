@@ -597,11 +597,11 @@ declare class SSM extends Service {
    */
   getMaintenanceWindowExecutionTaskInvocation(callback?: (err: AWSError, data: SSM.Types.GetMaintenanceWindowExecutionTaskInvocationResult) => void): Request<SSM.Types.GetMaintenanceWindowExecutionTaskInvocationResult, AWSError>;
   /**
-   * Lists the tasks in a maintenance window.  For maintenance window tasks without a specified target, you can't supply values for --max-errors and --max-concurrency. Instead, the system inserts a placeholder value of 1, which may be reported in the response to this command. These values don't affect the running of your task and can be ignored. 
+   * Retrieves the details of a maintenance window task.  For maintenance window tasks without a specified target, you can't supply values for --max-errors and --max-concurrency. Instead, the system inserts a placeholder value of 1, which may be reported in the response to this command. These values don't affect the running of your task and can be ignored.  To retrieve a list of tasks in a maintenance window, instead use the DescribeMaintenanceWindowTasks command.
    */
   getMaintenanceWindowTask(params: SSM.Types.GetMaintenanceWindowTaskRequest, callback?: (err: AWSError, data: SSM.Types.GetMaintenanceWindowTaskResult) => void): Request<SSM.Types.GetMaintenanceWindowTaskResult, AWSError>;
   /**
-   * Lists the tasks in a maintenance window.  For maintenance window tasks without a specified target, you can't supply values for --max-errors and --max-concurrency. Instead, the system inserts a placeholder value of 1, which may be reported in the response to this command. These values don't affect the running of your task and can be ignored. 
+   * Retrieves the details of a maintenance window task.  For maintenance window tasks without a specified target, you can't supply values for --max-errors and --max-concurrency. Instead, the system inserts a placeholder value of 1, which may be reported in the response to this command. These values don't affect the running of your task and can be ignored.  To retrieve a list of tasks in a maintenance window, instead use the DescribeMaintenanceWindowTasks command.
    */
   getMaintenanceWindowTask(callback?: (err: AWSError, data: SSM.Types.GetMaintenanceWindowTaskResult) => void): Request<SSM.Types.GetMaintenanceWindowTaskResult, AWSError>;
   /**
@@ -1005,11 +1005,11 @@ declare class SSM extends Service {
    */
   updateDocument(callback?: (err: AWSError, data: SSM.Types.UpdateDocumentResult) => void): Request<SSM.Types.UpdateDocumentResult, AWSError>;
   /**
-   * Set the default version of a document. 
+   * Set the default version of a document.   If you change a document version for a State Manager association, Systems Manager immediately runs the association unless you previously specifed the apply-only-at-cron-interval parameter. 
    */
   updateDocumentDefaultVersion(params: SSM.Types.UpdateDocumentDefaultVersionRequest, callback?: (err: AWSError, data: SSM.Types.UpdateDocumentDefaultVersionResult) => void): Request<SSM.Types.UpdateDocumentDefaultVersionResult, AWSError>;
   /**
-   * Set the default version of a document. 
+   * Set the default version of a document.   If you change a document version for a State Manager association, Systems Manager immediately runs the association unless you previously specifed the apply-only-at-cron-interval parameter. 
    */
   updateDocumentDefaultVersion(callback?: (err: AWSError, data: SSM.Types.UpdateDocumentDefaultVersionResult) => void): Request<SSM.Types.UpdateDocumentDefaultVersionResult, AWSError>;
   /**
@@ -1226,7 +1226,7 @@ declare namespace SSM {
      */
     AssociationVersion?: AssociationVersion;
     /**
-     * The version of the document used in the association.  State Manager doesn't support running associations that use a new version of a document if that document is shared from another account. State Manager always runs the default version of a document if shared from another account, even though the Systems Manager console shows that a new version was processed. If you want to run an association using a new version of a document shared form another account, you must set the document version to default. 
+     * The version of the document used in the association. If you change a document version for a State Manager association, Systems Manager immediately runs the association unless you previously specifed the apply-only-at-cron-interval parameter.  State Manager doesn't support running associations that use a new version of a document if that document is shared from another account. State Manager always runs the default version of a document if shared from another account, even though the Systems Manager console shows that a new version was processed. If you want to run an association using a new version of a document shared form another account, you must set the document version to default. 
      */
     DocumentVersion?: DocumentVersion;
     /**
@@ -5194,7 +5194,7 @@ declare namespace SSM {
      */
     PatchGroup: PatchGroup;
     /**
-     * Returns he operating system rule specified for patch groups using the patch baseline.
+     * Returns the operating system rule specified for patch groups using the patch baseline.
      */
     OperatingSystem?: OperatingSystem;
   }
@@ -6829,7 +6829,7 @@ declare namespace SSM {
   export type NotificationEvent = "All"|"InProgress"|"Success"|"TimedOut"|"Cancelled"|"Failed"|string;
   export type NotificationEventList = NotificationEvent[];
   export type NotificationType = "Command"|"Invocation"|string;
-  export type OperatingSystem = "WINDOWS"|"AMAZON_LINUX"|"AMAZON_LINUX_2"|"UBUNTU"|"REDHAT_ENTERPRISE_LINUX"|"SUSE"|"CENTOS"|"ORACLE_LINUX"|"DEBIAN"|"MACOS"|"RASPBIAN"|string;
+  export type OperatingSystem = "WINDOWS"|"AMAZON_LINUX"|"AMAZON_LINUX_2"|"UBUNTU"|"REDHAT_ENTERPRISE_LINUX"|"SUSE"|"CENTOS"|"ORACLE_LINUX"|"DEBIAN"|"MACOS"|"RASPBIAN"|"ROCKY_LINUX"|string;
   export interface OpsAggregator {
     /**
      * Either a Range or Count aggregator for limiting an OpsData summary.
@@ -7881,7 +7881,7 @@ declare namespace SSM {
   }
   export interface PutParameterRequest {
     /**
-     * The fully qualified name of the parameter that you want to add to the system. The fully qualified name includes the complete hierarchy of the parameter path and name. For parameters in a hierarchy, you must include a leading forward slash character (/) when you create or reference a parameter. For example: /Dev/DBServer/MySQL/db-string13  Naming Constraints:   Parameter names are case sensitive.   A parameter name must be unique within an Amazon Web Services Region   A parameter name can't be prefixed with "aws" or "ssm" (case-insensitive).   Parameter names can include only the following symbols and letters: a-zA-Z0-9_.-  In addition, the slash character ( / ) is used to delineate hierarchies in parameter names. For example: /Dev/Production/East/Project-ABC/MyParameter    A parameter name can't include spaces.   Parameter hierarchies are limited to a maximum depth of fifteen levels.   For additional information about valid values for parameter names, see Creating Systems Manager parameters in the Amazon Web Services Systems Manager User Guide.  The maximum length constraint listed below includes capacity for additional system attributes that aren't part of the name. The maximum length for a parameter name, including the full length of the parameter ARN, is 1011 characters. For example, the length of the following parameter name is 65 characters, not 20 characters:  arn:aws:ssm:us-east-2:111122223333:parameter/ExampleParameterName  
+     * The fully qualified name of the parameter that you want to add to the system. The fully qualified name includes the complete hierarchy of the parameter path and name. For parameters in a hierarchy, you must include a leading forward slash character (/) when you create or reference a parameter. For example: /Dev/DBServer/MySQL/db-string13  Naming Constraints:   Parameter names are case sensitive.   A parameter name must be unique within an Amazon Web Services Region   A parameter name can't be prefixed with "aws" or "ssm" (case-insensitive).   Parameter names can include only the following symbols and letters: a-zA-Z0-9_.-  In addition, the slash character ( / ) is used to delineate hierarchies in parameter names. For example: /Dev/Production/East/Project-ABC/MyParameter    A parameter name can't include spaces.   Parameter hierarchies are limited to a maximum depth of fifteen levels.   For additional information about valid values for parameter names, see Creating Systems Manager parameters in the Amazon Web Services Systems Manager User Guide.  The maximum length constraint of 2048 characters listed below includes 1037 characters reserved for internal use by Systems Manager. The maximum length for a parameter name that you create is 1011 characters. This includes the characters in the ARN that precede the name you specify, such as arn:aws:ssm:us-east-2:111122223333:parameter/. 
      */
     Name: PSParameterName;
     /**
@@ -8332,7 +8332,7 @@ declare namespace SSM {
   export type ResourceDataSyncType = string;
   export type ResourceId = string;
   export type ResourceType = "ManagedInstance"|"Document"|"EC2Instance"|string;
-  export type ResourceTypeForTagging = "Document"|"ManagedInstance"|"MaintenanceWindow"|"Parameter"|"PatchBaseline"|"OpsItem"|"OpsMetadata"|string;
+  export type ResourceTypeForTagging = "Document"|"ManagedInstance"|"MaintenanceWindow"|"Parameter"|"PatchBaseline"|"OpsItem"|"OpsMetadata"|"Automation"|string;
   export type ResponseCode = number;
   export interface ResultAttribute {
     /**
@@ -8821,7 +8821,7 @@ declare namespace SSM {
      */
     Reason?: SessionReason;
     /**
-     * Reserved for future use.
+     * The values you want to specify for the parameters defined in the Session document.
      */
     Parameters?: SessionManagerParameters;
   }
@@ -9121,7 +9121,7 @@ declare namespace SSM {
      */
     SyncCompliance?: AssociationSyncCompliance;
     /**
-     * By default, when you update an association, the system runs it immediately after it is updated and then according to the schedule you specified. Specify this option if you don't want an association to run immediately after you update it. This parameter isn't supported for rate expressions. Also, if you specified this option when you created the association, you can reset it. To do so, specify the no-apply-only-at-cron-interval parameter when you update the association from the command line. This parameter forces the association to run immediately after updating it and according to the interval specified.
+     * By default, when you update an association, the system runs it immediately after it is updated and then according to the schedule you specified. Specify this option if you don't want an association to run immediately after you update it. This parameter isn't supported for rate expressions. If you chose this option when you created an association and later you edit that association or you make changes to the SSM document on which that association is based (by using the Documents page in the console), State Manager applies the association at the next specified cron interval. For example, if you chose the Latest version of an SSM document when you created an association and you edit the association by choosing a different document version on the Documents page, State Manager applies the association at the next specified cron interval if you previously selected this option. If this option wasn't selected, State Manager immediately runs the association. You can reset this option. To do so, specify the no-apply-only-at-cron-interval parameter when you update the association from the command line. This parameter forces the association to run immediately after updating it and according to the interval specified.
      */
     ApplyOnlyAtCronInterval?: ApplyOnlyAtCronInterval;
     /**
@@ -9213,7 +9213,7 @@ declare namespace SSM {
      */
     VersionName?: DocumentVersionName;
     /**
-     * The version of the document that you want to update. Currently, Systems Manager supports updating only the latest version of the document. You can specify the version number of the latest version or use the $LATEST variable.
+     * The version of the document that you want to update. Currently, Systems Manager supports updating only the latest version of the document. You can specify the version number of the latest version or use the $LATEST variable.  If you change a document version for a State Manager association, Systems Manager immediately runs the association unless you previously specifed the apply-only-at-cron-interval parameter. 
      */
     DocumentVersion?: DocumentVersion;
     /**

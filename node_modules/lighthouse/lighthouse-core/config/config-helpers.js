@@ -6,7 +6,7 @@
 'use strict';
 
 const path = require('path');
-const isDeepEqual = require('lodash.isequal');
+const {isEqual: isDeepEqual} = require('lodash');
 const constants = require('./constants.js');
 const Budget = require('./budget.js');
 const ConfigPlugin = require('./config-plugin.js');

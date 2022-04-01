@@ -16,7 +16,9 @@ jobs:
       run: |
         node ./dist/bin/lighthouse-check.js --verbose \
         --apiToken ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }} \
-        --isGitHubAction \
+        --emulatedFormFactor all \
+        --isGitHubAction true \
+        --tag lighthouse-check \
         --urls ${{ secrets.LIGHTHOUSE_CHECK_URLS }} \
         --prCommentAccessToken "${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}" \
         --prCommentEnabled \

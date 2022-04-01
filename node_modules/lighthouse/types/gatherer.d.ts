@@ -62,6 +62,14 @@ declare module Gatherer {
     settings: Config.Settings;
   }
 
+  interface FRGatherResult {
+    artifacts: Artifacts;
+    runnerOptions: {
+      config: Config.FRConfig;
+      computedCache: Map<string, ArbitraryEqualityMap>
+    }
+  }
+
   interface PassContext {
     gatherMode: 'navigation';
     /** The url of the currently loaded page. If the main document redirects, this will be updated to keep track. */

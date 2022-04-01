@@ -1,7 +1,16 @@
 /// <reference types="node" />
 /// <reference lib="dom" />
 
-import {Agent} from 'http';
+import {RequestOptions} from 'http';
+import {FormData} from 'formdata-polyfill/esm.min.js';
+import {
+	Blob,
+	blobFrom,
+	blobFromSync,
+	File,
+	fileFrom,
+	fileFromSync
+} from 'fetch-blob/from.js';
 
 type AbortSignal = {
 	readonly aborted: boolean;
@@ -11,6 +20,16 @@ type AbortSignal = {
 };
 
 export type HeadersInit = Headers | Record<string, string> | Iterable<readonly [string, string]> | Iterable<Iterable<string>>;
+
+export {
+	FormData,
+	Blob,
+	blobFrom,
+	blobFromSync,
+	File,
+	fileFrom,
+	fileFromSync
+};
 
 /**
  * This Fetch API interface allows you to perform various actions on HTTP request and response headers.
@@ -81,7 +100,7 @@ export interface RequestInit {
 	referrerPolicy?: ReferrerPolicy;
 
 	// Node-fetch extensions to the whatwg/fetch spec
-	agent?: Agent | ((parsedUrl: URL) => Agent);
+	agent?: RequestOptions['agent'] | ((parsedUrl: URL) => RequestOptions['agent']);
 	compress?: boolean;
 	counter?: number;
 	follow?: number;
@@ -113,9 +132,7 @@ declare class BodyMixin {
 	readonly bodyUsed: boolean;
 	readonly size: number;
 
-	/**
- 	* @deprecated Please use 'response.arrayBuffer()' instead of 'response.buffer()
- 	*/
+	/** @deprecated Use `body.arrayBuffer()` instead. */
 	buffer(): Promise<Buffer>;
 	arrayBuffer(): Promise<ArrayBuffer>;
 	formData(): Promise<FormData>;

@@ -1,6 +1,6 @@
 import { __read, __spread } from "tslib";
 import { addGlobalEventProcessor, getCurrentHub } from '@sentry/hub';
-import { addNonEnumerableProperty, logger } from '@sentry/utils';
+import { addNonEnumerableProperty, isDebugBuild, logger } from '@sentry/utils';
 export var installedIntegrations = [];
 /**
  * @private
@@ -43,7 +43,7 @@ export function setupIntegration(integration) {
     }
     integration.setupOnce(addGlobalEventProcessor, getCurrentHub);
     installedIntegrations.push(integration.name);
-    logger.log("Integration installed: " + integration.name);
+    isDebugBuild() && logger.log("Integration installed: " + integration.name);
 }
 /**
  * Given a list of integration instances this installs them all. When `withDefaults` is set to `true` then all default

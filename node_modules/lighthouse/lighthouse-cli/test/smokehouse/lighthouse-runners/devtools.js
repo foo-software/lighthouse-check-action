@@ -75,10 +75,13 @@ async function runLighthouse(url, configJson, testRunnerOptions = {}) {
   await buildDevtoolsPromise;
 
   const outputDir = fs.mkdtempSync(os.tmpdir() + '/lh-smoke-cdt-runner-');
+  const chromeFlags = [
+    `--custom-devtools-frontend=file://${devtoolsDir}/out/Default/gen/front_end`,
+  ];
   const args = [
     'run-devtools',
     url,
-    `--custom-devtools-frontend=file://${devtoolsDir}/out/Default/gen/front_end`,
+    `--chrome-flags=${chromeFlags.join(' ')}`,
     '--output-dir', outputDir,
   ];
   if (configJson) {

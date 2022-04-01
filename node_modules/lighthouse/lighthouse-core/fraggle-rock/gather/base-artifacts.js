@@ -6,7 +6,7 @@
 'use strict';
 
 const log = require('lighthouse-logger');
-const isEqual = require('lodash.isequal');
+const {isEqual} = require('lodash');
 const {
   getBrowserVersion,
   getBenchmarkIndex,

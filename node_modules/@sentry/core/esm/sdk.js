@@ -1,5 +1,5 @@
 import { getCurrentHub } from '@sentry/hub';
-import { logger } from '@sentry/utils';
+import { isDebugBuild, logger } from '@sentry/utils';
 /**
  * Internal function to create a new SDK client instance. The client is
  * installed and then bound to the current scope.
@@ -9,7 +9,14 @@ import { logger } from '@sentry/utils';
  */
 export function initAndBind(clientClass, options) {
     if (options.debug === true) {
-        logger.enable();
+        if (isDebugBuild()) {
+            logger.enable();
+        }
+        else {
+            // use `console.warn` rather than `logger.warn` since by non-debug bundles have all `logger.x` statements stripped
+            // eslint-disable-next-line no-console
+            console.warn('[Sentry] Cannot initialize SDK with `debug` option using a non-debug bundle.');
+        }
     }
     var hub = getCurrentHub();
     var scope = hub.getScope();

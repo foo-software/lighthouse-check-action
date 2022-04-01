@@ -52,7 +52,7 @@ declare global {
       {expectations: Smokehouse.ExpectedRunnerResult | Array<Smokehouse.ExpectedRunnerResult>}
 
     export type LighthouseRunner =
-      (url: string, configJson?: Config.Json, runnerOptions?: {isDebug?: boolean; useFraggleRock?: boolean}) => Promise<{lhr: LHResult, artifacts: Artifacts, log: string}>;
+      {runnerName?: string} & ((url: string, configJson?: Config.Json, runnerOptions?: {isDebug?: boolean; useFraggleRock?: boolean}) => Promise<{lhr: LHResult, artifacts: Artifacts, log: string}>);
 
     export interface SmokehouseOptions {
       /** If true, performs extra logging from the test runs. */

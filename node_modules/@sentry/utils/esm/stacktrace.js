@@ -6,12 +6,13 @@ var STACKTRACE_LIMIT = 50;
  * StackFrames are returned in the correct order for Sentry Exception
  * frames and with Sentry SDK internal frames removed from the top and bottom
  *
- * */
+ */
 export function createStackParser() {
     var parsers = [];
     for (var _i = 0; _i < arguments.length; _i++) {
         parsers[_i] = arguments[_i];
     }
+    var sortedParsers = parsers.sort(function (a, b) { return a[0] - b[0]; }).map(function (p) { return p[1]; });
     return function (stack, skipFirst) {
         var e_1, _a, e_2, _b;
         if (skipFirst === void 0) { skipFirst = 0; }
@@ -20,8 +21,8 @@ export function createStackParser() {
             for (var _c = __values(stack.split('\n').slice(skipFirst)), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var line = _d.value;
                 try {
-                    for (var parsers_1 = (e_2 = void 0, __values(parsers)), parsers_1_1 = parsers_1.next(); !parsers_1_1.done; parsers_1_1 = parsers_1.next()) {
-                        var parser = parsers_1_1.value;
+                    for (var sortedParsers_1 = (e_2 = void 0, __values(sortedParsers)), sortedParsers_1_1 = sortedParsers_1.next(); !sortedParsers_1_1.done; sortedParsers_1_1 = sortedParsers_1.next()) {
+                        var parser = sortedParsers_1_1.value;
                         var frame = parser(line);
                         if (frame) {
                             frames.push(frame);
@@ -32,7 +33,7 @@ export function createStackParser() {
                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
                 finally {
                     try {
-                        if (parsers_1_1 && !parsers_1_1.done && (_b = parsers_1.return)) _b.call(parsers_1);
+                        if (sortedParsers_1_1 && !sortedParsers_1_1.done && (_b = sortedParsers_1.return)) _b.call(sortedParsers_1);
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
