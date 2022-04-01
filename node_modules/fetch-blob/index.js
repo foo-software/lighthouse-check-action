@@ -83,8 +83,12 @@ const _Blob = class Blob {
         part = encoder.encode(`${element}`)
       }
 
-      this.#size += ArrayBuffer.isView(part) ? part.byteLength : part.size
-      this.#parts.push(part)
+      const size = ArrayBuffer.isView(part) ? part.byteLength : part.size
+      // Avoid pushing empty parts into the array to better GC them
+      if (size) {
+        this.#size += size
+        this.#parts.push(part)
+      }
     }
 
     this.#endings = `${options.endings === undefined ? 'transparent' : options.endings}`

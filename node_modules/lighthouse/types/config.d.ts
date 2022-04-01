@@ -62,10 +62,10 @@ declare module Config {
    * This information is typically set by the CLI or other channel integrations.
    */
   interface FRContext {
-    gatherMode?: Gatherer.GatherMode;
     configPath?: string;
     settingsOverrides?: SharedFlagsSettings & Pick<LH.Flags, 'plugins'>;
     skipAboutBlank?: boolean;
+    logLevel?: string;
   }
 
   interface SharedPassNavigationJson {

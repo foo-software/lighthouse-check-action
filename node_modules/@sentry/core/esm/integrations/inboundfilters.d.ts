@@ -1,6 +1,6 @@
-import { Integration } from '@sentry/types';
-/** JSDoc */
-interface InboundFiltersOptions {
+import { Event, EventProcessor, Hub, Integration } from '@sentry/types';
+/** Options for the InboundFilters integration */
+export interface InboundFiltersOptions {
     allowUrls: Array<string | RegExp>;
     denyUrls: Array<string | RegExp>;
     ignoreErrors: Array<string | RegExp>;
@@ -25,25 +25,10 @@ export declare class InboundFilters implements Integration {
     /**
      * @inheritDoc
      */
-    setupOnce(): void;
-    /** JSDoc */
-    private _shouldDropEvent;
-    /** JSDoc */
-    private _isSentryError;
-    /** JSDoc */
-    private _isIgnoredError;
-    /** JSDoc */
-    private _isDeniedUrl;
-    /** JSDoc */
-    private _isAllowedUrl;
-    /** JSDoc */
-    private _mergeOptions;
-    /** JSDoc */
-    private _getPossibleEventMessages;
-    /** JSDoc */
-    private _getLastValidUrl;
-    /** JSDoc */
-    private _getEventFilterUrl;
+    setupOnce(addGlobalEventProcessor: (processor: EventProcessor) => void, getCurrentHub: () => Hub): void;
 }
-export {};
+/** JSDoc */
+export declare function _mergeOptions(internalOptions?: Partial<InboundFiltersOptions>, clientOptions?: Partial<InboundFiltersOptions>): Partial<InboundFiltersOptions>;
+/** JSDoc */
+export declare function _shouldDropEvent(event: Event, options: Partial<InboundFiltersOptions>): boolean;
 //# sourceMappingURL=inboundfilters.d.ts.map

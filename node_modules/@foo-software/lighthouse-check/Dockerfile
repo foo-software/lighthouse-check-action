@@ -1,6 +1,6 @@
 # Inspired by:
 # https://github.com/alpeware/chrome-headless-stable/blob/master/Dockerfile
-FROM ubuntu:20.10
+FROM ubuntu:18.04
 
 LABEL maintainer "Foo <hello@foo.software>"
 

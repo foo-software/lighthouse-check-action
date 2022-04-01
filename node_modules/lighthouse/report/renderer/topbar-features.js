@@ -306,7 +306,8 @@ export class TopbarFeatures {
       categoriesAboveTheMiddle.length > 0 ? categoriesAboveTheMiddle.length - 1 : 0;
 
     // Category order matches gauge order in sticky header.
-    const gaugeWrapperEls = this.stickyHeaderEl.querySelectorAll('.lh-gauge__wrapper');
+    const gaugeWrapperEls =
+      this.stickyHeaderEl.querySelectorAll('.lh-gauge__wrapper, .lh-fraction__wrapper');
     const gaugeToHighlight = gaugeWrapperEls[highlightIndex];
     const origin = gaugeWrapperEls[0].getBoundingClientRect().left;
     const offset = gaugeToHighlight.getBoundingClientRect().left - origin;

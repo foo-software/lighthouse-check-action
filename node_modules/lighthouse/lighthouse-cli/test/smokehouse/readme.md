@@ -66,6 +66,8 @@ However, if an array literal is used as the expectation, an extra condition is e
 
 Arrays can be checked against a subset of elements using the special `_includes` property. The value of `_includes` _must_ be an array. Each assertion in `_includes` will remove the matching item from consideration for the rest.
 
+Arrays can be asserted to not match any elements using the special `_excludes` property. The value of `_excludes` _must_ be an array. If an `_includes` check is defined before an `_excludes` check, only the element not matched under the previous will be considered.
+
 **Examples**:
 | Actual | Expected | Result |
 | -- | -- | -- |
@@ -73,6 +75,9 @@ Arrays can be checked against a subset of elements using the special `_includes`
 | `[{timeInMs: 5}, {timeInMs: 15}]` | `{length: 2}` | ✅ PASS |
 | `[{timeInMs: 5}, {timeInMs: 15}]` | `{_includes: [{timeInMs: 5}]}` | ✅ PASS |
 | `[{timeInMs: 5}, {timeInMs: 15}]` | `{_includes: [{timeInMs: 5}, {timeInMs: 5}]}` | ❌ FAIL |
+| `[{timeInMs: 5}, {timeInMs: 15}]` | `{_includes: [{timeInMs: 5}], _excludes: [{timeInMs: 5}]}` | ✅ PASS |
+| `[{timeInMs: 5}, {timeInMs: 15}]` | `{_includes: [{timeInMs: 5}], _excludes: [{timeInMs: 15}]}` | ❌ FAIL |
+| `[{timeInMs: 5}, {timeInMs: 15}]` | `{_includes: [{timeInMs: 5}], _excludes: [{}]}` | ❌ FAIL |
 | `[{timeInMs: 5}, {timeInMs: 15}]` | `[{timeInMs: 5}]` | ❌ FAIL |
 
 ### Special environment checks
@@ -103,6 +108,15 @@ If an expectation requires a minimum version of Chromium, use `_minChromiumMiles
     }
   },
 ```
+
+All pruning checks:
+
+- `_minChromiumMilestone`
+- `_maxChromiumMilestone`
+- `_legacyOnly`
+- `_fraggleRockOnly`
+- `_skipInBundled`
+- `_runner` (set to same value provided to CLI --runner flag, ex: `'devtools'`)
 
 ## Pipeline
 

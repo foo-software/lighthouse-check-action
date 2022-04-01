@@ -566,7 +566,7 @@ declare module Artifacts {
     mixedContentIssue: LH.Crdp.Audits.MixedContentIssueDetails[];
     navigatorUserAgentIssue: LH.Crdp.Audits.NavigatorUserAgentIssueDetails[];
     quirksModeIssue: LH.Crdp.Audits.QuirksModeIssueDetails[];
-    sameSiteCookieIssue: LH.Crdp.Audits.SameSiteCookieIssueDetails[];
+    cookieIssue: LH.Crdp.Audits.CookieIssueDetails[];
     sharedArrayBufferIssue: LH.Crdp.Audits.SharedArrayBufferIssueDetails[];
     twaQualityEnforcement: LH.Crdp.Audits.TrustedWebActivityIssueDetails[];
   }

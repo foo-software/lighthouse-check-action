@@ -33,6 +33,7 @@ import offlineReady from './test-definitions/offline-ready.js';
 import offlineSwBroken from './test-definitions/offline-sw-broken.js';
 import offlineSwSlow from './test-definitions/offline-sw-slow.js';
 import oopifRequests from './test-definitions/oopif-requests.js';
+import oopifScripts from './test-definitions/oopif-scripts.js';
 import perfBudgets from './test-definitions/perf-budgets.js';
 import perfDebug from './test-definitions/perf-debug.js';
 import perfDiagnosticsAnimations from './test-definitions/perf-diagnostics-animations.js';
@@ -53,6 +54,7 @@ import redirectsHistoryPushState from './test-definitions/redirects-history-push
 import redirectsMultipleServer from './test-definitions/redirects-multiple-server.js';
 import redirectsSingleClient from './test-definitions/redirects-single-client.js';
 import redirectsSingleServer from './test-definitions/redirects-single-server.js';
+import redirectsSelf from './test-definitions/redirects-self.js';
 import screenshot from './test-definitions/screenshot.js';
 import seoFailing from './test-definitions/seo-failing.js';
 import seoPassing from './test-definitions/seo-passing.js';
@@ -91,6 +93,7 @@ const smokeTests = [
   offlineSwBroken,
   offlineSwSlow,
   oopifRequests,
+  oopifScripts,
   perfBudgets,
   perfDebug,
   perfDiagnosticsAnimations,
@@ -111,6 +114,7 @@ const smokeTests = [
   redirectsMultipleServer,
   redirectsSingleClient,
   redirectsSingleServer,
+  redirectsSelf,
   screenshot,
   seoFailing,
   seoPassing,

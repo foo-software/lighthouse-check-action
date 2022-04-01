@@ -17,7 +17,7 @@ import path from 'path';
 import fs from 'fs';
 import url from 'url';
 
-import cloneDeep from 'lodash.clonedeep';
+import _ from 'lodash';
 import yargs from 'yargs';
 import * as yargsHelpers from 'yargs/helpers';
 import log from 'lighthouse-logger';
@@ -25,6 +25,8 @@ import log from 'lighthouse-logger';
 import {runSmokehouse, getShardedDefinitions} from '../smokehouse.js';
 import {updateTestDefnFormat} from './back-compat-util.js';
 import {LH_ROOT} from '../../../../root.js';
+
+const {cloneDeep} = _;
 
 const coreTestDefnsPath =
   path.join(LH_ROOT, 'lighthouse-cli/test/smokehouse/core-tests.js');
@@ -186,6 +188,7 @@ async function begin() {
     console.log('\n✨ Be sure to have recently run this: yarn build-all');
   }
   const {runLighthouse} = await import(runnerPath);
+  runLighthouse.runnerName = argv.runner;
 
   // Find test definition file and filter by requestedTestIds.
   let testDefnPath = argv.testsPath || coreTestDefnsPath;

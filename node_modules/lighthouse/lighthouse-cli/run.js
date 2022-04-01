@@ -207,7 +207,11 @@ async function runLighthouseWithFraggleRock(url, flags, config, launchedChrome) 
   const browser = await puppeteer.connect({browserURL: `http://localhost:${launchedChrome.port}`});
   const page = await browser.newPage();
   flags.channel = 'fraggle-rock-cli';
-  const configContext = {configPath: flags.configPath, settingsOverrides: flags};
+  const configContext = {
+    configPath: flags.configPath,
+    settingsOverrides: flags,
+    logLevel: flags.logLevel,
+  };
   return fraggleRock.navigation(url, {page, config, configContext});
 }
 

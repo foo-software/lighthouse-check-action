@@ -22,7 +22,7 @@ done
 #   DOCKERFILE_NAME="Dockerfile-dev"
 # fi
 
-BUILD_COMMAND="docker build --no-cache -t ${DOCKER_TAG_NAME} . -f ${DOCKERFILE_NAME}"
+BUILD_COMMAND="docker build --no-cache --platform=linux/amd64 -t ${DOCKER_TAG_NAME} . -f ${DOCKERFILE_NAME}"
 
 echo "${BUILD_COMMAND}"
 eval $BUILD_COMMAND

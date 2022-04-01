@@ -59,16 +59,20 @@ export default async ({
       markdown += `| ${result.url} |\n\n`;
     });
 
-    markdown += 'Not what you expected? Are your scores flaky? ';
-    markdown += `[Run Lighthouse on Foo](https://www.foo.software/lighthouse)\n`;
-
     if (isLocalAudit) {
-      markdown +=
-        'If scores continue to be inconsistent consider [running all audits on Foo]';
+      markdown += 'Not what you expected? Are your scores flaky?\n';
+
+      if (isGitHubAction) {
+        markdown += 'GitHub runners could be the cause.\n';
+      } else if (isOrb) {
+        markdown += 'CircleCI runners could be the cause.\n';
+      }
+
+      markdown += `[Try running on Foo instead]`;
 
       if (isGitHubAction) {
         markdown +=
-          '(https://github.com/foo-software/lighthouse-check-action#usage-foos-automated-lighthouse-check-api)\n';
+          '(https://www.foo.software/docs/lighthouse-check-github-action/examples#running-on-foo-and-saving-results)\n';
       } else if (isOrb) {
         markdown +=
           '(https://github.com/foo-software/lighthouse-check-orb#usage-foo-api)\n';

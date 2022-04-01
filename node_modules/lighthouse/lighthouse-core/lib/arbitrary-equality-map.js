@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const isEqual = require('lodash.isequal');
+const {isEqual} = require('lodash');
 
 /**
  * @fileoverview This class is designed to allow maps with arbitrary equality functions.

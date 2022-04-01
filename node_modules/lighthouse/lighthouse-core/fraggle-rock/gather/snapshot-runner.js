@@ -5,6 +5,7 @@
  */
 'use strict';
 
+const log = require('lighthouse-logger');
 const Driver = require('./driver.js');
 const Runner = require('../../runner.js');
 const {
@@ -15,16 +16,21 @@ const {
 const {initializeConfig} = require('../config/config.js');
 const {getBaseArtifacts, finalizeArtifacts} = require('./base-artifacts.js');
 
-/** @param {{page: import('puppeteer').Page, config?: LH.Config.Json, configContext?: LH.Config.FRContext}} options */
-async function snapshot(options) {
+/**
+ * @param {{page: import('puppeteer').Page, config?: LH.Config.Json, configContext?: LH.Config.FRContext}} options
+ * @return {Promise<LH.Gatherer.FRGatherResult>}
+ */
+async function snapshotGather(options) {
   const {configContext = {}} = options;
+  log.setLevel(configContext.logLevel || 'error');
+
   const {config} = initializeConfig(options.config, {...configContext, gatherMode: 'snapshot'});
   const driver = new Driver(options.page);
   await driver.connect();
 
   /** @type {Map<string, LH.ArbitraryEqualityMap>} */
   const computedCache = new Map();
-  const url = await options.page.url();
+  const url = await driver.url();
 
   const runnerOptions = {config, computedCache};
   const artifacts = await Runner.gather(
@@ -36,6 +42,7 @@ async function snapshot(options) {
       const artifactDefinitions = config.artifacts || [];
       const artifactState = getEmptyArtifactState();
       await collectPhaseArtifacts({
+        url,
         phase: 'getArtifact',
         gatherMode: 'snapshot',
         driver,
@@ -53,9 +60,9 @@ async function snapshot(options) {
     },
     runnerOptions
   );
-  return Runner.audit(artifacts, runnerOptions);
+  return {artifacts, runnerOptions};
 }
 
 module.exports = {
-  snapshot,
+  snapshotGather,
 };
