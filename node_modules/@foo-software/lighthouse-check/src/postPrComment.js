@@ -60,12 +60,12 @@ export default async ({
     });
 
     if (isLocalAudit) {
-      markdown += 'Not what you expected? Are your scores flaky?\n';
+      markdown += 'Not what you expected? Are your scores flaky? ';
 
       if (isGitHubAction) {
-        markdown += 'GitHub runners could be the cause.\n';
+        markdown += '**GitHub runners could be the cause.**\n';
       } else if (isOrb) {
-        markdown += 'CircleCI runners could be the cause.\n';
+        markdown += '**CircleCI runners could be the cause.**\n';
       }
 
       markdown += `[Try running on Foo instead]`;

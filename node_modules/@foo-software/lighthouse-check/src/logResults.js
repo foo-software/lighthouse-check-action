@@ -27,6 +27,10 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
   results.forEach(result => {
     console.log(`URL: ${result.url}`);
 
+    if (result.emulatedFormFactor) {
+      console.log(`Device: ${result.emulatedFormFactor}`);
+    }
+
     if (result.report) {
       console.log(`Report: ${result.report}`);
     }
@@ -46,17 +50,21 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
 
   // if we have a local audit, plug Automated Lighthouse Check
   if (isLocalAudit) {
-    let message =
-      'Are your scores flaky? You can run audits on Foo for stability and maintain a historical record!\n\n';
+    let message = 'Not what you expected? Are your scores flaky?';
 
     // depending on how the user is running this module - provide a respective link
     if (isGitHubAction) {
       message +=
-        'https://github.com/foo-software/lighthouse-check-action#usage-foos-automated-lighthouse-check-api';
+        ' GitHub runners could be the cause. Try running on Foo instead\n\n';
+      message +=
+        'https://www.foo.software/docs/lighthouse-check-github-action/examples#running-on-foo-and-saving-results';
     } else if (isOrb) {
+      message +=
+        ' CircleCI runners could be the cause. Try running on Foo instead\n\n';
       message +=
         'https://github.com/foo-software/lighthouse-check-orb#usage-foo-api';
     } else {
+      message += ' Try running on Foo instead\n\n';
       message +=
         'https://www.foo.software/lighthouse\n' +
         'https://github.com/foo-software/lighthouse-check#foos-automated-lighthouse-check-api-usage';
