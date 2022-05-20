@@ -10,17 +10,25 @@ app.get('/', (req, res) =>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
   </head>
   <body>
-    <ul>
-      ${Object.keys(req.headers)
-        .map(
-          current => `
-          <li style="font-size: 1rem">
+    ${Object.keys(req.headers)
+      .reduce(
+        (accumulator: string[], current) => [
+          ...accumulator,
+
+          // if header includes with "x-test"
+          ...(!current.includes('x-test')
+            ? []
+            : [
+                `
+          <p style="font-size: 4rem">
             ${current} = ${req.headers[current]}
-          </li>
-      `,
-        )
-        .join('')}
-    </ul>
+          </p>
+        `,
+              ]),
+        ],
+        [],
+      )
+      .join('')}
   </body>
 </html>
 `),
