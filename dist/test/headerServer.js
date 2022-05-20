@@ -23,8 +23,8 @@ app.get('/', (req, res) => res.send(`
           <p style="font-size: 4rem">
             ${current} = ${req.headers[current]}
           </p>
-        `
-        ])
+        `,
+        ]),
 ], [])
     .join('')}
   </body>

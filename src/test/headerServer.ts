@@ -23,15 +23,15 @@ app.get('/', (req, res) =>
           <p style="font-size: 4rem">
             ${current} = ${req.headers[current]}
           </p>
-        `
-              ])
+        `,
+              ]),
         ],
-        []
+        [],
       )
       .join('')}
   </body>
 </html>
-`)
+`),
 );
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
