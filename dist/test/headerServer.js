@@ -13,15 +13,20 @@ app.get('/', (req, res) => res.send(`
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
   </head>
   <body>
-    <ul>
-      ${Object.keys(req.headers)
-    .map(current => `
-          <li style="font-size: 1rem">
+    ${Object.keys(req.headers)
+    .reduce((accumulator, current) => [
+    ...accumulator,
+    ...(!current.includes('x-test')
+        ? []
+        : [
+            `
+          <p style="font-size: 4rem">
             ${current} = ${req.headers[current]}
-          </li>
-      `)
+          </p>
+        `,
+        ]),
+], [])
     .join('')}
-    </ul>
   </body>
 </html>
 `));
