@@ -19,8 +19,7 @@ jobs:
       - name: Run Lighthouse
         uses: ./
         with:
-          extraHeaders: '{ "x-one": "two" }'
-          # extraHeaders: '{ "Set-Cookie": "USE_COOKIE_CONSENT_STATE={%22session%22:false}; Path=/" }'
+          extraHeaders: '{ "Set-Cookie": "USE_COOKIE_CONSENT_STATE={%22session%22:false}; Path=/" }'
           fooApiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
           outputDirectory: ${{ github.workspace }}/tmp/artifacts
           urlsJson: '[["cf8b27b3-ccb8-4477-83b6-ded2c375f977", "${{ steps.now.outputs.preview-url }}"]]'

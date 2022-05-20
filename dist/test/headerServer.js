@@ -16,7 +16,7 @@ app.get('/', (req, res) => res.send(`
     ${Object.keys(req.headers)
     .reduce((accumulator, current) => [
     ...accumulator,
-    ...(!current.includes('x-test')
+    ...(!current.includes('Set-Cookie')
         ? []
         : [
             `
