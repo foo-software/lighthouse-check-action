@@ -13,11 +13,15 @@ app.get('/', (req, res) => res.send(`
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
   </head>
   <body>
-    ${Object.keys(req.headers).map((current) => (`
-        <p style="font-size: 4rem">
-          ${current} = ${req.headers[current]}
-        </p>
-    `)).join('')}
+    <ul>
+      ${Object.keys(req.headers)
+    .map(current => `
+          <li style="font-size: 1rem">
+            ${current} = ${req.headers[current]}
+          </li>
+      `)
+    .join('')}
+    </ul>
   </body>
 </html>
 `));
