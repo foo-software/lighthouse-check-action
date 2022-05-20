@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "builds": [{ "src": "/dist/test/headerServer.js", "use": "@vercel/node-server" }],
+  "builds": [{ "src": "/dist/test/headerServer.js", "use": "@vercel/node" }],
   "routes": [
     {
       "src": "/",
