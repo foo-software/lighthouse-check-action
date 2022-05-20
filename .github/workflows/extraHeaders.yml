@@ -21,10 +21,10 @@ jobs:
         with:
           extraHeaders: '{ "Set-Cookie": "USE_COOKIE_CONSENT_STATE={%22session%22:false}; Path=/" }'
           fooApiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
-          outputDirectory: ${{ github.workspace }}/tmp/artifacts
+          outputDirectory: ${{ github.workspace }}/tmp/artifacts-2
           urlsJson: '[["cf8b27b3-ccb8-4477-83b6-ded2c375f977", "${{ steps.now.outputs.preview-url }}"]]'
       - name: Upload artifacts
         uses: actions/upload-artifact@master
         with:
           name: Lighthouse reports
-          path: ${{ github.workspace }}/tmp/artifacts
+          path: ${{ github.workspace }}/tmp/artifacts-2
