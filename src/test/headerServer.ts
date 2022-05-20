@@ -11,22 +11,12 @@ app.get('/', (req, res) =>
   </head>
   <body>
     ${Object.keys(req.headers)
-      .reduce(
-        (accumulator: string[], current) => [
-          ...accumulator,
-
-          // if header includes with "Set-Cookie"
-          ...(!current.includes('Set-Cookie')
-            ? []
-            : [
-                `
-          <p style="font-size: 4rem">
-            ${current} = ${req.headers[current]}
-          </p>
-        `,
-              ]),
-        ],
-        [],
+      .map(
+        current => `
+        <p style="font-size: 4rem">
+          ${current} = ${req.headers[current]}
+        </p>
+    `,
       )
       .join('')}
   </body>

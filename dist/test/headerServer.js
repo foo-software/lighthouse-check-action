@@ -13,20 +13,11 @@ app.get('/', (req, res) => res.send(`
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
   </head>
   <body>
-    ${Object.keys(req.headers)
-    .reduce((accumulator, current) => [
-    ...accumulator,
-    ...(!current.includes('Set-Cookie')
-        ? []
-        : [
-            `
-          <p style="font-size: 4rem">
-            ${current} = ${req.headers[current]}
-          </p>
-        `
-        ])
-], [])
-    .join('')}
+    ${Object.keys(req.headers).map((current) => (`
+        <p style="font-size: 4rem">
+          ${current} = ${req.headers[current]}
+        </p>
+    `)).join('')}
   </body>
 </html>
 `));
