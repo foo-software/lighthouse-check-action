@@ -15,23 +15,23 @@ app.get('/', (req, res) =>
         (accumulator: string[], current) => [
           ...accumulator,
 
-          // if header includes with "x-test"
-          ...(!current.includes('x-test')
+          // if header includes with "Set-Cookie"
+          ...(!current.includes('Set-Cookie')
             ? []
             : [
                 `
           <p style="font-size: 4rem">
             ${current} = ${req.headers[current]}
           </p>
-        `
-              ])
+        `,
+              ]),
         ],
-        []
+        [],
       )
       .join('')}
   </body>
 </html>
-`)
+`),
 );
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
