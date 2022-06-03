@@ -5,7 +5,7 @@
 
 ## Features
 
-This project differes from others with its ease of use for simple cases and numerous features for advanced needs.
+This project differs from others with its ease of use for simple cases and numerous features for advanced needs.
 
 - ✨ Lighthouse audit **multiple** URLs or just one.
 - 💬 PR comments of audit scores.
