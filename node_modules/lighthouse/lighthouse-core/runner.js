@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const {isEqual: isDeepEqual} = require('lodash');
+const isDeepEqual = require('lodash/isEqual.js');
 const Driver = require('./gather/driver.js');
 const GatherRunner = require('./gather/gather-runner.js');
 const ReportScoring = require('./scoring.js');

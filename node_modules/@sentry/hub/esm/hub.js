@@ -1,5 +1,6 @@
 import { __assign, __read, __spread } from "tslib";
-import { consoleSandbox, dateTimestampInSeconds, getGlobalObject, isDebugBuild, isNodeEnv, logger, uuid4, } from '@sentry/utils';
+import { consoleSandbox, dateTimestampInSeconds, getGlobalObject, getGlobalSingleton, isNodeEnv, logger, uuid4, } from '@sentry/utils';
+import { IS_DEBUG_BUILD } from './flags';
 import { Scope } from './scope';
 import { Session } from './session';
 /**
@@ -276,7 +277,7 @@ var Hub = /** @class */ (function () {
             return client.getIntegration(integration);
         }
         catch (_oO) {
-            isDebugBuild() && logger.warn("Cannot retrieve integration " + integration.id + " from the current Hub");
+            IS_DEBUG_BUILD && logger.warn("Cannot retrieve integration " + integration.id + " from the current Hub");
             return null;
         }
     };
@@ -397,7 +398,7 @@ var Hub = /** @class */ (function () {
         if (sentry && sentry.extensions && typeof sentry.extensions[method] === 'function') {
             return sentry.extensions[method].apply(this, args);
         }
-        isDebugBuild() && logger.warn("Extension method " + method + " couldn't be found, doing nothing.");
+        IS_DEBUG_BUILD && logger.warn("Extension method " + method + " couldn't be found, doing nothing.");
     };
     return Hub;
 }());
@@ -456,7 +457,7 @@ export function getCurrentHub() {
  */
 // eslint-disable-next-line deprecation/deprecation
 export function getActiveDomain() {
-    isDebugBuild() && logger.warn('Function `getActiveDomain` is deprecated and will be removed in a future version.');
+    IS_DEBUG_BUILD && logger.warn('Function `getActiveDomain` is deprecated and will be removed in a future version.');
     var sentry = getMainCarrier().__SENTRY__;
     return sentry && sentry.extensions && sentry.extensions.domain && sentry.extensions.domain.active;
 }
@@ -499,11 +500,7 @@ function hasHubOnCarrier(carrier) {
  * @hidden
  */
 export function getHubFromCarrier(carrier) {
-    if (carrier && carrier.__SENTRY__ && carrier.__SENTRY__.hub)
-        return carrier.__SENTRY__.hub;
-    carrier.__SENTRY__ = carrier.__SENTRY__ || {};
-    carrier.__SENTRY__.hub = new Hub();
-    return carrier.__SENTRY__.hub;
+    return getGlobalSingleton('hub', function () { return new Hub(); }, carrier);
 }
 /**
  * This will set passed {@link Hub} on the passed object's __SENTRY__.hub attribute
@@ -514,8 +511,8 @@ export function getHubFromCarrier(carrier) {
 export function setHubOnCarrier(carrier, hub) {
     if (!carrier)
         return false;
-    carrier.__SENTRY__ = carrier.__SENTRY__ || {};
-    carrier.__SENTRY__.hub = hub;
+    var __SENTRY__ = (carrier.__SENTRY__ = carrier.__SENTRY__ || {});
+    __SENTRY__.hub = hub;
     return true;
 }
 //# sourceMappingURL=hub.js.map

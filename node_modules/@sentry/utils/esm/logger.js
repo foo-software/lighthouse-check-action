@@ -1,14 +1,13 @@
 import { __read, __spread } from "tslib";
-import { isDebugBuild } from './env';
-import { getGlobalObject } from './global';
+import { IS_DEBUG_BUILD } from './flags';
+import { getGlobalObject, getGlobalSingleton } from './global';
 // TODO: Implement different loggers for different environments
 var global = getGlobalObject();
 /** Prefix for logging strings */
 var PREFIX = 'Sentry Logger ';
 export var CONSOLE_LEVELS = ['debug', 'info', 'warn', 'error', 'log', 'assert'];
 /**
- * Temporarily unwrap `console.log` and friends in order to perform the given callback using the original methods.
- * Restores wrapping after the callback completes.
+ * Temporarily disable sentry console instrumentations.
  *
  * @param callback The function to run against the original `console` messages
  * @returns The results of the callback
@@ -18,89 +17,68 @@ export function consoleSandbox(callback) {
     if (!('console' in global)) {
         return callback();
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     var originalConsole = global.console;
     var wrappedLevels = {};
     // Restore all wrapped console methods
     CONSOLE_LEVELS.forEach(function (level) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (level in global.console && originalConsole[level].__sentry_original__) {
+        // TODO(v7): Remove this check as it's only needed for Node 6
+        var originalWrappedFunc = originalConsole[level] && originalConsole[level].__sentry_original__;
+        if (level in global.console && originalWrappedFunc) {
             wrappedLevels[level] = originalConsole[level];
-            originalConsole[level] = originalConsole[level].__sentry_original__;
+            originalConsole[level] = originalWrappedFunc;
         }
     });
-    // Perform callback manipulations
-    var result = callback();
-    // Revert restoration to wrapped state
-    Object.keys(wrappedLevels).forEach(function (level) {
-        originalConsole[level] = wrappedLevels[level];
-    });
-    return result;
-}
-/** JSDoc */
-var Logger = /** @class */ (function () {
-    /** JSDoc */
-    function Logger() {
-        this._enabled = false;
+    try {
+        return callback();
     }
-    /** JSDoc */
-    Logger.prototype.disable = function () {
-        this._enabled = false;
-    };
-    /** JSDoc */
-    Logger.prototype.enable = function () {
-        this._enabled = true;
-    };
-    /** JSDoc */
-    Logger.prototype.log = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        if (!this._enabled) {
-            return;
-        }
-        consoleSandbox(function () {
-            var _a;
-            (_a = global.console).log.apply(_a, __spread([PREFIX + "[Log]:"], args));
+    finally {
+        // Revert restoration to wrapped state
+        Object.keys(wrappedLevels).forEach(function (level) {
+            originalConsole[level] = wrappedLevels[level];
         });
+    }
+}
+function makeLogger() {
+    var enabled = false;
+    var logger = {
+        enable: function () {
+            enabled = true;
+        },
+        disable: function () {
+            enabled = false;
+        },
     };
-    /** JSDoc */
-    Logger.prototype.warn = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        if (!this._enabled) {
-            return;
-        }
-        consoleSandbox(function () {
-            var _a;
-            (_a = global.console).warn.apply(_a, __spread([PREFIX + "[Warn]:"], args));
+    if (IS_DEBUG_BUILD) {
+        CONSOLE_LEVELS.forEach(function (name) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            logger[name] = function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                if (enabled) {
+                    consoleSandbox(function () {
+                        var _a;
+                        (_a = global.console)[name].apply(_a, __spread([PREFIX + "[" + name + "]:"], args));
+                    });
+                }
+            };
         });
-    };
-    /** JSDoc */
-    Logger.prototype.error = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        if (!this._enabled) {
-            return;
-        }
-        consoleSandbox(function () {
-            var _a;
-            (_a = global.console).error.apply(_a, __spread([PREFIX + "[Error]:"], args));
+    }
+    else {
+        CONSOLE_LEVELS.forEach(function (name) {
+            logger[name] = function () { return undefined; };
         });
-    };
-    return Logger;
-}());
-var sentryGlobal = global.__SENTRY__ || {};
-var logger = sentryGlobal.logger || new Logger();
-if (isDebugBuild()) {
-    // Ensure we only have a single logger instance, even if multiple versions of @sentry/utils are being used
-    sentryGlobal.logger = logger;
-    global.__SENTRY__ = sentryGlobal;
+    }
+    return logger;
+}
+// Ensure we only have a single logger instance, even if multiple versions of @sentry/utils are being used
+var logger;
+if (IS_DEBUG_BUILD) {
+    logger = getGlobalSingleton('logger', makeLogger);
+}
+else {
+    logger = makeLogger();
 }
 export { logger };
 //# sourceMappingURL=logger.js.map

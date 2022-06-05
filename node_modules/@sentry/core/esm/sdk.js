@@ -1,5 +1,6 @@
 import { getCurrentHub } from '@sentry/hub';
-import { isDebugBuild, logger } from '@sentry/utils';
+import { logger } from '@sentry/utils';
+import { IS_DEBUG_BUILD } from './flags';
 /**
  * Internal function to create a new SDK client instance. The client is
  * installed and then bound to the current scope.
@@ -9,7 +10,7 @@ import { isDebugBuild, logger } from '@sentry/utils';
  */
 export function initAndBind(clientClass, options) {
     if (options.debug === true) {
-        if (isDebugBuild()) {
+        if (IS_DEBUG_BUILD) {
             logger.enable();
         }
         else {

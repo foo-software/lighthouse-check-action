@@ -436,11 +436,11 @@ declare class ServiceCatalog extends Service {
    */
   importAsProvisionedProduct(callback?: (err: AWSError, data: ServiceCatalog.Types.ImportAsProvisionedProductOutput) => void): Request<ServiceCatalog.Types.ImportAsProvisionedProductOutput, AWSError>;
   /**
-   * Lists all portfolios for which sharing was accepted by this account.
+   * Lists all imported portfolios for which account-to-account shares were accepted by this account. By specifying the PortfolioShareType, you can list portfolios for which organizational shares were accepted by this account.
    */
   listAcceptedPortfolioShares(params: ServiceCatalog.Types.ListAcceptedPortfolioSharesInput, callback?: (err: AWSError, data: ServiceCatalog.Types.ListAcceptedPortfolioSharesOutput) => void): Request<ServiceCatalog.Types.ListAcceptedPortfolioSharesOutput, AWSError>;
   /**
-   * Lists all portfolios for which sharing was accepted by this account.
+   * Lists all imported portfolios for which account-to-account shares were accepted by this account. By specifying the PortfolioShareType, you can list portfolios for which organizational shares were accepted by this account.
    */
   listAcceptedPortfolioShares(callback?: (err: AWSError, data: ServiceCatalog.Types.ListAcceptedPortfolioSharesOutput) => void): Request<ServiceCatalog.Types.ListAcceptedPortfolioSharesOutput, AWSError>;
   /**
@@ -1771,6 +1771,10 @@ declare namespace ServiceCatalog {
      * The output of the provisioning artifact.
      */
     ProvisioningArtifactOutputs?: ProvisioningArtifactOutputs;
+    /**
+     * A list of the keys and descriptions of the outputs. These outputs can be referenced from a provisioned product launched from this provisioning artifact.
+     */
+    ProvisioningArtifactOutputKeys?: ProvisioningArtifactOutputs;
   }
   export interface DescribeRecordInput {
     /**
@@ -2138,7 +2142,7 @@ declare namespace ServiceCatalog {
      */
     Tags?: Tags;
     /**
-     * The name of the portfolio to which the user was assigned.
+     * The name of the portfolio that contains the product. 
      */
     Name?: PortfolioName;
   }
@@ -2157,7 +2161,7 @@ declare namespace ServiceCatalog {
      */
     PageSize?: PageSizeMax100;
     /**
-     * The type of shared portfolios to list. The default is to list imported portfolios.    AWS_ORGANIZATIONS - List portfolios shared by the management account of your organization    AWS_SERVICECATALOG - List default portfolios    IMPORTED - List imported portfolios  
+     * The type of shared portfolios to list. The default is to list imported portfolios.    AWS_ORGANIZATIONS - List portfolios accepted and shared via organizational sharing by the management account or delegated administrator of your organization.    AWS_SERVICECATALOG - Deprecated type.    IMPORTED - List imported portfolios that have been accepted and shared through account-to-account sharing.  
      */
     PortfolioShareType?: PortfolioShareType;
   }

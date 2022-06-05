@@ -82,7 +82,8 @@ Arrays can be asserted to not match any elements using the special `_excludes` p
 
 ### Special environment checks
 
-If an expectation requires a minimum version of Chromium, use `_minChromiumMilestone: xx` to conditionally ignore that entire object in the expectation.
+If an expectation requires a minimum version of Chromium, use `_minChromiumVersion: xx.x.x.x` to conditionally ignore that entire object in the expectation.
+Can be as specific as you like (`_minChromiumVersion: xx` works too).
 
 **Examples**:
 ```js
@@ -90,7 +91,7 @@ If an expectation requires a minimum version of Chromium, use `_minChromiumMiles
   artifacts: {
     InspectorIssues: {
       // Mixed Content issues weren't added to the protocol until M84.
-      _minChromiumMilestone: 84, // The entire `InspectorIssues` is ignored for older Chrome.
+      _minChromiumVersion: '84', // The entire `InspectorIssues` is ignored for older Chrome.
       mixedContent: [
         {
           resourceType: 'Image',
@@ -111,8 +112,8 @@ If an expectation requires a minimum version of Chromium, use `_minChromiumMiles
 
 All pruning checks:
 
-- `_minChromiumMilestone`
-- `_maxChromiumMilestone`
+- `_minChromiumVersion`
+- `_maxChromiumVersion`
 - `_legacyOnly`
 - `_fraggleRockOnly`
 - `_skipInBundled`

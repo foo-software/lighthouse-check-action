@@ -58,7 +58,9 @@ declare module Details {
 
   interface List {
     type: 'list';
-    items: SnippetValue[]
+    // NOTE: any `Details` type *should* be usable in `items`, but check
+    // styles/report-ui-features are good before adding.
+    items: Array<Table | DebugData>;
   }
 
   interface Opportunity {

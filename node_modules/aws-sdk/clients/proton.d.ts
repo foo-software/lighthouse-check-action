@@ -21,6 +21,14 @@ declare class Proton extends Service {
    */
   acceptEnvironmentAccountConnection(callback?: (err: AWSError, data: Proton.Types.AcceptEnvironmentAccountConnectionOutput) => void): Request<Proton.Types.AcceptEnvironmentAccountConnectionOutput, AWSError>;
   /**
+   * Attempts to cancel a component deployment (for a component that is in the IN_PROGRESS deployment status). For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  cancelComponentDeployment(params: Proton.Types.CancelComponentDeploymentInput, callback?: (err: AWSError, data: Proton.Types.CancelComponentDeploymentOutput) => void): Request<Proton.Types.CancelComponentDeploymentOutput, AWSError>;
+  /**
+   * Attempts to cancel a component deployment (for a component that is in the IN_PROGRESS deployment status). For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  cancelComponentDeployment(callback?: (err: AWSError, data: Proton.Types.CancelComponentDeploymentOutput) => void): Request<Proton.Types.CancelComponentDeploymentOutput, AWSError>;
+  /**
    * Attempts to cancel an environment deployment on an UpdateEnvironment action, if the deployment is IN_PROGRESS. For more information, see Update an environment in the Proton Administrator guide. The following list includes potential cancellation scenarios.   If the cancellation attempt succeeds, the resulting deployment state is CANCELLED.   If the cancellation attempt fails, the resulting deployment state is FAILED.   If the current UpdateEnvironment action succeeds before the cancellation attempt starts, the resulting deployment state is SUCCEEDED and the cancellation attempt has no effect.  
    */
   cancelEnvironmentDeployment(params: Proton.Types.CancelEnvironmentDeploymentInput, callback?: (err: AWSError, data: Proton.Types.CancelEnvironmentDeploymentOutput) => void): Request<Proton.Types.CancelEnvironmentDeploymentOutput, AWSError>;
@@ -45,11 +53,19 @@ declare class Proton extends Service {
    */
   cancelServicePipelineDeployment(callback?: (err: AWSError, data: Proton.Types.CancelServicePipelineDeploymentOutput) => void): Request<Proton.Types.CancelServicePipelineDeploymentOutput, AWSError>;
   /**
-   * Deploy a new environment. An Proton environment is created from an environment template that defines infrastructure and resources that can be shared across services.  You can provision environments using the following methods:    Standard provisioning: Proton makes direct calls to provision your resources.   Pull request provisioning: Proton makes pull requests on your repository to provide compiled infrastructure as code (IaC) files that your IaC engine uses to provision resources.   For more information, see the Environments in the Proton Administrator Guide. 
+   * Create an Proton component. A component is an infrastructure extension for a service instance. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  createComponent(params: Proton.Types.CreateComponentInput, callback?: (err: AWSError, data: Proton.Types.CreateComponentOutput) => void): Request<Proton.Types.CreateComponentOutput, AWSError>;
+  /**
+   * Create an Proton component. A component is an infrastructure extension for a service instance. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  createComponent(callback?: (err: AWSError, data: Proton.Types.CreateComponentOutput) => void): Request<Proton.Types.CreateComponentOutput, AWSError>;
+  /**
+   * Deploy a new environment. An Proton environment is created from an environment template that defines infrastructure and resources that can be shared across services.  You can provision environments using the following methods:    Amazon Web Services-managed provisioning: Proton makes direct calls to provision your resources.   Self-managed provisioning: Proton makes pull requests on your repository to provide compiled infrastructure as code (IaC) files that your IaC engine uses to provision resources.   For more information, see Environments and Provisioning methods in the Proton Administrator Guide.
    */
   createEnvironment(params: Proton.Types.CreateEnvironmentInput, callback?: (err: AWSError, data: Proton.Types.CreateEnvironmentOutput) => void): Request<Proton.Types.CreateEnvironmentOutput, AWSError>;
   /**
-   * Deploy a new environment. An Proton environment is created from an environment template that defines infrastructure and resources that can be shared across services.  You can provision environments using the following methods:    Standard provisioning: Proton makes direct calls to provision your resources.   Pull request provisioning: Proton makes pull requests on your repository to provide compiled infrastructure as code (IaC) files that your IaC engine uses to provision resources.   For more information, see the Environments in the Proton Administrator Guide. 
+   * Deploy a new environment. An Proton environment is created from an environment template that defines infrastructure and resources that can be shared across services.  You can provision environments using the following methods:    Amazon Web Services-managed provisioning: Proton makes direct calls to provision your resources.   Self-managed provisioning: Proton makes pull requests on your repository to provide compiled infrastructure as code (IaC) files that your IaC engine uses to provision resources.   For more information, see Environments and Provisioning methods in the Proton Administrator Guide.
    */
   createEnvironment(callback?: (err: AWSError, data: Proton.Types.CreateEnvironmentOutput) => void): Request<Proton.Types.CreateEnvironmentOutput, AWSError>;
   /**
@@ -77,11 +93,11 @@ declare class Proton extends Service {
    */
   createEnvironmentTemplateVersion(callback?: (err: AWSError, data: Proton.Types.CreateEnvironmentTemplateVersionOutput) => void): Request<Proton.Types.CreateEnvironmentTemplateVersionOutput, AWSError>;
   /**
-   * Create and register a link to a repository that can be used with pull request provisioning or template sync configurations. For more information, see Template bundles and Template sync configurations in the Proton Administrator Guide.
+   * Create and register a link to a repository that can be used with self-managed provisioning (infrastructure or pipelines) or for template sync configurations. When you create a repository link, Proton creates a service-linked role for you. For more information, see Self-managed provisioning, Template bundles, and Template sync configurations in the Proton Administrator Guide.
    */
   createRepository(params: Proton.Types.CreateRepositoryInput, callback?: (err: AWSError, data: Proton.Types.CreateRepositoryOutput) => void): Request<Proton.Types.CreateRepositoryOutput, AWSError>;
   /**
-   * Create and register a link to a repository that can be used with pull request provisioning or template sync configurations. For more information, see Template bundles and Template sync configurations in the Proton Administrator Guide.
+   * Create and register a link to a repository that can be used with self-managed provisioning (infrastructure or pipelines) or for template sync configurations. When you create a repository link, Proton creates a service-linked role for you. For more information, see Self-managed provisioning, Template bundles, and Template sync configurations in the Proton Administrator Guide.
    */
   createRepository(callback?: (err: AWSError, data: Proton.Types.CreateRepositoryOutput) => void): Request<Proton.Types.CreateRepositoryOutput, AWSError>;
   /**
@@ -93,11 +109,11 @@ declare class Proton extends Service {
    */
   createService(callback?: (err: AWSError, data: Proton.Types.CreateServiceOutput) => void): Request<Proton.Types.CreateServiceOutput, AWSError>;
   /**
-   * Create a service template. The administrator creates a service template to define standardized infrastructure and an optional CICD service pipeline. Developers, in turn, select the service template from Proton. If the selected service template includes a service pipeline definition, they provide a link to their source code repository. Proton then deploys and manages the infrastructure defined by the selected service template. For more information, see Service Templates in the Proton Administrator Guide.
+   * Create a service template. The administrator creates a service template to define standardized infrastructure and an optional CI/CD service pipeline. Developers, in turn, select the service template from Proton. If the selected service template includes a service pipeline definition, they provide a link to their source code repository. Proton then deploys and manages the infrastructure defined by the selected service template. For more information, see Service Templates in the Proton Administrator Guide.
    */
   createServiceTemplate(params: Proton.Types.CreateServiceTemplateInput, callback?: (err: AWSError, data: Proton.Types.CreateServiceTemplateOutput) => void): Request<Proton.Types.CreateServiceTemplateOutput, AWSError>;
   /**
-   * Create a service template. The administrator creates a service template to define standardized infrastructure and an optional CICD service pipeline. Developers, in turn, select the service template from Proton. If the selected service template includes a service pipeline definition, they provide a link to their source code repository. Proton then deploys and manages the infrastructure defined by the selected service template. For more information, see Service Templates in the Proton Administrator Guide.
+   * Create a service template. The administrator creates a service template to define standardized infrastructure and an optional CI/CD service pipeline. Developers, in turn, select the service template from Proton. If the selected service template includes a service pipeline definition, they provide a link to their source code repository. Proton then deploys and manages the infrastructure defined by the selected service template. For more information, see Service Templates in the Proton Administrator Guide.
    */
   createServiceTemplate(callback?: (err: AWSError, data: Proton.Types.CreateServiceTemplateOutput) => void): Request<Proton.Types.CreateServiceTemplateOutput, AWSError>;
   /**
@@ -109,13 +125,21 @@ declare class Proton extends Service {
    */
   createServiceTemplateVersion(callback?: (err: AWSError, data: Proton.Types.CreateServiceTemplateVersionOutput) => void): Request<Proton.Types.CreateServiceTemplateVersionOutput, AWSError>;
   /**
-   * Set up a template for automated template version creation. When a commit is pushed to your registered repository, Proton checks for changes to your repository template bundles. If it detects a template bundle change, a new minor or major version of its template is created, if the version doesn’t already exist. For more information, see Template sync configurations in the Proton Administrator Guide.
+   * Set up a template to create new template versions automatically. When a commit is pushed to your registered repository, Proton checks for changes to your repository template bundles. If it detects a template bundle change, a new major or minor version of its template is created, if the version doesn’t already exist. For more information, see Template sync configurations in the Proton Administrator Guide.
    */
   createTemplateSyncConfig(params: Proton.Types.CreateTemplateSyncConfigInput, callback?: (err: AWSError, data: Proton.Types.CreateTemplateSyncConfigOutput) => void): Request<Proton.Types.CreateTemplateSyncConfigOutput, AWSError>;
   /**
-   * Set up a template for automated template version creation. When a commit is pushed to your registered repository, Proton checks for changes to your repository template bundles. If it detects a template bundle change, a new minor or major version of its template is created, if the version doesn’t already exist. For more information, see Template sync configurations in the Proton Administrator Guide.
+   * Set up a template to create new template versions automatically. When a commit is pushed to your registered repository, Proton checks for changes to your repository template bundles. If it detects a template bundle change, a new major or minor version of its template is created, if the version doesn’t already exist. For more information, see Template sync configurations in the Proton Administrator Guide.
    */
   createTemplateSyncConfig(callback?: (err: AWSError, data: Proton.Types.CreateTemplateSyncConfigOutput) => void): Request<Proton.Types.CreateTemplateSyncConfigOutput, AWSError>;
+  /**
+   * Delete an Proton component resource. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  deleteComponent(params: Proton.Types.DeleteComponentInput, callback?: (err: AWSError, data: Proton.Types.DeleteComponentOutput) => void): Request<Proton.Types.DeleteComponentOutput, AWSError>;
+  /**
+   * Delete an Proton component resource. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  deleteComponent(callback?: (err: AWSError, data: Proton.Types.DeleteComponentOutput) => void): Request<Proton.Types.DeleteComponentOutput, AWSError>;
   /**
    * Delete an environment.
    */
@@ -157,11 +181,11 @@ declare class Proton extends Service {
    */
   deleteRepository(callback?: (err: AWSError, data: Proton.Types.DeleteRepositoryOutput) => void): Request<Proton.Types.DeleteRepositoryOutput, AWSError>;
   /**
-   * Delete a service.
+   * Delete a service, with its instances and pipeline.  You can't delete a service if it has any service instances that have components attached to them. For more information about components, see Proton components in the Proton Administrator Guide. 
    */
   deleteService(params: Proton.Types.DeleteServiceInput, callback?: (err: AWSError, data: Proton.Types.DeleteServiceOutput) => void): Request<Proton.Types.DeleteServiceOutput, AWSError>;
   /**
-   * Delete a service.
+   * Delete a service, with its instances and pipeline.  You can't delete a service if it has any service instances that have components attached to them. For more information about components, see Proton components in the Proton Administrator Guide. 
    */
   deleteService(callback?: (err: AWSError, data: Proton.Types.DeleteServiceOutput) => void): Request<Proton.Types.DeleteServiceOutput, AWSError>;
   /**
@@ -197,35 +221,43 @@ declare class Proton extends Service {
    */
   getAccountSettings(callback?: (err: AWSError, data: Proton.Types.GetAccountSettingsOutput) => void): Request<Proton.Types.GetAccountSettingsOutput, AWSError>;
   /**
-   * Get detail data for an environment.
+   * Get detailed data for a component. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  getComponent(params: Proton.Types.GetComponentInput, callback?: (err: AWSError, data: Proton.Types.GetComponentOutput) => void): Request<Proton.Types.GetComponentOutput, AWSError>;
+  /**
+   * Get detailed data for a component. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  getComponent(callback?: (err: AWSError, data: Proton.Types.GetComponentOutput) => void): Request<Proton.Types.GetComponentOutput, AWSError>;
+  /**
+   * Get detailed data for an environment.
    */
   getEnvironment(params: Proton.Types.GetEnvironmentInput, callback?: (err: AWSError, data: Proton.Types.GetEnvironmentOutput) => void): Request<Proton.Types.GetEnvironmentOutput, AWSError>;
   /**
-   * Get detail data for an environment.
+   * Get detailed data for an environment.
    */
   getEnvironment(callback?: (err: AWSError, data: Proton.Types.GetEnvironmentOutput) => void): Request<Proton.Types.GetEnvironmentOutput, AWSError>;
   /**
-   * In an environment account, view the detail data for an environment account connection. For more information, see Environment account connections in the Proton Administrator guide.
+   * In an environment account, get the detailed data for an environment account connection. For more information, see Environment account connections in the Proton Administrator guide.
    */
   getEnvironmentAccountConnection(params: Proton.Types.GetEnvironmentAccountConnectionInput, callback?: (err: AWSError, data: Proton.Types.GetEnvironmentAccountConnectionOutput) => void): Request<Proton.Types.GetEnvironmentAccountConnectionOutput, AWSError>;
   /**
-   * In an environment account, view the detail data for an environment account connection. For more information, see Environment account connections in the Proton Administrator guide.
+   * In an environment account, get the detailed data for an environment account connection. For more information, see Environment account connections in the Proton Administrator guide.
    */
   getEnvironmentAccountConnection(callback?: (err: AWSError, data: Proton.Types.GetEnvironmentAccountConnectionOutput) => void): Request<Proton.Types.GetEnvironmentAccountConnectionOutput, AWSError>;
   /**
-   * Get detail data for an environment template.
+   * Get detailed data for an environment template.
    */
   getEnvironmentTemplate(params: Proton.Types.GetEnvironmentTemplateInput, callback?: (err: AWSError, data: Proton.Types.GetEnvironmentTemplateOutput) => void): Request<Proton.Types.GetEnvironmentTemplateOutput, AWSError>;
   /**
-   * Get detail data for an environment template.
+   * Get detailed data for an environment template.
    */
   getEnvironmentTemplate(callback?: (err: AWSError, data: Proton.Types.GetEnvironmentTemplateOutput) => void): Request<Proton.Types.GetEnvironmentTemplateOutput, AWSError>;
   /**
-   * View detail data for a major or minor version of an environment template.
+   * Get detailed data for a major or minor version of an environment template.
    */
   getEnvironmentTemplateVersion(params: Proton.Types.GetEnvironmentTemplateVersionInput, callback?: (err: AWSError, data: Proton.Types.GetEnvironmentTemplateVersionOutput) => void): Request<Proton.Types.GetEnvironmentTemplateVersionOutput, AWSError>;
   /**
-   * View detail data for a major or minor version of an environment template.
+   * Get detailed data for a major or minor version of an environment template.
    */
   getEnvironmentTemplateVersion(callback?: (err: AWSError, data: Proton.Types.GetEnvironmentTemplateVersionOutput) => void): Request<Proton.Types.GetEnvironmentTemplateVersionOutput, AWSError>;
   /**
@@ -237,43 +269,43 @@ declare class Proton extends Service {
    */
   getRepository(callback?: (err: AWSError, data: Proton.Types.GetRepositoryOutput) => void): Request<Proton.Types.GetRepositoryOutput, AWSError>;
   /**
-   * Get the repository sync status.
+   * Get the sync status of a repository used for Proton template sync. For more information about template sync, see .  A repository sync status isn't tied to the Proton Repository resource (or any other Proton resource). Therefore, tags on an Proton Repository resource have no effect on this action. Specifically, you can't use these tags to control access to this action using Attribute-based access control (ABAC). For more information about ABAC, see ABAC in the Proton Administrator Guide. 
    */
   getRepositorySyncStatus(params: Proton.Types.GetRepositorySyncStatusInput, callback?: (err: AWSError, data: Proton.Types.GetRepositorySyncStatusOutput) => void): Request<Proton.Types.GetRepositorySyncStatusOutput, AWSError>;
   /**
-   * Get the repository sync status.
+   * Get the sync status of a repository used for Proton template sync. For more information about template sync, see .  A repository sync status isn't tied to the Proton Repository resource (or any other Proton resource). Therefore, tags on an Proton Repository resource have no effect on this action. Specifically, you can't use these tags to control access to this action using Attribute-based access control (ABAC). For more information about ABAC, see ABAC in the Proton Administrator Guide. 
    */
   getRepositorySyncStatus(callback?: (err: AWSError, data: Proton.Types.GetRepositorySyncStatusOutput) => void): Request<Proton.Types.GetRepositorySyncStatusOutput, AWSError>;
   /**
-   * Get detail data for a service.
+   * Get detailed data for a service.
    */
   getService(params: Proton.Types.GetServiceInput, callback?: (err: AWSError, data: Proton.Types.GetServiceOutput) => void): Request<Proton.Types.GetServiceOutput, AWSError>;
   /**
-   * Get detail data for a service.
+   * Get detailed data for a service.
    */
   getService(callback?: (err: AWSError, data: Proton.Types.GetServiceOutput) => void): Request<Proton.Types.GetServiceOutput, AWSError>;
   /**
-   * Get detail data for a service instance. A service instance is an instantiation of service template, which is running in a specific environment.
+   * Get detailed data for a service instance. A service instance is an instantiation of service template and it runs in a specific environment.
    */
   getServiceInstance(params: Proton.Types.GetServiceInstanceInput, callback?: (err: AWSError, data: Proton.Types.GetServiceInstanceOutput) => void): Request<Proton.Types.GetServiceInstanceOutput, AWSError>;
   /**
-   * Get detail data for a service instance. A service instance is an instantiation of service template, which is running in a specific environment.
+   * Get detailed data for a service instance. A service instance is an instantiation of service template and it runs in a specific environment.
    */
   getServiceInstance(callback?: (err: AWSError, data: Proton.Types.GetServiceInstanceOutput) => void): Request<Proton.Types.GetServiceInstanceOutput, AWSError>;
   /**
-   * Get detail data for a service template.
+   * Get detailed data for a service template.
    */
   getServiceTemplate(params: Proton.Types.GetServiceTemplateInput, callback?: (err: AWSError, data: Proton.Types.GetServiceTemplateOutput) => void): Request<Proton.Types.GetServiceTemplateOutput, AWSError>;
   /**
-   * Get detail data for a service template.
+   * Get detailed data for a service template.
    */
   getServiceTemplate(callback?: (err: AWSError, data: Proton.Types.GetServiceTemplateOutput) => void): Request<Proton.Types.GetServiceTemplateOutput, AWSError>;
   /**
-   * View detail data for a major or minor version of a service template.
+   * Get detailed data for a major or minor version of a service template.
    */
   getServiceTemplateVersion(params: Proton.Types.GetServiceTemplateVersionInput, callback?: (err: AWSError, data: Proton.Types.GetServiceTemplateVersionOutput) => void): Request<Proton.Types.GetServiceTemplateVersionOutput, AWSError>;
   /**
-   * View detail data for a major or minor version of a service template.
+   * Get detailed data for a major or minor version of a service template.
    */
   getServiceTemplateVersion(callback?: (err: AWSError, data: Proton.Types.GetServiceTemplateVersionOutput) => void): Request<Proton.Types.GetServiceTemplateVersionOutput, AWSError>;
   /**
@@ -292,6 +324,30 @@ declare class Proton extends Service {
    * Get the status of a template sync.
    */
   getTemplateSyncStatus(callback?: (err: AWSError, data: Proton.Types.GetTemplateSyncStatusOutput) => void): Request<Proton.Types.GetTemplateSyncStatusOutput, AWSError>;
+  /**
+   * Get a list of component Infrastructure as Code (IaC) outputs. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  listComponentOutputs(params: Proton.Types.ListComponentOutputsInput, callback?: (err: AWSError, data: Proton.Types.ListComponentOutputsOutput) => void): Request<Proton.Types.ListComponentOutputsOutput, AWSError>;
+  /**
+   * Get a list of component Infrastructure as Code (IaC) outputs. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  listComponentOutputs(callback?: (err: AWSError, data: Proton.Types.ListComponentOutputsOutput) => void): Request<Proton.Types.ListComponentOutputsOutput, AWSError>;
+  /**
+   * List provisioned resources for a component with details. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  listComponentProvisionedResources(params: Proton.Types.ListComponentProvisionedResourcesInput, callback?: (err: AWSError, data: Proton.Types.ListComponentProvisionedResourcesOutput) => void): Request<Proton.Types.ListComponentProvisionedResourcesOutput, AWSError>;
+  /**
+   * List provisioned resources for a component with details. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  listComponentProvisionedResources(callback?: (err: AWSError, data: Proton.Types.ListComponentProvisionedResourcesOutput) => void): Request<Proton.Types.ListComponentProvisionedResourcesOutput, AWSError>;
+  /**
+   * List components with summary data. You can filter the result list by environment, service, or a single service instance. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  listComponents(params: Proton.Types.ListComponentsInput, callback?: (err: AWSError, data: Proton.Types.ListComponentsOutput) => void): Request<Proton.Types.ListComponentsOutput, AWSError>;
+  /**
+   * List components with summary data. You can filter the result list by environment, service, or a single service instance. For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  listComponents(callback?: (err: AWSError, data: Proton.Types.ListComponentsOutput) => void): Request<Proton.Types.ListComponentsOutput, AWSError>;
   /**
    * View a list of environment account connections. For more information, see Environment account connections in the Proton Administrator guide.
    */
@@ -357,11 +413,11 @@ declare class Proton extends Service {
    */
   listRepositorySyncDefinitions(callback?: (err: AWSError, data: Proton.Types.ListRepositorySyncDefinitionsOutput) => void): Request<Proton.Types.ListRepositorySyncDefinitionsOutput, AWSError>;
   /**
-   * View a list service instance infrastructure as code outputs with detail data.
+   * Get a list service of instance Infrastructure as Code (IaC) outputs.
    */
   listServiceInstanceOutputs(params: Proton.Types.ListServiceInstanceOutputsInput, callback?: (err: AWSError, data: Proton.Types.ListServiceInstanceOutputsOutput) => void): Request<Proton.Types.ListServiceInstanceOutputsOutput, AWSError>;
   /**
-   * View a list service instance infrastructure as code outputs with detail data.
+   * Get a list service of instance Infrastructure as Code (IaC) outputs.
    */
   listServiceInstanceOutputs(callback?: (err: AWSError, data: Proton.Types.ListServiceInstanceOutputsOutput) => void): Request<Proton.Types.ListServiceInstanceOutputsOutput, AWSError>;
   /**
@@ -373,19 +429,19 @@ declare class Proton extends Service {
    */
   listServiceInstanceProvisionedResources(callback?: (err: AWSError, data: Proton.Types.ListServiceInstanceProvisionedResourcesOutput) => void): Request<Proton.Types.ListServiceInstanceProvisionedResourcesOutput, AWSError>;
   /**
-   * List service instances with summaries of detail data.
+   * List service instances with summary data.
    */
   listServiceInstances(params: Proton.Types.ListServiceInstancesInput, callback?: (err: AWSError, data: Proton.Types.ListServiceInstancesOutput) => void): Request<Proton.Types.ListServiceInstancesOutput, AWSError>;
   /**
-   * List service instances with summaries of detail data.
+   * List service instances with summary data.
    */
   listServiceInstances(callback?: (err: AWSError, data: Proton.Types.ListServiceInstancesOutput) => void): Request<Proton.Types.ListServiceInstancesOutput, AWSError>;
   /**
-   * View a list service pipeline infrastructure as code outputs with detail.
+   * Get a list of service pipeline Infrastructure as Code (IaC) outputs.
    */
   listServicePipelineOutputs(params: Proton.Types.ListServicePipelineOutputsInput, callback?: (err: AWSError, data: Proton.Types.ListServicePipelineOutputsOutput) => void): Request<Proton.Types.ListServicePipelineOutputsOutput, AWSError>;
   /**
-   * View a list service pipeline infrastructure as code outputs with detail.
+   * Get a list of service pipeline Infrastructure as Code (IaC) outputs.
    */
   listServicePipelineOutputs(callback?: (err: AWSError, data: Proton.Types.ListServicePipelineOutputsOutput) => void): Request<Proton.Types.ListServicePipelineOutputsOutput, AWSError>;
   /**
@@ -429,35 +485,35 @@ declare class Proton extends Service {
    */
   listTagsForResource(callback?: (err: AWSError, data: Proton.Types.ListTagsForResourceOutput) => void): Request<Proton.Types.ListTagsForResourceOutput, AWSError>;
   /**
-   * Notify Proton of status changes to a provisioned resource when you use pull request provisioning. For more information, see Template bundles.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+   * Notify Proton of status changes to a provisioned resource when you use self-managed provisioning. For more information, see Self-managed provisioning in the Proton Administrator Guide.
    */
   notifyResourceDeploymentStatusChange(params: Proton.Types.NotifyResourceDeploymentStatusChangeInput, callback?: (err: AWSError, data: Proton.Types.NotifyResourceDeploymentStatusChangeOutput) => void): Request<Proton.Types.NotifyResourceDeploymentStatusChangeOutput, AWSError>;
   /**
-   * Notify Proton of status changes to a provisioned resource when you use pull request provisioning. For more information, see Template bundles.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+   * Notify Proton of status changes to a provisioned resource when you use self-managed provisioning. For more information, see Self-managed provisioning in the Proton Administrator Guide.
    */
   notifyResourceDeploymentStatusChange(callback?: (err: AWSError, data: Proton.Types.NotifyResourceDeploymentStatusChangeOutput) => void): Request<Proton.Types.NotifyResourceDeploymentStatusChangeOutput, AWSError>;
   /**
-   * In a management account, reject an environment account connection from another environment account. After you reject an environment account connection request, you won’t be able to accept or use the rejected environment account connection. You can’t reject an environment account connection that is connected to an environment. For more information, see Environment account connections in the Proton Administrator guide.
+   * In a management account, reject an environment account connection from another environment account. After you reject an environment account connection request, you can't accept or use the rejected environment account connection. You can’t reject an environment account connection that's connected to an environment. For more information, see Environment account connections in the Proton Administrator guide.
    */
   rejectEnvironmentAccountConnection(params: Proton.Types.RejectEnvironmentAccountConnectionInput, callback?: (err: AWSError, data: Proton.Types.RejectEnvironmentAccountConnectionOutput) => void): Request<Proton.Types.RejectEnvironmentAccountConnectionOutput, AWSError>;
   /**
-   * In a management account, reject an environment account connection from another environment account. After you reject an environment account connection request, you won’t be able to accept or use the rejected environment account connection. You can’t reject an environment account connection that is connected to an environment. For more information, see Environment account connections in the Proton Administrator guide.
+   * In a management account, reject an environment account connection from another environment account. After you reject an environment account connection request, you can't accept or use the rejected environment account connection. You can’t reject an environment account connection that's connected to an environment. For more information, see Environment account connections in the Proton Administrator guide.
    */
   rejectEnvironmentAccountConnection(callback?: (err: AWSError, data: Proton.Types.RejectEnvironmentAccountConnectionOutput) => void): Request<Proton.Types.RejectEnvironmentAccountConnectionOutput, AWSError>;
   /**
-   * Tag a resource. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+   * Tag a resource. A tag is a key-value pair of metadata that you associate with an Proton resource. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
    */
   tagResource(params: Proton.Types.TagResourceInput, callback?: (err: AWSError, data: Proton.Types.TagResourceOutput) => void): Request<Proton.Types.TagResourceOutput, AWSError>;
   /**
-   * Tag a resource. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+   * Tag a resource. A tag is a key-value pair of metadata that you associate with an Proton resource. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
    */
   tagResource(callback?: (err: AWSError, data: Proton.Types.TagResourceOutput) => void): Request<Proton.Types.TagResourceOutput, AWSError>;
   /**
-   * Remove a tag from a resource. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+   * Remove a customer tag from a resource. A tag is a key-value pair of metadata associated with an Proton resource. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
    */
   untagResource(params: Proton.Types.UntagResourceInput, callback?: (err: AWSError, data: Proton.Types.UntagResourceOutput) => void): Request<Proton.Types.UntagResourceOutput, AWSError>;
   /**
-   * Remove a tag from a resource. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+   * Remove a customer tag from a resource. A tag is a key-value pair of metadata associated with an Proton resource. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
    */
   untagResource(callback?: (err: AWSError, data: Proton.Types.UntagResourceOutput) => void): Request<Proton.Types.UntagResourceOutput, AWSError>;
   /**
@@ -469,11 +525,19 @@ declare class Proton extends Service {
    */
   updateAccountSettings(callback?: (err: AWSError, data: Proton.Types.UpdateAccountSettingsOutput) => void): Request<Proton.Types.UpdateAccountSettingsOutput, AWSError>;
   /**
-   * Update an environment. If the environment is associated with an environment account connection, don't update or include the protonServiceRoleArn and provisioningRepository parameter to update or connect to an environment account connection. You can only update to a new environment account connection if it was created in the same environment account that the current environment account connection was created in and is associated with the current environment. If the environment isn't associated with an environment account connection, don't update or include the environmentAccountConnectionId parameter to update or connect to an environment account connection. You can update either the environmentAccountConnectionId or protonServiceRoleArn parameter and value. You can’t update both. If the environment was provisioned with pull request provisioning, include the provisioningRepository parameter and omit the protonServiceRoleArn and environmentAccountConnectionId parameters. If the environment wasn't provisioned with pull request provisioning, omit the provisioningRepository parameter. There are four modes for updating an environment as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the environment is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that's higher than the major version in use and a minor version (optional).  
+   * Update a component. There are a few modes for updating a component. The deploymentType field defines the mode.  You can't update a component while its deployment status, or the deployment status of a service instance attached to it, is IN_PROGRESS.  For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  updateComponent(params: Proton.Types.UpdateComponentInput, callback?: (err: AWSError, data: Proton.Types.UpdateComponentOutput) => void): Request<Proton.Types.UpdateComponentOutput, AWSError>;
+  /**
+   * Update a component. There are a few modes for updating a component. The deploymentType field defines the mode.  You can't update a component while its deployment status, or the deployment status of a service instance attached to it, is IN_PROGRESS.  For more information about components, see Proton components in the Proton Administrator Guide.
+   */
+  updateComponent(callback?: (err: AWSError, data: Proton.Types.UpdateComponentOutput) => void): Request<Proton.Types.UpdateComponentOutput, AWSError>;
+  /**
+   * Update an environment. If the environment is associated with an environment account connection, don't update or include the protonServiceRoleArn and provisioningRepository parameter to update or connect to an environment account connection. You can only update to a new environment account connection if that connection was created in the same environment account that the current environment account connection was created in. The account connection must also be associated with the current environment. If the environment isn't associated with an environment account connection, don't update or include the environmentAccountConnectionId parameter. You can't update or connect the environment to an environment account connection if it isn't already associated with an environment connection. You can update either the environmentAccountConnectionId or protonServiceRoleArn parameter and value. You can’t update both. If the environment was configured for Amazon Web Services-managed provisioning, omit the provisioningRepository parameter. If the environment was configured for self-managed provisioning, specify the provisioningRepository parameter and omit the protonServiceRoleArn and environmentAccountConnectionId parameters. For more information, see Environments and Provisioning methods in the Proton Administrator Guide. There are four modes for updating an environment. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the environment is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that's higher than the major version in use and a minor version.  
    */
   updateEnvironment(params: Proton.Types.UpdateEnvironmentInput, callback?: (err: AWSError, data: Proton.Types.UpdateEnvironmentOutput) => void): Request<Proton.Types.UpdateEnvironmentOutput, AWSError>;
   /**
-   * Update an environment. If the environment is associated with an environment account connection, don't update or include the protonServiceRoleArn and provisioningRepository parameter to update or connect to an environment account connection. You can only update to a new environment account connection if it was created in the same environment account that the current environment account connection was created in and is associated with the current environment. If the environment isn't associated with an environment account connection, don't update or include the environmentAccountConnectionId parameter to update or connect to an environment account connection. You can update either the environmentAccountConnectionId or protonServiceRoleArn parameter and value. You can’t update both. If the environment was provisioned with pull request provisioning, include the provisioningRepository parameter and omit the protonServiceRoleArn and environmentAccountConnectionId parameters. If the environment wasn't provisioned with pull request provisioning, omit the provisioningRepository parameter. There are four modes for updating an environment as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the environment is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that's higher than the major version in use and a minor version (optional).  
+   * Update an environment. If the environment is associated with an environment account connection, don't update or include the protonServiceRoleArn and provisioningRepository parameter to update or connect to an environment account connection. You can only update to a new environment account connection if that connection was created in the same environment account that the current environment account connection was created in. The account connection must also be associated with the current environment. If the environment isn't associated with an environment account connection, don't update or include the environmentAccountConnectionId parameter. You can't update or connect the environment to an environment account connection if it isn't already associated with an environment connection. You can update either the environmentAccountConnectionId or protonServiceRoleArn parameter and value. You can’t update both. If the environment was configured for Amazon Web Services-managed provisioning, omit the provisioningRepository parameter. If the environment was configured for self-managed provisioning, specify the provisioningRepository parameter and omit the protonServiceRoleArn and environmentAccountConnectionId parameters. For more information, see Environments and Provisioning methods in the Proton Administrator Guide. There are four modes for updating an environment. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the environment is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that's higher than the major version in use and a minor version.  
    */
   updateEnvironment(callback?: (err: AWSError, data: Proton.Types.UpdateEnvironmentOutput) => void): Request<Proton.Types.UpdateEnvironmentOutput, AWSError>;
   /**
@@ -501,27 +565,27 @@ declare class Proton extends Service {
    */
   updateEnvironmentTemplateVersion(callback?: (err: AWSError, data: Proton.Types.UpdateEnvironmentTemplateVersionOutput) => void): Request<Proton.Types.UpdateEnvironmentTemplateVersionOutput, AWSError>;
   /**
-   * Edit a service description or use a spec to add and delete service instances.  Existing service instances and the service pipeline can't be edited using this API. They can only be deleted.  Use the description parameter to modify the description. Edit the spec parameter to add or delete instances.
+   * Edit a service description or use a spec to add and delete service instances.  Existing service instances and the service pipeline can't be edited using this API. They can only be deleted.  Use the description parameter to modify the description. Edit the spec parameter to add or delete instances.  You can't delete a service instance (remove it from the spec) if it has an attached component. For more information about components, see Proton components in the Proton Administrator Guide. 
    */
   updateService(params: Proton.Types.UpdateServiceInput, callback?: (err: AWSError, data: Proton.Types.UpdateServiceOutput) => void): Request<Proton.Types.UpdateServiceOutput, AWSError>;
   /**
-   * Edit a service description or use a spec to add and delete service instances.  Existing service instances and the service pipeline can't be edited using this API. They can only be deleted.  Use the description parameter to modify the description. Edit the spec parameter to add or delete instances.
+   * Edit a service description or use a spec to add and delete service instances.  Existing service instances and the service pipeline can't be edited using this API. They can only be deleted.  Use the description parameter to modify the description. Edit the spec parameter to add or delete instances.  You can't delete a service instance (remove it from the spec) if it has an attached component. For more information about components, see Proton components in the Proton Administrator Guide. 
    */
   updateService(callback?: (err: AWSError, data: Proton.Types.UpdateServiceOutput) => void): Request<Proton.Types.UpdateServiceOutput, AWSError>;
   /**
-   * Update a service instance. There are four modes for updating a service instance as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service instance is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service instance is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service instance is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that is higher than the major version in use and a minor version (optional).  
+   * Update a service instance. There are a few modes for updating a service instance. The deploymentType field defines the mode.  You can't update a service instance while its deployment status, or the deployment status of a component attached to it, is IN_PROGRESS. For more information about components, see Proton components in the Proton Administrator Guide. 
    */
   updateServiceInstance(params: Proton.Types.UpdateServiceInstanceInput, callback?: (err: AWSError, data: Proton.Types.UpdateServiceInstanceOutput) => void): Request<Proton.Types.UpdateServiceInstanceOutput, AWSError>;
   /**
-   * Update a service instance. There are four modes for updating a service instance as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service instance is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service instance is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service instance is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that is higher than the major version in use and a minor version (optional).  
+   * Update a service instance. There are a few modes for updating a service instance. The deploymentType field defines the mode.  You can't update a service instance while its deployment status, or the deployment status of a component attached to it, is IN_PROGRESS. For more information about components, see Proton components in the Proton Administrator Guide. 
    */
   updateServiceInstance(callback?: (err: AWSError, data: Proton.Types.UpdateServiceInstanceOutput) => void): Request<Proton.Types.UpdateServiceInstanceOutput, AWSError>;
   /**
-   * Update the service pipeline. There are four modes for updating a service pipeline as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service pipeline is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) major and minor version of the current template by default. You can also specify a different major version that is higher than the major version in use and a minor version (optional).  
+   * Update the service pipeline. There are four modes for updating a service pipeline. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service pipeline is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include major or minor version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) major and minor version of the current template by default. You can specify a different major version that's higher than the major version in use and a minor version.  
    */
   updateServicePipeline(params: Proton.Types.UpdateServicePipelineInput, callback?: (err: AWSError, data: Proton.Types.UpdateServicePipelineOutput) => void): Request<Proton.Types.UpdateServicePipelineOutput, AWSError>;
   /**
-   * Update the service pipeline. There are four modes for updating a service pipeline as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service pipeline is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) major and minor version of the current template by default. You can also specify a different major version that is higher than the major version in use and a minor version (optional).  
+   * Update the service pipeline. There are four modes for updating a service pipeline. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service pipeline is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include major or minor version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) major and minor version of the current template by default. You can specify a different major version that's higher than the major version in use and a minor version.  
    */
   updateServicePipeline(callback?: (err: AWSError, data: Proton.Types.UpdateServicePipelineOutput) => void): Request<Proton.Types.UpdateServicePipelineOutput, AWSError>;
   /**
@@ -548,6 +612,22 @@ declare class Proton extends Service {
    * Update template sync configuration parameters, except for the templateName and templateType.
    */
   updateTemplateSyncConfig(callback?: (err: AWSError, data: Proton.Types.UpdateTemplateSyncConfigOutput) => void): Request<Proton.Types.UpdateTemplateSyncConfigOutput, AWSError>;
+  /**
+   * Waits for the componentDeleted state by periodically calling the underlying Proton.getComponentoperation every 5 seconds (at most 999 times). Wait until a Component is deleted. Use this after invoking DeleteComponent
+   */
+  waitFor(state: "componentDeleted", params: Proton.Types.GetComponentInput & {$waiter?: WaiterConfiguration}, callback?: (err: AWSError, data: Proton.Types.GetComponentOutput) => void): Request<Proton.Types.GetComponentOutput, AWSError>;
+  /**
+   * Waits for the componentDeleted state by periodically calling the underlying Proton.getComponentoperation every 5 seconds (at most 999 times). Wait until a Component is deleted. Use this after invoking DeleteComponent
+   */
+  waitFor(state: "componentDeleted", callback?: (err: AWSError, data: Proton.Types.GetComponentOutput) => void): Request<Proton.Types.GetComponentOutput, AWSError>;
+  /**
+   * Waits for the componentDeployed state by periodically calling the underlying Proton.getComponentoperation every 5 seconds (at most 999 times). Wait until a Component is deployed. Use this after invoking CreateComponent or UpdateComponent
+   */
+  waitFor(state: "componentDeployed", params: Proton.Types.GetComponentInput & {$waiter?: WaiterConfiguration}, callback?: (err: AWSError, data: Proton.Types.GetComponentOutput) => void): Request<Proton.Types.GetComponentOutput, AWSError>;
+  /**
+   * Waits for the componentDeployed state by periodically calling the underlying Proton.getComponentoperation every 5 seconds (at most 999 times). Wait until a Component is deployed. Use this after invoking CreateComponent or UpdateComponent
+   */
+  waitFor(state: "componentDeployed", callback?: (err: AWSError, data: Proton.Types.GetComponentOutput) => void): Request<Proton.Types.GetComponentOutput, AWSError>;
   /**
    * Waits for the environmentDeployed state by periodically calling the underlying Proton.getEnvironmentoperation every 5 seconds (at most 999 times). Wait until an Environment is deployed. Use this after invoking CreateEnvironment or UpdateEnvironment
    */
@@ -628,16 +708,28 @@ declare namespace Proton {
   }
   export interface AccountSettings {
     /**
-     * The repository that you provide with pull request provisioning.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+     * The repository configured in the Amazon Web Services account for pipeline provisioning. Required it if you have environments configured for self-managed provisioning with services that include pipelines.
      */
     pipelineProvisioningRepository?: RepositoryBranch;
     /**
-     * The Amazon Resource Name (ARN) of the Proton pipeline service role.
+     * The Amazon Resource Name (ARN) of the service role you want to use for provisioning pipelines. Assumed by Proton for Amazon Web Services-managed provisioning, and by customer-owned automation for self-managed provisioning.
      */
     pipelineServiceRoleArn?: PipelineRoleArn;
   }
   export type Arn = string;
   export type AwsAccountId = string;
+  export interface CancelComponentDeploymentInput {
+    /**
+     * The name of the component with the deployment to cancel.
+     */
+    componentName: ResourceName;
+  }
+  export interface CancelComponentDeploymentOutput {
+    /**
+     * The detailed data of the component with the deployment that is being canceled.
+     */
+    component: Component;
+  }
   export interface CancelEnvironmentDeploymentInput {
     /**
      * The name of the environment with the deployment to cancel.
@@ -701,17 +793,168 @@ declare namespace Proton {
   }
   export type CompatibleEnvironmentTemplateInputList = CompatibleEnvironmentTemplateInput[];
   export type CompatibleEnvironmentTemplateList = CompatibleEnvironmentTemplate[];
+  export interface Component {
+    /**
+     * The Amazon Resource Name (ARN) of the component.
+     */
+    arn: ComponentArn;
+    /**
+     * The time when the component was created.
+     */
+    createdAt: Timestamp;
+    /**
+     * The component deployment status.
+     */
+    deploymentStatus: DeploymentStatus;
+    /**
+     * The message associated with the component deployment status.
+     */
+    deploymentStatusMessage?: StatusMessage;
+    /**
+     * A description of the component.
+     */
+    description?: Description;
+    /**
+     * The name of the Proton environment that this component is associated with.
+     */
+    environmentName: ResourceName;
+    /**
+     * The time when a deployment of the component was last attempted.
+     */
+    lastDeploymentAttemptedAt?: Timestamp;
+    /**
+     * The time when the component was last deployed successfully.
+     */
+    lastDeploymentSucceededAt?: Timestamp;
+    /**
+     * The time when the component was last modified.
+     */
+    lastModifiedAt: Timestamp;
+    /**
+     * The name of the component.
+     */
+    name: ResourceName;
+    /**
+     * The name of the service instance that this component is attached to. Provided when a component is attached to a service instance.
+     */
+    serviceInstanceName?: ResourceName;
+    /**
+     * The name of the service that serviceInstanceName is associated with. Provided when a component is attached to a service instance.
+     */
+    serviceName?: ResourceName;
+    /**
+     * The service spec that the component uses to access service inputs. Provided when a component is attached to a service instance.
+     */
+    serviceSpec?: SpecContents;
+  }
+  export type ComponentArn = string;
+  export type ComponentDeploymentUpdateType = "NONE"|"CURRENT_VERSION"|string;
+  export interface ComponentSummary {
+    /**
+     * The Amazon Resource Name (ARN) of the component.
+     */
+    arn: ComponentArn;
+    /**
+     * The time when the component was created.
+     */
+    createdAt: Timestamp;
+    /**
+     * The component deployment status.
+     */
+    deploymentStatus: DeploymentStatus;
+    /**
+     * The message associated with the component deployment status.
+     */
+    deploymentStatusMessage?: StatusMessage;
+    /**
+     * The name of the Proton environment that this component is associated with.
+     */
+    environmentName: ResourceName;
+    /**
+     * The time when a deployment of the component was last attempted.
+     */
+    lastDeploymentAttemptedAt?: Timestamp;
+    /**
+     * The time when the component was last deployed successfully.
+     */
+    lastDeploymentSucceededAt?: Timestamp;
+    /**
+     * The time when the component was last modified.
+     */
+    lastModifiedAt: Timestamp;
+    /**
+     * The name of the component.
+     */
+    name: ResourceName;
+    /**
+     * The name of the service instance that this component is attached to. Provided when a component is attached to a service instance.
+     */
+    serviceInstanceName?: ResourceName;
+    /**
+     * The name of the service that serviceInstanceName is associated with. Provided when a component is attached to a service instance.
+     */
+    serviceName?: ResourceName;
+  }
+  export type ComponentSummaryList = ComponentSummary[];
+  export interface CreateComponentInput {
+    /**
+     * An optional customer-provided description of the component.
+     */
+    description?: Description;
+    /**
+     * The name of the Proton environment that you want to associate this component with. You must specify this when you don't specify serviceInstanceName and serviceName.
+     */
+    environmentName?: ResourceName;
+    /**
+     * A path to a manifest file that lists the Infrastructure as Code (IaC) file, template language, and rendering engine for infrastructure that a custom component provisions.
+     */
+    manifest: TemplateManifestContents;
+    /**
+     * The customer-provided name of the component.
+     */
+    name: ResourceName;
+    /**
+     * The name of the service instance that you want to attach this component to. If you don't specify this, the component isn't attached to any service instance. Specify both serviceInstanceName and serviceName or neither of them.
+     */
+    serviceInstanceName?: ResourceName;
+    /**
+     * The name of the service that serviceInstanceName is associated with. If you don't specify this, the component isn't attached to any service instance. Specify both serviceInstanceName and serviceName or neither of them.
+     */
+    serviceName?: ResourceName;
+    /**
+     * The service spec that you want the component to use to access service inputs. Set this only when you attach the component to a service instance.
+     */
+    serviceSpec?: SpecContents;
+    /**
+     * An optional list of metadata items that you can associate with the Proton component. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+     */
+    tags?: TagList;
+    /**
+     * A path to the Infrastructure as Code (IaC) file describing infrastructure that a custom component provisions.  Components support a single IaC file, even if you use Terraform as your template language. 
+     */
+    templateFile: TemplateFileContents;
+  }
+  export interface CreateComponentOutput {
+    /**
+     * The detailed data of the created component.
+     */
+    component: Component;
+  }
   export interface CreateEnvironmentAccountConnectionInput {
     /**
      * When included, if two identical requests are made with the same client token, Proton returns the environment account connection that the first request created.
      */
     clientToken?: ClientToken;
     /**
+     * The Amazon Resource Name (ARN) of the IAM service role that Proton uses when provisioning directly defined components in the associated environment account. It determines the scope of infrastructure that a component can provision in the account. You must specify componentRoleArn to allow directly defined components to be associated with any environments running in this account. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    componentRoleArn?: Arn;
+    /**
      * The name of the Proton environment that's created in the associated management account.
      */
     environmentName: ResourceName;
     /**
-     * The ID of the management account that accepts or rejects the environment account connection. You create an manage the Proton environment in this account. If the management account accepts the environment account connection, Proton can use the associated IAM role to provision environment infrastructure resources in the associated environment account.
+     * The ID of the management account that accepts or rejects the environment account connection. You create and manage the Proton environment in this account. If the management account accepts the environment account connection, Proton can use the associated IAM role to provision environment infrastructure resources in the associated environment account.
      */
     managementAccountId: AwsAccountId;
     /**
@@ -719,7 +962,7 @@ declare namespace Proton {
      */
     roleArn: Arn;
     /**
-     * Tags for your environment account connection. For more information, see Proton resources and tagging in the Proton Administrator Guide.
+     * An optional list of metadata items that you can associate with the Proton environment account connection. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide.
      */
     tags?: TagList;
   }
@@ -731,11 +974,15 @@ declare namespace Proton {
   }
   export interface CreateEnvironmentInput {
     /**
+     * The Amazon Resource Name (ARN) of the IAM service role that Proton uses when provisioning directly defined components in this environment. It determines the scope of infrastructure that a component can provision. You must specify componentRoleArn to allow directly defined components to be associated with this environment. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    componentRoleArn?: Arn;
+    /**
      * A description of the environment that's being created and deployed.
      */
     description?: Description;
     /**
-     * The ID of the environment account connection that you provide if you're provisioning your environment infrastructure resources to an environment account. You must include either the environmentAccountConnectionId or protonServiceRoleArn parameter and value and omit the provisioningRepository parameter and values. For more information, see Environment account connections in the Proton Administrator guide.
+     * The ID of the environment account connection that you provide if you're provisioning your environment infrastructure resources to an environment account. For more information, see Environment account connections in the Proton Administrator guide. To use Amazon Web Services-managed provisioning for the environment, specify either the environmentAccountConnectionId or protonServiceRoleArn parameter and omit the provisioningRepository parameter.
      */
     environmentAccountConnectionId?: EnvironmentAccountConnectionId;
     /**
@@ -743,19 +990,19 @@ declare namespace Proton {
      */
     name: ResourceName;
     /**
-     * The Amazon Resource Name (ARN) of the Proton service role that allows Proton to make calls to other services on your behalf. You must include either the environmentAccountConnectionId or protonServiceRoleArn parameter and value and omit the provisioningRepository parameter when you use standard provisioning.
+     * The Amazon Resource Name (ARN) of the Proton service role that allows Proton to make calls to other services on your behalf. To use Amazon Web Services-managed provisioning for the environment, specify either the environmentAccountConnectionId or protonServiceRoleArn parameter and omit the provisioningRepository parameter.
      */
     protonServiceRoleArn?: Arn;
     /**
-     * The repository that you provide with pull request provisioning. If you provide this parameter, you must omit the environmentAccountConnectionId and protonServiceRoleArn parameters.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+     * The infrastructure repository that you use to host your rendered infrastructure templates for self-managed provisioning. To use self-managed provisioning for the environment, specify this parameter and omit the environmentAccountConnectionId and protonServiceRoleArn parameters.
      */
     provisioningRepository?: RepositoryBranchInput;
     /**
-     * A link to a YAML formatted spec file that provides inputs as defined in the environment template bundle schema file. For more information, see Environments in the Proton Administrator Guide.
+     * A YAML formatted string that provides inputs as defined in the environment template bundle schema file. For more information, see Environments in the Proton Administrator Guide.
      */
     spec: SpecContents;
     /**
-     * Create tags for your environment. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+     * An optional list of metadata items that you can associate with the Proton environment. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
      */
     tags?: TagList;
     /**
@@ -799,7 +1046,7 @@ declare namespace Proton {
      */
     provisioning?: Provisioning;
     /**
-     * Create tags for your environment template. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+     * An optional list of metadata items that you can associate with the Proton environment template. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
      */
     tags?: TagList;
   }
@@ -819,7 +1066,7 @@ declare namespace Proton {
      */
     description?: Description;
     /**
-     * To create a new minor version of the environment template, include a major Version. To create a new major and minor version of the environment template, exclude major Version.
+     * To create a new minor version of the environment template, include major Version. To create a new major and minor version of the environment template, exclude major Version.
      */
     majorVersion?: TemplateVersionPart;
     /**
@@ -827,7 +1074,7 @@ declare namespace Proton {
      */
     source: TemplateVersionSourceInput;
     /**
-     * Create tags for a new version of an environment template.
+     * An optional list of metadata items that you can associate with the Proton environment template version. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
      */
     tags?: TagList;
     /**
@@ -851,13 +1098,17 @@ declare namespace Proton {
      */
     encryptionKey?: Arn;
     /**
-     * The repository name, for example myrepos/myrepo.
+     * The repository name (for example, myrepos/myrepo).
      */
     name: RepositoryName;
     /**
      * The repository provider.
      */
     provider: RepositoryProvider;
+    /**
+     * An optional list of metadata items that you can associate with the Proton repository. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+     */
+    tags?: TagList;
   }
   export interface CreateRepositoryOutput {
     /**
@@ -891,7 +1142,7 @@ declare namespace Proton {
      */
     spec: SpecContents;
     /**
-     * Create tags for your service. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+     * An optional list of metadata items that you can associate with the Proton service. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
      */
     tags?: TagList;
     /**
@@ -931,11 +1182,11 @@ declare namespace Proton {
      */
     name: ResourceName;
     /**
-     * Proton includes a service pipeline for your service by default. When included, this parameter indicates that an Proton service pipeline won't be included for your service. Once specified, this parameter can't be changed. For more information, see Service template bundles in the Proton Administrator Guide.
+     * By default, Proton provides a service pipeline for your service. When this parameter is included, it indicates that an Proton service pipeline isn't provided for your service. After it's included, it can't be changed. For more information, see Service template bundles in the Proton Administrator Guide.
      */
     pipelineProvisioning?: Provisioning;
     /**
-     * Create tags for your service template. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
+     * An optional list of metadata items that you can associate with the Proton service template. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
      */
     tags?: TagList;
   }
@@ -951,7 +1202,7 @@ declare namespace Proton {
      */
     clientToken?: ClientToken;
     /**
-     * An array of compatible environment template objects for the new version of a service template.
+     * An array of environment template objects that are compatible with the new service template version. A service instance based on this service template version can run in environments based on compatible templates.
      */
     compatibleEnvironmentTemplates: CompatibleEnvironmentTemplateInputList;
     /**
@@ -967,7 +1218,11 @@ declare namespace Proton {
      */
     source: TemplateVersionSourceInput;
     /**
-     * Create tags for a new version of a service template.
+     * An array of supported component sources. Components with supported sources can be attached to service instances based on this service template version. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    supportedComponentSources?: ServiceTemplateSupportedComponentSourceInputList;
+    /**
+     * An optional list of metadata items that you can associate with the Proton service template version. A tag is a key-value pair. For more information, see Proton resources and tagging in the Proton Administrator Guide or Proton User Guide.
      */
     tags?: TagList;
     /**
@@ -987,7 +1242,7 @@ declare namespace Proton {
      */
     branch: GitBranchName;
     /**
-     * The name of your repository, for example myrepos/myrepo.
+     * The name of your repository (for example, myrepos/myrepo).
      */
     repositoryName: RepositoryName;
     /**
@@ -1013,6 +1268,18 @@ declare namespace Proton {
      */
     templateSyncConfig?: TemplateSyncConfig;
   }
+  export interface DeleteComponentInput {
+    /**
+     * The name of the component to delete.
+     */
+    name: ResourceName;
+  }
+  export interface DeleteComponentOutput {
+    /**
+     * The detailed data of the component being deleted.
+     */
+    component?: Component;
+  }
   export interface DeleteEnvironmentAccountConnectionInput {
     /**
      * The ID of the environment account connection to delete.
@@ -1021,7 +1288,7 @@ declare namespace Proton {
   }
   export interface DeleteEnvironmentAccountConnectionOutput {
     /**
-     * The environment account connection detail data that's returned by Proton.
+     * The detailed data of the environment account connection being deleted.
      */
     environmentAccountConnection?: EnvironmentAccountConnection;
   }
@@ -1033,7 +1300,7 @@ declare namespace Proton {
   }
   export interface DeleteEnvironmentOutput {
     /**
-     * The environment detail data that's returned by Proton.
+     * The detailed data of the environment being deleted.
      */
     environment?: Environment;
   }
@@ -1045,7 +1312,7 @@ declare namespace Proton {
   }
   export interface DeleteEnvironmentTemplateOutput {
     /**
-     * The environment template detail data that's returned by Proton.
+     * The detailed data of the environment template being deleted.
      */
     environmentTemplate?: EnvironmentTemplate;
   }
@@ -1065,7 +1332,7 @@ declare namespace Proton {
   }
   export interface DeleteEnvironmentTemplateVersionOutput {
     /**
-     * The environment template version detail data that's returned by Proton.
+     * The detailed data of the environment template version being deleted.
      */
     environmentTemplateVersion?: EnvironmentTemplateVersion;
   }
@@ -1093,7 +1360,7 @@ declare namespace Proton {
   }
   export interface DeleteServiceOutput {
     /**
-     * The service detail data that's returned by Proton.
+     * The detailed data of the service being deleted.
      */
     service?: Service;
   }
@@ -1105,7 +1372,7 @@ declare namespace Proton {
   }
   export interface DeleteServiceTemplateOutput {
     /**
-     * The service template detail data that's returned by Proton.
+     * The detailed data of the service template being deleted.
      */
     serviceTemplate?: ServiceTemplate;
   }
@@ -1125,7 +1392,7 @@ declare namespace Proton {
   }
   export interface DeleteServiceTemplateVersionOutput {
     /**
-     * The service template version detail data that's returned by Proton.
+     * The detailed data of the service template version being deleted.
      */
     serviceTemplateVersion?: ServiceTemplateVersion;
   }
@@ -1156,6 +1423,10 @@ declare namespace Proton {
      * The Amazon Resource Name (ARN) of the environment.
      */
     arn: EnvironmentArn;
+    /**
+     * The Amazon Resource Name (ARN) of the IAM service role that Proton uses when provisioning directly defined components in this environment. It determines the scope of infrastructure that a component can provision. The environment must have a componentRoleArn to allow directly defined components to be associated with the environment. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    componentRoleArn?: Arn;
     /**
      * The time when the environment was created.
      */
@@ -1201,7 +1472,7 @@ declare namespace Proton {
      */
     provisioning?: Provisioning;
     /**
-     * The repository that you provide with pull request provisioning.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+     * The infrastructure repository that you use to host your rendered infrastructure templates for self-managed provisioning.
      */
     provisioningRepository?: RepositoryBranch;
     /**
@@ -1209,11 +1480,11 @@ declare namespace Proton {
      */
     spec?: SpecContents;
     /**
-     * The ID of the major version of the environment template.
+     * The major version of the environment template.
      */
     templateMajorVersion: TemplateVersionPart;
     /**
-     * The ID of the minor version of the environment template.
+     * The minor version of the environment template.
      */
     templateMinorVersion: TemplateVersionPart;
     /**
@@ -1226,6 +1497,10 @@ declare namespace Proton {
      * The Amazon Resource Name (ARN) of the environment account connection.
      */
     arn: EnvironmentAccountConnectionArn;
+    /**
+     * The Amazon Resource Name (ARN) of the IAM service role that Proton uses when provisioning directly defined components in the associated environment account. It determines the scope of infrastructure that a component can provision in the account. The environment account connection must have a componentRoleArn to allow directly defined components to be associated with any environments running in the account. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    componentRoleArn?: Arn;
     /**
      * The environment account that's connected to the environment account connection.
      */
@@ -1270,6 +1545,10 @@ declare namespace Proton {
      */
     arn: EnvironmentAccountConnectionArn;
     /**
+     * The Amazon Resource Name (ARN) of the IAM service role that Proton uses when provisioning directly defined components in the associated environment account. It determines the scope of infrastructure that a component can provision in the account. The environment account connection must have a componentRoleArn to allow directly defined components to be associated with any environments running in the account. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    componentRoleArn?: Arn;
+    /**
      * The ID of the environment account that's connected to the environment account connection.
      */
     environmentAccountId: AwsAccountId;
@@ -1309,6 +1588,10 @@ declare namespace Proton {
      * The Amazon Resource Name (ARN) of the environment.
      */
     arn: EnvironmentArn;
+    /**
+     * The Amazon Resource Name (ARN) of the IAM service role that Proton uses when provisioning directly defined components in this environment. It determines the scope of infrastructure that a component can provision. The environment must have a componentRoleArn to allow directly defined components to be associated with the environment. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    componentRoleArn?: Arn;
     /**
      * The time when the environment was created.
      */
@@ -1537,7 +1820,7 @@ declare namespace Proton {
      */
     statusMessage?: StatusMessage;
     /**
-     * The name of the version of an environment template.
+     * The name of the environment template.
      */
     templateName: ResourceName;
   }
@@ -1551,59 +1834,71 @@ declare namespace Proton {
      */
     accountSettings?: AccountSettings;
   }
+  export interface GetComponentInput {
+    /**
+     * The name of the component that you want to get the detailed data for.
+     */
+    name: ResourceName;
+  }
+  export interface GetComponentOutput {
+    /**
+     * The detailed data of the requested component.
+     */
+    component?: Component;
+  }
   export interface GetEnvironmentAccountConnectionInput {
     /**
-     * The ID of the environment account connection.
+     * The ID of the environment account connection that you want to get the detailed data for.
      */
     id: EnvironmentAccountConnectionId;
   }
   export interface GetEnvironmentAccountConnectionOutput {
     /**
-     * The environment account connection detail data that's returned by Proton.
+     * The detailed data of the requested environment account connection.
      */
     environmentAccountConnection: EnvironmentAccountConnection;
   }
   export interface GetEnvironmentInput {
     /**
-     * The name of the environment that you want to get the detail data for.
+     * The name of the environment that you want to get the detailed data for.
      */
     name: ResourceName;
   }
   export interface GetEnvironmentOutput {
     /**
-     * The environment detail data that's returned by Proton.
+     * The detailed data of the requested environment.
      */
     environment: Environment;
   }
   export interface GetEnvironmentTemplateInput {
     /**
-     * The name of the environment template that you want to get the detail data for.
+     * The name of the environment template that you want to get the detailed data for.
      */
     name: ResourceName;
   }
   export interface GetEnvironmentTemplateOutput {
     /**
-     * The environment template detail data that's returned by Proton.
+     * The detailed data of the requested environment template.
      */
     environmentTemplate: EnvironmentTemplate;
   }
   export interface GetEnvironmentTemplateVersionInput {
     /**
-     * To view environment template major version detail data, include major Version.
+     * To get environment template major version detail data, include major Version.
      */
     majorVersion: TemplateVersionPart;
     /**
-     * To view environment template minor version detail data, include minorVersion.
+     * To get environment template minor version detail data, include minorVersion.
      */
     minorVersion: TemplateVersionPart;
     /**
-     * The name of the environment template.
+     * The name of the environment template a version of which you want to get detailed data for..
      */
     templateName: ResourceName;
   }
   export interface GetEnvironmentTemplateVersionOutput {
     /**
-     * The environment template version detail data that's returned by Proton.
+     * The detailed data of the requested environment template version.
      */
     environmentTemplateVersion: EnvironmentTemplateVersion;
   }
@@ -1649,13 +1944,13 @@ declare namespace Proton {
   }
   export interface GetServiceInput {
     /**
-     * The name of the service that you want to get the detail data for.
+     * The name of the service that you want to get the detailed data for.
      */
     name: ResourceName;
   }
   export interface GetServiceInstanceInput {
     /**
-     * The name of a service instance that you want to get the detail data for.
+     * The name of a service instance that you want to get the detailed data for.
      */
     name: ResourceName;
     /**
@@ -1665,45 +1960,45 @@ declare namespace Proton {
   }
   export interface GetServiceInstanceOutput {
     /**
-     * The service instance detail data that's returned by Proton.
+     * The detailed data of the requested service instance.
      */
     serviceInstance: ServiceInstance;
   }
   export interface GetServiceOutput {
     /**
-     * The service detail data that's returned by Proton.
+     * The detailed data of the requested service.
      */
     service?: Service;
   }
   export interface GetServiceTemplateInput {
     /**
-     * The name of the service template that you want to get detail data for.
+     * The name of the service template that you want to get detailed data for.
      */
     name: ResourceName;
   }
   export interface GetServiceTemplateOutput {
     /**
-     * The service template detail data that's returned by Proton.
+     * The detailed data of the requested service template.
      */
     serviceTemplate: ServiceTemplate;
   }
   export interface GetServiceTemplateVersionInput {
     /**
-     * To view service template major version detail data, include major Version.
+     * To get service template major version detail data, include major Version.
      */
     majorVersion: TemplateVersionPart;
     /**
-     * To view service template minor version detail data, include minorVersion.
+     * To get service template minor version detail data, include minorVersion.
      */
     minorVersion: TemplateVersionPart;
     /**
-     * The name of the service template.
+     * The name of the service template a version of which you want to get detailed data for.
      */
     templateName: ResourceName;
   }
   export interface GetServiceTemplateVersionOutput {
     /**
-     * The service template version detail data that's returned by Proton.
+     * The detailed data of the requested service template version.
      */
     serviceTemplateVersion: ServiceTemplateVersion;
   }
@@ -1733,7 +2028,7 @@ declare namespace Proton {
      */
     templateType: TemplateType;
     /**
-     * The template version.
+     * The template major version.
      */
     templateVersion: TemplateVersionPart;
   }
@@ -1752,6 +2047,78 @@ declare namespace Proton {
     latestSync?: ResourceSyncAttempt;
   }
   export type GitBranchName = string;
+  export interface ListComponentOutputsInput {
+    /**
+     * The name of the component whose outputs you want.
+     */
+    componentName: ResourceName;
+    /**
+     * A token that indicates the location of the next output in the array of outputs, after the list of outputs that was previously requested.
+     */
+    nextToken?: EmptyNextToken;
+  }
+  export interface ListComponentOutputsOutput {
+    /**
+     * A token that indicates the location of the next output in the array of outputs, after the list of outputs that was previously requested.
+     */
+    nextToken?: EmptyNextToken;
+    /**
+     * An array of component Infrastructure as Code (IaC) outputs.
+     */
+    outputs: OutputsList;
+  }
+  export interface ListComponentProvisionedResourcesInput {
+    /**
+     * The name of the component whose provisioned resources you want.
+     */
+    componentName: ResourceName;
+    /**
+     * A token that indicates the location of the next provisioned resource in the array of provisioned resources, after the list of provisioned resources that was previously requested.
+     */
+    nextToken?: EmptyNextToken;
+  }
+  export interface ListComponentProvisionedResourcesOutput {
+    /**
+     * A token that indicates the location of the next provisioned resource in the array of provisioned resources, after the current requested list of provisioned resources.
+     */
+    nextToken?: EmptyNextToken;
+    /**
+     * An array of provisioned resources for a component.
+     */
+    provisionedResources: ProvisionedResourceList;
+  }
+  export interface ListComponentsInput {
+    /**
+     * The name of an environment for result list filtering. Proton returns components associated with the environment or attached to service instances running in it.
+     */
+    environmentName?: ResourceName;
+    /**
+     * The maximum number of components to list.
+     */
+    maxResults?: MaxPageResults;
+    /**
+     * A token that indicates the location of the next component in the array of components, after the list of components that was previously requested.
+     */
+    nextToken?: NextToken;
+    /**
+     * The name of a service instance for result list filtering. Proton returns the component attached to the service instance, if any.
+     */
+    serviceInstanceName?: ResourceName;
+    /**
+     * The name of a service for result list filtering. Proton returns components attached to service instances of the service.
+     */
+    serviceName?: ResourceName;
+  }
+  export interface ListComponentsOutput {
+    /**
+     * An array of components with summary data.
+     */
+    components: ComponentSummaryList;
+    /**
+     * A token that indicates the location of the next component in the array of components, after the current requested list of components.
+     */
+    nextToken?: NextToken;
+  }
   export interface ListEnvironmentAccountConnectionsInput {
     /**
      * The environment name that's associated with each listed environment account connection.
@@ -1762,7 +2129,7 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next environment account connection in the array of environment account connections, after the list of environment account connections that was previously requested.
+     * A token that indicates the location of the next environment account connection in the array of environment account connections, after the list of environment account connections that was previously requested.
      */
     nextToken?: NextToken;
     /**
@@ -1780,7 +2147,7 @@ declare namespace Proton {
      */
     environmentAccountConnections: EnvironmentAccountConnectionSummaryList;
     /**
-     * A token to indicate the location of the next environment account connection in the array of environment account connections, after the current requested list of environment account connections.
+     * A token that indicates the location of the next environment account connection in the array of environment account connections, after the current requested list of environment account connections.
      */
     nextToken?: NextToken;
   }
@@ -1790,13 +2157,13 @@ declare namespace Proton {
      */
     environmentName: ResourceName;
     /**
-     * A token to indicate the location of the next environment output in the array of environment outputs, after the list of environment outputs that was previously requested.
+     * A token that indicates the location of the next environment output in the array of environment outputs, after the list of environment outputs that was previously requested.
      */
     nextToken?: EmptyNextToken;
   }
   export interface ListEnvironmentOutputsOutput {
     /**
-     * A token to indicate the location of the next environment output in the array of environment outputs, after the current requested list of environment outputs.
+     * A token that indicates the location of the next environment output in the array of environment outputs, after the current requested list of environment outputs.
      */
     nextToken?: EmptyNextToken;
     /**
@@ -1810,13 +2177,13 @@ declare namespace Proton {
      */
     environmentName: ResourceName;
     /**
-     * A token to indicate the location of the next environment provisioned resource in the array of environment provisioned resources, after the list of environment provisioned resources that was previously requested.
+     * A token that indicates the location of the next environment provisioned resource in the array of environment provisioned resources, after the list of environment provisioned resources that was previously requested.
      */
     nextToken?: EmptyNextToken;
   }
   export interface ListEnvironmentProvisionedResourcesOutput {
     /**
-     * A token to indicate the location of the next environment provisioned resource in the array of provisioned resources, after the current requested list of environment provisioned resources.
+     * A token that indicates the location of the next environment provisioned resource in the array of provisioned resources, after the current requested list of environment provisioned resources.
      */
     nextToken?: EmptyNextToken;
     /**
@@ -1834,7 +2201,7 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next major or minor version in the array of major or minor versions of an environment template, after the list of major or minor versions that was previously requested.
+     * A token that indicates the location of the next major or minor version in the array of major or minor versions of an environment template, after the list of major or minor versions that was previously requested.
      */
     nextToken?: NextToken;
     /**
@@ -1844,7 +2211,7 @@ declare namespace Proton {
   }
   export interface ListEnvironmentTemplateVersionsOutput {
     /**
-     * A token to indicate the location of the next major or minor version in the array of major or minor versions of an environment template, after the list of major or minor versions that was previously requested.
+     * A token that indicates the location of the next major or minor version in the array of major or minor versions of an environment template, after the list of major or minor versions that was previously requested.
      */
     nextToken?: NextToken;
     /**
@@ -1858,13 +2225,13 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next environment template in the array of environment templates, after the list of environment templates that was previously requested.
+     * A token that indicates the location of the next environment template in the array of environment templates, after the list of environment templates that was previously requested.
      */
     nextToken?: NextToken;
   }
   export interface ListEnvironmentTemplatesOutput {
     /**
-     * A token to indicate the location of the next environment template in the array of environment templates, after the current requested list of environment templates.
+     * A token that indicates the location of the next environment template in the array of environment templates, after the current requested list of environment templates.
      */
     nextToken?: NextToken;
     /**
@@ -1882,7 +2249,7 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next environment in the array of environments, after the list of environments that was previously requested.
+     * A token that indicates the location of the next environment in the array of environments, after the list of environments that was previously requested.
      */
     nextToken?: NextToken;
   }
@@ -1892,7 +2259,7 @@ declare namespace Proton {
      */
     environments: EnvironmentSummaryList;
     /**
-     * A token to indicate the location of the next environment in the array of environments, after the current requested list of environments.
+     * A token that indicates the location of the next environment in the array of environments, after the current requested list of environments.
      */
     nextToken?: NextToken;
   }
@@ -1902,13 +2269,13 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next repository in the array of repositories, after the list of repositories previously requested.
+     * A token that indicates the location of the next repository in the array of repositories, after the list of repositories previously requested.
      */
     nextToken?: NextToken;
   }
   export interface ListRepositoriesOutput {
     /**
-     * A token to indicate the location of the next repository in the array of repositories, after the current requested list of repositories. 
+     * A token that indicates the location of the next repository in the array of repositories, after the current requested list of repositories. 
      */
     nextToken?: NextToken;
     /**
@@ -1918,7 +2285,7 @@ declare namespace Proton {
   }
   export interface ListRepositorySyncDefinitionsInput {
     /**
-     * A token to indicate the location of the next repository sync definition in the array of repository sync definitions, after the list of repository sync definitions previously requested.
+     * A token that indicates the location of the next repository sync definition in the array of repository sync definitions, after the list of repository sync definitions previously requested.
      */
     nextToken?: EmptyNextToken;
     /**
@@ -1936,7 +2303,7 @@ declare namespace Proton {
   }
   export interface ListRepositorySyncDefinitionsOutput {
     /**
-     * A token to indicate the location of the next repository sync definition in the array of repository sync definitions, after the current requested list of repository sync definitions.
+     * A token that indicates the location of the next repository sync definition in the array of repository sync definitions, after the current requested list of repository sync definitions.
      */
     nextToken?: EmptyNextToken;
     /**
@@ -1946,45 +2313,45 @@ declare namespace Proton {
   }
   export interface ListServiceInstanceOutputsInput {
     /**
-     * A token to indicate the location of the next output in the array of outputs, after the list of outputs that was previously requested.
+     * A token that indicates the location of the next output in the array of outputs, after the list of outputs that was previously requested.
      */
     nextToken?: EmptyNextToken;
     /**
-     * The service instance name.
+     * The name of the service instance whose outputs you want.
      */
     serviceInstanceName: ResourceName;
     /**
-     * The service name.
+     * The name of the service that serviceInstanceName is associated to.
      */
     serviceName: ResourceName;
   }
   export interface ListServiceInstanceOutputsOutput {
     /**
-     * A token to indicate the location of the next output in the array of outputs, after the current requested list of outputs.
+     * A token that indicates the location of the next output in the array of outputs, after the current requested list of outputs.
      */
     nextToken?: EmptyNextToken;
     /**
-     * An array of service instance infrastructure as code outputs.
+     * An array of service instance Infrastructure as Code (IaC) outputs.
      */
     outputs: OutputsList;
   }
   export interface ListServiceInstanceProvisionedResourcesInput {
     /**
-     * A token to indicate the location of the next provisioned resource in the array of provisioned resources, after the list of provisioned resources that was previously requested.
+     * A token that indicates the location of the next provisioned resource in the array of provisioned resources, after the list of provisioned resources that was previously requested.
      */
     nextToken?: EmptyNextToken;
     /**
-     * The service instance name.
+     * The name of the service instance whose provisioned resources you want.
      */
     serviceInstanceName: ResourceName;
     /**
-     * The service name.
+     * The name of the service that serviceInstanceName is associated to.
      */
     serviceName: ResourceName;
   }
   export interface ListServiceInstanceProvisionedResourcesOutput {
     /**
-     * A token to indicate the location of the next provisioned resource in the array of provisioned resources, after the current requested list of provisioned resources.
+     * A token that indicates the location of the next provisioned resource in the array of provisioned resources, after the current requested list of provisioned resources.
      */
     nextToken?: EmptyNextToken;
     /**
@@ -1998,7 +2365,7 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next service in the array of service instances, after the list of service instances that was previously requested.
+     * A token that indicates the location of the next service in the array of service instances, after the list of service instances that was previously requested.
      */
     nextToken?: NextToken;
     /**
@@ -2008,47 +2375,47 @@ declare namespace Proton {
   }
   export interface ListServiceInstancesOutput {
     /**
-     * A token to indicate the location of the next service instance in the array of service instances, after the current requested list of service instances.
+     * A token that indicates the location of the next service instance in the array of service instances, after the current requested list of service instances.
      */
     nextToken?: NextToken;
     /**
-     * An array of service instances with summaries of detail data.
+     * An array of service instances with summary data.
      */
     serviceInstances: ServiceInstanceSummaryList;
   }
   export interface ListServicePipelineOutputsInput {
     /**
-     * A token to indicate the location of the next output in the array of outputs, after the list of outputs that was previously requested.
+     * A token that indicates the location of the next output in the array of outputs, after the list of outputs that was previously requested.
      */
     nextToken?: EmptyNextToken;
     /**
-     * The service name.
+     * The name of the service whose pipeline's outputs you want.
      */
     serviceName: ResourceName;
   }
   export interface ListServicePipelineOutputsOutput {
     /**
-     * A token to indicate the location of the next output in the array of outputs, after the current requested list of outputs.
+     * A token that indicates the location of the next output in the array of outputs, after the current requested list of outputs.
      */
     nextToken?: EmptyNextToken;
     /**
-     * An array of outputs.
+     * An array of service pipeline Infrastructure as Code (IaC) outputs.
      */
     outputs: OutputsList;
   }
   export interface ListServicePipelineProvisionedResourcesInput {
     /**
-     * A token to indicate the location of the next provisioned resource in the array of provisioned resources, after the list of provisioned resources that was previously requested.
+     * A token that indicates the location of the next provisioned resource in the array of provisioned resources, after the list of provisioned resources that was previously requested.
      */
     nextToken?: EmptyNextToken;
     /**
-     * The service name.
+     * The name of the service whose pipeline's provisioned resources you want.
      */
     serviceName: ResourceName;
   }
   export interface ListServicePipelineProvisionedResourcesOutput {
     /**
-     * A token to indicate the location of the next provisioned resource in the array of provisioned resources, after the current requested list of provisioned resources.
+     * A token that indicates the location of the next provisioned resource in the array of provisioned resources, after the current requested list of provisioned resources.
      */
     nextToken?: EmptyNextToken;
     /**
@@ -2066,7 +2433,7 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next major or minor version in the array of major or minor versions of a service template, after the list of major or minor versions that was previously requested.
+     * A token that indicates the location of the next major or minor version in the array of major or minor versions of a service template, after the list of major or minor versions that was previously requested.
      */
     nextToken?: NextToken;
     /**
@@ -2076,7 +2443,7 @@ declare namespace Proton {
   }
   export interface ListServiceTemplateVersionsOutput {
     /**
-     * A token to indicate the location of the next major or minor version in the array of major or minor versions of a service template, after the current requested list of service major or minor versions.
+     * A token that indicates the location of the next major or minor version in the array of major or minor versions of a service template, after the current requested list of service major or minor versions.
      */
     nextToken?: NextToken;
     /**
@@ -2090,13 +2457,13 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next service template in the array of service templates, after the list of service templates previously requested.
+     * A token that indicates the location of the next service template in the array of service templates, after the list of service templates previously requested.
      */
     nextToken?: NextToken;
   }
   export interface ListServiceTemplatesOutput {
     /**
-     * A token to indicate the location of the next service template in the array of service templates, after the current requested list of service templates.
+     * A token that indicates the location of the next service template in the array of service templates, after the current requested list of service templates.
      */
     nextToken?: NextToken;
     /**
@@ -2110,13 +2477,13 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next service in the array of services, after the list of services that was previously requested.
+     * A token that indicates the location of the next service in the array of services, after the list of services that was previously requested.
      */
     nextToken?: NextToken;
   }
   export interface ListServicesOutput {
     /**
-     * A token to indicate the location of the next service in the array of services, after the current requested list of services.
+     * A token that indicates the location of the next service in the array of services, after the current requested list of services.
      */
     nextToken?: NextToken;
     /**
@@ -2130,7 +2497,7 @@ declare namespace Proton {
      */
     maxResults?: MaxPageResults;
     /**
-     * A token to indicate the location of the next resource tag in the array of resource tags, after the list of resource tags that was previously requested.
+     * A token that indicates the location of the next resource tag in the array of resource tags, after the list of resource tags that was previously requested.
      */
     nextToken?: String;
     /**
@@ -2140,11 +2507,11 @@ declare namespace Proton {
   }
   export interface ListTagsForResourceOutput {
     /**
-     * A token to indicate the location of the next resource tag in the array of resource tags, after the current requested list of resource tags.
+     * A token that indicates the location of the next resource tag in the array of resource tags, after the current requested list of resource tags.
      */
     nextToken?: String;
     /**
-     * An array of resource tags with detail data.
+     * A list of resource tags with detail data.
      */
     tags: TagList;
   }
@@ -2170,9 +2537,10 @@ declare namespace Proton {
     /**
      * The deployment status message for your provisioned resource.
      */
-    statusMessage?: SyntheticNotifyResourceDeploymentStatusChangeInputString;
+    statusMessage?: NotifyResourceDeploymentStatusChangeInputStatusMessageString;
   }
   export type NotifyResourceDeploymentStatusChangeInputOutputsList = Output[];
+  export type NotifyResourceDeploymentStatusChangeInputStatusMessageString = string;
   export interface NotifyResourceDeploymentStatusChangeOutput {
   }
   export interface Output {
@@ -2199,7 +2567,7 @@ declare namespace Proton {
      */
     name?: ProvisionedResourceName;
     /**
-     * The resource provisioning engine.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+     * The resource provisioning engine. At this time, CLOUDFORMATION can be used for Amazon Web Services-managed provisioning, and TERRAFORM can be used for self-managed provisioning. For more information, see Self-managed provisioning in the Proton Administrator Guide.
      */
     provisioningEngine?: ProvisionedResourceEngine;
   }
@@ -2348,6 +2716,7 @@ declare namespace Proton {
   export type RepositorySyncStatus = "INITIATED"|"IN_PROGRESS"|"SUCCEEDED"|"FAILED"|"QUEUED"|string;
   export type ResourceDeploymentStatus = "IN_PROGRESS"|"FAILED"|"SUCCEEDED"|string;
   export type ResourceName = string;
+  export type ResourceNameOrEmpty = string;
   export interface ResourceSyncAttempt {
     /**
      * An array of events with detail data.
@@ -2443,7 +2812,7 @@ declare namespace Proton {
      */
     createdAt: Timestamp;
     /**
-     * A description of a service.
+     * A description of the service.
      */
     description?: Description;
     /**
@@ -2498,7 +2867,7 @@ declare namespace Proton {
      */
     deploymentStatus: DeploymentStatus;
     /**
-     * A service instance deployment status message.
+     * The message associated with the service instance deployment status.
      */
     deploymentStatusMessage?: StatusMessage;
     /**
@@ -2742,6 +3111,8 @@ declare namespace Proton {
     recommendedVersion?: FullTemplateVersionNumber;
   }
   export type ServiceTemplateSummaryList = ServiceTemplateSummary[];
+  export type ServiceTemplateSupportedComponentSourceInputList = ServiceTemplateSupportedComponentSourceType[];
+  export type ServiceTemplateSupportedComponentSourceType = "DIRECTLY_DEFINED"|string;
   export interface ServiceTemplateVersion {
     /**
      * The Amazon Resource Name (ARN) of the version of a service template.
@@ -2787,6 +3158,10 @@ declare namespace Proton {
      * A service template version status message.
      */
     statusMessage?: StatusMessage;
+    /**
+     * An array of supported component sources. Components with supported sources can be attached to service instances based on this service template version. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    supportedComponentSources?: ServiceTemplateSupportedComponentSourceInputList;
     /**
      * The name of the version of a service template.
      */
@@ -2841,7 +3216,6 @@ declare namespace Proton {
   export type String = string;
   export type Subdirectory = string;
   export type SyncType = "TEMPLATE_SYNC"|string;
-  export type SyntheticNotifyResourceDeploymentStatusChangeInputString = string;
   export interface Tag {
     /**
      * The key of the resource tag.
@@ -2857,17 +3231,19 @@ declare namespace Proton {
   export type TagList = Tag[];
   export interface TagResourceInput {
     /**
-     * The Amazon Resource Name (ARN) of the resource that the resource tag is applied to.
+     * The Amazon Resource Name (ARN) of the Proton resource to apply customer tags to.
      */
     resourceArn: Arn;
     /**
-     * An array of resource tags to apply to a resource.
+     * A list of customer tags to apply to the Proton resource.
      */
     tags: TagList;
   }
   export interface TagResourceOutput {
   }
   export type TagValue = string;
+  export type TemplateFileContents = string;
+  export type TemplateManifestContents = string;
   export type TemplateSchema = string;
   export interface TemplateSyncConfig {
     /**
@@ -2907,11 +3283,11 @@ declare namespace Proton {
   export type Timestamp = Date;
   export interface UntagResourceInput {
     /**
-     * The Amazon Resource Name (ARN) of the resource that the tag is to be removed from.
+     * The Amazon Resource Name (ARN) of the resource to remove customer tags from.
      */
     resourceArn: Arn;
     /**
-     * An array of tag keys indicating the resource tags to be removed from the resource.
+     * A list of customer tag keys that indicate the customer tags to be removed from the resource.
      */
     tagKeys: TagKeyList;
   }
@@ -2919,29 +3295,69 @@ declare namespace Proton {
   }
   export interface UpdateAccountSettingsInput {
     /**
-     * The repository that you provide with pull request provisioning.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+     * A repository for pipeline provisioning. Specify it if you have environments configured for self-managed provisioning with services that include pipelines.
      */
     pipelineProvisioningRepository?: RepositoryBranchInput;
     /**
-     * The Amazon Resource Name (ARN) of the Proton pipeline service role.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+     * The Amazon Resource Name (ARN) of the service role you want to use for provisioning pipelines. Assumed by Proton for Amazon Web Services-managed provisioning, and by customer-owned automation for self-managed provisioning.
      */
     pipelineServiceRoleArn?: PipelineRoleArn;
   }
   export interface UpdateAccountSettingsOutput {
     /**
-     * The Proton pipeline service role repository detail data that's returned by Proton.
+     * The Proton pipeline service role and repository data shared across the Amazon Web Services account.
      */
     accountSettings: AccountSettings;
   }
+  export interface UpdateComponentInput {
+    /**
+     * The deployment type. It defines the mode for updating a component, as follows:     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated. You can only specify description in this mode.     CURRENT_VERSION  In this mode, the component is deployed and updated with the new serviceSpec, templateSource, and/or type that you provide. Only requested parameters are updated.  
+     */
+    deploymentType: ComponentDeploymentUpdateType;
+    /**
+     * An optional customer-provided description of the component.
+     */
+    description?: Description;
+    /**
+     * The name of the component to update.
+     */
+    name: ResourceName;
+    /**
+     * The name of the service instance that you want to attach this component to. Don't specify to keep the component's current service instance attachment. Specify an empty string to detach the component from the service instance it's attached to. Specify non-empty values for both serviceInstanceName and serviceName or for neither of them.
+     */
+    serviceInstanceName?: ResourceNameOrEmpty;
+    /**
+     * The name of the service that serviceInstanceName is associated with. Don't specify to keep the component's current service instance attachment. Specify an empty string to detach the component from the service instance it's attached to. Specify non-empty values for both serviceInstanceName and serviceName or for neither of them.
+     */
+    serviceName?: ResourceNameOrEmpty;
+    /**
+     * The service spec that you want the component to use to access service inputs. Set this only when the component is attached to a service instance.
+     */
+    serviceSpec?: SpecContents;
+    /**
+     * A path to the Infrastructure as Code (IaC) file describing infrastructure that a custom component provisions.  Components support a single IaC file, even if you use Terraform as your template language. 
+     */
+    templateFile?: TemplateFileContents;
+  }
+  export interface UpdateComponentOutput {
+    /**
+     * The detailed data of the updated component.
+     */
+    component: Component;
+  }
   export interface UpdateEnvironmentAccountConnectionInput {
+    /**
+     * The Amazon Resource Name (ARN) of the IAM service role that Proton uses when provisioning directly defined components in the associated environment account. It determines the scope of infrastructure that a component can provision in the account. The environment account connection must have a componentRoleArn to allow directly defined components to be associated with any environments running in the account. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    componentRoleArn?: Arn;
     /**
      * The ID of the environment account connection to update.
      */
     id: EnvironmentAccountConnectionId;
     /**
-     * The Amazon Resource Name (ARN) of the IAM service role that is associated with the environment account connection to update.
+     * The Amazon Resource Name (ARN) of the IAM service role that's associated with the environment account connection to update.
      */
-    roleArn: Arn;
+    roleArn?: Arn;
   }
   export interface UpdateEnvironmentAccountConnectionOutput {
     /**
@@ -2951,7 +3367,11 @@ declare namespace Proton {
   }
   export interface UpdateEnvironmentInput {
     /**
-     * There are four modes for updating an environment as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the environment is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that is higher than the major version in use and a minor version (optional).  
+     * The Amazon Resource Name (ARN) of the IAM service role that Proton uses when provisioning directly defined components in this environment. It determines the scope of infrastructure that a component can provision. The environment must have a componentRoleArn to allow directly defined components to be associated with the environment. For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    componentRoleArn?: Arn;
+    /**
+     * There are four modes for updating an environment. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the environment is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include major or minor version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the environment is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that is higher than the major version in use and a minor version (optional).  
      */
     deploymentType: DeploymentUpdateType;
     /**
@@ -2971,7 +3391,7 @@ declare namespace Proton {
      */
     protonServiceRoleArn?: Arn;
     /**
-     * The repository that you provide with pull request provisioning.  Provisioning by pull request is currently in feature preview and is only usable with Terraform based Proton Templates. To learn more about Amazon Web Services Feature Preview terms, see section 2 on Beta and Previews. 
+     * The infrastructure repository that you use to host your rendered infrastructure templates for self-managed provisioning.
      */
     provisioningRepository?: RepositoryBranchInput;
     /**
@@ -3057,7 +3477,7 @@ declare namespace Proton {
   }
   export interface UpdateServiceInstanceInput {
     /**
-     * The deployment type. There are four modes for updating a service instance as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service instance is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service instance is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service instance is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that is higher than the major version in use and a minor version (optional).  
+     * The deployment type. It defines the mode for updating a service instance, as follows:     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service instance is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include major or minor version parameters when you use this deployment type.     MINOR_VERSION  In this mode, the service instance is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service instance is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can specify a different major version that's higher than the major version in use and a minor version.  
      */
     deploymentType: DeploymentUpdateType;
     /**
@@ -3083,7 +3503,7 @@ declare namespace Proton {
   }
   export interface UpdateServiceInstanceOutput {
     /**
-     * The service instance summary data returned by Proton.
+     * The service instance summary data that's returned by Proton.
      */
     serviceInstance: ServiceInstance;
   }
@@ -3095,7 +3515,7 @@ declare namespace Proton {
   }
   export interface UpdateServicePipelineInput {
     /**
-     * The deployment type. There are four modes for updating a service pipeline as described in the following. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service pipeline is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include minor or major version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can also specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can also specify a different major version that is higher than the major version in use and a minor version (optional).  
+     * The deployment type. There are four modes for updating a service pipeline. The deploymentType field defines the mode.     NONE  In this mode, a deployment doesn't occur. Only the requested metadata parameters are updated.     CURRENT_VERSION  In this mode, the service pipeline is deployed and updated with the new spec that you provide. Only requested parameters are updated. Don’t include major or minor version parameters when you use this deployment-type.     MINOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) minor version of the current major version in use, by default. You can specify a different minor version of the current major version in use.     MAJOR_VERSION  In this mode, the service pipeline is deployed and updated with the published, recommended (latest) major and minor version of the current template, by default. You can specify a different major version that's higher than the major version in use and a minor version.  
      */
     deploymentType: DeploymentUpdateType;
     /**
@@ -3117,7 +3537,7 @@ declare namespace Proton {
   }
   export interface UpdateServicePipelineOutput {
     /**
-     * The pipeline details returned by Proton.
+     * The pipeline details that are returned by Proton.
      */
     pipeline: ServicePipeline;
   }
@@ -3127,7 +3547,7 @@ declare namespace Proton {
      */
     description?: Description;
     /**
-     * The name of the service template to update as displayed in the developer interface.
+     * The name of the service template to update that's displayed in the developer interface.
      */
     displayName?: DisplayName;
     /**
@@ -3143,7 +3563,7 @@ declare namespace Proton {
   }
   export interface UpdateServiceTemplateVersionInput {
     /**
-     * An array of compatible environment names for a service template major or minor version to update.
+     * An array of environment template objects that are compatible with this service template version. A service instance based on this service template version can run in environments based on compatible templates.
      */
     compatibleEnvironmentTemplates?: CompatibleEnvironmentTemplateInputList;
     /**
@@ -3163,6 +3583,10 @@ declare namespace Proton {
      */
     status?: TemplateVersionStatus;
     /**
+     * An array of supported component sources. Components with supported sources can be attached to service instances based on this service template version.  A change to supportedComponentSources doesn't impact existing component attachments to instances based on this template version. A change only affects later associations.  For more information about components, see Proton components in the Proton Administrator Guide.
+     */
+    supportedComponentSources?: ServiceTemplateSupportedComponentSourceInputList;
+    /**
      * The name of the service template.
      */
     templateName: ResourceName;
@@ -3179,7 +3603,7 @@ declare namespace Proton {
      */
     branch: GitBranchName;
     /**
-     * The name of the repository, for example myrepos/myrepo.
+     * The name of the repository (for example, myrepos/myrepo).
      */
     repositoryName: RepositoryName;
     /**

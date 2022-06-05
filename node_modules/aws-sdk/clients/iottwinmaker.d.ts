@@ -20,11 +20,11 @@ declare class IoTTwinMaker extends Service {
    */
   batchPutPropertyValues(callback?: (err: AWSError, data: IoTTwinMaker.Types.BatchPutPropertyValuesResponse) => void): Request<IoTTwinMaker.Types.BatchPutPropertyValuesResponse, AWSError>;
   /**
-   * Creates a component type.   TwinMaker is in public preview and is subject to change.  
+   * Creates a component type.
    */
   createComponentType(params: IoTTwinMaker.Types.CreateComponentTypeRequest, callback?: (err: AWSError, data: IoTTwinMaker.Types.CreateComponentTypeResponse) => void): Request<IoTTwinMaker.Types.CreateComponentTypeResponse, AWSError>;
   /**
-   * Creates a component type.   TwinMaker is in public preview and is subject to change.  
+   * Creates a component type.
    */
   createComponentType(callback?: (err: AWSError, data: IoTTwinMaker.Types.CreateComponentTypeResponse) => void): Request<IoTTwinMaker.Types.CreateComponentTypeResponse, AWSError>;
   /**
@@ -515,7 +515,7 @@ declare namespace IoTTwinMaker {
   }
   export interface DataConnector {
     /**
-     * A Boolean value that specifies whether the data connector is native to TwinMaker.
+     * A Boolean value that specifies whether the data connector is native to IoT TwinMaker.
      */
     isNative?: Boolean;
     /**
@@ -886,7 +886,11 @@ declare namespace IoTTwinMaker {
     /**
      * The date and time of the latest property value to return.
      */
-    endDateTime: Timestamp;
+    endDateTime?: Timestamp;
+    /**
+     * The ISO8601 DateTime of the latest property value to return. For more information about the ISO8601 DateTime format, see the data type PropertyValue.
+     */
+    endTime?: Time;
     /**
      * The ID of the entity.
      */
@@ -918,7 +922,11 @@ declare namespace IoTTwinMaker {
     /**
      * The date and time of the earliest property value to return.
      */
-    startDateTime: Timestamp;
+    startDateTime?: Timestamp;
+    /**
+     * The ISO8601 DateTime of the earliest property value to return. For more information about the ISO8601 DateTime format, see the data type PropertyValue.
+     */
+    startTime?: Time;
     /**
      * The ID of the workspace.
      */
@@ -1121,6 +1129,10 @@ declare namespace IoTTwinMaker {
      */
     componentTypeId?: ComponentTypeId;
     /**
+     * The external-Id property of a component. The external-Id property is the primary key of an external storage system.
+     */
+    externalId?: String;
+    /**
      * The parent of the entities in the list.
      */
     parentEntityId?: ParentEntityId;
@@ -1128,7 +1140,7 @@ declare namespace IoTTwinMaker {
   export type ListEntitiesFilters = ListEntitiesFilter[];
   export interface ListEntitiesRequest {
     /**
-     * A list of objects that filter the request.
+     * A list of objects that filter the request.  Only one object is accepted as a valid input. 
      */
     filters?: ListEntitiesFilters;
     /**
@@ -1365,12 +1377,16 @@ declare namespace IoTTwinMaker {
     value?: DataValue;
   }
   export type PropertyResponses = {[key: string]: PropertyResponse};
-  export type PropertyUpdateType = "UPDATE"|"DELETE"|string;
+  export type PropertyUpdateType = "UPDATE"|"DELETE"|"CREATE"|string;
   export interface PropertyValue {
+    /**
+     * ISO8601 DateTime of a value for a time series property. The time for when the property value was recorded in ISO 8601 format: YYYY-MM-DDThh:mm:ss[.SSSSSSSSS][Z/±HH:mm].    [YYYY]: year    [MM]: month    [DD]: day    [hh]: hour    [mm]: minute    [ss]: seconds    [.SSSSSSSSS]: additional precision, where precedence is maintained. For example: [.573123] is equal to 573123000 nanoseconds.    Z: default timezone UTC    ± HH:mm: time zone offset in Hours and Minutes.    Required sub-fields: YYYY-MM-DDThh:mm:ss and [Z/±HH:mm]
+     */
+    time?: Time;
     /**
      * The timestamp of a value for a time series property.
      */
-    timestamp: Timestamp;
+    timestamp?: Timestamp;
     /**
      * An object that specifies a value for a time series property.
      */
@@ -1481,6 +1497,7 @@ declare namespace IoTTwinMaker {
   export interface TagResourceResponse {
   }
   export type TagValue = string;
+  export type Time = string;
   export type Timestamp = Date;
   export type TwinMakerArn = string;
   export type Type = "RELATIONSHIP"|"STRING"|"LONG"|"BOOLEAN"|"INTEGER"|"DOUBLE"|"LIST"|"MAP"|string;

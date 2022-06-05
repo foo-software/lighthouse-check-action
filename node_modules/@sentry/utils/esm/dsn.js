@@ -1,6 +1,6 @@
 import { __read } from "tslib";
-import { isDebugBuild } from './env';
 import { SentryError } from './error';
+import { IS_DEBUG_BUILD } from './flags';
 /** Regular expression used to parse a Dsn. */
 var DSN_REGEX = /^(?:(\w+):)\/\/(?:(\w+)(?::(\w+))?@)([\w.-]+)(?::(\d+))?\/(.+)/;
 function isValidProtocol(protocol) {
@@ -59,7 +59,7 @@ function dsnFromComponents(components) {
     };
 }
 function validateDsn(dsn) {
-    if (!isDebugBuild()) {
+    if (!IS_DEBUG_BUILD) {
         return;
     }
     var port = dsn.port, projectId = dsn.projectId, protocol = dsn.protocol;

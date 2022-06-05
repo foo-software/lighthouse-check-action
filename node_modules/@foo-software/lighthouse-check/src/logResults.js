@@ -44,7 +44,11 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
       Object.values(result.scores)
     ];
     console.log('\n');
-    console.log(table(tableData, tableConfig));
+    if (result.runtimeError) {
+      console.log(`Lighthouse runtime error: ${result.runtimeError}`);
+    } else {
+      console.log(table(tableData, tableConfig));
+    }
     console.log('\n');
   });
 

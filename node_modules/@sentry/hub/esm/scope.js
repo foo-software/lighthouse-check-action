@@ -1,5 +1,5 @@
 import { __assign, __read, __spread } from "tslib";
-import { dateTimestampInSeconds, getGlobalObject, isPlainObject, isThenable, SyncPromise } from '@sentry/utils';
+import { dateTimestampInSeconds, getGlobalSingleton, isPlainObject, isThenable, SyncPromise } from '@sentry/utils';
 /**
  * Absolute maximum number of breadcrumbs added to an event.
  * The `maxBreadcrumbs` option cannot be higher than this value.
@@ -429,12 +429,7 @@ export { Scope };
  * Returns the global event processors.
  */
 function getGlobalEventProcessors() {
-    /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access  */
-    var global = getGlobalObject();
-    global.__SENTRY__ = global.__SENTRY__ || {};
-    global.__SENTRY__.globalEventProcessors = global.__SENTRY__.globalEventProcessors || [];
-    return global.__SENTRY__.globalEventProcessors;
-    /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
+    return getGlobalSingleton('globalEventProcessors', function () { return []; });
 }
 /**
  * Add a EventProcessor to be kept globally.

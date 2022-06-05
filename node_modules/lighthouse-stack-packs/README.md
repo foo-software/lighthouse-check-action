@@ -12,13 +12,14 @@ Many developers today use different technologies (backend/CMS/JavaScript framewo
 
 ## Supported
 
-* WordPress
-* Drupal
-* React
-* Angular
 * AMP
+* Angular
+* Drupal
 * Magento
 * Next.js
+* Nuxt
+* React
+* WordPress
 
 ## Contributing
 

@@ -1,6 +1,7 @@
 import { __read } from "tslib";
-import { isDebugBuild, logger, SentryError } from '@sentry/utils';
+import { logger, SentryError } from '@sentry/utils';
 import { initAPIDetails } from './api';
+import { IS_DEBUG_BUILD } from './flags';
 import { createEventEnvelope, createSessionEnvelope } from './request';
 import { NoopTransport } from './transports/noop';
 /**
@@ -12,7 +13,7 @@ var BaseBackend = /** @class */ (function () {
     function BaseBackend(options) {
         this._options = options;
         if (!this._options.dsn) {
-            isDebugBuild() && logger.warn('No DSN provided, backend will not do anything.');
+            IS_DEBUG_BUILD && logger.warn('No DSN provided, backend will not do anything.');
         }
         this._transport = this._setupTransport();
     }
@@ -41,12 +42,12 @@ var BaseBackend = /** @class */ (function () {
             var api = initAPIDetails(this._options.dsn, this._options._metadata, this._options.tunnel);
             var env = createEventEnvelope(event, api);
             void this._newTransport.send(env).then(null, function (reason) {
-                isDebugBuild() && logger.error('Error while sending event:', reason);
+                IS_DEBUG_BUILD && logger.error('Error while sending event:', reason);
             });
         }
         else {
             void this._transport.sendEvent(event).then(null, function (reason) {
-                isDebugBuild() && logger.error('Error while sending event:', reason);
+                IS_DEBUG_BUILD && logger.error('Error while sending event:', reason);
             });
         }
     };
@@ -55,7 +56,7 @@ var BaseBackend = /** @class */ (function () {
      */
     BaseBackend.prototype.sendSession = function (session) {
         if (!this._transport.sendSession) {
-            isDebugBuild() && logger.warn("Dropping session because custom transport doesn't implement sendSession");
+            IS_DEBUG_BUILD && logger.warn("Dropping session because custom transport doesn't implement sendSession");
             return;
         }
         // TODO(v7): Remove the if-else
@@ -66,12 +67,12 @@ var BaseBackend = /** @class */ (function () {
             var api = initAPIDetails(this._options.dsn, this._options._metadata, this._options.tunnel);
             var _a = __read(createSessionEnvelope(session, api), 1), env = _a[0];
             void this._newTransport.send(env).then(null, function (reason) {
-                isDebugBuild() && logger.error('Error while sending session:', reason);
+                IS_DEBUG_BUILD && logger.error('Error while sending session:', reason);
             });
         }
         else {
             void this._transport.sendSession(session).then(null, function (reason) {
-                isDebugBuild() && logger.error('Error while sending session:', reason);
+                IS_DEBUG_BUILD && logger.error('Error while sending session:', reason);
             });
         }
     };

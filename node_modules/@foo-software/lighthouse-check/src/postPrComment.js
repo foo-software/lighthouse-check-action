@@ -5,7 +5,7 @@ import LighthouseCheckError from './LighthouseCheckError';
 import { ERROR_UNEXPECTED_RESPONSE } from './errorCodes';
 import { NAME } from './constants';
 
-const getBadge = ({ title, score }) =>
+const getBadge = ({ title, score = 0 }) =>
   `![](https://img.shields.io/badge/${title}-${score}-${getLighthouseScoreColor(
     {
       isHex: false,
@@ -42,6 +42,11 @@ export default async ({
           score: result.scores[current]
         });
       });
+
+      // error
+      if (result.runtimeError) {
+        markdown += `**Lighthouse runtime error**: ${result.runtimeError}\n\n`;
+      }
 
       // table header
       markdown += `\n| Device ${!result.report ? '' : `| Report `}| URL |\n`;

@@ -438,10 +438,8 @@ class GatherRunner {
     }
 
     try {
-      if (baseArtifacts.WebAppManifest) {
-        baseArtifacts.InstallabilityErrors = await InstallabilityErrors.getInstallabilityErrors(
-          passContext.driver.defaultSession);
-      }
+      baseArtifacts.InstallabilityErrors = await InstallabilityErrors.getInstallabilityErrors(
+        passContext.driver.defaultSession);
     } catch (err) {
       log.error('GatherRunner InstallabilityErrors', err);
       baseArtifacts.InstallabilityErrors = {

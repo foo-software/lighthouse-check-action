@@ -46,6 +46,8 @@ describe('ReportRendererAxe', () => {
           'heading-order': {enabled: true},
           'meta-viewport': {enabled: true},
           'aria-treeitem-name': {enabled: true},
+          // TODO: re-enable. https://github.com/GoogleChrome/lighthouse/issues/13918
+          'color-contrast': {enabled: false},
         },
       };
 
@@ -76,21 +78,7 @@ describe('ReportRendererAxe', () => {
           message: v.nodes.map((n) => n.failureSummary).join('\n'),
         };
       });
-      expect(axeSummary).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "id": "duplicate-id",
-    "message": "Fix any of the following:
-  Document has multiple static elements with the same id attribute: viewport
-Fix any of the following:
-  Document has multiple static elements with the same id attribute: image-alt
-Fix any of the following:
-  Document has multiple static elements with the same id attribute: document-title",
-  },
-]
-`);
-
-      expect(axeResults.violations).toMatchSnapshot();
+      expect(axeSummary).toMatchSnapshot();
     },
     // This test takes 10s on fast hardware, but can take longer in CI.
     // https://github.com/dequelabs/axe-core/tree/b573b1c1/doc/examples/jest_react#timeout-issues

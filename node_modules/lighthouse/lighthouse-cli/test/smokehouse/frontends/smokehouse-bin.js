@@ -17,7 +17,7 @@ import path from 'path';
 import fs from 'fs';
 import url from 'url';
 
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep.js';
 import yargs from 'yargs';
 import * as yargsHelpers from 'yargs/helpers';
 import log from 'lighthouse-logger';
@@ -25,8 +25,6 @@ import log from 'lighthouse-logger';
 import {runSmokehouse, getShardedDefinitions} from '../smokehouse.js';
 import {updateTestDefnFormat} from './back-compat-util.js';
 import {LH_ROOT} from '../../../../root.js';
-
-const {cloneDeep} = _;
 
 const coreTestDefnsPath =
   path.join(LH_ROOT, 'lighthouse-cli/test/smokehouse/core-tests.js');

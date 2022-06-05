@@ -1,7 +1,8 @@
 import { __assign, __read, __spread, __values } from "tslib";
 /* eslint-disable max-lines */
 import { Scope } from '@sentry/hub';
-import { checkOrSetAlreadyCaught, dateTimestampInSeconds, isDebugBuild, isPlainObject, isPrimitive, isThenable, logger, makeDsn, normalize, rejectedSyncPromise, resolvedSyncPromise, SentryError, SyncPromise, truncate, uuid4, } from '@sentry/utils';
+import { checkOrSetAlreadyCaught, dateTimestampInSeconds, isPlainObject, isPrimitive, isThenable, logger, makeDsn, normalize, rejectedSyncPromise, resolvedSyncPromise, SentryError, SyncPromise, truncate, uuid4, } from '@sentry/utils';
+import { IS_DEBUG_BUILD } from './flags';
 import { setupIntegrations } from './integration';
 var ALREADY_SEEN_ERROR = "Not capturing exception because it's already been captured.";
 /**
@@ -62,7 +63,7 @@ var BaseClient = /** @class */ (function () {
         var _this = this;
         // ensure we haven't captured this very object before
         if (checkOrSetAlreadyCaught(exception)) {
-            isDebugBuild() && logger.log(ALREADY_SEEN_ERROR);
+            IS_DEBUG_BUILD && logger.log(ALREADY_SEEN_ERROR);
             return;
         }
         var eventId = hint && hint.event_id;
@@ -96,7 +97,7 @@ var BaseClient = /** @class */ (function () {
     BaseClient.prototype.captureEvent = function (event, hint, scope) {
         // ensure we haven't captured this very object before
         if (hint && hint.originalException && checkOrSetAlreadyCaught(hint.originalException)) {
-            isDebugBuild() && logger.log(ALREADY_SEEN_ERROR);
+            IS_DEBUG_BUILD && logger.log(ALREADY_SEEN_ERROR);
             return;
         }
         var eventId = hint && hint.event_id;
@@ -110,11 +111,11 @@ var BaseClient = /** @class */ (function () {
      */
     BaseClient.prototype.captureSession = function (session) {
         if (!this._isEnabled()) {
-            isDebugBuild() && logger.warn('SDK not enabled, will not capture session.');
+            IS_DEBUG_BUILD && logger.warn('SDK not enabled, will not capture session.');
             return;
         }
         if (!(typeof session.release === 'string')) {
-            isDebugBuild() && logger.warn('Discarded session because of missing or non-string release');
+            IS_DEBUG_BUILD && logger.warn('Discarded session because of missing or non-string release');
         }
         else {
             this._sendSession(session);
@@ -177,7 +178,7 @@ var BaseClient = /** @class */ (function () {
             return this._integrations[integration.id] || null;
         }
         catch (_oO) {
-            isDebugBuild() && logger.warn("Cannot retrieve integration " + integration.id + " from the current Client");
+            IS_DEBUG_BUILD && logger.warn("Cannot retrieve integration " + integration.id + " from the current Client");
             return null;
         }
     };
@@ -297,7 +298,7 @@ var BaseClient = /** @class */ (function () {
             if (evt) {
                 // TODO this is more of the hack trying to solve https://github.com/getsentry/sentry-javascript/issues/2809
                 // it is only attached as extra data to the event if the event somehow skips being normalized
-                evt.sdkProcessingMetadata = __assign(__assign({}, evt.sdkProcessingMetadata), { normalizeDepth: normalize(normalizeDepth) });
+                evt.sdkProcessingMetadata = __assign(__assign({}, evt.sdkProcessingMetadata), { normalizeDepth: normalize(normalizeDepth) + " (" + typeof normalizeDepth + ")" });
             }
             if (typeof normalizeDepth === 'number' && normalizeDepth > 0) {
                 return _this._normalizeEvent(evt, normalizeDepth, normalizeMaxBreadth);
@@ -402,7 +403,7 @@ var BaseClient = /** @class */ (function () {
         return this._processEvent(event, hint, scope).then(function (finalEvent) {
             return finalEvent.event_id;
         }, function (reason) {
-            isDebugBuild() && logger.error(reason);
+            IS_DEBUG_BUILD && logger.error(reason);
             return undefined;
         });
     };

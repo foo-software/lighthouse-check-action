@@ -13,12 +13,10 @@
 
 /* eslint-disable no-console */
 
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep.js';
 
 import smokeTests from '../core-tests.js';
 import {runSmokehouse, getShardedDefinitions} from '../smokehouse.js';
-
-const {cloneDeep} = _;
 
 /**
  * @param {Smokehouse.SmokehouseLibOptions} options

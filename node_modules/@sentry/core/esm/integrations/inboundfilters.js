@@ -1,5 +1,6 @@
 import { __read, __spread } from "tslib";
-import { getEventDescription, isDebugBuild, isMatchingPattern, logger } from '@sentry/utils';
+import { getEventDescription, isMatchingPattern, logger } from '@sentry/utils';
+import { IS_DEBUG_BUILD } from '../flags';
 // "Script error." is hard coded into browsers for errors that it can't read.
 // this is the result of a script being pulled in from an external domain and CORS.
 var DEFAULT_IGNORE_ERRORS = [/^Script error\.?$/, /^Javascript error: Script error\.? on line 0$/];
@@ -52,22 +53,22 @@ export function _mergeOptions(internalOptions, clientOptions) {
 /** JSDoc */
 export function _shouldDropEvent(event, options) {
     if (options.ignoreInternal && _isSentryError(event)) {
-        isDebugBuild() &&
+        IS_DEBUG_BUILD &&
             logger.warn("Event dropped due to being internal Sentry Error.\nEvent: " + getEventDescription(event));
         return true;
     }
     if (_isIgnoredError(event, options.ignoreErrors)) {
-        isDebugBuild() &&
+        IS_DEBUG_BUILD &&
             logger.warn("Event dropped due to being matched by `ignoreErrors` option.\nEvent: " + getEventDescription(event));
         return true;
     }
     if (_isDeniedUrl(event, options.denyUrls)) {
-        isDebugBuild() &&
+        IS_DEBUG_BUILD &&
             logger.warn("Event dropped due to being matched by `denyUrls` option.\nEvent: " + getEventDescription(event) + ".\nUrl: " + _getEventFilterUrl(event));
         return true;
     }
     if (!_isAllowedUrl(event, options.allowUrls)) {
-        isDebugBuild() &&
+        IS_DEBUG_BUILD &&
             logger.warn("Event dropped due to not being matched by `allowUrls` option.\nEvent: " + getEventDescription(event) + ".\nUrl: " + _getEventFilterUrl(event));
         return true;
     }
@@ -107,7 +108,7 @@ function _getPossibleEventMessages(event) {
             return ["" + value, type + ": " + value];
         }
         catch (oO) {
-            isDebugBuild() && logger.error("Cannot extract message for event " + getEventDescription(event));
+            IS_DEBUG_BUILD && logger.error("Cannot extract message for event " + getEventDescription(event));
             return [];
         }
     }
@@ -150,7 +151,7 @@ function _getEventFilterUrl(event) {
         return frames_1 ? _getLastValidUrl(frames_1) : null;
     }
     catch (oO) {
-        isDebugBuild() && logger.error("Cannot extract url for event " + getEventDescription(event));
+        IS_DEBUG_BUILD && logger.error("Cannot extract url for event " + getEventDescription(event));
         return null;
     }
 }

@@ -122,6 +122,7 @@ export const localLighthouse = async ({
     localReport,
     report,
     emulatedFormFactor,
+    runtimeError: get(result, 'runtimeError.message'),
     scores
   };
 };

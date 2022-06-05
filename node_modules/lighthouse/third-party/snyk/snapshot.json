@@ -116,14 +116,14 @@
       {"id":"SNYK-JS-LODASH-1040724","severity":"high","semver":{"vulnerable":["<4.17.21"]}},
       {"id":"SNYK-JS-LODASH-1018905","severity":"medium","semver":{"vulnerable":["<4.17.21"]}},
       {"id":"SNYK-JS-LODASH-608086","severity":"high","semver":{"vulnerable":["<4.17.17"]}},
-      {"id":"SNYK-JS-LODASH-590103","severity":"critical","semver":{"vulnerable":["<4.17.20"]}},
-      {"id":"SNYK-JS-LODASH-567746","severity":"medium","semver":{"vulnerable":["<4.17.16"]}},
+      {"id":"SNYK-JS-LODASH-567746","severity":"high","semver":{"vulnerable":["<4.17.20"]}},
       {"id":"SNYK-JS-LODASH-450202","severity":"high","semver":{"vulnerable":["<4.17.12"]}},
       {"id":"SNYK-JS-LODASH-73639","severity":"medium","semver":{"vulnerable":["<4.17.11"]}},
       {"id":"SNYK-JS-LODASH-73638","severity":"high","semver":{"vulnerable":["<4.17.11"]}},
       {"id":"npm:lodash:20180130","severity":"medium","semver":{"vulnerable":["<4.17.5"]}}
     ],
     "moment":[
+      {"id":"SNYK-JS-MOMENT-2440688","severity":"high","semver":{"vulnerable":["<2.29.2"]}},
       {"id":"npm:moment:20170905","severity":"low","semver":{"vulnerable":["<2.19.3"]}},
       {"id":"npm:moment:20161019","severity":"medium","semver":{"vulnerable":["<2.15.2"]}},
       {"id":"npm:moment:20160126","severity":"medium","semver":{"vulnerable":["<2.11.2"]}}
@@ -160,7 +160,6 @@
       {"id":"npm:socket.io:20120323","severity":"medium","semver":{"vulnerable":["<0.9.7"]}}
     ],
     "three":[
-      {"id":"SNYK-JS-THREE-2359738","severity":"medium","semver":{"vulnerable":["<=0.124.0"]}},
       {"id":"SNYK-JS-THREE-1064931","severity":"high","semver":{"vulnerable":["<0.125.0"]}}
     ],
     "underscore":[
