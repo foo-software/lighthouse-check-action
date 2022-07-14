@@ -137,6 +137,9 @@ export const getLocalLighthouseResultsWithRetries = async ({
   let lighthouseAuditResult;
   try {
     lighthouseAuditResult = await localLighthousePromise(auditConfig);
+    if (lighthouseAuditResult.runtimeError) {
+      throw Error(lighthouseAuditResult.runtimeError);
+    }
     if (maxRetries && retries) {
       console.log(`Succeeded on retry #${retries}.`);
     }
