@@ -9,20 +9,20 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
-      - uses: amondnet/now-deployment@master
-        id: now
+      - uses: amondnet/vercel-action@master
+        id: vercelAction
         with:
           github-comment: false
-          zeit-token: ${{ secrets.ZEIT_NOW_TOKEN }}
-          now-org-id: ${{ secrets.ZEIT_NOW_ORG_ID }}
-          now-project-id: ${{ secrets.ZEIT_NOW_PROJECT_ID }}
+          vercel-token: ${{ secrets.ZEIT_NOW_TOKEN }}
+          vercel-org-id: ${{ secrets.ZEIT_NOW_ORG_ID }}
+          vercel-project-id: ${{ secrets.ZEIT_NOW_PROJECT_ID }}
       - name: Run Lighthouse
         uses: ./
         with:
           extraHeaders: '{ "x-test-1": "hello world", "x-test-2": "foo" }'
           fooApiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
           outputDirectory: ${{ github.workspace }}/tmp/artifacts
-          urlsJson: '[["cf8b27b3-ccb8-4477-83b6-ded2c375f977", "${{ steps.now.outputs.preview-url }}"]]'
+          urlsJson: '[["cf8b27b3-ccb8-4477-83b6-ded2c375f977", "${{ steps.vercelAction.outputs.preview-url }}"]]'
       - name: Upload artifacts
         uses: actions/upload-artifact@master
         with:
