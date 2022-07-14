@@ -7,7 +7,7 @@ import postPrComment from './postPrComment';
 import slackNotify from './slackNotify';
 import writeResults from './helpers/writeResults';
 import { NAME, SUCCESS_CODE_GENERIC } from './constants';
-import { ERROR_NO_RESULTS } from './errorCodes';
+import { ERROR_NO_RESULTS, ERROR_RUNTIME } from './errorCodes';
 import logResults from './logResults';
 
 export default ({
@@ -189,7 +189,13 @@ export default ({
           verbose
         });
 
-        if (!lighthouseAudits.length) {
+        if (lighthouseAudits.runtimeError) {
+          reject(
+            new LighthouseCheckError(lighthouseAudits.runtimeError, {
+              code: ERROR_RUNTIME
+            })
+          );
+        } else if (!lighthouseAudits.length) {
           reject(
             new LighthouseCheckError('Something went wrong - no results.', {
               code: ERROR_NO_RESULTS
