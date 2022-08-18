@@ -51,7 +51,7 @@
     ]
   },
   "dependencies": {
-    "@actions/core": "^1.6.0",
+    "@actions/core": "^1.9.1",
     "@actions/github": "^5.0.0",
     "@foo-software/lighthouse-check": "^7.0.0",
     "express": "^4.17.1",
