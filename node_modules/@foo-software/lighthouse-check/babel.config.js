@@ -10,5 +10,4 @@ module.exports = {
       },
     ],
   ],
-  ignore: [/node_modules\/(?!node-fetch)/],
 };
