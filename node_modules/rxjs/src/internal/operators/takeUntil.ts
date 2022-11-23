@@ -1,6 +1,6 @@
 import { MonoTypeOperatorFunction, ObservableInput } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { innerFrom } from '../observable/innerFrom';
 import { noop } from '../util/noop';
 
@@ -20,10 +20,11 @@ import { noop } from '../util/noop';
  * then `takeUntil` will pass all values.
  *
  * ## Example
+ *
  * Tick every second until the first click happens
+ *
  * ```ts
- * import { fromEvent, interval } from 'rxjs';
- * import { takeUntil } from 'rxjs/operators';
+ * import { interval, fromEvent, takeUntil } from 'rxjs';
  *
  * const source = interval(1000);
  * const clicks = fromEvent(document, 'click');
@@ -44,7 +45,7 @@ import { noop } from '../util/noop';
  */
 export function takeUntil<T>(notifier: ObservableInput<any>): MonoTypeOperatorFunction<T> {
   return operate((source, subscriber) => {
-    innerFrom(notifier).subscribe(new OperatorSubscriber(subscriber, () => subscriber.complete(), noop));
+    innerFrom(notifier).subscribe(createOperatorSubscriber(subscriber, () => subscriber.complete(), noop));
     !subscriber.closed && source.subscribe(subscriber);
   });
 }

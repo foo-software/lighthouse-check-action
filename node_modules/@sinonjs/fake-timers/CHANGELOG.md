@@ -1,4 +1,32 @@
 
+9.1.2 / 2022-04-13
+==================
+
+  * Prohibit faking of faked timers (#426)
+
+9.1.1 / 2022-03-05
+==================
+
+  * fix(timer.refresh): should just change `callAt` (#425)
+
+9.1.0 / 2022-02-03
+==================
+
+  * add hasRef (#419)
+
+9.0.0 / 2022-01-28
+==================
+
+  * Breaking: remove Node 10 from running tests
+  * chore(ci): do not hard code node versions (#417)
+  * chore: test on node 17 (#416)
+  * fix global performance node 16 (#412)
+  * Bump node-fetch from 2.6.1 to 2.6.7 (#414)
+  * Bump cached-path-relative from 1.0.2 to 1.1.0 (#413)
+  * Clarify async usage (#411)
+  * Faking performance when not present should throw an error (and minor changes) - fix for #374  (#400)
+  * Add performance to config.toFake
+
 8.1.0 / 2021-11-03
 ==================
 

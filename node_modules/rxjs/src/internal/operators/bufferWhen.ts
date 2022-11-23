@@ -2,7 +2,7 @@ import { Subscriber } from '../Subscriber';
 import { ObservableInput, OperatorFunction } from '../types';
 import { operate } from '../util/lift';
 import { noop } from '../util/noop';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { innerFrom } from '../observable/innerFrom';
 
 /**
@@ -13,7 +13,7 @@ import { innerFrom } from '../observable/innerFrom';
  * starts collecting values, it calls a function that returns an Observable that
  * tells when to close the buffer and restart collecting.</span>
  *
- * ![](bufferWhen.png)
+ * ![](bufferWhen.svg)
  *
  * Opens a buffer immediately, then closes the buffer when the observable
  * returned by calling `closingSelector` function emits a value. When it closes
@@ -24,16 +24,14 @@ import { innerFrom } from '../observable/innerFrom';
  * Emit an array of the last clicks every [1-5] random seconds
  *
  * ```ts
- * import { fromEvent, interval } from 'rxjs';
- * import { bufferWhen } from 'rxjs/operators';
+ * import { fromEvent, bufferWhen, interval } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
- * const buffered = clicks.pipe(bufferWhen(() =>
- *   interval(1000 + Math.random() * 4000)
- * ));
+ * const buffered = clicks.pipe(
+ *   bufferWhen(() => interval(1000 + Math.random() * 4000))
+ * );
  * buffered.subscribe(x => console.log(x));
  * ```
- *
  *
  * @see {@link buffer}
  * @see {@link bufferCount}
@@ -59,7 +57,7 @@ export function bufferWhen<T>(closingSelector: () => ObservableInput<any>): Oper
     // the current buffer  if there is one, starts a new buffer, and starts a
     // new closing notifier.
     const openBuffer = () => {
-      // Make sure to teardown the closing subscription, we only cared
+      // Make sure to finalize the closing subscription, we only cared
       // about one notification.
       closingSubscriber?.unsubscribe();
       // emit the buffer if we have one, and start a new buffer.
@@ -68,7 +66,7 @@ export function bufferWhen<T>(closingSelector: () => ObservableInput<any>): Oper
       b && subscriber.next(b);
 
       // Get a new closing notifier and subscribe to it.
-      innerFrom(closingSelector()).subscribe((closingSubscriber = new OperatorSubscriber(subscriber, openBuffer, noop)));
+      innerFrom(closingSelector()).subscribe((closingSubscriber = createOperatorSubscriber(subscriber, openBuffer, noop)));
     };
 
     // Start the first buffer.
@@ -76,7 +74,7 @@ export function bufferWhen<T>(closingSelector: () => ObservableInput<any>): Oper
 
     // Subscribe to our source.
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         // Add every new value to the current buffer.
         (value) => buffer?.push(value),
@@ -88,7 +86,7 @@ export function bufferWhen<T>(closingSelector: () => ObservableInput<any>): Oper
         },
         // Pass all errors through to consumer.
         undefined,
-        // Release memory on teardown
+        // Release memory on finalization
         () => (buffer = closingSubscriber = null!)
       )
     );

@@ -6,7 +6,15 @@
 //                 Griffin Yourick <https://github.com/tough-griff>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-import { RawSourceMap } from '@cspotcode/source-map-consumer';
+export interface RawSourceMap {
+    version: 3;
+    sources: string[];
+    names: string[];
+    sourceRoot?: string;
+    sourcesContent?: string[];
+    mappings: string;
+    file: string;
+}
 
 /**
  * Output of retrieveSourceMap().

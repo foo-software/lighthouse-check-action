@@ -1,9 +1,14 @@
 # Disallow commented out tests (`no-commented-out-tests`)
 
+⚠️ This rule _warns_ in the ✅ `recommended`
+[config](https://github.com/jest-community/eslint-plugin-jest/blob/main/README.md#shareable-configurations).
+
+<!-- end auto-generated rule header -->
+
 This rule raises a warning about commented out tests. It's similar to
 no-disabled-tests rule.
 
-## Rule Details
+## Rule details
 
 The rule uses fuzzy matching to do its best to determine what constitutes a
 commented out test, checking for a presence of `it(`, `describe(`, `it.skip(`,

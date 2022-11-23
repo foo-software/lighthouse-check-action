@@ -8,7 +8,7 @@ import { Subscription } from '../Subscription';
 import { mapOneOrManyArgs } from '../util/mapOneOrManyArgs';
 import { popResultSelector, popScheduler } from '../util/args';
 import { createObject } from '../util/createObject';
-import { OperatorSubscriber } from '../operators/OperatorSubscriber';
+import { createOperatorSubscriber } from '../operators/OperatorSubscriber';
 import { AnyCatcher } from '../AnyCatcher';
 import { executeSchedule } from '../util/executeSchedule';
 
@@ -110,9 +110,11 @@ export function combineLatest<T extends Record<string, ObservableInput<any>>>(
  * will error immediately as well, and all other Observables will be unsubscribed.
  *
  * ## Examples
- * ### Combine two timer Observables
+ *
+ * Combine two timer Observables
+ *
  * ```ts
- * import { combineLatest, timer } from 'rxjs';
+ * import { timer, combineLatest } from 'rxjs';
  *
  * const firstTimer = timer(0, 1000); // emit 0, 1, 2... after every second, starting from now
  * const secondTimer = timer(500, 1000); // emit 0, 1, 2... after every second, starting 0,5s from now
@@ -124,10 +126,11 @@ export function combineLatest<T extends Record<string, ObservableInput<any>>>(
  * // [1, 1] after 1.5s
  * // [2, 1] after 2s
  * ```
- * ### Combine a dictionary of Observables
+ *
+ * Combine a dictionary of Observables
+ *
  * ```ts
- * import { combineLatest, of } from 'rxjs';
- * import { delay, startWith } from 'rxjs/operators';
+ * import { of, delay, startWith, combineLatest } from 'rxjs';
  *
  * const observables = {
  *   a: of(1).pipe(delay(1000), startWith(0)),
@@ -137,20 +140,21 @@ export function combineLatest<T extends Record<string, ObservableInput<any>>>(
  * const combined = combineLatest(observables);
  * combined.subscribe(value => console.log(value));
  * // Logs
- * // {a: 0, b: 0, c: 0} immediately
- * // {a: 1, b: 0, c: 0} after 1s
- * // {a: 1, b: 5, c: 0} after 5s
- * // {a: 1, b: 5, c: 10} after 10s
+ * // { a: 0, b: 0, c: 0 } immediately
+ * // { a: 1, b: 0, c: 0 } after 1s
+ * // { a: 1, b: 5, c: 0 } after 5s
+ * // { a: 1, b: 5, c: 10 } after 10s
  * ```
- * ### Combine an array of Observables
+ *
+ * Combine an array of Observables
+ *
  * ```ts
- * import { combineLatest, of } from 'rxjs';
- * import { delay, startWith } from 'rxjs/operators';
+ * import { of, delay, startWith, combineLatest } from 'rxjs';
  *
  * const observables = [1, 5, 10].map(
  *   n => of(n).pipe(
- *     delay(n * 1000),   // emit 0 and then emit n after n seconds
- *     startWith(0),
+ *     delay(n * 1000), // emit 0 and then emit n after n seconds
+ *     startWith(0)
  *   )
  * );
  * const combined = combineLatest(observables);
@@ -162,11 +166,10 @@ export function combineLatest<T extends Record<string, ObservableInput<any>>>(
  * // [1, 5, 10] after 10s
  * ```
  *
+ * Use map operator to dynamically calculate the Body-Mass Index
  *
- * ### Use map operator to dynamically calculate the Body-Mass Index
  * ```ts
- * import { combineLatest, of } from 'rxjs';
- * import { map } from 'rxjs/operators';
+ * import { of, combineLatest, map } from 'rxjs';
  *
  * const weight = of(70, 72, 76, 79, 75);
  * const height = of(1.76, 1.77, 1.78);
@@ -202,7 +205,7 @@ export function combineLatest<O extends ObservableInput<any>, R>(...args: any[])
   const { args: observables, keys } = argsArgArrayOrObject(args);
 
   if (observables.length === 0) {
-    // If no observables are passed, or someone has passed an ampty array
+    // If no observables are passed, or someone has passed an empty array
     // of observables, or even an empty object POJO, we need to just
     // complete (EMPTY), but we have to honor the scheduler provided if any.
     return from([], scheduler as any);
@@ -253,7 +256,7 @@ export function combineLatestInit(
               const source = from(observables[i], scheduler as any);
               let hasFirstValue = false;
               source.subscribe(
-                new OperatorSubscriber(
+                createOperatorSubscriber(
                   subscriber,
                   (value) => {
                     // When we get a value, record it in our set of values.

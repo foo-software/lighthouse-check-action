@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -19,19 +23,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const utils_1 = require("@typescript-eslint/utils");
 const util = __importStar(require("../util"));
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
 exports.default = util.createRule({
     name: 'no-implicit-any-catch',
     meta: {
+        deprecated: true,
         type: 'suggestion',
         docs: {
             description: 'Disallow usage of the implicit `any` type in catch clauses',
-            category: 'Best Practices',
             recommended: false,
-            suggestion: true,
         },
         fixable: 'code',
+        hasSuggestions: true,
         messages: {
             implicitAnyInCatch: 'Implicit any in catch clause.',
             explicitAnyInCatch: 'Explicit any in catch clause.',
@@ -43,6 +47,7 @@ exports.default = util.createRule({
                 additionalProperties: false,
                 properties: {
                     allowExplicitAny: {
+                        description: 'Whether to disallow specifying `: any` as the error type as well. See also `no-explicit-any`.',
                         type: 'boolean',
                     },
                 },
@@ -76,7 +81,7 @@ exports.default = util.createRule({
                 }
                 else if (!allowExplicitAny &&
                     node.param.typeAnnotation.typeAnnotation.type ===
-                        experimental_utils_1.AST_NODE_TYPES.TSAnyKeyword) {
+                        utils_1.AST_NODE_TYPES.TSAnyKeyword) {
                     context.report({
                         node,
                         messageId: 'explicitAnyInCatch',

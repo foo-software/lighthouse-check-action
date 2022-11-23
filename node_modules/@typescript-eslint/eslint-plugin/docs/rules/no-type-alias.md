@@ -1,4 +1,10 @@
-# Disallow the use of type aliases (`no-type-alias`)
+---
+description: 'Disallow type aliases.'
+---
+
+> 🛑 This file is source code, not the primary documentation location! 🛑
+>
+> See **https://typescript-eslint.io/rules/no-type-alias** for documentation.
 
 In TypeScript, type aliases serve three purposes:
 
@@ -72,24 +78,12 @@ On the other hand, using a type alias as an interface can limit your ability to:
 Finally, mapping types is an advanced technique and leaving it open can quickly become a pain point
 in your application.
 
-## Rule Details
+## Examples
 
 This rule disallows the use of type aliases in favor of interfaces
 and simplified types (primitives, tuples, unions, intersections, etc).
 
 ## Options
-
-This rule, in its default state, does not require any argument. If you would like to enable one
-or more of the following you may pass an object with the options set as follows:
-
-- `allowAliases` set to `"always"` will allow you to do aliasing (Defaults to `"never"`).
-- `allowCallbacks` set to `"always"` will allow you to use type aliases with callbacks (Defaults to `"never"`)
-- `allowConditionalTypes` set to `"always"` will allow you to use type aliases with conditional types (Defaults to `"never"`)
-- `allowConstructors` set to `"always"` will allow you to use type aliases with constructors (Defaults to `"never"`)
-- `allowLiterals` set to `"always"` will allow you to use type aliases with literal objects (Defaults to `"never"`)
-- `allowMappedTypes` set to `"always"` will allow you to use type aliases as mapping tools (Defaults to `"never"`)
-- `allowTupleTypes` set to `"always"` will allow you to use type aliases with tuples (Defaults to `"never"`)
-- `allowGenerics` set to `"always"` will allow you to use type aliases with generics (Defaults to `"never"`)
 
 ### `allowAliases`
 
@@ -116,6 +110,8 @@ type Foo = string | string[];
 
 type Foo = string & string[];
 
+type Foo = `foo-${number}`;
+
 // reference types
 interface Bar {}
 class Baz implements Bar {}
@@ -137,6 +133,8 @@ type Foo = string;
 
 type Foo = string & string[];
 
+type Foo = `foo-${number}`;
+
 // reference types
 interface Bar {}
 class Baz implements Bar {}
@@ -153,6 +151,8 @@ Examples of **correct** code for the `{ "allowAliases": "in-unions" }` option:
 type Foo = 'a' | 'b';
 
 type Foo = string | string[];
+
+type Foo = `a-${number}` | `b-${number}`;
 
 // reference types
 interface Bar {}
@@ -173,6 +173,8 @@ type Foo = string;
 
 type Foo = string | string[];
 
+type Foo = `a-${number}` | `b-${number}`;
+
 // reference types
 interface Bar {}
 class Baz implements Bar {}
@@ -188,6 +190,8 @@ Examples of **correct** code for the `{ "allowAliases": "in-intersections" }` op
 // primitives
 type Foo = string & string[];
 
+type Foo = `a-${number}` & `b-${number}`;
+
 // reference types
 interface Bar {}
 class Baz implements Bar {}
@@ -202,6 +206,8 @@ Examples of **incorrect** code for the `{ "allowAliases": "in-unions-and-interse
 type Foo = 'a';
 
 type Foo = string;
+
+type Foo = `foo-${number}`;
 
 // reference types
 interface Bar {}
@@ -219,6 +225,10 @@ type Foo = 'a' | 'b';
 type Foo = string | string[];
 
 type Foo = string & string[];
+
+type Foo = `a-${number}` & `b-${number}`;
+
+type Foo = `a-${number}` | `b-${number}`;
 
 // reference types
 interface Bar {}
@@ -406,8 +416,9 @@ type Foo<T, U> =
 
 type Foo<T, U> = { [P in keyof T]?: T[P] } | { [P in keyof U]?: U[P] };
 
-type Foo<T, U> = { readonly [P in keyof T]: T[P] } &
-  { readonly [P in keyof U]: U[P] };
+type Foo<T, U> = { readonly [P in keyof T]: T[P] } & {
+  readonly [P in keyof U]: U[P];
+};
 
 type Foo<T, U> = { [P in keyof T]?: T[P] } & { [P in keyof U]?: U[P] };
 ```
@@ -419,8 +430,9 @@ type Foo<T> = { readonly [P in keyof T]: T[P] };
 
 type Foo<T> = { [P in keyof T]?: T[P] };
 
-type Foo<T, U> = { readonly [P in keyof T]: T[P] } &
-  { readonly [P in keyof U]: U[P] };
+type Foo<T, U> = { readonly [P in keyof T]: T[P] } & {
+  readonly [P in keyof U]: U[P];
+};
 
 type Foo<T, U> = { [P in keyof T]?: T[P] } & { [P in keyof U]?: U[P] };
 ```
@@ -452,8 +464,9 @@ type Foo<T, U> = { [P in keyof T]?: T[P] } | { [P in keyof U]?: U[P] };
 Examples of **correct** code for the `{ "allowMappedTypes": "in-intersections" }` option:
 
 ```ts
-type Foo<T, U> = { readonly [P in keyof T]: T[P] } &
-  { readonly [P in keyof U]: U[P] };
+type Foo<T, U> = { readonly [P in keyof T]: T[P] } & {
+  readonly [P in keyof U]: U[P];
+};
 
 type Foo<T, U> = { [P in keyof T]?: T[P] } & { [P in keyof U]?: U[P] };
 ```
@@ -475,8 +488,9 @@ type Foo<T, U> =
 
 type Foo<T, U> = { [P in keyof T]?: T[P] } | { [P in keyof U]?: U[P] };
 
-type Foo<T, U> = { readonly [P in keyof T]: T[P] } &
-  { readonly [P in keyof U]: U[P] };
+type Foo<T, U> = { readonly [P in keyof T]: T[P] } & {
+  readonly [P in keyof U]: U[P];
+};
 
 type Foo<T, U> = { [P in keyof T]?: T[P] } & { [P in keyof U]?: U[P] };
 ```
@@ -585,8 +599,4 @@ callback, etc. that would cause the code to be unreadable or impractical.
 
 ## Further Reading
 
-- [Advance Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html)
-
-## Related to
-
-- TSLint: [interface-over-type-literal](https://palantir.github.io/tslint/rules/interface-over-type-literal/)
+- [Advanced Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html)

@@ -1,14 +1,14 @@
 import { Observable } from '../Observable';
 import { MonoTypeOperatorFunction } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { noop } from '../util/noop';
 
 /**
  * Returns an Observable that emits all items emitted by the source Observable that are distinct by comparison from previous items.
  *
- * If a keySelector function is provided, then it will project each value from the source observable into a new value that it will
- * check for equality with previously projected values. If a keySelector function is not provided, it will use each value from the
+ * If a `keySelector` function is provided, then it will project each value from the source observable into a new value that it will
+ * check for equality with previously projected values. If the `keySelector` function is not provided, it will use each value from the
  * source observable directly with an equality check against previous values.
  *
  * In JavaScript runtimes that support `Set`, this operator will use a `Set` to improve performance of the distinct value checking.
@@ -23,13 +23,10 @@ import { noop } from '../util/noop';
  * A simple example with numbers
  *
  * ```ts
- * import { of } from 'rxjs';
- * import { distinct } from 'rxjs/operators';
+ * import { of, distinct } from 'rxjs';
  *
  * of(1, 1, 2, 2, 2, 1, 2, 3, 4, 3, 2, 1)
- *   .pipe(
- *     distinct()
- *   )
+ *   .pipe(distinct())
  *   .subscribe(x => console.log(x));
  *
  * // Outputs
@@ -39,25 +36,18 @@ import { noop } from '../util/noop';
  * // 4
  * ```
  *
- * An example using a keySelector function
+ * An example using the `keySelector` function
  *
  * ```ts
- * import { of } from 'rxjs';
- * import { distinct } from 'rxjs/operators';
- *
- * interface Person {
- *    age: number,
- *    name: string
- * }
+ * import { of, distinct } from 'rxjs';
  *
  * of(
- *     { age: 4, name: 'Foo'},
- *     { age: 7, name: 'Bar'},
- *     { age: 5, name: 'Foo'}
- *   ).pipe(
- *     distinct((p: Person) => p.name)
- *   )
- *   .subscribe(x => console.log(x));
+ *   { age: 4, name: 'Foo'},
+ *   { age: 7, name: 'Bar'},
+ *   { age: 5, name: 'Foo'}
+ * )
+ * .pipe(distinct(({ name }) => name))
+ * .subscribe(x => console.log(x));
  *
  * // Outputs
  * // { age: 4, name: 'Foo' }
@@ -75,7 +65,7 @@ export function distinct<T, K>(keySelector?: (value: T) => K, flushes?: Observab
   return operate((source, subscriber) => {
     const distinctKeys = new Set();
     source.subscribe(
-      new OperatorSubscriber(subscriber, (value) => {
+      createOperatorSubscriber(subscriber, (value) => {
         const key = keySelector ? keySelector(value) : value;
         if (!distinctKeys.has(key)) {
           distinctKeys.add(key);
@@ -84,6 +74,6 @@ export function distinct<T, K>(keySelector?: (value: T) => K, flushes?: Observab
       })
     );
 
-    flushes?.subscribe(new OperatorSubscriber(subscriber, () => distinctKeys.clear(), noop));
+    flushes?.subscribe(createOperatorSubscriber(subscriber, () => distinctKeys.clear(), noop));
   });
 }

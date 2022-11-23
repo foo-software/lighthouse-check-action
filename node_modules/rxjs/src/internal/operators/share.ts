@@ -1,6 +1,5 @@
 import { Observable } from '../Observable';
-import { from } from '../observable/from';
-import { take } from '../operators/take';
+import { innerFrom } from '../observable/innerFrom';
 import { Subject } from '../Subject';
 import { SafeSubscriber } from '../Subscriber';
 import { Subscription } from '../Subscription';
@@ -68,45 +67,54 @@ export function share<T>(options: ShareConfig<T>): MonoTypeOperatorFunction<T>;
  * ![](share.png)
  *
  * ## Example
- * Generate new multicast Observable from the source Observable value
- * ```ts
- * import { interval } from 'rxjs';
- * import { share, map } from 'rxjs/operators';
  *
- * const source = interval(1000)
- *   .pipe(
- *         map((x: number) => {
- *             console.log('Processing: ', x);
- *             return x*x;
- *         }),
- *         share()
+ * Generate new multicast Observable from the `source` Observable value
+ *
+ * ```ts
+ * import { interval, tap, map, take, share } from 'rxjs';
+ *
+ * const source = interval(1000).pipe(
+ *   tap(x => console.log('Processing: ', x)),
+ *   map(x => x * x),
+ *   take(6),
+ *   share()
  * );
  *
  * source.subscribe(x => console.log('subscription 1: ', x));
  * source.subscribe(x => console.log('subscription 2: ', x));
  *
  * // Logs:
- * // Processing:  0
- * // subscription 1:  0
- * // subscription 2:  0
- * // Processing:  1
- * // subscription 1:  1
- * // subscription 2:  1
- * // Processing:  2
- * // subscription 1:  4
- * // subscription 2:  4
- * // Processing:  3
- * // subscription 1:  9
- * // subscription 2:  9
- * // ... and so on
+ * // Processing: 0
+ * // subscription 1: 0
+ * // subscription 2: 0
+ * // Processing: 1
+ * // subscription 1: 1
+ * // subscription 2: 1
+ * // Processing: 2
+ * // subscription 1: 4
+ * // subscription 2: 4
+ * // Processing: 3
+ * // subscription 1: 9
+ * // subscription 2: 9
+ * // Processing: 4
+ * // subscription 1: 16
+ * // subscription 2: 16
+ * // Processing: 5
+ * // subscription 1: 25
+ * // subscription 2: 25
  * ```
  *
  * ## Example with notifier factory: Delayed reset
- * ```ts
- * import { interval, timer } from 'rxjs';
- * import { share, take } from 'rxjs/operators';
  *
- * const source = interval(1000).pipe(take(3), share({ resetOnRefCountZero: () => timer(1000) }));
+ * ```ts
+ * import { interval, take, share, timer } from 'rxjs';
+ *
+ * const source = interval(1000).pipe(
+ *   take(3),
+ *   share({
+ *     resetOnRefCountZero: () => timer(1000)
+ *   })
+ * );
  *
  * const subscriptionOne = source.subscribe(x => console.log('subscription 1: ', x));
  * setTimeout(() => subscriptionOne.unsubscribe(), 1300);
@@ -128,8 +136,7 @@ export function share<T>(options: ShareConfig<T>): MonoTypeOperatorFunction<T>;
  * // subscription 3:  2
  * ```
  *
- * @see {@link api/index/function/interval}
- * @see {@link map}
+ * @see {@link shareReplay}
  *
  * @return A function that returns an Observable that mirrors the source.
  */
@@ -145,22 +152,22 @@ export function share<T>(options: ShareConfig<T> = {}): MonoTypeOperatorFunction
   // call to a source observable's `pipe` method - not when the static `pipe`
   // function is called.
   return (wrapperSource) => {
-    let connection: SafeSubscriber<T> | null = null;
-    let resetConnection: Subscription | null = null;
-    let subject: SubjectLike<T> | null = null;
+    let connection: SafeSubscriber<T> | undefined;
+    let resetConnection: Subscription | undefined;
+    let subject: SubjectLike<T> | undefined;
     let refCount = 0;
     let hasCompleted = false;
     let hasErrored = false;
 
     const cancelReset = () => {
       resetConnection?.unsubscribe();
-      resetConnection = null;
+      resetConnection = undefined;
     };
     // Used to reset the internal state to a "cold"
     // state, as though it had never been subscribed to.
     const reset = () => {
       cancelReset();
-      connection = subject = null;
+      connection = subject = undefined;
       hasCompleted = hasErrored = false;
     };
     const resetAndUnsubscribe = () => {
@@ -178,12 +185,12 @@ export function share<T>(options: ShareConfig<T> = {}): MonoTypeOperatorFunction
       }
 
       // Create the subject if we don't have one yet. Grab a local reference to
-      // it as well, which avoids non-null assertations when using it and, if we
+      // it as well, which avoids non-null assertions when using it and, if we
       // connect to it now, then error/complete need a reference after it was
       // reset.
       const dest = (subject = subject ?? connector());
 
-      // Add the teardown directly to the subscriber - instead of returning it -
+      // Add the finalization directly to the subscriber - instead of returning it -
       // so that the handling of the subscriber's unsubscription will be wired
       // up _before_ the subscription to the source occurs. This is done so that
       // the assignment to the source connection's `closed` property will be seen
@@ -203,7 +210,13 @@ export function share<T>(options: ShareConfig<T> = {}): MonoTypeOperatorFunction
       // Basically, `subscriber === dest.subscribe(subscriber)` is `true`.
       dest.subscribe(subscriber);
 
-      if (!connection) {
+      if (
+        !connection &&
+        // Check this shareReplay is still activate - it can be reset to 0
+        // and be "unsubscribed" _before_ it actually subscribes.
+        // If we were to subscribe then, it'd leak and get stuck.
+        refCount > 0
+      ) {
         // We need to create a subscriber here - rather than pass an observer and
         // assign the returned subscription to connection - because it's possible
         // for reentrant subscriptions to the shared observable to occur and in
@@ -224,7 +237,7 @@ export function share<T>(options: ShareConfig<T> = {}): MonoTypeOperatorFunction
             dest.complete();
           },
         });
-        from(source).subscribe(connection);
+        innerFrom(source).subscribe(connection);
       }
     })(wrapperSource);
   };
@@ -234,18 +247,22 @@ function handleReset<T extends unknown[] = never[]>(
   reset: () => void,
   on: boolean | ((...args: T) => Observable<any>),
   ...args: T
-): Subscription | null {
+): Subscription | undefined {
   if (on === true) {
     reset();
-
-    return null;
+    return;
   }
 
   if (on === false) {
-    return null;
+    return;
   }
 
-  return on(...args)
-    .pipe(take(1))
-    .subscribe(() => reset());
+  const onSubscriber = new SafeSubscriber({
+    next: () => {
+      onSubscriber.unsubscribe();
+      reset();
+    },
+  });
+
+  return on(...args).subscribe(onSubscriber);
 }

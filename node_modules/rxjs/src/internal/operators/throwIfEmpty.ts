@@ -1,7 +1,7 @@
 import { EmptyError } from '../util/EmptyError';
 import { MonoTypeOperatorFunction } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 
 /**
  * If the source observable completes without emitting a value, it will emit
@@ -11,21 +11,25 @@ import { OperatorSubscriber } from './OperatorSubscriber';
  * ![](throwIfEmpty.png)
  *
  * ## Example
+ *
+ * Throw an error if the document wasn't clicked within 1 second
+ *
  * ```ts
- * import { fromEvent, timer } from 'rxjs';
- * import { throwIfEmpty, takeUntil } from 'rxjs/operators';
+ * import { fromEvent, takeUntil, timer, throwIfEmpty } from 'rxjs';
  *
  * const click$ = fromEvent(document, 'click');
  *
  * click$.pipe(
  *   takeUntil(timer(1000)),
- *   throwIfEmpty(
- *     () => new Error('the document was not clicked within 1 second')
- *   ),
+ *   throwIfEmpty(() => new Error('The document was not clicked within 1 second'))
  * )
  * .subscribe({
- *   next() { console.log('The button was clicked'); },
- *   error(err) { console.error(err); }
+ *   next() {
+ *    console.log('The document was clicked');
+ *   },
+ *   error(err) {
+ *     console.error(err.message);
+ *   }
  * });
  * ```
  *
@@ -39,7 +43,7 @@ export function throwIfEmpty<T>(errorFactory: () => any = defaultErrorFactory): 
   return operate((source, subscriber) => {
     let hasValue = false;
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (value) => {
           hasValue = true;

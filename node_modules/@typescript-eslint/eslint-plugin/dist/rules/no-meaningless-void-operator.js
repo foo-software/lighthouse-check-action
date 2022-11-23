@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -19,22 +23,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
+const utils_1 = require("@typescript-eslint/utils");
 const tsutils = __importStar(require("tsutils"));
-const util = __importStar(require("../util"));
 const ts = __importStar(require("typescript"));
+const util = __importStar(require("../util"));
 exports.default = util.createRule({
     name: 'no-meaningless-void-operator',
     meta: {
         type: 'suggestion',
         docs: {
             description: 'Disallow the `void` operator except when used to discard a value',
-            category: 'Best Practices',
-            recommended: false,
-            suggestion: true,
+            recommended: 'strict',
             requiresTypeChecking: true,
         },
         fixable: 'code',
+        hasSuggestions: true,
         messages: {
             meaninglessVoidOperator: "void operator shouldn't be used on {{type}}; it should convey that a return value is being ignored",
             removeVoid: "Remove 'void'",
@@ -54,7 +57,7 @@ exports.default = util.createRule({
     },
     defaultOptions: [{ checkNever: false }],
     create(context, [{ checkNever }]) {
-        const parserServices = experimental_utils_1.ESLintUtils.getParserServices(context);
+        const parserServices = utils_1.ESLintUtils.getParserServices(context);
         const checker = parserServices.program.getTypeChecker();
         const sourceCode = context.getSourceCode();
         return {

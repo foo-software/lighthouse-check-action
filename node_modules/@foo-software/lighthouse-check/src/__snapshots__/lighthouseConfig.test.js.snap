@@ -1,25 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`config should match snapshot 1`] = `
-Object {
-  "desktop": Object {
+{
+  "desktop": {
     "extends": "lighthouse:default",
-    "settings": Object {
+    "settings": {
       "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Safari/537.36 Chrome-Lighthouse",
       "formFactor": "desktop",
       "maxWaitForFcp": 15000,
       "maxWaitForLoad": 35000,
-      "screenEmulation": Object {
+      "screenEmulation": {
         "deviceScaleFactor": 1,
         "disabled": false,
         "height": 940,
         "mobile": false,
         "width": 1350,
       },
-      "skipAudits": Array [
+      "skipAudits": [
         "uses-http2",
       ],
-      "throttling": Object {
+      "throttling": {
         "cpuSlowdownMultiplier": 1,
         "downloadThroughputKbps": 0,
         "requestLatencyMs": 0,
@@ -29,20 +29,20 @@ Object {
       },
     },
   },
-  "mobile": Object {
+  "mobile": {
     "extends": "lighthouse:default",
-    "settings": Object {
+    "settings": {
       "maxWaitForFcp": 15000,
       "maxWaitForLoad": 35000,
-      "skipAudits": Array [
+      "skipAudits": [
         "uses-http2",
       ],
     },
   },
-  "throttling": Object {
+  "throttling": {
     "DEVTOOLS_RTT_ADJUSTMENT_FACTOR": 3.75,
     "DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR": 0.9,
-    "desktopDense4G": Object {
+    "desktopDense4G": {
       "cpuSlowdownMultiplier": 1,
       "downloadThroughputKbps": 0,
       "requestLatencyMs": 0,
@@ -50,7 +50,7 @@ Object {
       "throughputKbps": 10240,
       "uploadThroughputKbps": 0,
     },
-    "mobileRegular3G": Object {
+    "mobileRegular3G": {
       "cpuSlowdownMultiplier": 4,
       "downloadThroughputKbps": 630,
       "requestLatencyMs": 1125,
@@ -58,7 +58,7 @@ Object {
       "throughputKbps": 700,
       "uploadThroughputKbps": 630,
     },
-    "mobileSlow4G": Object {
+    "mobileSlow4G": {
       "cpuSlowdownMultiplier": 4,
       "downloadThroughputKbps": 1474.5600000000002,
       "requestLatencyMs": 562.5,

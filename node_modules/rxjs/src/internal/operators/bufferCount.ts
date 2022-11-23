@@ -1,6 +1,6 @@
 import { OperatorFunction } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { arrRemove } from '../util/arrRemove';
 
 /**
@@ -23,8 +23,7 @@ import { arrRemove } from '../util/arrRemove';
  * Emit the last two click events as an array
  *
  * ```ts
- * import { fromEvent } from 'rxjs';
- * import { bufferCount } from 'rxjs/operators';
+ * import { fromEvent, bufferCount } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const buffered = clicks.pipe(bufferCount(2));
@@ -34,8 +33,7 @@ import { arrRemove } from '../util/arrRemove';
  * On every click, emit the last two click events as an array
  *
  * ```ts
- * import { fromEvent } from 'rxjs';
- * import { bufferCount } from 'rxjs/operators';
+ * import { fromEvent, bufferCount } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const buffered = clicks.pipe(bufferCount(2, 1));
@@ -66,7 +64,7 @@ export function bufferCount<T>(bufferSize: number, startBufferEvery: number | nu
     let count = 0;
 
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (value) => {
           let toEmit: T[][] | null = null;
@@ -113,7 +111,7 @@ export function bufferCount<T>(bufferSize: number, startBufferEvery: number | nu
         // Pass all errors through to consumer.
         undefined,
         () => {
-          // Clean up our memory when we teardown
+          // Clean up our memory when we finalize
           buffers = null!;
         }
       )

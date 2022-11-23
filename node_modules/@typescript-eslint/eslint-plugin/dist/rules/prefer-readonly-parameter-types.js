@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -19,15 +23,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
+const utils_1 = require("@typescript-eslint/utils");
 const util = __importStar(require("../util"));
 exports.default = util.createRule({
     name: 'prefer-readonly-parameter-types',
     meta: {
         type: 'suggestion',
         docs: {
-            description: 'Requires that function parameters are typed as readonly to prevent accidental mutation of inputs',
-            category: 'Possible Errors',
+            description: 'Require function parameters to be typed as `readonly` to prevent accidental mutation of inputs',
             recommended: false,
             requiresTypeChecking: true,
         },
@@ -49,28 +52,27 @@ exports.default = util.createRule({
     defaultOptions: [
         Object.assign({ checkParameterProperties: true, ignoreInferredTypes: false }, util.readonlynessOptionsDefaults),
     ],
-    create(context, options) {
-        const [{ checkParameterProperties, ignoreInferredTypes, treatMethodsAsReadonly },] = options;
+    create(context, [{ checkParameterProperties, ignoreInferredTypes, treatMethodsAsReadonly }]) {
         const { esTreeNodeToTSNodeMap, program } = util.getParserServices(context);
         const checker = program.getTypeChecker();
         return {
             [[
-                experimental_utils_1.AST_NODE_TYPES.ArrowFunctionExpression,
-                experimental_utils_1.AST_NODE_TYPES.FunctionDeclaration,
-                experimental_utils_1.AST_NODE_TYPES.FunctionExpression,
-                experimental_utils_1.AST_NODE_TYPES.TSCallSignatureDeclaration,
-                experimental_utils_1.AST_NODE_TYPES.TSConstructSignatureDeclaration,
-                experimental_utils_1.AST_NODE_TYPES.TSDeclareFunction,
-                experimental_utils_1.AST_NODE_TYPES.TSEmptyBodyFunctionExpression,
-                experimental_utils_1.AST_NODE_TYPES.TSFunctionType,
-                experimental_utils_1.AST_NODE_TYPES.TSMethodSignature,
+                utils_1.AST_NODE_TYPES.ArrowFunctionExpression,
+                utils_1.AST_NODE_TYPES.FunctionDeclaration,
+                utils_1.AST_NODE_TYPES.FunctionExpression,
+                utils_1.AST_NODE_TYPES.TSCallSignatureDeclaration,
+                utils_1.AST_NODE_TYPES.TSConstructSignatureDeclaration,
+                utils_1.AST_NODE_TYPES.TSDeclareFunction,
+                utils_1.AST_NODE_TYPES.TSEmptyBodyFunctionExpression,
+                utils_1.AST_NODE_TYPES.TSFunctionType,
+                utils_1.AST_NODE_TYPES.TSMethodSignature,
             ].join(', ')](node) {
                 for (const param of node.params) {
                     if (!checkParameterProperties &&
-                        param.type === experimental_utils_1.AST_NODE_TYPES.TSParameterProperty) {
+                        param.type === utils_1.AST_NODE_TYPES.TSParameterProperty) {
                         continue;
                     }
-                    const actualParam = param.type === experimental_utils_1.AST_NODE_TYPES.TSParameterProperty
+                    const actualParam = param.type === utils_1.AST_NODE_TYPES.TSParameterProperty
                         ? param.parameter
                         : param;
                     if (ignoreInferredTypes && actualParam.typeAnnotation == null) {

@@ -1,7 +1,7 @@
 import { MonoTypeOperatorFunction } from '../types';
 import { EMPTY } from '../observable/empty';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 
 /**
  * Emits only the first `count` values emitted by the source Observable.
@@ -17,10 +17,11 @@ import { OperatorSubscriber } from './OperatorSubscriber';
  * source completes.
  *
  * ## Example
+ *
  * Take the first 5 seconds of an infinite 1-second interval Observable
+ *
  * ```ts
- * import { interval } from 'rxjs';
- * import { take } from 'rxjs/operators';
+ * import { interval, take } from 'rxjs';
  *
  * const intervalCount = interval(1000);
  * const takeFive = intervalCount.pipe(take(5));
@@ -51,7 +52,7 @@ export function take<T>(count: number): MonoTypeOperatorFunction<T> {
     : operate((source, subscriber) => {
         let seen = 0;
         source.subscribe(
-          new OperatorSubscriber(subscriber, (value) => {
+          createOperatorSubscriber(subscriber, (value) => {
             // Increment the number of values we have seen,
             // then check it against the allowed count to see
             // if we are still letting values through.

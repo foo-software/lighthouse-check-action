@@ -42,7 +42,9 @@ export function getHostname(url: string): string {
   const hostname =
       new URL(
           'https://' +
-          getSchemeFreeUrl(url).replace('*', 'wildcard_placeholder'))
+      getSchemeFreeUrl(url)
+        .replace(':*', '')  // Remove wildcard port
+        .replace('*', 'wildcard_placeholder'))
           .hostname.replace('wildcard_placeholder', '*');
 
   // Some browsers strip the brackets from IPv6 addresses when you access the
@@ -78,7 +80,9 @@ export function matchWildcardUrls(
   // encapsulated in this function such that callers of this function do not
   // have to worry about this detail.
   const cspUrl =
-      new URL(setScheme(cspUrlString.replace('*', 'wildcard_placeholder')));
+      new URL(setScheme(cspUrlString
+        .replace(':*', '')  // Remove wildcard port
+        .replace('*', 'wildcard_placeholder')));
   const listOfUrls = listOfUrlStrings.map(u => new URL(setScheme(u)));
   const host = cspUrl.hostname.toLowerCase();
   const hostHasWildcard = host.startsWith('wildcard_placeholder.');

@@ -24,7 +24,7 @@ const ProcessedNavigation = require('../../computed/processed-navigation.js');
 const LighthouseError = require('../../lib/lh-error.js');
 const ComputedResponsivenes = require('../../computed/metrics/responsiveness.js');
 
-/** @typedef {{nodeId: number, score?: number, animations?: {name?: string, failureReasonsMask?: number, unsupportedProperties?: string[]}[]}} TraceElementData */
+/** @typedef {{nodeId: number, score?: number, animations?: {name?: string, failureReasonsMask?: number, unsupportedProperties?: string[]}[], type?: string}} TraceElementData */
 
 /**
  * @this {HTMLElement}
@@ -214,6 +214,34 @@ class TraceElements extends FRGatherer {
   }
 
   /**
+   * @param {LH.Artifacts.ProcessedTrace} processedTrace
+   * @param {LH.Gatherer.FRTransitionalContext} context
+   * @return {Promise<{nodeId: number, type: string} | undefined>}
+   */
+  static async getLcpElement(processedTrace, context) {
+    let processedNavigation;
+    try {
+      processedNavigation = await ProcessedNavigation.request(processedTrace, context);
+    } catch (err) {
+      // If we were running in timespan mode and there was no paint, treat LCP as missing.
+      if (context.gatherMode === 'timespan' && err.code === LighthouseError.errors.NO_FCP.code) {
+        return;
+      }
+
+      throw err;
+    }
+
+    // These should exist, but trace types are loose.
+    const lcpData = processedNavigation.largestContentfulPaintEvt?.args?.data;
+    if (lcpData?.nodeId === undefined || !lcpData.type) return;
+
+    return {
+      nodeId: lcpData.nodeId,
+      type: lcpData.type,
+    };
+  }
+
+  /**
    * @param {LH.Gatherer.FRTransitionalContext} context
    */
   async startInstrumentation(context) {
@@ -241,26 +269,16 @@ class TraceElements extends FRGatherer {
     }
 
     const processedTrace = await ProcessedTrace.request(trace, context);
-    const {largestContentfulPaintEvt} = await ProcessedNavigation
-      .request(processedTrace, context)
-      .catch(err => {
-        // If we were running in timespan mode and there was no paint, treat LCP as missing.
-        if (context.gatherMode === 'timespan' && err.code === LighthouseError.errors.NO_FCP.code) {
-          return {largestContentfulPaintEvt: undefined};
-        }
-
-        throw err;
-      });
     const {mainThreadEvents} = processedTrace;
 
-    const lcpNodeId = largestContentfulPaintEvt?.args?.data?.nodeId;
+    const lcpNodeData = await TraceElements.getLcpElement(processedTrace, context);
     const clsNodeData = TraceElements.getTopLayoutShiftElements(mainThreadEvents);
     const animatedElementData = await this.getAnimatedElements(mainThreadEvents);
     const responsivenessElementData = await TraceElements.getResponsivenessElement(trace, context);
 
     /** @type {Map<string, TraceElementData[]>} */
     const backendNodeDataMap = new Map([
-      ['largest-contentful-paint', lcpNodeId ? [{nodeId: lcpNodeId}] : []],
+      ['largest-contentful-paint', lcpNodeData ? [lcpNodeData] : []],
       ['layout-shift', clsNodeData],
       ['animation', animatedElementData],
       ['responsiveness', responsivenessElementData ? [responsivenessElementData] : []],
@@ -299,6 +317,7 @@ class TraceElements extends FRGatherer {
             score: backendNodeData[i].score,
             animations: backendNodeData[i].animations,
             nodeId: backendNodeId,
+            type: backendNodeData[i].type,
           });
         }
       }

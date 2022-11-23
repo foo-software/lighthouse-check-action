@@ -3,7 +3,7 @@ import { Observable } from '../Observable';
 import { Subject } from '../Subject';
 import { ObservableInput, OperatorFunction } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { innerFrom } from '../observable/innerFrom';
 
 /**
@@ -23,16 +23,17 @@ import { innerFrom } from '../observable/innerFrom';
  * window is opened immediately when subscribing to the output Observable.
  *
  * ## Example
+ *
  * Emit only the first two clicks events in every window of [1-5] random seconds
+ *
  * ```ts
- * import { fromEvent, interval } from 'rxjs';
- * import { windowWhen, map, mergeAll, take } from 'rxjs/operators';
+ * import { fromEvent, windowWhen, interval, map, take, mergeAll } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const result = clicks.pipe(
  *   windowWhen(() => interval(1000 + Math.random() * 4000)),
- *   map(win => win.pipe(take(2))),     // each window has at most 2 emissions
- *   mergeAll()                         // flatten the Observable-of-Observables
+ *   map(win => win.pipe(take(2))), // take at most 2 emissions from each window
+ *   mergeAll()                     // flatten the Observable-of-Observables
  * );
  * result.subscribe(x => console.log(x));
  * ```
@@ -56,7 +57,7 @@ export function windowWhen<T>(closingSelector: () => ObservableInput<any>): Oper
 
     /**
      * When we get an error, we have to notify both the
-     * destiation subscriber and the window.
+     * destination subscriber and the window.
      */
     const handleError = (err: any) => {
       window!.error(err);
@@ -94,7 +95,7 @@ export function windowWhen<T>(closingSelector: () => ObservableInput<any>): Oper
       // to capture the subscriber (aka Subscription)
       // so we can clean it up when we close the window
       // and open a new one.
-      closingNotifier.subscribe((closingSubscriber = new OperatorSubscriber(subscriber, openWindow, openWindow, handleError)));
+      closingNotifier.subscribe((closingSubscriber = createOperatorSubscriber(subscriber, openWindow, openWindow, handleError)));
     };
 
     // Start the first window.
@@ -102,7 +103,7 @@ export function windowWhen<T>(closingSelector: () => ObservableInput<any>): Oper
 
     // Subscribe to the source
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (value) => window!.next(value),
         () => {

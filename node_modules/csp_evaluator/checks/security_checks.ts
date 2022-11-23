@@ -266,7 +266,7 @@ export function checkScriptAllowlistBypass(parsedCsp: Csp): Finding[] {
     if (value === Keyword.SELF) {
       violations.push(new Finding(
           Type.SCRIPT_ALLOWLIST_BYPASS,
-          `'self' can be problematic if you host JSONP, Angular or user ` +
+          `'self' can be problematic if you host JSONP, AngularJS or user ` +
               'uploaded files.',
           Severity.MEDIUM_MAYBE, effectiveScriptSrcDirective, value));
       continue;

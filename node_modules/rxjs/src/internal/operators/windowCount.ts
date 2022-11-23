@@ -2,7 +2,7 @@ import { Observable } from '../Observable';
 import { Subject } from '../Subject';
 import { OperatorFunction } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 
 /**
  * Branch out the source Observable values as a nested Observable with each
@@ -23,10 +23,11 @@ import { OperatorSubscriber } from './OperatorSubscriber';
  * with size `windowSize`.
  *
  * ## Examples
+ *
  * Ignore every 3rd click event, starting from the first one
+ *
  * ```ts
- * import { fromEvent } from 'rxjs';
- * import { windowCount, map, mergeAll, skip } from 'rxjs/operators';
+ * import { fromEvent, windowCount, map, skip, mergeAll } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const result = clicks.pipe(
@@ -38,14 +39,14 @@ import { OperatorSubscriber } from './OperatorSubscriber';
  * ```
  *
  * Ignore every 3rd click event, starting from the third one
+ *
  * ```ts
- * import { fromEvent } from 'rxjs';
- * import { windowCount, mergeAll } from 'rxjs/operators';
+ * import { fromEvent, windowCount, mergeAll } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const result = clicks.pipe(
  *   windowCount(2, 3),
- *   mergeAll(),              // flatten the Observable-of-Observables
+ *   mergeAll() // flatten the Observable-of-Observables
  * );
  * result.subscribe(x => console.log(x));
  * ```
@@ -77,7 +78,7 @@ export function windowCount<T>(windowSize: number, startWindowEvery: number = 0)
     subscriber.next(windows[0].asObservable());
 
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (value: T) => {
           // Emit the value through all current windows.

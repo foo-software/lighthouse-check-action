@@ -2,7 +2,7 @@ import { Subscription } from '../Subscription';
 import { OperatorFunction, ObservableInput } from '../types';
 import { operate } from '../util/lift';
 import { innerFrom } from '../observable/innerFrom';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { noop } from '../util/noop';
 import { arrRemove } from '../util/arrRemove';
 
@@ -20,14 +20,12 @@ import { arrRemove } from '../util/arrRemove';
  * Observable provided to `openings`, and closing and sending the buffers when
  * a Subscribable or Promise returned by the `closingSelector` function emits.
  *
- *
  * ## Example
  *
  * Every other second, emit the click events from the next 500ms
  *
  * ```ts
- * import { fromEvent, interval, EMPTY } from 'rxjs';
- * import { bufferToggle } from 'rxjs/operators';
+ * import { fromEvent, interval, bufferToggle, EMPTY } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const openings = interval(1000);
@@ -60,7 +58,7 @@ export function bufferToggle<T, O>(
 
     // Subscribe to the openings notifier first
     innerFrom(openings).subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (openValue) => {
           const buffer: T[] = [];
@@ -76,14 +74,14 @@ export function bufferToggle<T, O>(
           };
 
           // The line below will add the subscription to the parent subscriber *and* the closing subscription.
-          closingSubscription.add(innerFrom(closingSelector(openValue)).subscribe(new OperatorSubscriber(subscriber, emitBuffer, noop)));
+          closingSubscription.add(innerFrom(closingSelector(openValue)).subscribe(createOperatorSubscriber(subscriber, emitBuffer, noop)));
         },
         noop
       )
     );
 
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (value) => {
           // Value from our source. Add it to all pending buffers.

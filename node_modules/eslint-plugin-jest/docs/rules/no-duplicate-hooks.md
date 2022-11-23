@@ -1,8 +1,10 @@
 # Disallow duplicate setup and teardown hooks (`no-duplicate-hooks`)
 
+<!-- end auto-generated rule header -->
+
 A `describe` block should not contain duplicate hooks.
 
-## Rule Details
+## Rule details
 
 Examples of **incorrect** code for this rule
 

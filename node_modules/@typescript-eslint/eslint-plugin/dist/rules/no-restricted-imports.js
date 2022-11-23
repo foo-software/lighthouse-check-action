@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
-const no_restricted_imports_1 = __importDefault(require("eslint/lib/rules/no-restricted-imports"));
 const ignore_1 = __importDefault(require("ignore"));
 const util_1 = require("../util");
+const getESLintCoreRule_1 = require("../util/getESLintCoreRule");
+const baseRule = (0, getESLintCoreRule_1.getESLintCoreRule)('no-restricted-imports');
 const allowTypeImportsOptionSchema = {
     allowTypeImports: {
         type: 'boolean',
@@ -33,7 +33,7 @@ const schemaForMergeArrayOfStringsOrObjectPatterns = {
         },
     ],
 };
-const schema = (0, util_1.deepMerge)(Object.assign({}, no_restricted_imports_1.default.meta.schema), {
+const schema = (0, util_1.deepMerge)(Object.assign({}, baseRule.meta.schema), {
     anyOf: [
         schemaForMergeArrayOfStringsOrObjects,
         {
@@ -82,17 +82,16 @@ exports.default = (0, util_1.createRule)({
         type: 'suggestion',
         docs: {
             description: 'Disallow specified modules when loaded by `import`',
-            category: 'Best Practices',
             recommended: false,
             extendsBaseRule: true,
         },
-        messages: no_restricted_imports_1.default.meta.messages,
-        fixable: no_restricted_imports_1.default.meta.fixable,
+        messages: baseRule.meta.messages,
+        fixable: baseRule.meta.fixable,
         schema,
     },
     defaultOptions: [],
     create(context) {
-        const rules = no_restricted_imports_1.default.create(context);
+        const rules = baseRule.create(context);
         const { options } = context;
         if (options.length === 0) {
             return {};
@@ -113,19 +112,20 @@ exports.default = (0, util_1.createRule)({
         for (const restrictedPattern of restrictedPatterns) {
             if (typeof restrictedPattern === 'object' &&
                 restrictedPattern.allowTypeImports) {
-                allowedImportTypeMatchers.push((0, ignore_1.default)().add(restrictedPattern.group));
+                // Following how ignore is configured in the base rule
+                allowedImportTypeMatchers.push((0, ignore_1.default)({
+                    allowRelativePaths: true,
+                    ignoreCase: !restrictedPattern.caseSensitive,
+                }).add(restrictedPattern.group));
             }
         }
         function isAllowedTypeImportPattern(importSource) {
-            return allowedImportTypeMatchers.every(matcher => {
-                return matcher.ignores(importSource);
-            });
+            return (
+            // As long as there's one matching pattern that allows type import
+            allowedImportTypeMatchers.some(matcher => matcher.ignores(importSource)));
         }
         return {
             ImportDeclaration(node) {
-                if (typeof node.source.value !== 'string') {
-                    return;
-                }
                 if (node.importKind === 'type') {
                     const importSource = node.source.value.trim();
                     if (!isAllowedTypeImportPath(importSource) &&
@@ -137,12 +137,7 @@ exports.default = (0, util_1.createRule)({
                     return rules.ImportDeclaration(node);
                 }
             },
-            ExportNamedDeclaration(node) {
-                var _a;
-                if (((_a = node.source) === null || _a === void 0 ? void 0 : _a.type) !== experimental_utils_1.AST_NODE_TYPES.Literal ||
-                    typeof node.source.value !== 'string') {
-                    return;
-                }
+            'ExportNamedDeclaration[source]'(node) {
                 if (node.exportKind === 'type') {
                     const importSource = node.source.value.trim();
                     if (!isAllowedTypeImportPath(importSource) &&

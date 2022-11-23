@@ -1,16 +1,17 @@
-'use strict';
-const path = require('path');
-const childProcess = require('child_process');
-const crossSpawn = require('cross-spawn');
-const stripFinalNewline = require('strip-final-newline');
-const npmRunPath = require('npm-run-path');
-const onetime = require('onetime');
-const makeError = require('./lib/error');
-const normalizeStdio = require('./lib/stdio');
-const {spawnedKill, spawnedCancel, setupTimeout, setExitHandler} = require('./lib/kill');
-const {handleInput, getSpawnedResult, makeAllStream, validateInputSync} = require('./lib/stream.js');
-const {mergePromise, getSpawnedPromise} = require('./lib/promise.js');
-const {joinCommand, parseCommand} = require('./lib/command.js');
+import {Buffer} from 'node:buffer';
+import path from 'node:path';
+import childProcess from 'node:child_process';
+import process from 'node:process';
+import crossSpawn from 'cross-spawn';
+import stripFinalNewline from 'strip-final-newline';
+import {npmRunPathEnv} from 'npm-run-path';
+import onetime from 'onetime';
+import {makeError} from './lib/error.js';
+import {normalizeStdio, normalizeStdioNode} from './lib/stdio.js';
+import {spawnedKill, spawnedCancel, setupTimeout, validateTimeout, setExitHandler} from './lib/kill.js';
+import {handleInput, getSpawnedResult, makeAllStream, validateInputSync} from './lib/stream.js';
+import {mergePromise, getSpawnedPromise} from './lib/promise.js';
+import {joinCommand, parseCommand, getEscapedCommand} from './lib/command.js';
 
 const DEFAULT_MAX_BUFFER = 1000 * 1000 * 100;
 
@@ -18,7 +19,7 @@ const getEnv = ({env: envOption, extendEnv, preferLocal, localDir, execPath}) =>
 	const env = extendEnv ? {...process.env, ...envOption} : envOption;
 
 	if (preferLocal) {
-		return npmRunPath.env({env, cwd: localDir, execPath});
+		return npmRunPathEnv({env, cwd: localDir, execPath});
 	}
 
 	return env;
@@ -43,7 +44,7 @@ const handleArguments = (file, args, options = {}) => {
 		cleanup: true,
 		all: false,
 		windowsHide: true,
-		...options
+		...options,
 	};
 
 	options.env = getEnv(options);
@@ -60,7 +61,7 @@ const handleArguments = (file, args, options = {}) => {
 
 const handleOutput = (options, value, error) => {
 	if (typeof value !== 'string' && !Buffer.isBuffer(value)) {
-		// When `execa.sync()` errors, we normalize it to '' to mimic `execa()`
+		// When `execaSync()` errors, we normalize it to '' to mimic `execa()`
 		return error === undefined ? undefined : '';
 	}
 
@@ -71,9 +72,12 @@ const handleOutput = (options, value, error) => {
 	return value;
 };
 
-const execa = (file, args, options) => {
+export function execa(file, args, options) {
 	const parsed = handleArguments(file, args, options);
 	const command = joinCommand(file, args);
+	const escapedCommand = getEscapedCommand(file, args);
+
+	validateTimeout(parsed.options);
 
 	let spawned;
 	try {
@@ -87,10 +91,11 @@ const execa = (file, args, options) => {
 			stderr: '',
 			all: '',
 			command,
+			escapedCommand,
 			parsed,
 			timedOut: false,
 			isCanceled: false,
-			killed: false
+			killed: false,
 		}));
 		return mergePromise(dummySpawned, errorPromise);
 	}
@@ -119,10 +124,11 @@ const execa = (file, args, options) => {
 				stderr,
 				all,
 				command,
+				escapedCommand,
 				parsed,
 				timedOut,
-				isCanceled: context.isCanceled,
-				killed: spawned.killed
+				isCanceled: context.isCanceled || (parsed.options.signal ? parsed.options.signal.aborted : false),
+				killed: spawned.killed,
 			});
 
 			if (!parsed.options.reject) {
@@ -134,6 +140,7 @@ const execa = (file, args, options) => {
 
 		return {
 			command,
+			escapedCommand,
 			exitCode: 0,
 			stdout,
 			stderr,
@@ -141,26 +148,23 @@ const execa = (file, args, options) => {
 			failed: false,
 			timedOut: false,
 			isCanceled: false,
-			killed: false
+			killed: false,
 		};
 	};
 
 	const handlePromiseOnce = onetime(handlePromise);
-
-	crossSpawn._enoent.hookChildProcess(spawned, parsed.parsed);
 
 	handleInput(spawned, parsed.options.input);
 
 	spawned.all = makeAllStream(spawned, parsed.options);
 
 	return mergePromise(spawned, handlePromiseOnce);
-};
+}
 
-module.exports = execa;
-
-module.exports.sync = (file, args, options) => {
+export function execaSync(file, args, options) {
 	const parsed = handleArguments(file, args, options);
 	const command = joinCommand(file, args);
+	const escapedCommand = getEscapedCommand(file, args);
 
 	validateInputSync(parsed.options);
 
@@ -174,10 +178,11 @@ module.exports.sync = (file, args, options) => {
 			stderr: '',
 			all: '',
 			command,
+			escapedCommand,
 			parsed,
 			timedOut: false,
 			isCanceled: false,
-			killed: false
+			killed: false,
 		});
 	}
 
@@ -192,10 +197,11 @@ module.exports.sync = (file, args, options) => {
 			signal: result.signal,
 			exitCode: result.status,
 			command,
+			escapedCommand,
 			parsed,
 			timedOut: result.error && result.error.code === 'ETIMEDOUT',
 			isCanceled: false,
-			killed: result.signal !== null
+			killed: result.signal !== null,
 		});
 
 		if (!parsed.options.reject) {
@@ -207,38 +213,39 @@ module.exports.sync = (file, args, options) => {
 
 	return {
 		command,
+		escapedCommand,
 		exitCode: 0,
 		stdout,
 		stderr,
 		failed: false,
 		timedOut: false,
 		isCanceled: false,
-		killed: false
+		killed: false,
 	};
-};
+}
 
-module.exports.command = (command, options) => {
+export function execaCommand(command, options) {
 	const [file, ...args] = parseCommand(command);
 	return execa(file, args, options);
-};
+}
 
-module.exports.commandSync = (command, options) => {
+export function execaCommandSync(command, options) {
 	const [file, ...args] = parseCommand(command);
-	return execa.sync(file, args, options);
-};
+	return execaSync(file, args, options);
+}
 
-module.exports.node = (scriptPath, args, options = {}) => {
+export function execaNode(scriptPath, args, options = {}) {
 	if (args && !Array.isArray(args) && typeof args === 'object') {
 		options = args;
 		args = [];
 	}
 
-	const stdio = normalizeStdio.node(options);
+	const stdio = normalizeStdioNode(options);
 	const defaultExecArgv = process.execArgv.filter(arg => !arg.startsWith('--inspect'));
 
 	const {
 		nodePath = process.execPath,
-		nodeOptions = defaultExecArgv
+		nodeOptions = defaultExecArgv,
 	} = options;
 
 	return execa(
@@ -246,7 +253,7 @@ module.exports.node = (scriptPath, args, options = {}) => {
 		[
 			...nodeOptions,
 			scriptPath,
-			...(Array.isArray(args) ? args : [])
+			...(Array.isArray(args) ? args : []),
 		],
 		{
 			...options,
@@ -254,7 +261,7 @@ module.exports.node = (scriptPath, args, options = {}) => {
 			stdout: undefined,
 			stderr: undefined,
 			stdio,
-			shell: false
-		}
+			shell: false,
+		},
 	);
-};
+}

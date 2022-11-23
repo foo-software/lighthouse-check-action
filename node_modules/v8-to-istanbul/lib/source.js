@@ -1,9 +1,10 @@
 const CovLine = require('./line')
-const { GREATEST_LOWER_BOUND, LEAST_UPPER_BOUND } = require('source-map').SourceMapConsumer
+const { sliceRange } = require('./range')
+const { originalPositionFor, generatedPositionFor, GREATEST_LOWER_BOUND, LEAST_UPPER_BOUND } = require('@jridgewell/trace-mapping')
 
 module.exports = class CovSource {
   constructor (sourceRaw, wrapperLength) {
-    sourceRaw = sourceRaw.trimEnd()
+    sourceRaw = sourceRaw ? sourceRaw.trimEnd() : ''
     this.lines = []
     this.eof = sourceRaw.length
     this.shebangLength = getShebangLength(sourceRaw)
@@ -75,9 +76,7 @@ module.exports = class CovSource {
   // given a start column and end column in absolute offsets within
   // a source file (0 - EOF), returns the relative line column positions.
   offsetToOriginalRelative (sourceMap, startCol, endCol) {
-    const lines = this.lines.filter((line, i) => {
-      return startCol <= line.endCol && endCol >= line.startCol
-    })
+    const lines = sliceRange(this.lines, startCol, endCol, true)
     if (!lines.length) return {}
 
     const start = originalPositionTryBoth(
@@ -85,17 +84,16 @@ module.exports = class CovSource {
       lines[0].line,
       Math.max(0, startCol - lines[0].startCol)
     )
+    if (!(start && start.source)) {
+      return {}
+    }
+
     let end = originalEndPositionFor(
       sourceMap,
       lines[lines.length - 1].line,
       endCol - lines[lines.length - 1].startCol
     )
-
-    if (!(start && end)) {
-      return {}
-    }
-
-    if (!(start.source && end.source)) {
+    if (!(end && end.source)) {
       return {}
     }
 
@@ -104,7 +102,7 @@ module.exports = class CovSource {
     }
 
     if (start.line === end.line && start.column === end.column) {
-      end = sourceMap.originalPositionFor({
+      end = originalPositionFor(sourceMap, {
         line: lines[lines.length - 1].line,
         column: endCol - lines[lines.length - 1].startCol,
         bias: LEAST_UPPER_BOUND
@@ -170,7 +168,7 @@ function originalEndPositionFor (sourceMap, line, column) {
   // for mappings in the original-order sorted list, this will find the
   // mapping that corresponds to the one immediately after the
   // beforeEndMapping mapping.
-  const afterEndMapping = sourceMap.generatedPositionFor({
+  const afterEndMapping = generatedPositionFor(sourceMap, {
     source: beforeEndMapping.source,
     line: beforeEndMapping.line,
     column: beforeEndMapping.column + 1,
@@ -183,7 +181,7 @@ function originalEndPositionFor (sourceMap, line, column) {
       // If these don't match, it means that the call to
       // 'generatedPositionFor' didn't find any other original mappings on
       // the line we gave, so consider the binding to extend to infinity.
-      sourceMap.originalPositionFor(afterEndMapping).line !==
+      originalPositionFor(sourceMap, afterEndMapping).line !==
           beforeEndMapping.line
   ) {
     return {
@@ -194,17 +192,17 @@ function originalEndPositionFor (sourceMap, line, column) {
   }
 
   // Convert the end mapping into the real original position.
-  return sourceMap.originalPositionFor(afterEndMapping)
+  return originalPositionFor(sourceMap, afterEndMapping)
 }
 
 function originalPositionTryBoth (sourceMap, line, column) {
-  let original = sourceMap.originalPositionFor({
+  let original = originalPositionFor(sourceMap, {
     line,
     column,
     bias: GREATEST_LOWER_BOUND
   })
   if (original.line === null) {
-    original = sourceMap.originalPositionFor({
+    original = originalPositionFor(sourceMap, {
       line,
       column,
       bias: LEAST_UPPER_BOUND
@@ -222,7 +220,7 @@ function originalPositionTryBoth (sourceMap, line, column) {
   //     }  else { ... }
   //  ^  ^
   // l5  l3
-  const min = sourceMap.originalPositionFor({
+  const min = originalPositionFor(sourceMap, {
     line,
     column: 0,
     bias: GREATEST_LOWER_BOUND

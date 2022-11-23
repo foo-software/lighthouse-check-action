@@ -165,18 +165,18 @@ function getEncodedRootLength(path) {
         return 0;
     const ch0 = path.charCodeAt(0);
     // POSIX or UNC
-    if (ch0 === 47 /* slash */ || ch0 === 92 /* backslash */) {
+    if (ch0 === 47 /* CharacterCodes.slash */ || ch0 === 92 /* CharacterCodes.backslash */) {
         if (path.charCodeAt(1) !== ch0)
             return 1; // POSIX: "/" (or non-normalized "\")
-        const p1 = path.indexOf(ch0 === 47 /* slash */ ? directorySeparator : altDirectorySeparator, 2);
+        const p1 = path.indexOf(ch0 === 47 /* CharacterCodes.slash */ ? directorySeparator : altDirectorySeparator, 2);
         if (p1 < 0)
             return path.length; // UNC: "//server" or "\\server"
         return p1 + 1; // UNC: "//server/" or "\\server\"
     }
     // DOS
-    if (isVolumeCharacter(ch0) && path.charCodeAt(1) === 58 /* colon */) {
+    if (isVolumeCharacter(ch0) && path.charCodeAt(1) === 58 /* CharacterCodes.colon */) {
         const ch2 = path.charCodeAt(2);
-        if (ch2 === 47 /* slash */ || ch2 === 92 /* backslash */)
+        if (ch2 === 47 /* CharacterCodes.slash */ || ch2 === 92 /* CharacterCodes.backslash */)
             return 3; // DOS: "c:/" or "c:\"
         if (path.length === 2)
             return 2; // DOS: "c:" (but not "c:d")
@@ -198,7 +198,7 @@ function getEncodedRootLength(path) {
                 isVolumeCharacter(path.charCodeAt(authorityEnd + 1))) {
                 const volumeSeparatorEnd = getFileUrlVolumeSeparatorEnd(path, authorityEnd + 2);
                 if (volumeSeparatorEnd !== -1) {
-                    if (path.charCodeAt(volumeSeparatorEnd) === 47 /* slash */) {
+                    if (path.charCodeAt(volumeSeparatorEnd) === 47 /* CharacterCodes.slash */) {
                         // URL: "file:///c:/", "file://localhost/c:/", "file:///c%3a/", "file://localhost/c%3a/"
                         return ~(volumeSeparatorEnd + 1);
                     }
@@ -226,7 +226,7 @@ function hasTrailingDirectorySeparator(path) {
     return (path.length > 0 && isAnyDirectorySeparator(path.charCodeAt(path.length - 1)));
 }
 function isAnyDirectorySeparator(charCode) {
-    return (charCode === 47 /* slash */ || charCode === 92 /* backslash */);
+    return (charCode === 47 /* CharacterCodes.slash */ || charCode === 92 /* CharacterCodes.backslash */);
 }
 function removeTrailingDirectorySeparator(path) {
     if (hasTrailingDirectorySeparator(path)) {
@@ -238,17 +238,17 @@ const directorySeparator = '/';
 const altDirectorySeparator = '\\';
 const urlSchemeSeparator = '://';
 function isVolumeCharacter(charCode) {
-    return ((charCode >= 97 /* a */ && charCode <= 122 /* z */) ||
-        (charCode >= 65 /* A */ && charCode <= 90 /* Z */));
+    return ((charCode >= 97 /* CharacterCodes.a */ && charCode <= 122 /* CharacterCodes.z */) ||
+        (charCode >= 65 /* CharacterCodes.A */ && charCode <= 90 /* CharacterCodes.Z */));
 }
 function getFileUrlVolumeSeparatorEnd(url, start) {
     const ch0 = url.charCodeAt(start);
-    if (ch0 === 58 /* colon */)
+    if (ch0 === 58 /* CharacterCodes.colon */)
         return start + 1;
-    if (ch0 === 37 /* percent */ &&
-        url.charCodeAt(start + 1) === 51 /* _3 */) {
+    if (ch0 === 37 /* CharacterCodes.percent */ &&
+        url.charCodeAt(start + 1) === 51 /* CharacterCodes._3 */) {
         const ch2 = url.charCodeAt(start + 2);
-        if (ch2 === 97 /* a */ || ch2 === 65 /* A */)
+        if (ch2 === 97 /* CharacterCodes.a */ || ch2 === 65 /* CharacterCodes.A */)
             return start + 3;
     }
     return -1;

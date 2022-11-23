@@ -1,10 +1,13 @@
 const assert = require('assert')
 const convertSourceMap = require('convert-source-map')
+const util = require('util')
+const debuglog = util.debuglog('c8')
 const { dirname, isAbsolute, join, resolve } = require('path')
 const { fileURLToPath } = require('url')
 const CovBranch = require('./branch')
 const CovFunction = require('./function')
 const CovSource = require('./source')
+const { sliceRange } = require('./range')
 const compatError = Error(`requires Node.js ${require('../package.json').engines.node}`)
 let readFile = () => { throw compatError }
 try {
@@ -12,7 +15,7 @@ try {
 } catch (_err) {
   // most likely we're on an older version of Node.js.
 }
-const { SourceMapConsumer } = require('source-map')
+const { TraceMap } = require('@jridgewell/trace-mapping')
 const isOlderNode10 = /^v10\.(([0-9]\.)|(1[0-5]\.))/u.test(process.version)
 const isNode8 = /^v8\./.test(process.version)
 
@@ -50,13 +53,16 @@ module.exports = class V8ToIstanbul {
 
     if (this.rawSourceMap) {
       if (this.rawSourceMap.sourcemap.sources.length > 1) {
-        this.sourceMap = await new SourceMapConsumer(this.rawSourceMap.sourcemap)
+        this.sourceMap = new TraceMap(this.rawSourceMap.sourcemap)
+        if (!this.sourceMap.sourcesContent) {
+          this.sourceMap.sourcesContent = await this.sourcesContentFromSources()
+        }
         this.covSources = this.sourceMap.sourcesContent.map((rawSource, i) => ({ source: new CovSource(rawSource, this.wrapperLength), path: this.sourceMap.sources[i] }))
         this.sourceTranspiled = new CovSource(rawSource, this.wrapperLength)
       } else {
         const candidatePath = this.rawSourceMap.sourcemap.sources.length >= 1 ? this.rawSourceMap.sourcemap.sources[0] : this.rawSourceMap.sourcemap.file
         this.path = this._resolveSource(this.rawSourceMap, candidatePath || this.path)
-        this.sourceMap = await new SourceMapConsumer(this.rawSourceMap.sourcemap)
+        this.sourceMap = new TraceMap(this.rawSourceMap.sourcemap)
 
         let originalRawSource
         if (this.sources.sourceMap && this.sources.sourceMap.sourcemap && this.sources.sourceMap.sourcemap.sourcesContent && this.sources.sourceMap.sourcemap.sourcesContent.length === 1) {
@@ -83,11 +89,20 @@ module.exports = class V8ToIstanbul {
     }
   }
 
+  async sourcesContentFromSources () {
+    const fileList = this.sourceMap.sources.map(relativePath => {
+      const realPath = this._resolveSource(this.rawSourceMap, relativePath)
+      return readFile(realPath, 'utf-8')
+        .then(result => result)
+        .catch(err => {
+          debuglog(`failed to load ${realPath}: ${err.message}`)
+        })
+    })
+    return await Promise.all(fileList)
+  }
+
   destroy () {
-    if (this.sourceMap) {
-      this.sourceMap.destroy()
-      this.sourceMap = undefined
-    }
+    // no longer necessary, but preserved for backwards compatibility.
   }
 
   _resolveSource (rawSourceMap, sourcePath) {
@@ -112,22 +127,25 @@ module.exports = class V8ToIstanbul {
         if (this.excludePath(path)) {
           return
         }
-        const lines = covSource.lines.filter(line => {
-          // Upstream tooling can provide a block with the functionName
-          // (empty-report), this will result in a report that has all
-          // lines zeroed out.
-          if (block.functionName === '(empty-report)') {
+        let lines
+        if (block.functionName === '(empty-report)') {
+          // (empty-report), this will result in a report that has all lines zeroed out.
+          lines = covSource.lines.filter((line) => {
             line.count = 0
-            this.all = true
             return true
-          }
+          })
+          this.all = lines.length > 0
+        } else {
+          lines = sliceRange(covSource.lines, startCol, endCol)
+        }
+        if (!lines.length) {
+          return
+        }
 
-          return startCol < line.endCol && endCol >= line.startCol
-        })
         const startLineInstance = lines[0]
         const endLineInstance = lines[lines.length - 1]
 
-        if (block.isBlockCoverage && lines.length) {
+        if (block.isBlockCoverage) {
           this.branches[path] = this.branches[path] || []
           // record branches.
           this.branches[path].push(new CovBranch(
@@ -138,7 +156,7 @@ module.exports = class V8ToIstanbul {
             range.count
           ))
 
-          // if block-level granularity is enabled, we we still create a single
+          // if block-level granularity is enabled, we still create a single
           // CovFunction tracking object for each set of ranges.
           if (block.functionName && i === 0) {
             this.functions[path] = this.functions[path] || []
@@ -151,7 +169,7 @@ module.exports = class V8ToIstanbul {
               range.count
             ))
           }
-        } else if (block.functionName && lines.length) {
+        } else if (block.functionName) {
           this.functions[path] = this.functions[path] || []
           // record functions.
           this.functions[path].push(new CovFunction(

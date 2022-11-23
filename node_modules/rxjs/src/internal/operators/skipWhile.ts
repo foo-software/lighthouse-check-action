@@ -1,6 +1,6 @@
 import { Falsy, MonoTypeOperatorFunction, OperatorFunction } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 
 export function skipWhile<T>(predicate: BooleanConstructor): OperatorFunction<T, Extract<T, Falsy> extends never ? never : T>;
 export function skipWhile<T>(predicate: (value: T, index: number) => true): OperatorFunction<T, never>;
@@ -16,26 +16,28 @@ export function skipWhile<T>(predicate: (value: T, index: number) => boolean): M
  * It can also be skipped using index. Once the predicate is true, it will not be called again.
  *
  * ## Example
- * Using Value: Skip some super heroes
+ *
+ * Skip some super heroes
+ *
  * ```ts
- * import { from } from 'rxjs';
- * import { skipWhile } from 'rxjs/operators';
+ * import { from, skipWhile } from 'rxjs';
  *
  * const source = from(['Green Arrow', 'SuperMan', 'Flash', 'SuperGirl', 'Black Canary'])
  * // Skip the heroes until SuperGirl
- * const example = source.pipe(skipWhile((hero) => hero !== 'SuperGirl'));
+ * const example = source.pipe(skipWhile(hero => hero !== 'SuperGirl'));
  * // output: SuperGirl, Black Canary
- * example.subscribe((femaleHero) => console.log(femaleHero));
+ * example.subscribe(femaleHero => console.log(femaleHero));
  * ```
- * Using Index: Skip value from the array until index 5
+ *
+ * Skip values from the array until index 5
+ *
  * ```ts
- * import { from } from 'rxjs';
- * import { skipWhile } from 'rxjs/operators';
+ * import { from, skipWhile } from 'rxjs';
  *
  * const source = from([1, 2, 3, 4, 5, 6, 7, 9, 10]);
  * const example = source.pipe(skipWhile((_, i) => i !== 5));
  * // output: 6, 7, 9, 10
- * example.subscribe((val) => console.log(val));
+ * example.subscribe(value => console.log(value));
  * ```
  *
  * @see {@link last}
@@ -52,7 +54,7 @@ export function skipWhile<T>(predicate: (value: T, index: number) => boolean): M
     let taking = false;
     let index = 0;
     source.subscribe(
-      new OperatorSubscriber(subscriber, (value) => (taking || (taking = !predicate(value, index++))) && subscriber.next(value))
+      createOperatorSubscriber(subscriber, (value) => (taking || (taking = !predicate(value, index++))) && subscriber.next(value))
     );
   });
 }

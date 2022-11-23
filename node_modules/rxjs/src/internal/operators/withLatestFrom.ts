@@ -1,6 +1,6 @@
 import { OperatorFunction, ObservableInputTuple } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { innerFrom } from '../observable/innerFrom';
 import { identity } from '../util/identity';
 import { noop } from '../util/noop';
@@ -30,10 +30,11 @@ export function withLatestFrom<T, O extends unknown[], R>(
  * emit at least one value before the output Observable will emit a value.
  *
  * ## Example
+ *
  * On every click event, emit an array with the latest timer event plus the click event
+ *
  * ```ts
- * import { fromEvent, interval } from 'rxjs';
- * import { withLatestFrom } from 'rxjs/operators';
+ * import { fromEvent, interval, withLatestFrom } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const timer = interval(1000);
@@ -74,7 +75,7 @@ export function withLatestFrom<T, R>(...inputs: any[]): OperatorFunction<T, R | 
     // a side-effect.
     for (let i = 0; i < len; i++) {
       innerFrom(inputs[i]).subscribe(
-        new OperatorSubscriber(
+        createOperatorSubscriber(
           subscriber,
           (value) => {
             otherValues[i] = value;
@@ -97,7 +98,7 @@ export function withLatestFrom<T, R>(...inputs: any[]): OperatorFunction<T, R | 
 
     // Source subscription
     source.subscribe(
-      new OperatorSubscriber(subscriber, (value) => {
+      createOperatorSubscriber(subscriber, (value) => {
         if (ready) {
           // We have at least one value from the other sources. Go ahead and emit.
           const values = [value, ...otherValues];

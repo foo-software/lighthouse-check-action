@@ -1,5 +1,13 @@
 # Suggest using `toHaveLength()` (`prefer-to-have-length`)
 
+💼 This rule is enabled in the 🎨 `style`
+[config](https://github.com/jest-community/eslint-plugin-jest/blob/main/README.md#shareable-configurations).
+
+🔧 This rule is automatically fixable by the
+[`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+
+<!-- end auto-generated rule header -->
+
 In order to have a better failure message, `toHaveLength()` should be used upon
 asserting expectations on objects length property.
 
@@ -13,8 +21,6 @@ expect(files.length).toBe(1);
 ```
 
 This rule is enabled by default.
-
-### Default configuration
 
 The following patterns are considered warnings:
 

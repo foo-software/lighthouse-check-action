@@ -1,7 +1,7 @@
 import { Subscription } from '../Subscription';
 import { OperatorFunction, SchedulerLike } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { arrRemove } from '../util/arrRemove';
 import { asyncScheduler } from '../scheduler/async';
 import { popScheduler } from '../util/args';
@@ -44,8 +44,7 @@ export function bufferTime<T>(
  * Every second, emit an array of the recent click events
  *
  * ```ts
- * import { fromEvent } from 'rxjs';
- * import { bufferTime } from 'rxjs/operators';
+ * import { fromEvent, bufferTime } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const buffered = clicks.pipe(bufferTime(1000));
@@ -55,8 +54,7 @@ export function bufferTime<T>(
  * Every 5 seconds, emit the click events from the next 2 seconds
  *
  * ```ts
- * import { fromEvent } from 'rxjs';
- * import { bufferTime } from 'rxjs/operators';
+ * import { fromEvent, bufferTime } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const buffered = clicks.pipe(bufferTime(2000, 5000));
@@ -133,7 +131,7 @@ export function bufferTime<T>(bufferTimeSpan: number, ...otherArgs: any[]): Oper
 
     startBuffer();
 
-    const bufferTimeSubscriber = new OperatorSubscriber(
+    const bufferTimeSubscriber = createOperatorSubscriber(
       subscriber,
       (value: T) => {
         // Copy the records, so if we need to remove one we

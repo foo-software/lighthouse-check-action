@@ -1,15 +1,9 @@
 <img src="media/logo.svg" width="400">
 <br>
 
-[![Build Status](https://travis-ci.com/sindresorhus/execa.svg?branch=master)](https://travis-ci.com/github/sindresorhus/execa) [![Coverage Status](https://coveralls.io/repos/github/sindresorhus/execa/badge.svg?branch=master)](https://coveralls.io/github/sindresorhus/execa?branch=master)
+[![Coverage Status](https://codecov.io/gh/sindresorhus/execa/branch/main/graph/badge.svg)](https://codecov.io/gh/sindresorhus/execa)
 
 > Process execution for humans
-
----
-
-Netlify is looking for a senior/expert Node.js backend engineer to join a fully remote, international, diverse (44% women and non-binary) and friendly team. This is for the team where one of the co-maintainers [@ehmicky](https://github.com/ehmicky) is working. The job description is [here](https://boards.greenhouse.io/netlify/jobs/4832483002).
-
----
 
 ## Why
 
@@ -28,26 +22,24 @@ This package improves [`child_process`](https://nodejs.org/api/child_process.htm
 
 ## Install
 
-```
-$ npm install execa
+```sh
+npm install execa
 ```
 
 ## Usage
 
 ```js
-const execa = require('execa');
+import {execa} from 'execa';
 
-(async () => {
-	const {stdout} = await execa('echo', ['unicorns']);
-	console.log(stdout);
-	//=> 'unicorns'
-})();
+const {stdout} = await execa('echo', ['unicorns']);
+console.log(stdout);
+//=> 'unicorns'
 ```
 
 ### Pipe the child process stdout to the parent
 
 ```js
-const execa = require('execa');
+import {execa} from 'execa';
 
 execa('echo', ['unicorns']).stdout.pipe(process.stdout);
 ```
@@ -55,65 +47,64 @@ execa('echo', ['unicorns']).stdout.pipe(process.stdout);
 ### Handling Errors
 
 ```js
-const execa = require('execa');
+import {execa} from 'execa';
 
-(async () => {
-	// Catching an error
-	try {
-		await execa('unknown', ['command']);
-	} catch (error) {
-		console.log(error);
-		/*
-		{
-			message: 'Command failed with ENOENT: unknown command spawn unknown ENOENT',
-			errno: -2,
-			code: 'ENOENT',
-			syscall: 'spawn unknown',
-			path: 'unknown',
-			spawnargs: ['command'],
-			originalMessage: 'spawn unknown ENOENT',
-			shortMessage: 'Command failed with ENOENT: unknown command spawn unknown ENOENT',
-			command: 'unknown command',
-			stdout: '',
-			stderr: '',
-			all: '',
-			failed: true,
-			timedOut: false,
-			isCanceled: false,
-			killed: false
-		}
-		*/
+// Catching an error
+try {
+	await execa('unknown', ['command']);
+} catch (error) {
+	console.log(error);
+	/*
+	{
+		message: 'Command failed with ENOENT: unknown command spawn unknown ENOENT',
+		errno: -2,
+		code: 'ENOENT',
+		syscall: 'spawn unknown',
+		path: 'unknown',
+		spawnargs: ['command'],
+		originalMessage: 'spawn unknown ENOENT',
+		shortMessage: 'Command failed with ENOENT: unknown command spawn unknown ENOENT',
+		command: 'unknown command',
+		escapedCommand: 'unknown command',
+		stdout: '',
+		stderr: '',
+		all: '',
+		failed: true,
+		timedOut: false,
+		isCanceled: false,
+		killed: false
 	}
-
-})();
+	*/
+}
 ```
 
 ### Cancelling a spawned process
 
 ```js
-const execa = require('execa');
+import {execa} from 'execa';
 
-(async () => {
-	const subprocess = execa('node');
+const abortController = new AbortController();
+const subprocess = execa('node', [], {signal: abortController.signal});
 
-	setTimeout(() => {
-		subprocess.cancel();
-	}, 1000);
+setTimeout(() => {
+	abortController.abort();
+}, 1000);
 
-	try {
-		await subprocess;
-	} catch (error) {
-		console.log(subprocess.killed); // true
-		console.log(error.isCanceled); // true
-	}
-})()
+try {
+	await subprocess;
+} catch (error) {
+	console.log(subprocess.killed); // true
+	console.log(error.isCanceled); // true
+}
 ```
 
 ### Catching an error with the sync method
 
 ```js
+import {execaSync} from 'execa';
+
 try {
-	execa.sync('unknown', ['command']);
+	execaSync('unknown', ['command']);
 } catch (error) {
 	console.log(error);
 	/*
@@ -127,6 +118,7 @@ try {
 		originalMessage: 'spawnSync unknown ENOENT',
 		shortMessage: 'Command failed with ENOENT: unknown command spawnSync unknown ENOENT',
 		command: 'unknown command',
+		escapedCommand: 'unknown command',
 		stdout: '',
 		stderr: '',
 		all: '',
@@ -180,10 +172,6 @@ Milliseconds to wait for the child process to terminate before sending `SIGKILL`
 
 Can be disabled with `false`.
 
-#### cancel()
-
-Similar to [`childProcess.kill()`](https://nodejs.org/api/child_process.html#child_process_subprocess_kill_signal). This is preferred when cancelling the child process execution as the error is more descriptive and [`childProcessResult.isCanceled`](#iscanceled) is set to `true`.
-
 #### all
 
 Type: `ReadableStream | undefined`
@@ -194,27 +182,27 @@ This is `undefined` if either:
   - the [`all` option](#all-2) is `false` (the default value)
   - both [`stdout`](#stdout-1) and [`stderr`](#stderr-1) options are set to [`'inherit'`, `'ipc'`, `Stream` or `integer`](https://nodejs.org/dist/latest-v6.x/docs/api/child_process.html#child_process_options_stdio)
 
-### execa.sync(file, arguments?, options?)
+### execaSync(file, arguments?, options?)
 
 Execute a file synchronously.
 
 Returns or throws a [`childProcessResult`](#childProcessResult).
 
-### execa.command(command, options?)
+### execaCommand(command, options?)
 
-Same as [`execa()`](#execafile-arguments-options) except both file and arguments are specified in a single `command` string. For example, `execa('echo', ['unicorns'])` is the same as `execa.command('echo unicorns')`.
+Same as [`execa()`](#execafile-arguments-options) except both file and arguments are specified in a single `command` string. For example, `execa('echo', ['unicorns'])` is the same as `execaCommand('echo unicorns')`.
 
 If the file or an argument contains spaces, they must be escaped with backslashes. This matters especially if `command` is not a constant but a variable, for example with `__dirname` or `process.cwd()`. Except for spaces, no escaping/quoting is needed.
 
-The [`shell` option](#shell) must be used if the `command` uses shell-specific features, as opposed to being a simple `file` followed by its `arguments`.
+The [`shell` option](#shell) must be used if the `command` uses shell-specific features (for example, `&&` or `||`), as opposed to being a simple `file` followed by its `arguments`.
 
-### execa.commandSync(command, options?)
+### execaCommandSync(command, options?)
 
-Same as [`execa.command()`](#execacommand-command-options) but synchronous.
+Same as [`execaCommand()`](#execacommand-command-options) but synchronous.
 
 Returns or throws a [`childProcessResult`](#childProcessResult).
 
-### execa.node(scriptPath, arguments?, options?)
+### execaNode(scriptPath, arguments?, options?)
 
 Execute a Node.js script as a child process.
 
@@ -240,7 +228,18 @@ The child process [fails](#failed) when:
 
 Type: `string`
 
-The file and arguments that were run.
+The file and arguments that were run, for logging purposes.
+
+This is not escaped and should not be executed directly as a process, including using [`execa()`](#execafile-arguments-options) or [`execaCommand()`](#execacommandcommand-options).
+
+#### escapedCommand
+
+Type: `string`
+
+Same as [`command`](#command) but escaped.
+
+This is meant to be copy and pasted into a shell, for debugging purposes.
+Since the escaping is fairly basic, this should not be executed directly as a process, including using [`execa()`](#execafile-arguments-options) or [`execaCommand()`](#execacommandcommand-options).
 
 #### exitCode
 
@@ -268,7 +267,7 @@ The output of the process with `stdout` and `stderr` interleaved.
 
 This is `undefined` if either:
   - the [`all` option](#all-2) is `false` (the default value)
-  - `execa.sync()` was used
+  - `execaSync()` was used
 
 #### failed
 
@@ -287,6 +286,8 @@ Whether the process timed out.
 Type: `boolean`
 
 Whether the process was canceled.
+
+You can cancel the spawned process using the [`signal`](#signal-1) option.
 
 #### killed
 
@@ -355,10 +356,12 @@ If you `$ npm install foo`, you can then `execa('foo')`.
 
 #### localDir
 
-Type: `string`\
+Type: `string | URL`\
 Default: `process.cwd()`
 
 Preferred path to find locally installed binaries in (use with `preferLocal`).
+
+Using a `URL` is only supported in Node.js `14.18.0`, `16.14.0` or above.
 
 #### execPath
 
@@ -444,10 +447,12 @@ Execa also accepts the below options which are the same as the options for [`chi
 
 #### cwd
 
-Type: `string`\
+Type: `string | URL`\
 Default: `process.cwd()`
 
 Current working directory of the child process.
+
+Using a `URL` is only supported in Node.js `14.18.0`, `16.14.0` or above.
 
 #### env
 
@@ -474,7 +479,7 @@ Child's [stdio](https://nodejs.org/api/child_process.html#child_process_options_
 Type: `string`\
 Default: `'json'`
 
-Specify the kind of serialization used for sending messages between processes when using the [`stdio: 'ipc'`](#stdio) option or [`execa.node()`](#execanodescriptpath-arguments-options):
+Specify the kind of serialization used for sending messages between processes when using the [`stdio: 'ipc'`](#stdio) option or [`execaNode()`](#execanodescriptpath-arguments-options):
 	- `json`: Uses `JSON.stringify()` and `JSON.parse()`.
 	- `advanced`: Uses [`v8.serialize()`](https://nodejs.org/api/v8.html#v8_v8_serialize_value)
 
@@ -540,6 +545,16 @@ Default: `SIGTERM`
 
 Signal value to be used when the spawned process will be killed.
 
+#### signal
+
+Type: [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)
+
+You can abort the spawned process using [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
+
+When `AbortController.abort()` is called, [`.isCanceled`](#iscanceled) becomes `false`.
+
+*Requires Node.js 16 or later.*
+
 #### windowsVerbatimArguments
 
 Type: `boolean`\
@@ -575,16 +590,14 @@ List of [CLI options](https://nodejs.org/api/cli.html#cli_options) passed to the
 Gracefully handle failures by using automatic retries and exponential backoff with the [`p-retry`](https://github.com/sindresorhus/p-retry) package:
 
 ```js
-const pRetry = require('p-retry');
+import pRetry from 'p-retry';
 
 const run = async () => {
 	const results = await execa('curl', ['-sSL', 'https://sindresorhus.com/unicorn']);
 	return results;
 };
 
-(async () => {
-	console.log(await pRetry(run, {retries: 5}));
-})();
+console.log(await pRetry(run, {retries: 5}));
 ```
 
 ### Save and pipe output from a child process
@@ -592,21 +605,19 @@ const run = async () => {
 Let's say you want to show the output of a child process in real-time while also saving it to a variable.
 
 ```js
-const execa = require('execa');
+import {execa} from 'execa';
 
 const subprocess = execa('echo', ['foo']);
 subprocess.stdout.pipe(process.stdout);
 
-(async () => {
-	const {stdout} = await subprocess;
-	console.log('child output:', stdout);
-})();
+const {stdout} = await subprocess;
+console.log('child output:', stdout);
 ```
 
 ### Redirect output to a file
 
 ```js
-const execa = require('execa');
+import {execa} from 'execa';
 
 const subprocess = execa('echo', ['foo'])
 subprocess.stdout.pipe(fs.createWriteStream('stdout.txt'))
@@ -615,7 +626,7 @@ subprocess.stdout.pipe(fs.createWriteStream('stdout.txt'))
 ### Redirect input from a file
 
 ```js
-const execa = require('execa');
+import {execa} from 'execa';
 
 const subprocess = execa('cat')
 fs.createReadStream('stdin.txt').pipe(subprocess.stdin)
@@ -624,7 +635,7 @@ fs.createReadStream('stdin.txt').pipe(subprocess.stdin)
 ### Execute the current package's binary
 
 ```js
-const {getBinPathSync} = require('get-bin-path');
+import {getBinPathSync} from 'get-bin-path';
 
 const binPath = getBinPathSync();
 const subprocess = execa(binPath);

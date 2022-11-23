@@ -37,6 +37,7 @@ export interface ReplService {
      */
     start(code: string): void;
 }
+/** @category REPL */
 export interface CreateReplOptions {
     service?: Service;
     state?: EvalState;
@@ -57,6 +58,8 @@ export interface CreateReplOptions {
  *     const service = tsNode.create({...repl.evalAwarePartialHost});
  *     repl.setService(service);
  *     repl.start();
+ *
+ * @category REPL
  */
 export declare function createRepl(options?: CreateReplOptions): ReplService;
 /**

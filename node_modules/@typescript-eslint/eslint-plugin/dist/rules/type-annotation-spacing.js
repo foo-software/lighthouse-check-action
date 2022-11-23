@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -81,7 +85,6 @@ exports.default = util.createRule({
         type: 'layout',
         docs: {
             description: 'Require consistent spacing around type annotations',
-            category: 'Stylistic Issues',
             recommended: false,
         },
         fixable: 'whitespace',
@@ -139,7 +142,9 @@ exports.default = util.createRule({
             }
             const { before, after } = getRules(ruleSet, typeAnnotation);
             if (type === ':' && previousToken.value === '?') {
-                if (sourceCode.isSpaceBetweenTokens(previousToken, punctuatorTokenStart)) {
+                if (
+                // eslint-disable-next-line deprecation/deprecation -- TODO - switch once our min ESLint version is 6.7.0
+                sourceCode.isSpaceBetweenTokens(previousToken, punctuatorTokenStart)) {
                     context.report({
                         node: punctuatorTokenStart,
                         messageId: 'unexpectedSpaceBetween',

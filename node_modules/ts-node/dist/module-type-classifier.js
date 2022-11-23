@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createModuleTypeClassifier = void 0;
-require("path");
 const ts_internals_1 = require("./ts-internals");
 const util_1 = require("./util");
 /**
@@ -21,7 +20,7 @@ function createModuleTypeClassifier(options) {
     });
     const classifications = {
         package: {
-            moduleType: 'package',
+            moduleType: 'auto',
         },
         cjs: {
             moduleType: 'cjs',
@@ -43,7 +42,7 @@ function createModuleTypeClassifier(options) {
         return auto;
     }
     return {
-        classifyModule: patternTypePairs.length
+        classifyModuleByModuleTypeOverrides: patternTypePairs.length
             ? classifyModule
             : classifyModuleAuto,
     };

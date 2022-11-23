@@ -4,7 +4,7 @@ import { ObservableInput, OperatorFunction, ObservedValueOf } from '../types';
 import { map } from './map';
 import { innerFrom } from '../observable/innerFrom';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 
 /* tslint:disable:max-line-length */
 export function exhaustMap<T, O extends ObservableInput<any>>(
@@ -41,14 +41,15 @@ export function exhaustMap<T, I, R>(
  * and repeat this process.
  *
  * ## Example
+ *
  * Run a finite timer for each click, only if there is no currently active timer
+ *
  * ```ts
- * import { fromEvent, interval } from 'rxjs';
- * import { exhaustMap, take } from 'rxjs/operators';
+ * import { fromEvent, exhaustMap, interval, take } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const result = clicks.pipe(
- *   exhaustMap(ev => interval(1000).pipe(take(5)))
+ *   exhaustMap(() => interval(1000).pipe(take(5)))
  * );
  * result.subscribe(x => console.log(x));
  * ```
@@ -79,11 +80,11 @@ export function exhaustMap<T, R, O extends ObservableInput<any>>(
     let innerSub: Subscriber<T> | null = null;
     let isComplete = false;
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (outerValue) => {
           if (!innerSub) {
-            innerSub = new OperatorSubscriber(subscriber, undefined, () => {
+            innerSub = createOperatorSubscriber(subscriber, undefined, () => {
               innerSub = null;
               isComplete && subscriber.complete();
             });

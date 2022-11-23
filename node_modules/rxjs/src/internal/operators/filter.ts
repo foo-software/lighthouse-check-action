@@ -1,6 +1,6 @@
 import { OperatorFunction, MonoTypeOperatorFunction, TruthyTypesOf } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 
 /** @deprecated Use a closure instead of a `thisArg`. Signatures accepting a `thisArg` will be removed in v8. */
 export function filter<T, S extends T, A>(predicate: (this: A, value: T, index: number) => value is S, thisArg: A): OperatorFunction<T, S>;
@@ -25,17 +25,18 @@ export function filter<T>(predicate: (value: T, index: number) => boolean): Mono
  * function and only emits those values that yielded `true`.
  *
  * ## Example
+ *
  * Emit only click events whose target was a DIV element
+ *
  * ```ts
- * import { fromEvent } from 'rxjs';
- * import { filter } from 'rxjs/operators';
+ * import { fromEvent, filter } from 'rxjs';
  *
  * const div = document.createElement('div');
- * div.style.cssText = `width: 200px;height: 200px;background: #09c;`;
+ * div.style.cssText = 'width: 200px; height: 200px; background: #09c;';
  * document.body.appendChild(div);
  *
  * const clicks = fromEvent(document, 'click');
- * const clicksOnDivs = clicks.pipe(filter(ev => ev.target.tagName === 'DIV'));
+ * const clicksOnDivs = clicks.pipe(filter(ev => (<HTMLElement>ev.target).tagName === 'DIV'));
  * clicksOnDivs.subscribe(x => console.log(x));
  * ```
  *
@@ -68,7 +69,7 @@ export function filter<T>(predicate: (value: T, index: number) => boolean, thisA
       // Call the predicate with the appropriate `this` context,
       // if the predicate returns `true`, then send the value
       // to the consumer.
-      new OperatorSubscriber(subscriber, (value) => predicate.call(thisArg, value, index++) && subscriber.next(value))
+      createOperatorSubscriber(subscriber, (value) => predicate.call(thisArg, value, index++) && subscriber.next(value))
     );
   });
 }

@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`triggerLighthouse() on fail should return an expected response payload when all URLs failed to queue 1`] = `
-Object {
+{
   "code": "SOME_ERROR",
-  "data": Array [
-    Object {
+  "data": [
+    {
       "code": "SOME_ERROR",
       "message": "some error message",
       "status": 401,
     },
-    Object {
+    {
       "code": "SOME_ERROR",
       "message": "some error message",
       "status": 401,
@@ -20,15 +20,15 @@ Object {
 `;
 
 exports[`triggerLighthouse() on fail should return an expected response payload when all URLs failed to queue due to max limit reached 1`] = `
-Object {
+{
   "code": "ERROR_QUEUE_MAX_USED_DAY",
-  "data": Array [
-    Object {
+  "data": [
+    {
       "code": "ERROR_QUEUE_MAX_USED_DAY",
       "message": "Max limit of 5 triggers reached.",
       "status": 401,
     },
-    Object {
+    {
       "code": "ERROR_QUEUE_MAX_USED_DAY",
       "message": "Max limit of 5 triggers reached.",
       "status": 401,
@@ -39,35 +39,35 @@ Object {
 `;
 
 exports[`triggerLighthouse() on fail should return an expected response payload when api key is invalid 1`] = `
-Object {
+{
   "code": "ERROR_UNAUTHORIZED",
   "error": [Error: Account wasn't found for the provided API token.],
 }
 `;
 
 exports[`triggerLighthouse() on fail should return an expected response payload when no pages are found 1`] = `
-Object {
+{
   "code": "ERROR_NO_URLS",
   "error": [Error: No URLs were found for this account.],
 }
 `;
 
 exports[`triggerLighthouse() on fail should return an expected response payload when no queue results are returned 1`] = `
-Object {
+{
   "code": "ERROR_NO_RESULTS",
   "error": [Error: No results.],
 }
 `;
 
 exports[`triggerLighthouse() on success should return an expected response payload 1`] = `
-Object {
+{
   "code": "SUCCESS",
-  "data": Array [
-    Object {
+  "data": [
+    {
       "code": "SUCCESS_QUEUE_ADD",
       "status": 200,
     },
-    Object {
+    {
       "code": "SUCCESS_QUEUE_ADD",
       "status": 200,
     },
@@ -77,20 +77,20 @@ Object {
 `;
 
 exports[`triggerLighthouse() on success should return an expected response payload when some URLs failed to queue but some succeeded 1`] = `
-Object {
+{
   "code": "SUCCESS",
-  "data": Array [
-    Object {
+  "data": [
+    {
       "code": "ERROR_QUEUE_MAX_USED_DAY",
       "message": "Max limit of 5 triggers reached.",
       "status": 401,
     },
-    Object {
+    {
       "code": "ERROR_QUEUE_MAX_USED_DAY",
       "message": "Max limit of 5 triggers reached.",
       "status": 401,
     },
-    Object {
+    {
       "code": "SUCCESS_QUEUE_ADD",
       "status": 200,
     },

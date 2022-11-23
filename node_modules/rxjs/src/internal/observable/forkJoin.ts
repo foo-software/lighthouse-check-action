@@ -3,7 +3,7 @@ import { ObservedValueOf, ObservableInputTuple, ObservableInput } from '../types
 import { argsArgArrayOrObject } from '../util/argsArgArrayOrObject';
 import { innerFrom } from './innerFrom';
 import { popResultSelector } from '../util/args';
-import { OperatorSubscriber } from '../operators/OperatorSubscriber';
+import { createOperatorSubscriber } from '../operators/OperatorSubscriber';
 import { mapOneOrManyArgs } from '../util/mapOneOrManyArgs';
 import { createObject } from '../util/createObject';
 import { AnyCatcher } from '../AnyCatcher';
@@ -94,14 +94,15 @@ export function forkJoin<T extends Record<string, ObservableInput<any>>>(
  *
  * ## Examples
  *
- * ### Use forkJoin with a dictionary of observable inputs
+ * Use `forkJoin` with a dictionary of observable inputs
+ *
  * ```ts
  * import { forkJoin, of, timer } from 'rxjs';
  *
  * const observable = forkJoin({
  *   foo: of(1, 2, 3, 4),
  *   bar: Promise.resolve(8),
- *   baz: timer(4000),
+ *   baz: timer(4000)
  * });
  * observable.subscribe({
  *  next: value => console.log(value),
@@ -110,17 +111,18 @@ export function forkJoin<T extends Record<string, ObservableInput<any>>>(
  *
  * // Logs:
  * // { foo: 4, bar: 8, baz: 0 } after 4 seconds
- * // "This is how it ends!" immediately after
+ * // 'This is how it ends!' immediately after
  * ```
  *
- * ### Use forkJoin with an array of observable inputs
+ * Use `forkJoin` with an array of observable inputs
+ *
  * ```ts
  * import { forkJoin, of, timer } from 'rxjs';
  *
  * const observable = forkJoin([
  *   of(1, 2, 3, 4),
  *   Promise.resolve(8),
- *   timer(4000),
+ *   timer(4000)
  * ]);
  * observable.subscribe({
  *  next: value => console.log(value),
@@ -129,7 +131,7 @@ export function forkJoin<T extends Record<string, ObservableInput<any>>>(
  *
  * // Logs:
  * // [4, 8, 0] after 4 seconds
- * // "This is how it ends!" immediately after
+ * // 'This is how it ends!' immediately after
  * ```
  *
  * @see {@link combineLatest}
@@ -157,7 +159,7 @@ export function forkJoin(...args: any[]): Observable<any> {
     for (let sourceIndex = 0; sourceIndex < length; sourceIndex++) {
       let hasValue = false;
       innerFrom(sources[sourceIndex]).subscribe(
-        new OperatorSubscriber(
+        createOperatorSubscriber(
           subscriber,
           (value) => {
             if (!hasValue) {

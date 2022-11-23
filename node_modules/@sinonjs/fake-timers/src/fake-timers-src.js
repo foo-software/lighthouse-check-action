@@ -157,6 +157,10 @@ function withGlobal(_global) {
     const hasPerformancePrototype =
         _global.Performance &&
         (typeof _global.Performance).match(/^(function|object)$/);
+    const hasPerformanceConstructorPrototype =
+        _global.performance &&
+        _global.performance.constructor &&
+        _global.performance.constructor.prototype;
     const queueMicrotaskPresent = _global.hasOwnProperty("queueMicrotask");
     const requestAnimationFramePresent =
         _global.requestAnimationFrame &&
@@ -421,6 +425,7 @@ function withGlobal(_global) {
         target.parse = source.parse;
         target.UTC = source.UTC;
         target.prototype.toUTCString = source.prototype.toUTCString;
+        target.isFake = true;
 
         return target;
     }
@@ -581,16 +586,27 @@ function withGlobal(_global) {
 
         if (addTimerReturnsObject) {
             const res = {
+                refed: true,
                 ref: function () {
+                    this.refed = true;
                     return res;
                 },
                 unref: function () {
+                    this.refed = false;
                     return res;
                 },
+                hasRef: function () {
+                    return this.refed;
+                },
                 refresh: function () {
-                    clearTimeout(timer.id);
-                    const args = [timer.func, timer.delay].concat(timer.args);
-                    return setTimeout.apply(null, args);
+                    timer.callAt =
+                        clock.now +
+                        (parseInt(timer.delay) || (clock.duringTick ? 1 : 0));
+
+                    // it _might_ have been removed, but if not the assignment is perfectly fine
+                    clock.timers[timer.id] = timer;
+
+                    return res;
                 },
                 [Symbol.toPrimitive]: function () {
                     return timer.id;
@@ -738,6 +754,7 @@ function withGlobal(_global) {
 
     /**
      * Gets clear handler name for a given timer type
+     *
      * @param {string} ttype
      */
     function getClearHandler(ttype) {
@@ -749,6 +766,7 @@ function withGlobal(_global) {
 
     /**
      * Gets schedule handler name for a given timer type
+     *
      * @param {string} ttype
      */
     function getScheduleHandler(ttype) {
@@ -1584,20 +1602,6 @@ function withGlobal(_global) {
 
         if (performancePresent) {
             clock.performance = Object.create(null);
-
-            if (hasPerformancePrototype) {
-                const proto = _global.Performance.prototype;
-
-                Object.getOwnPropertyNames(proto).forEach(function (name) {
-                    if (name.indexOf("getEntries") === 0) {
-                        // match expected return type for getEntries functions
-                        clock.performance[name] = NOOP_ARRAY;
-                    } else {
-                        clock.performance[name] = NOOP;
-                    }
-                });
-            }
-
             clock.performance.now = function FakeTimersNow() {
                 const hrt = hrtime();
                 const millis = hrt[0] * 1000 + hrt[1] / 1e6;
@@ -1629,6 +1633,14 @@ function withGlobal(_global) {
                 `FakeTimers.install called with ${String(
                     config
                 )} install requires an object parameter`
+            );
+        }
+
+        if (_global.Date.isFake === true) {
+            // Timers are already faked; this is a problem.
+            // Make the user reset timers before continuing.
+            throw new TypeError(
+                "Can't install fake timers twice on the same global object."
             );
         }
 
@@ -1673,6 +1685,32 @@ function withGlobal(_global) {
                 config.advanceTimeDelta
             );
             clock.attachedInterval = intervalId;
+        }
+
+        if (clock.methods.includes("performance")) {
+            const proto = (() => {
+                if (hasPerformancePrototype) {
+                    return _global.Performance.prototype;
+                }
+                if (hasPerformanceConstructorPrototype) {
+                    return _global.performance.constructor.prototype;
+                }
+            })();
+            if (proto) {
+                Object.getOwnPropertyNames(proto).forEach(function (name) {
+                    if (name !== "now") {
+                        clock.performance[name] =
+                            name.indexOf("getEntries") === 0
+                                ? NOOP_ARRAY
+                                : NOOP;
+                    }
+                });
+            } else if ((config.toFake || []).includes("performance")) {
+                // user explicitly tried to fake performance when not present
+                throw new ReferenceError(
+                    "non-existent performance object cannot be faked"
+                );
+            }
         }
 
         for (i = 0, l = clock.methods.length; i < l; i++) {

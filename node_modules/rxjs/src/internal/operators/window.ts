@@ -2,7 +2,7 @@ import { Observable } from '../Observable';
 import { OperatorFunction } from '../types';
 import { Subject } from '../Subject';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 import { noop } from '../util/noop';
 
 /**
@@ -21,20 +21,22 @@ import { noop } from '../util/noop';
  * Observable, the output is a higher-order Observable.
  *
  * ## Example
- * In every window of 1 second each, emit at most 2 click events
- * ```ts
- * import { fromEvent, interval } from 'rxjs';
- * import { window, mergeAll, map, take } from 'rxjs/operators';
  *
- *  const clicks = fromEvent(document, 'click');
- *  const sec = interval(1000);
- *  const result = clicks.pipe(
- *      window(sec),
- *      map(win => win.pipe(take(2))), // each window has at most 2 emissions
- *      mergeAll(),              // flatten the Observable-of-Observables
- *  );
- *  result.subscribe(x => console.log(x));
+ * In every window of 1 second each, emit at most 2 click events
+ *
+ * ```ts
+ * import { fromEvent, interval, window, map, take, mergeAll } from 'rxjs';
+ *
+ * const clicks = fromEvent(document, 'click');
+ * const sec = interval(1000);
+ * const result = clicks.pipe(
+ *   window(sec),
+ *   map(win => win.pipe(take(2))), // take at most 2 emissions from each window
+ *   mergeAll()                     // flatten the Observable-of-Observables
+ * );
+ * result.subscribe(x => console.log(x));
  * ```
+ *
  * @see {@link windowCount}
  * @see {@link windowTime}
  * @see {@link windowToggle}
@@ -59,7 +61,7 @@ export function window<T>(windowBoundaries: Observable<any>): OperatorFunction<T
 
     // Subscribe to our source
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (value) => windowSubject?.next(value),
         () => {
@@ -72,7 +74,7 @@ export function window<T>(windowBoundaries: Observable<any>): OperatorFunction<T
 
     // Subscribe to the window boundaries.
     windowBoundaries.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         () => {
           windowSubject.complete();

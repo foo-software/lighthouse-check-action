@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -19,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const experimental_utils_1 = require("@typescript-eslint/experimental-utils");
+const utils_1 = require("@typescript-eslint/utils");
 const util = __importStar(require("../util"));
 const enumValues = [
     'always',
@@ -33,8 +37,7 @@ exports.default = util.createRule({
     meta: {
         type: 'suggestion',
         docs: {
-            description: 'Disallow the use of type aliases',
-            category: 'Stylistic Issues',
+            description: 'Disallow type aliases',
             // too opinionated to be recommended
             recommended: false,
         },
@@ -47,27 +50,35 @@ exports.default = util.createRule({
                 type: 'object',
                 properties: {
                     allowAliases: {
+                        description: 'Whether to allow direct one-to-one type aliases.',
                         enum: enumValues,
                     },
                     allowCallbacks: {
+                        description: 'Whether to allow type aliases for callbacks.',
                         enum: ['always', 'never'],
                     },
                     allowConditionalTypes: {
+                        description: 'Whether to allow type aliases for conditional types.',
                         enum: ['always', 'never'],
                     },
                     allowConstructors: {
+                        description: 'Whether to allow type aliases with constructors.',
                         enum: ['always', 'never'],
                     },
                     allowLiterals: {
+                        description: 'Whether to allow type aliases with object literal types.',
                         enum: enumValues,
                     },
                     allowMappedTypes: {
+                        description: 'Whether to allow type aliases with mapped types.',
                         enum: enumValues,
                     },
                     allowTupleTypes: {
+                        description: 'Whether to allow type aliases with tuple types.',
                         enum: enumValues,
                     },
                     allowGenerics: {
+                        description: 'Whether to allow type aliases with generic types.',
                         enum: ['always', 'never'],
                     },
                 },
@@ -100,12 +111,13 @@ exports.default = util.createRule({
             'in-unions-and-intersections',
         ];
         const aliasTypes = new Set([
-            experimental_utils_1.AST_NODE_TYPES.TSArrayType,
-            experimental_utils_1.AST_NODE_TYPES.TSImportType,
-            experimental_utils_1.AST_NODE_TYPES.TSTypeReference,
-            experimental_utils_1.AST_NODE_TYPES.TSLiteralType,
-            experimental_utils_1.AST_NODE_TYPES.TSTypeQuery,
-            experimental_utils_1.AST_NODE_TYPES.TSIndexedAccessType,
+            utils_1.AST_NODE_TYPES.TSArrayType,
+            utils_1.AST_NODE_TYPES.TSImportType,
+            utils_1.AST_NODE_TYPES.TSTypeReference,
+            utils_1.AST_NODE_TYPES.TSLiteralType,
+            utils_1.AST_NODE_TYPES.TSTypeQuery,
+            utils_1.AST_NODE_TYPES.TSIndexedAccessType,
+            utils_1.AST_NODE_TYPES.TSTemplateLiteralType,
         ]);
         /**
          * Determines if the composition type is supported by the allowed flags.
@@ -116,9 +128,9 @@ exports.default = util.createRule({
         function isSupportedComposition(isTopLevel, compositionType, allowed) {
             return (!compositions.includes(allowed) ||
                 (!isTopLevel &&
-                    ((compositionType === experimental_utils_1.AST_NODE_TYPES.TSUnionType &&
+                    ((compositionType === utils_1.AST_NODE_TYPES.TSUnionType &&
                         unions.includes(allowed)) ||
-                        (compositionType === experimental_utils_1.AST_NODE_TYPES.TSIntersectionType &&
+                        (compositionType === utils_1.AST_NODE_TYPES.TSIntersectionType &&
                             intersections.includes(allowed)))));
         }
         /**
@@ -143,7 +155,7 @@ exports.default = util.createRule({
                 node,
                 messageId: 'noCompositionAlias',
                 data: {
-                    compositionType: compositionType === experimental_utils_1.AST_NODE_TYPES.TSUnionType
+                    compositionType: compositionType === utils_1.AST_NODE_TYPES.TSUnionType
                         ? 'union'
                         : 'intersection',
                     typeName: type,
@@ -151,20 +163,20 @@ exports.default = util.createRule({
             });
         }
         const isValidTupleType = (type) => {
-            if (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSTupleType) {
+            if (type.node.type === utils_1.AST_NODE_TYPES.TSTupleType) {
                 return true;
             }
-            if (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSTypeOperator) {
+            if (type.node.type === utils_1.AST_NODE_TYPES.TSTypeOperator) {
                 if (['keyof', 'readonly'].includes(type.node.operator) &&
                     type.node.typeAnnotation &&
-                    type.node.typeAnnotation.type === experimental_utils_1.AST_NODE_TYPES.TSTupleType) {
+                    type.node.typeAnnotation.type === utils_1.AST_NODE_TYPES.TSTupleType) {
                     return true;
                 }
             }
             return false;
         };
         const isValidGeneric = (type) => {
-            return (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSTypeReference &&
+            return (type.node.type === utils_1.AST_NODE_TYPES.TSTypeReference &&
                 type.node.typeParameters !== undefined);
         };
         const checkAndReport = (optionValue, isTopLevel, type, label) => {
@@ -180,28 +192,28 @@ exports.default = util.createRule({
          * @param isTopLevel a flag indicating this is the top level node.
          */
         function validateTypeAliases(type, isTopLevel = false) {
-            if (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSFunctionType) {
+            if (type.node.type === utils_1.AST_NODE_TYPES.TSFunctionType) {
                 // callback
                 if (allowCallbacks === 'never') {
                     reportError(type.node, type.compositionType, isTopLevel, 'Callbacks');
                 }
             }
-            else if (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSConditionalType) {
+            else if (type.node.type === utils_1.AST_NODE_TYPES.TSConditionalType) {
                 // conditional type
                 if (allowConditionalTypes === 'never') {
                     reportError(type.node, type.compositionType, isTopLevel, 'Conditional types');
                 }
             }
-            else if (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSConstructorType) {
+            else if (type.node.type === utils_1.AST_NODE_TYPES.TSConstructorType) {
                 if (allowConstructors === 'never') {
                     reportError(type.node, type.compositionType, isTopLevel, 'Constructors');
                 }
             }
-            else if (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSTypeLiteral) {
+            else if (type.node.type === utils_1.AST_NODE_TYPES.TSTypeLiteral) {
                 // literal object type
                 checkAndReport(allowLiterals, isTopLevel, type, 'Literals');
             }
-            else if (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSMappedType) {
+            else if (type.node.type === utils_1.AST_NODE_TYPES.TSMappedType) {
                 // mapped type
                 checkAndReport(allowMappedTypes, isTopLevel, type, 'Mapped types');
             }
@@ -214,9 +226,9 @@ exports.default = util.createRule({
                     reportError(type.node, type.compositionType, isTopLevel, 'Generics');
                 }
             }
-            else if (type.node.type.endsWith(experimental_utils_1.AST_TOKEN_TYPES.Keyword) ||
+            else if (type.node.type.endsWith(utils_1.AST_TOKEN_TYPES.Keyword) ||
                 aliasTypes.has(type.node.type) ||
-                (type.node.type === experimental_utils_1.AST_NODE_TYPES.TSTypeOperator &&
+                (type.node.type === utils_1.AST_NODE_TYPES.TSTypeOperator &&
                     (type.node.operator === 'keyof' ||
                         (type.node.operator === 'readonly' &&
                             type.node.typeAnnotation &&
@@ -233,15 +245,12 @@ exports.default = util.createRule({
          * Flatten the given type into an array of its dependencies
          */
         function getTypes(node, compositionType = null) {
-            if (node.type === experimental_utils_1.AST_NODE_TYPES.TSUnionType ||
-                node.type === experimental_utils_1.AST_NODE_TYPES.TSIntersectionType) {
+            if (node.type === utils_1.AST_NODE_TYPES.TSUnionType ||
+                node.type === utils_1.AST_NODE_TYPES.TSIntersectionType) {
                 return node.types.reduce((acc, type) => {
                     acc.push(...getTypes(type, node.type));
                     return acc;
                 }, []);
-            }
-            if (node.type === experimental_utils_1.AST_NODE_TYPES.TSParenthesizedType) {
-                return getTypes(node.typeAnnotation, compositionType);
             }
             return [{ node, compositionType }];
         }

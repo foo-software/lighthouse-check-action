@@ -85,6 +85,14 @@ describe('Test Utils', () => {
     expect(getHostname('https://www.google.com')).toBe('www.google.com');
   });
 
+  it('GetHostnamePort', () => {
+    expect(getHostname('https://www.google.com:8080')).toBe('www.google.com');
+  });
+
+  it('GetHostnameWildcardPort', () => {
+    expect(getHostname('https://www.google.com:*')).toBe('www.google.com');
+  });
+
   it('GetHostnameNoProtocol', () => {
     expect(getHostname('www.google.com')).toBe('www.google.com');
   });

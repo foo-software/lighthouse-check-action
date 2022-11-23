@@ -244,6 +244,14 @@ declare class DirectoryService extends Service {
    */
   describeRegions(callback?: (err: AWSError, data: DirectoryService.Types.DescribeRegionsResult) => void): Request<DirectoryService.Types.DescribeRegionsResult, AWSError>;
   /**
+   * Retrieves information about the configurable settings for the specified directory.
+   */
+  describeSettings(params: DirectoryService.Types.DescribeSettingsRequest, callback?: (err: AWSError, data: DirectoryService.Types.DescribeSettingsResult) => void): Request<DirectoryService.Types.DescribeSettingsResult, AWSError>;
+  /**
+   * Retrieves information about the configurable settings for the specified directory.
+   */
+  describeSettings(callback?: (err: AWSError, data: DirectoryService.Types.DescribeSettingsResult) => void): Request<DirectoryService.Types.DescribeSettingsResult, AWSError>;
+  /**
    * Returns the shared directories in your account. 
    */
   describeSharedDirectories(params: DirectoryService.Types.DescribeSharedDirectoriesRequest, callback?: (err: AWSError, data: DirectoryService.Types.DescribeSharedDirectoriesResult) => void): Request<DirectoryService.Types.DescribeSharedDirectoriesResult, AWSError>;
@@ -267,6 +275,14 @@ declare class DirectoryService extends Service {
    * Obtains information about the trust relationships for this account. If no input parameters are provided, such as DirectoryId or TrustIds, this request describes all the trust relationships belonging to the account.
    */
   describeTrusts(callback?: (err: AWSError, data: DirectoryService.Types.DescribeTrustsResult) => void): Request<DirectoryService.Types.DescribeTrustsResult, AWSError>;
+  /**
+   *  Describes the updates of a directory for a particular update type. 
+   */
+  describeUpdateDirectory(params: DirectoryService.Types.DescribeUpdateDirectoryRequest, callback?: (err: AWSError, data: DirectoryService.Types.DescribeUpdateDirectoryResult) => void): Request<DirectoryService.Types.DescribeUpdateDirectoryResult, AWSError>;
+  /**
+   *  Describes the updates of a directory for a particular update type. 
+   */
+  describeUpdateDirectory(callback?: (err: AWSError, data: DirectoryService.Types.DescribeUpdateDirectoryResult) => void): Request<DirectoryService.Types.DescribeUpdateDirectoryResult, AWSError>;
   /**
    * Disables alternative client authentication methods for the specified directory. 
    */
@@ -484,6 +500,14 @@ declare class DirectoryService extends Service {
    */
   updateConditionalForwarder(callback?: (err: AWSError, data: DirectoryService.Types.UpdateConditionalForwarderResult) => void): Request<DirectoryService.Types.UpdateConditionalForwarderResult, AWSError>;
   /**
+   *  Updates the directory for a particular update type. 
+   */
+  updateDirectorySetup(params: DirectoryService.Types.UpdateDirectorySetupRequest, callback?: (err: AWSError, data: DirectoryService.Types.UpdateDirectorySetupResult) => void): Request<DirectoryService.Types.UpdateDirectorySetupResult, AWSError>;
+  /**
+   *  Updates the directory for a particular update type. 
+   */
+  updateDirectorySetup(callback?: (err: AWSError, data: DirectoryService.Types.UpdateDirectorySetupResult) => void): Request<DirectoryService.Types.UpdateDirectorySetupResult, AWSError>;
+  /**
    * Adds or removes domain controllers to or from the directory. Based on the difference between current value and new value (provided through this API call), domain controllers will be added or removed. It may take up to 45 minutes for any new domain controllers to become fully active once the requested number of domain controllers is updated. During this time, you cannot make another update request.
    */
   updateNumberOfDomainControllers(params: DirectoryService.Types.UpdateNumberOfDomainControllersRequest, callback?: (err: AWSError, data: DirectoryService.Types.UpdateNumberOfDomainControllersResult) => void): Request<DirectoryService.Types.UpdateNumberOfDomainControllersResult, AWSError>;
@@ -499,6 +523,14 @@ declare class DirectoryService extends Service {
    * Updates the Remote Authentication Dial In User Service (RADIUS) server information for an AD Connector or Microsoft AD directory.
    */
   updateRadius(callback?: (err: AWSError, data: DirectoryService.Types.UpdateRadiusResult) => void): Request<DirectoryService.Types.UpdateRadiusResult, AWSError>;
+  /**
+   * Updates the configurable settings for the specified directory.
+   */
+  updateSettings(params: DirectoryService.Types.UpdateSettingsRequest, callback?: (err: AWSError, data: DirectoryService.Types.UpdateSettingsResult) => void): Request<DirectoryService.Types.UpdateSettingsResult, AWSError>;
+  /**
+   * Updates the configurable settings for the specified directory.
+   */
+  updateSettings(callback?: (err: AWSError, data: DirectoryService.Types.UpdateSettingsResult) => void): Request<DirectoryService.Types.UpdateSettingsResult, AWSError>;
   /**
    * Updates the trust that has been set up between your Managed Microsoft AD directory and an self-managed Active Directory.
    */
@@ -684,7 +716,7 @@ declare namespace DirectoryService {
   }
   export type ClientAuthenticationSettingsInfo = ClientAuthenticationSettingInfo[];
   export type ClientAuthenticationStatus = "Enabled"|"Disabled"|string;
-  export type ClientAuthenticationType = "SmartCard"|string;
+  export type ClientAuthenticationType = "SmartCard"|"SmartCardOrPassword"|string;
   export interface ClientCertAuthSettings {
     /**
      * Specifies the URL of the default OCSP server used to check for revocation status. A secondary value to any OCSP address found in the AIA extension of the user certificate.
@@ -910,6 +942,7 @@ declare namespace DirectoryService {
     DirectoryId?: DirectoryId;
   }
   export type CreateSnapshotBeforeSchemaExtension = boolean;
+  export type CreateSnapshotBeforeUpdate = boolean;
   export interface CreateSnapshotRequest {
     /**
      * The identifier of the directory of which to take a snapshot.
@@ -1230,6 +1263,34 @@ declare namespace DirectoryService {
      */
     NextToken?: NextToken;
   }
+  export interface DescribeSettingsRequest {
+    /**
+     * The identifier of the directory for which to retrieve information.
+     */
+    DirectoryId: DirectoryId;
+    /**
+     * The status of the directory settings for which to retrieve information.
+     */
+    Status?: DirectoryConfigurationStatus;
+    /**
+     * The DescribeSettingsResult.NextToken value from a previous call to DescribeSettings. Pass null if this is the first call.
+     */
+    NextToken?: NextToken;
+  }
+  export interface DescribeSettingsResult {
+    /**
+     * The identifier of the directory.
+     */
+    DirectoryId?: DirectoryId;
+    /**
+     * The list of SettingEntry objects that were retrieved. It is possible that this list contains less than the number of items specified in the Limit member of the request. This occurs if there are less than the requested number of items left to retrieve, or if the limitations of the operation have been exceeded.
+     */
+    SettingEntries?: SettingEntries;
+    /**
+     * If not null, token that indicates that more results are available. Pass this value for the NextToken parameter in a subsequent call to DescribeSettings to retrieve the next set of items. 
+     */
+    NextToken?: NextToken;
+  }
   export interface DescribeSharedDirectoriesRequest {
     /**
      * Returns the identifier of the directory in the directory owner account. 
@@ -1314,8 +1375,45 @@ declare namespace DirectoryService {
      */
     NextToken?: NextToken;
   }
+  export interface DescribeUpdateDirectoryRequest {
+    /**
+     *  The unique identifier of the directory. 
+     */
+    DirectoryId: DirectoryId;
+    /**
+     *  The type of updates you want to describe for the directory. 
+     */
+    UpdateType: UpdateType;
+    /**
+     *  The name of the Region. 
+     */
+    RegionName?: RegionName;
+    /**
+     *  The DescribeUpdateDirectoryResult. NextToken value from a previous call to DescribeUpdateDirectory. Pass null if this is the first call. 
+     */
+    NextToken?: NextToken;
+  }
+  export interface DescribeUpdateDirectoryResult {
+    /**
+     *  The list of update activities on a directory for the requested update type. 
+     */
+    UpdateActivities?: UpdateActivities;
+    /**
+     *  If not null, more results are available. Pass this value for the NextToken parameter. 
+     */
+    NextToken?: NextToken;
+  }
   export type Description = string;
   export type DesiredNumberOfDomainControllers = number;
+  export type DirectoryConfigurationSettingAllowedValues = string;
+  export type DirectoryConfigurationSettingLastRequestedDateTime = Date;
+  export type DirectoryConfigurationSettingLastUpdatedDateTime = Date;
+  export type DirectoryConfigurationSettingName = string;
+  export type DirectoryConfigurationSettingRequestDetailedStatus = {[key: string]: DirectoryConfigurationStatus};
+  export type DirectoryConfigurationSettingRequestStatusMessage = string;
+  export type DirectoryConfigurationSettingType = string;
+  export type DirectoryConfigurationSettingValue = string;
+  export type DirectoryConfigurationStatus = "Requested"|"Updating"|"Updated"|"Failed"|"Default"|string;
   export interface DirectoryConnectSettings {
     /**
      * The identifier of the VPC in which the AD Connector is created.
@@ -1461,6 +1559,10 @@ declare namespace DirectoryService {
      * Lists the Regions where the directory has replicated.
      */
     RegionsInfo?: RegionsInfo;
+    /**
+     * The operating system (OS) version of the directory.
+     */
+    OsVersion?: OSVersion;
   }
   export type DirectoryDescriptions = DirectoryDescription[];
   export type DirectoryEdition = "Enterprise"|"Standard"|string;
@@ -1729,6 +1831,7 @@ declare namespace DirectoryService {
      */
     SnapshotLimits?: SnapshotLimits;
   }
+  export type InitiatedBy = string;
   export type IpAddr = string;
   export type IpAddrs = IpAddr[];
   export interface IpRoute {
@@ -1933,6 +2036,13 @@ declare namespace DirectoryService {
   export type NextToken = string;
   export type Notes = string;
   export type OCSPUrl = string;
+  export interface OSUpdateSettings {
+    /**
+     *  OS version that the directory needs to be updated to. 
+     */
+    OSVersion?: OSVersion;
+  }
+  export type OSVersion = "SERVER_2012"|"SERVER_2019"|string;
   export type OrganizationalUnitDN = string;
   export interface OwnerDirectoryDescription {
     /**
@@ -2199,6 +2309,60 @@ declare namespace DirectoryService {
   export type SelectiveAuth = "Enabled"|"Disabled"|string;
   export type Server = string;
   export type Servers = Server[];
+  export interface Setting {
+    /**
+     * The name of the directory setting. For example:  TLS_1_0 
+     */
+    Name: DirectoryConfigurationSettingName;
+    /**
+     * The value of the directory setting for which to retrieve information. For example, for TLS_1_0, the valid values are: Enable and Disable.
+     */
+    Value: DirectoryConfigurationSettingValue;
+  }
+  export type SettingEntries = SettingEntry[];
+  export interface SettingEntry {
+    /**
+     * The type of directory setting. For example, Protocol or Cipher.
+     */
+    Type?: DirectoryConfigurationSettingType;
+    /**
+     * The name of the directory setting. For example:  TLS_1_0 
+     */
+    Name?: DirectoryConfigurationSettingName;
+    /**
+     * The valid range of values for the directory setting.
+     */
+    AllowedValues?: DirectoryConfigurationSettingAllowedValues;
+    /**
+     * The value of the directory setting that is applied to the directory.
+     */
+    AppliedValue?: DirectoryConfigurationSettingValue;
+    /**
+     * The value that was last requested for the directory setting.
+     */
+    RequestedValue?: DirectoryConfigurationSettingValue;
+    /**
+     * The overall status of the request to update the directory setting request. If the directory setting is deployed in more than one region, and the request fails in any region, the overall status is Failed.
+     */
+    RequestStatus?: DirectoryConfigurationStatus;
+    /**
+     * Details about the status of the request to update the directory setting. If the directory setting is deployed in more than one region, status is returned for the request in each region where the setting is deployed.
+     */
+    RequestDetailedStatus?: DirectoryConfigurationSettingRequestDetailedStatus;
+    /**
+     * The last status message for the directory status request.
+     */
+    RequestStatusMessage?: DirectoryConfigurationSettingRequestStatusMessage;
+    /**
+     * The date and time when the directory setting was last updated.
+     */
+    LastUpdatedDateTime?: DirectoryConfigurationSettingLastUpdatedDateTime;
+    /**
+     * The date and time when the request to update a directory setting was last submitted.
+     */
+    LastRequestedDateTime?: DirectoryConfigurationSettingLastRequestedDateTime;
+  }
+  export type Settings = Setting[];
   export interface ShareDirectoryRequest {
     /**
      * Identifier of the Managed Microsoft AD directory that you want to share with other Amazon Web Services accounts.
@@ -2452,6 +2616,7 @@ declare namespace DirectoryService {
      */
     Type: TargetType;
   }
+  export type UpdateActivities = UpdateInfoEntry[];
   export interface UpdateConditionalForwarderRequest {
     /**
      * The directory ID of the Amazon Web Services directory for which to update the conditional forwarder.
@@ -2467,6 +2632,60 @@ declare namespace DirectoryService {
     DnsIpAddrs: DnsIpAddrs;
   }
   export interface UpdateConditionalForwarderResult {
+  }
+  export interface UpdateDirectorySetupRequest {
+    /**
+     *  The identifier of the directory on which you want to perform the update. 
+     */
+    DirectoryId: DirectoryId;
+    /**
+     *  The type of update that needs to be performed on the directory. For example, OS. 
+     */
+    UpdateType: UpdateType;
+    /**
+     *  The settings for the OS update that needs to be performed on the directory. 
+     */
+    OSUpdateSettings?: OSUpdateSettings;
+    /**
+     *  The boolean that specifies if a snapshot for the directory needs to be taken before updating the directory. 
+     */
+    CreateSnapshotBeforeUpdate?: CreateSnapshotBeforeUpdate;
+  }
+  export interface UpdateDirectorySetupResult {
+  }
+  export interface UpdateInfoEntry {
+    /**
+     *  The name of the Region. 
+     */
+    Region?: RegionName;
+    /**
+     *  The status of the update performed on the directory. 
+     */
+    Status?: UpdateStatus;
+    /**
+     *  The reason for the current status of the update type activity. 
+     */
+    StatusReason?: UpdateStatusReason;
+    /**
+     *  This specifies if the update was initiated by the customer or by the service team. 
+     */
+    InitiatedBy?: InitiatedBy;
+    /**
+     *  The new value of the target setting. 
+     */
+    NewValue?: UpdateValue;
+    /**
+     *  The old value of the target setting. 
+     */
+    PreviousValue?: UpdateValue;
+    /**
+     *  The start time of the UpdateDirectorySetup for the particular type. 
+     */
+    StartTime?: StartDateTime;
+    /**
+     *  The last updated date and time of a particular directory setting. 
+     */
+    LastUpdatedDateTime?: LastUpdatedDateTime;
   }
   export interface UpdateNumberOfDomainControllersRequest {
     /**
@@ -2493,6 +2712,24 @@ declare namespace DirectoryService {
   export interface UpdateRadiusResult {
   }
   export type UpdateSecurityGroupForDirectoryControllers = boolean;
+  export interface UpdateSettingsRequest {
+    /**
+     * The identifier of the directory for which to update settings.
+     */
+    DirectoryId: DirectoryId;
+    /**
+     * The list of Setting objects.
+     */
+    Settings: Settings;
+  }
+  export interface UpdateSettingsResult {
+    /**
+     * The identifier of the directory.
+     */
+    DirectoryId?: DirectoryId;
+  }
+  export type UpdateStatus = "Updated"|"Updating"|"UpdateFailed"|string;
+  export type UpdateStatusReason = string;
   export interface UpdateTrustRequest {
     /**
      * Identifier of the trust relationship.
@@ -2509,6 +2746,13 @@ declare namespace DirectoryService {
      * Identifier of the trust relationship.
      */
     TrustId?: TrustId;
+  }
+  export type UpdateType = "OS"|string;
+  export interface UpdateValue {
+    /**
+     *  The OS update related settings. 
+     */
+    OSUpdateSettings?: OSUpdateSettings;
   }
   export type UseSameUsername = boolean;
   export type UserName = string;

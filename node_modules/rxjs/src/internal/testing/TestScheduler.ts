@@ -10,6 +10,7 @@ import { COMPLETE_NOTIFICATION, errorNotification, nextNotification } from '../N
 import { dateTimestampProvider } from '../scheduler/dateTimestampProvider';
 import { performanceTimestampProvider } from '../scheduler/performanceTimestampProvider';
 import { animationFrameProvider } from '../scheduler/animationFrameProvider';
+import type { TimerHandle } from '../scheduler/timerHandle';
 import { immediateProvider } from '../scheduler/immediateProvider';
 import { intervalProvider } from '../scheduler/intervalProvider';
 import { timeoutProvider } from '../scheduler/timeoutProvider';
@@ -38,7 +39,7 @@ export type subscriptionLogsToBeFn = (marbles: string | string[]) => void;
 export class TestScheduler extends VirtualTimeScheduler {
   /**
    * The number of virtual time units each character in a marble diagram represents. If
-   * the test scheduler is being used in "run mode", via the `run` method, this is temporarly
+   * the test scheduler is being used in "run mode", via the `run` method, this is temporarily
    * set to `1` for the duration of the `run` block, then set back to whatever value it was.
    * @nocollapse
    */
@@ -83,7 +84,7 @@ export class TestScheduler extends VirtualTimeScheduler {
 
   /**
    * @param marbles A diagram in the marble DSL. Letters map to keys in `values` if provided.
-   * @param values Values to use for the letters in `marbles`. If ommitted, the letters themselves are used.
+   * @param values Values to use for the letters in `marbles`. If omitted, the letters themselves are used.
    * @param error The error to use for the `#` marble (if present).
    */
   createColdObservable<T = string>(marbles: string, values?: { [marble: string]: T }, error?: any): ColdObservable<T> {
@@ -101,7 +102,7 @@ export class TestScheduler extends VirtualTimeScheduler {
 
   /**
    * @param marbles A diagram in the marble DSL. Letters map to keys in `values` if provided.
-   * @param values Values to use for the letters in `marbles`. If ommitted, the letters themselves are used.
+   * @param values Values to use for the letters in `marbles`. If omitted, the letters themselves are used.
    * @param error The error to use for the `#` marble (if present).
    */
   createHotObservable<T = string>(marbles: string, values?: { [marble: string]: T }, error?: any): HotObservable<T> {
@@ -116,17 +117,17 @@ export class TestScheduler extends VirtualTimeScheduler {
 
   private materializeInnerObservable(observable: Observable<any>, outerFrame: number): TestMessage[] {
     const messages: TestMessage[] = [];
-    observable.subscribe(
-      (value) => {
+    observable.subscribe({
+      next: (value) => {
         messages.push({ frame: this.frame - outerFrame, notification: nextNotification(value) });
       },
-      (error) => {
+      error: (error) => {
         messages.push({ frame: this.frame - outerFrame, notification: errorNotification(error) });
       },
-      () => {
+      complete: () => {
         messages.push({ frame: this.frame - outerFrame, notification: COMPLETE_NOTIFICATION });
-      }
-    );
+      },
+    });
     return messages;
   }
 
@@ -139,19 +140,19 @@ export class TestScheduler extends VirtualTimeScheduler {
     let subscription: Subscription;
 
     this.schedule(() => {
-      subscription = observable.subscribe(
-        (x) => {
+      subscription = observable.subscribe({
+        next: (x) => {
           // Support Observable-of-Observables
           const value = x instanceof Observable ? this.materializeInnerObservable(x, this.frame) : x;
           actual.push({ frame: this.frame, notification: nextNotification(value) });
         },
-        (error) => {
+        error: (error) => {
           actual.push({ frame: this.frame, notification: errorNotification(error) });
         },
-        () => {
+        complete: () => {
           actual.push({ frame: this.frame, notification: COMPLETE_NOTIFICATION });
-        }
-      );
+        },
+      });
     }, subscriptionFrame);
 
     if (unsubscriptionFrame !== Infinity) {
@@ -170,19 +171,19 @@ export class TestScheduler extends VirtualTimeScheduler {
         flushTest.ready = true;
         flushTest.expected = [];
         this.schedule(() => {
-          subscription = other.subscribe(
-            (x) => {
+          subscription = other.subscribe({
+            next: (x) => {
               // Support Observable-of-Observables
               const value = x instanceof Observable ? this.materializeInnerObservable(x, this.frame) : x;
               flushTest.expected!.push({ frame: this.frame, notification: nextNotification(value) });
             },
-            (error) => {
+            error: (error) => {
               flushTest.expected!.push({ frame: this.frame, notification: errorNotification(error) });
             },
-            () => {
+            complete: () => {
               flushTest.expected!.push({ frame: this.frame, notification: COMPLETE_NOTIFICATION });
-            }
-          );
+            },
+          });
         }, subscriptionFrame);
       },
     };
@@ -510,11 +511,11 @@ export class TestScheduler extends VirtualTimeScheduler {
 
     let lastHandle = 0;
     const scheduleLookup = new Map<
-      number,
+      TimerHandle,
       {
         due: number;
         duration: number;
-        handle: number;
+        handle: TimerHandle;
         handler: () => void;
         subscription: Subscription;
         type: 'immediate' | 'interval' | 'timeout';
@@ -582,7 +583,7 @@ export class TestScheduler extends VirtualTimeScheduler {
         });
         return handle;
       },
-      clearImmediate: (handle: number) => {
+      clearImmediate: (handle: TimerHandle) => {
         const value = scheduleLookup.get(handle);
         if (value) {
           value.subscription.unsubscribe();
@@ -604,7 +605,7 @@ export class TestScheduler extends VirtualTimeScheduler {
         });
         return handle;
       },
-      clearInterval: (handle: number) => {
+      clearInterval: (handle: TimerHandle) => {
         const value = scheduleLookup.get(handle);
         if (value) {
           value.subscription.unsubscribe();
@@ -626,7 +627,7 @@ export class TestScheduler extends VirtualTimeScheduler {
         });
         return handle;
       },
-      clearTimeout: (handle: number) => {
+      clearTimeout: (handle: TimerHandle) => {
         const value = scheduleLookup.get(handle);
         if (value) {
           value.subscription.unsubscribe();

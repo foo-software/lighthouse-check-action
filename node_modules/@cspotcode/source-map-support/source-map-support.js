@@ -1,5 +1,6 @@
-var SourceMapConsumer = require('@cspotcode/source-map-consumer').SourceMapConsumer;
+const { TraceMap, originalPositionFor, AnyMap } = require('@jridgewell/trace-mapping');
 var path = require('path');
+const { fileURLToPath, pathToFileURL } = require('url');
 var util = require('util');
 
 var fs;
@@ -92,10 +93,11 @@ var sharedData = initializeSharedData({
   emptyCacheBetweenOperations: false,
 
   // Maps a file path to a string containing the file contents
-  fileContentsCache: {},
+  fileContentsCache: Object.create(null),
 
   // Maps a file path to a source map for that file
-  sourceMapCache: {},
+  /** @type {Record<string, {url: string, map: TraceMap}} */
+  sourceMapCache: Object.create(null),
 
   // Priority list of retrieve handlers
   retrieveFileHandlers: [],
@@ -125,6 +127,65 @@ function isInBrowser() {
 function hasGlobalProcessEventEmitter() {
   return ((typeof process === 'object') && (process !== null) && (typeof process.on === 'function'));
 }
+
+function tryFileURLToPath(v) {
+  if(isFileUrl(v)) {
+    return fileURLToPath(v);
+  }
+  return v;
+}
+
+// TODO un-copy these from resolve-uri; see if they can be exported from that lib
+function isFileUrl(input) {
+  return input.startsWith('file:');
+}
+function isAbsoluteUrl(input) {
+  return schemeRegex.test(input);
+}
+// Matches the scheme of a URL, eg "http://"
+const schemeRegex = /^[\w+.-]+:\/\//;
+function isSchemeRelativeUrl(input) {
+  return input.startsWith('//');
+}
+
+// #region Caches
+/** @param {string} pathOrFileUrl */
+function getCacheKey(pathOrFileUrl) {
+  if(pathOrFileUrl.startsWith('node:')) return pathOrFileUrl;
+  if(isFileUrl(pathOrFileUrl)) {
+    // Must normalize spaces to %20, stuff like that
+    return new URL(pathOrFileUrl).toString();
+  } else {
+    try {
+      return pathToFileURL(pathOrFileUrl).toString();
+    } catch {
+      return pathOrFileUrl;
+    }
+  }
+}
+function getFileContentsCache(key) {
+  return sharedData.fileContentsCache[getCacheKey(key)];
+}
+function hasFileContentsCacheFromKey(key) {
+  return Object.prototype.hasOwnProperty.call(sharedData.fileContentsCache, key);
+}
+function getFileContentsCacheFromKey(key) {
+  return sharedData.fileContentsCache[key];
+}
+function setFileContentsCache(key, value) {
+  return sharedData.fileContentsCache[getCacheKey(key)] = value;
+}
+function getSourceMapCache(key) {
+  return sharedData.sourceMapCache[getCacheKey(key)];
+}
+function setSourceMapCache(key, value) {
+  return sharedData.sourceMapCache[getCacheKey(key)] = value;
+}
+function clearCaches() {
+  sharedData.fileContentsCache = Object.create(null);
+  sharedData.sourceMapCache = Object.create(null);
+}
+// #endregion Caches
 
 function handlerExec(list, internalList) {
   return function(arg) {
@@ -157,8 +218,9 @@ sharedData.internalRetrieveFileHandlers.push(function(path) {
         '/'; // file:///root-dir/file -> /root-dir/file
     });
   }
-  if (path in sharedData.fileContentsCache) {
-    return sharedData.fileContentsCache[path];
+  const key = getCacheKey(path);
+  if(hasFileContentsCacheFromKey(key)) {
+    return getFileContentsCacheFromKey(key);
   }
 
   var contents = '';
@@ -179,23 +241,74 @@ sharedData.internalRetrieveFileHandlers.push(function(path) {
     /* ignore any errors */
   }
 
-  return sharedData.fileContentsCache[path] = contents;
+  return setFileContentsCache(path, contents);
 });
 
 // Support URLs relative to a directory, but be careful about a protocol prefix
 // in case we are in the browser (i.e. directories may start with "http://" or "file:///")
 function supportRelativeURL(file, url) {
-  if (!file) return url;
-  var dir = path.dirname(file);
-  var match = /^\w+:\/\/[^\/]*/.exec(dir);
-  var protocol = match ? match[0] : '';
-  var startPath = dir.slice(protocol.length);
-  if (protocol && /^\/\w\:/.test(startPath)) {
-    // handle file:///C:/ paths
-    protocol += '/';
-    return protocol + path.resolve(dir.slice(protocol.length), url).replace(/\\/g, '/');
+  if(!file) return url;
+  // given that this happens within error formatting codepath, probably best to
+  // fallback instead of throwing if anything goes wrong
+  try {
+    // if should output a URL
+    if(isAbsoluteUrl(file) || isSchemeRelativeUrl(file)) {
+        if(isAbsoluteUrl(url) || isSchemeRelativeUrl(url)) {
+            return new URL(url, file).toString();
+        }
+        if(path.isAbsolute(url)) {
+            return new URL(pathToFileURL(url), file).toString();
+        }
+        // url is relative path or URL
+        return new URL(url.replace(/\\/g, '/'), file).toString();
+    }
+    // if should output a path (unless URL is something like https://)
+    if(path.isAbsolute(file)) {
+        if(isFileUrl(url)) {
+            return fileURLToPath(url);
+        }
+        if(isSchemeRelativeUrl(url)) {
+            return fileURLToPath(new URL(url, 'file://'));
+        }
+        if(isAbsoluteUrl(url)) {
+            // url is a non-file URL
+            // Go with the URL
+            return url;
+        }
+        if(path.isAbsolute(url)) {
+            // Normalize at all?  decodeURI or normalize slashes?
+            return path.normalize(url);
+        }
+        // url is relative path or URL
+        return path.join(file, '..', decodeURI(url));
+    }
+    // If we get here, file is relative.
+    // Shouldn't happen since node identifies modules with absolute paths or URLs.
+    // But we can take a stab at returning something meaningful anyway.
+    if(isAbsoluteUrl(url) || isSchemeRelativeUrl(url)) {
+        return url;
+    }
+    return path.join(file, '..', url);
+  } catch(e) {
+      return url;
   }
-  return protocol + path.resolve(dir.slice(protocol.length), url);
+}
+
+// Return pathOrUrl in the same style as matchStyleOf: either a file URL or a native path
+function matchStyleOfPathOrUrl(matchStyleOf, pathOrUrl) {
+  try {
+    if(isAbsoluteUrl(matchStyleOf) || isSchemeRelativeUrl(matchStyleOf)) {
+      if(isAbsoluteUrl(pathOrUrl) || isSchemeRelativeUrl(pathOrUrl)) return pathOrUrl;
+      if(path.isAbsolute(pathOrUrl)) return pathToFileURL(pathOrUrl).toString();
+    } else if(path.isAbsolute(matchStyleOf)) {
+      if(isAbsoluteUrl(pathOrUrl) || isSchemeRelativeUrl(pathOrUrl)) {
+        return fileURLToPath(new URL(pathOrUrl, 'file://'));
+      }
+    }
+    return pathOrUrl;
+  } catch(e) {
+    return pathOrUrl;
+  }
 }
 
 function retrieveSourceMapURL(source) {
@@ -219,7 +332,7 @@ function retrieveSourceMapURL(source) {
   }
 
   // Get the URL of the source map
-  fileData = retrieveFile(source);
+  fileData = retrieveFile(tryFileURLToPath(source));
   var re = /(?:\/\/[@#][\s]*sourceMappingURL=([^\s'"]+)[\s]*$)|(?:\/\*[@#][\s]*sourceMappingURL=([^\s*'"]+)[\s]*(?:\*\/)[\s]*$)/mg;
   // Keep executing the search to find the *last* sourceMappingURL to avoid
   // picking up sourceMappingURLs from comments, strings, etc.
@@ -234,6 +347,7 @@ function retrieveSourceMapURL(source) {
 // there is no source map.  The map field may be either a string or the parsed
 // JSON object (ie, it must be a valid argument to the SourceMapConsumer
 // constructor).
+/** @type {(source: string) => import('./source-map-support').UrlAndMap | null} */
 var retrieveSourceMap = handlerExec(sharedData.retrieveMapHandlers, sharedData.internalRetrieveMapHandlers);
 sharedData.internalRetrieveMapHandlers.push(function(source) {
   var sourceMappingURL = retrieveSourceMapURL(source);
@@ -249,7 +363,7 @@ sharedData.internalRetrieveMapHandlers.push(function(source) {
   } else {
     // Support source map URLs relative to the source URL
     sourceMappingURL = supportRelativeURL(source, sourceMappingURL);
-    sourceMapData = retrieveFile(sourceMappingURL);
+    sourceMapData = retrieveFile(tryFileURLToPath(sourceMappingURL));
   }
 
   if (!sourceMapData) {
@@ -263,38 +377,42 @@ sharedData.internalRetrieveMapHandlers.push(function(source) {
 });
 
 function mapSourcePosition(position) {
-  var sourceMap = sharedData.sourceMapCache[position.source];
+  var sourceMap = getSourceMapCache(position.source);
   if (!sourceMap) {
     // Call the (overrideable) retrieveSourceMap function to get the source map.
     var urlAndMap = retrieveSourceMap(position.source);
     if (urlAndMap) {
-      sourceMap = sharedData.sourceMapCache[position.source] = {
+      sourceMap = setSourceMapCache(position.source, {
         url: urlAndMap.url,
-        map: new SourceMapConsumer(urlAndMap.map)
-      };
+        map: new AnyMap(urlAndMap.map, urlAndMap.url)
+      });
+
+      // Overwrite trace-mapping's resolutions, because they do not handle
+      // Windows paths the way we want.
+      // TODO Remove now that windows path support was added to resolve-uri and thus trace-mapping?
+      sourceMap.map.resolvedSources = sourceMap.map.sources.map(s => supportRelativeURL(sourceMap.url, s));
 
       // Load all sources stored inline with the source map into the file cache
       // to pretend like they are already loaded. They may not exist on disk.
       if (sourceMap.map.sourcesContent) {
-        sourceMap.map.sources.forEach(function(source, i) {
+        sourceMap.map.resolvedSources.forEach(function(resolvedSource, i) {
           var contents = sourceMap.map.sourcesContent[i];
           if (contents) {
-            var url = supportRelativeURL(sourceMap.url, source);
-            sharedData.fileContentsCache[url] = contents;
+            setFileContentsCache(resolvedSource, contents);
           }
         });
       }
     } else {
-      sourceMap = sharedData.sourceMapCache[position.source] = {
+      sourceMap = setSourceMapCache(position.source, {
         url: null,
         map: null
-      };
+      });
     }
   }
 
   // Resolve the source URL relative to the URL of the source map
-  if (sourceMap && sourceMap.map && typeof sourceMap.map.originalPositionFor === 'function') {
-    var originalPosition = sourceMap.map.originalPositionFor(position);
+  if (sourceMap && sourceMap.map) {
+    var originalPosition = originalPositionFor(sourceMap.map, position);
 
     // Only return the original position if a matching line was found. If no
     // matching line is found then we return position instead, which will cause
@@ -302,8 +420,11 @@ function mapSourcePosition(position) {
     // better to give a precise location in the compiled file than a vague
     // location in the original file.
     if (originalPosition.source !== null) {
-      originalPosition.source = supportRelativeURL(
-        sourceMap.url, originalPosition.source);
+      // originalPosition.source has *already* been resolved against sourceMap.url
+      // so is *already* as absolute as possible.
+      // However, we want to ensure we output in same format as input: URL or native path
+      originalPosition.source = matchStyleOfPathOrUrl(
+        position.source, originalPosition.source);
       return originalPosition;
     }
   }
@@ -337,8 +458,12 @@ function mapEvalOrigin(origin) {
 }
 
 // This is copied almost verbatim from the V8 source code at
-// https://code.google.com/p/v8/source/browse/trunk/src/messages.js. The
-// implementation of wrapCallSite() used to just forward to the actual source
+// https://code.google.com/p/v8/source/browse/trunk/src/messages.js
+// Update 2022-04-29:
+//    https://github.com/v8/v8/blob/98f6f100c5ab8e390e51422747c4ef644d5ac6f2/src/builtins/builtins-callsite.cc#L175-L179
+//    https://github.com/v8/v8/blob/98f6f100c5ab8e390e51422747c4ef644d5ac6f2/src/objects/call-site-info.cc#L795-L804
+//    https://github.com/v8/v8/blob/98f6f100c5ab8e390e51422747c4ef644d5ac6f2/src/objects/call-site-info.cc#L717-L750
+// The implementation of wrapCallSite() used to just forward to the actual source
 // code of CallSite.prototype.toString but unfortunately a new release of V8
 // did something to the prototype chain and broke the shim. The only fix I
 // could find was copy/paste.
@@ -444,6 +569,12 @@ function wrapCallSite(frame, state) {
   // from getScriptNameOrSourceURL() instead
   var source = frame.getFileName() || frame.getScriptNameOrSourceURL();
   if (source) {
+    // v8 does not expose its internal isWasm, etc methods, so we do this instead.
+    if(source.startsWith('wasm://')) {
+      state.curPosition = null;
+      return frame;
+    }
+
     var line = frame.getLineNumber();
     var column = frame.getColumnNumber() - 1;
 
@@ -515,8 +646,7 @@ function createPrepareStackTrace(hookState) {
     if(!hookState.enabled) return hookState.originalValue.apply(this, arguments);
 
     if (sharedData.emptyCacheBetweenOperations) {
-      sharedData.fileContentsCache = {};
-      sharedData.sourceMapCache = {};
+      clearCaches();
     }
 
     // node gives its own errors special treatment.  Mimic that behavior
@@ -532,7 +662,7 @@ function createPrepareStackTrace(hookState) {
     } else {
       var name = error.name || 'Error';
       var message = error.message || '';
-      errorString = name + ": " + message;
+      errorString = message ? name + ": " + message : name;
     }
 
     var state = { nextPosition: null, curPosition: null };
@@ -555,12 +685,14 @@ function getErrorSource(error) {
     var column = +match[3];
 
     // Support the inline sourceContents inside the source map
-    var contents = sharedData.fileContentsCache[source];
+    var contents = getFileContentsCache(source);
+
+    const sourceAsPath = tryFileURLToPath(source);
 
     // Support files on disk
-    if (!contents && fs && fs.existsSync(source)) {
+    if (!contents && fs && fs.existsSync(sourceAsPath)) {
       try {
-        contents = fs.readFileSync(source, 'utf8');
+        contents = fs.readFileSync(sourceAsPath, 'utf8');
       } catch (er) {
         contents = '';
       }
@@ -710,8 +842,8 @@ exports.install = function(options) {
 
     if (!$compile.__sourceMapSupport) {
       Module.prototype._compile = function(content, filename) {
-        sharedData.fileContentsCache[filename] = content;
-        sharedData.sourceMapCache[filename] = undefined;
+        setFileContentsCache(filename, content);
+        setSourceMapCache(filename, undefined);
         return $compile.call(this, content, filename);
       };
 

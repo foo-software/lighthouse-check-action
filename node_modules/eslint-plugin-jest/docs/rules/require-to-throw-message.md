@@ -1,5 +1,7 @@
 # Require a message for `toThrow()` (`require-to-throw-message`)
 
+<!-- end auto-generated rule header -->
+
 `toThrow()` (and its alias `toThrowError()`) is used to check if an error is
 thrown by a function call, such as in `expect(() => a()).toThrow()`. However, if
 no message is defined, then the test will pass for any thrown error. Requiring a
@@ -9,8 +11,6 @@ message ensures that the intended error is thrown.
 
 This rule triggers a warning if `toThrow()` or `toThrowError()` is used without
 an error message.
-
-### Default configuration
 
 The following patterns are considered warnings:
 

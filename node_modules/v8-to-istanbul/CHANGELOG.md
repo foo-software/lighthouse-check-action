@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.0.1](https://github.com/istanbuljs/v8-to-istanbul/compare/v9.0.0...v9.0.1) (2022-06-20)
+
+
+### Bug Fixes
+
+* update `@jridgewell/trace-mapping` ([#194](https://github.com/istanbuljs/v8-to-istanbul/issues/194)) ([83d3ea2](https://github.com/istanbuljs/v8-to-istanbul/commit/83d3ea29648012fef3a5c379fa04d8bfc53f3fd2))
+
+## [9.0.0](https://github.com/istanbuljs/v8-to-istanbul/compare/v8.1.1...v9.0.0) (2022-04-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate from source-map to TraceMap
+
+### Bug Fixes
+
+* address issues with line selection for Node 10  ([12d01c6](https://github.com/istanbuljs/v8-to-istanbul/commit/12d01c6f1abc6d5a01a1a8cbdfaabed4b43cf05f))
+
+
+### Code Refactoring
+
+* migrate from source-map to TraceMap ([c39ac4c](https://github.com/istanbuljs/v8-to-istanbul/commit/c39ac4cb636f3f9f92ff4375f377414d2ff93c16))
+
+### [8.1.1](https://github.com/istanbuljs/v8-to-istanbul/compare/v8.1.0...v8.1.1) (2022-01-10)
+
+
+### Bug Fixes
+
+* handle undefined sourcesContent and null sourcesContent entry ([6c2e2ec](https://github.com/istanbuljs/v8-to-istanbul/commit/6c2e2ecd2aece8b01543f75dfa203744f8a785b9))
+* **perf:** optimize hit counting and source map performance ([3f83226](https://github.com/istanbuljs/v8-to-istanbul/commit/3f83226212e9fd26231bb313b36db4f2d0661970)), closes [#159](https://github.com/istanbuljs/v8-to-istanbul/issues/159)
+
 ## [8.1.0](https://www.github.com/istanbuljs/v8-to-istanbul/compare/v8.0.0...v8.1.0) (2021-09-27)
 
 

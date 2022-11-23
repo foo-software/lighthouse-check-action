@@ -1,5 +1,10 @@
 # Suggest using `test.todo` (`prefer-todo`)
 
+🔧 This rule is automatically fixable by the
+[`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+
+<!-- end auto-generated rule header -->
+
 When test cases are empty then it is better to mark them as `test.todo` as it
 will be highlighted in the summary output.
 
@@ -10,8 +15,6 @@ This rule triggers a warning if empty test cases are used without 'test.todo'.
 ```js
 test('i need to write this test');
 ```
-
-### Default configuration
 
 The following pattern is considered warning:
 

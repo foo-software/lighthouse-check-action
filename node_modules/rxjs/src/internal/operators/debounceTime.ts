@@ -2,7 +2,7 @@ import { asyncScheduler } from '../scheduler/async';
 import { Subscription } from '../Subscription';
 import { MonoTypeOperatorFunction, SchedulerAction, SchedulerLike } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 
 /**
  * Emits a notification from the source Observable only after a particular time span
@@ -32,10 +32,11 @@ import { OperatorSubscriber } from './OperatorSubscriber';
  * managing timers.
  *
  * ## Example
+ *
  * Emit the most recent click after a burst of clicks
+ *
  * ```ts
- * import { fromEvent } from 'rxjs';
- * import { debounceTime } from 'rxjs/operators';
+ * import { fromEvent, debounceTime } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const result = clicks.pipe(debounceTime(1000));
@@ -45,7 +46,6 @@ import { OperatorSubscriber } from './OperatorSubscriber';
  * @see {@link audit}
  * @see {@link auditTime}
  * @see {@link debounce}
- * @see {@link debounceTime}
  * @see {@link sample}
  * @see {@link sampleTime}
  * @see {@link throttle}
@@ -94,7 +94,7 @@ export function debounceTime<T>(dueTime: number, scheduler: SchedulerLike = asyn
     }
 
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (value: T) => {
           lastValue = value;
@@ -115,7 +115,7 @@ export function debounceTime<T>(dueTime: number, scheduler: SchedulerLike = asyn
         // Pass all errors through to consumer.
         undefined,
         () => {
-          // Teardown.
+          // Finalization.
           lastValue = activeTask = null;
         }
       )

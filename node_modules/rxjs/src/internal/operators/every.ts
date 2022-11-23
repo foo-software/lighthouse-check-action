@@ -1,7 +1,7 @@
 import { Observable } from '../Observable';
 import { Falsy, OperatorFunction } from '../types';
 import { operate } from '../util/lift';
-import { OperatorSubscriber } from './OperatorSubscriber';
+import { createOperatorSubscriber } from './OperatorSubscriber';
 
 export function every<T>(predicate: BooleanConstructor): OperatorFunction<T, Exclude<T, Falsy> extends never ? false : boolean>;
 /** @deprecated Use a closure instead of a `thisArg`. Signatures accepting a `thisArg` will be removed in v8. */
@@ -25,15 +25,15 @@ export function every<T>(predicate: (value: T, index: number, source: Observable
  * ![](every.png)
  *
  * ## Example
- * A simple example emitting true if all elements are less than 5, false otherwise
- * ```ts
- * import { of } from 'rxjs';
- * import { every } from 'rxjs/operators';
  *
- *  of(1, 2, 3, 4, 5, 6).pipe(
- *     every(x => x < 5),
- * )
- * .subscribe(x => console.log(x)); // -> false
+ * A simple example emitting true if all elements are less than 5, false otherwise
+ *
+ * ```ts
+ * import { of, every } from 'rxjs';
+ *
+ * of(1, 2, 3, 4, 5, 6)
+ *   .pipe(every(x => x < 5))
+ *   .subscribe(x => console.log(x)); // -> false
  * ```
  *
  * @param {function} predicate A function for determining if an item meets a specified condition.
@@ -48,7 +48,7 @@ export function every<T>(
   return operate((source, subscriber) => {
     let index = 0;
     source.subscribe(
-      new OperatorSubscriber(
+      createOperatorSubscriber(
         subscriber,
         (value) => {
           if (!predicate.call(thisArg, value, index++, source)) {

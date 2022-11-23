@@ -2,12 +2,15 @@ import { OperatorFunction, ObservedValueOf, ObservableInput } from '../types';
 import { mergeMap } from './mergeMap';
 import { isFunction } from '../util/isFunction';
 
-/* tslint:disable:max-line-length */
+/** @deprecated Will be removed in v9. Use {@link mergeMap} instead: `mergeMap(() => result)` */
 export function mergeMapTo<O extends ObservableInput<unknown>>(
   innerObservable: O,
   concurrent?: number
-): OperatorFunction<any, ObservedValueOf<O>>;
-/** @deprecated The `resultSelector` parameter will be removed in v8. Use an inner `map` instead. Details: https://rxjs.dev/deprecations/resultSelector */
+): OperatorFunction<unknown, ObservedValueOf<O>>;
+/**
+ * @deprecated The `resultSelector` parameter will be removed in v8. Use an inner `map` instead.
+ * Details: https://rxjs.dev/deprecations/resultSelector
+ */
 export function mergeMapTo<T, R, O extends ObservableInput<unknown>>(
   innerObservable: O,
   resultSelector: (outerValue: T, innerValue: ObservedValueOf<O>, outerIndex: number, innerIndex: number) => R,
@@ -29,13 +32,15 @@ export function mergeMapTo<T, R, O extends ObservableInput<unknown>>(
  * single Observable, which is the output Observable.
  *
  * ## Example
+ *
  * For each click event, start an interval Observable ticking every 1 second
+ *
  * ```ts
- * import { fromEvent, interval } from 'rxjs';
- * import { mergeMapTo } from 'rxjs/operators';
+ * import { fromEvent, mergeMapTo, interval } from 'rxjs';
  *
  * const clicks = fromEvent(document, 'click');
  * const result = clicks.pipe(mergeMapTo(interval(1000)));
+ *
  * result.subscribe(x => console.log(x));
  * ```
  *
@@ -52,6 +57,7 @@ export function mergeMapTo<T, R, O extends ObservableInput<unknown>>(
  * Observables being subscribed to concurrently.
  * @return A function that returns an Observable that emits items from the
  * given `innerObservable`.
+ * @deprecated Will be removed in v9. Use {@link mergeMap} instead: `mergeMap(() => result)`
  */
 export function mergeMapTo<T, R, O extends ObservableInput<unknown>>(
   innerObservable: O,

@@ -1,5 +1,7 @@
 # Suggest using `toBeCalledWith()` or `toHaveBeenCalledWith()` (`prefer-called-with`)
 
+<!-- end auto-generated rule header -->
+
 The `toBeCalled()` matcher is used to assert that a mock function has been
 called one or more times, without checking the arguments passed. The assertion
 is stronger when arguments are also validated using the `toBeCalledWith()`
