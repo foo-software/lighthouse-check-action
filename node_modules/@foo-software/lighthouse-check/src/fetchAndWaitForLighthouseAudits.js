@@ -1,38 +1,38 @@
-import fetchLighthouseAudits from './fetchLighthouseAudits';
 import LighthouseCheckError from './LighthouseCheckError';
 import {
   DEFAULT_FETCH_AND_WAIT_TIMEOUT_MINUTES,
   FETCH_POLL_INTERVAL,
   FETCH_POLL_INTERVAL_SECONDS,
-  NAME
+  NAME,
 } from './constants';
 import { ERROR_NO_RESULTS, ERROR_TIMEOUT } from './errorCodes';
+import fetchLighthouseAudits from './fetchLighthouseAudits';
 
 export default ({
   apiToken,
   queueIds,
   timeout = DEFAULT_FETCH_AND_WAIT_TIMEOUT_MINUTES,
-  verbose = true
+  verbose = true,
 }) =>
   new Promise((resolve, reject) => {
     const timeoutMilliseconds = 60000 * timeout;
     const startTime = Date.now();
     let fetchIndex = 0;
 
-    const fetchData = interval =>
+    const fetchData = (interval) =>
       setTimeout(async () => {
         fetchIndex++;
 
         if (verbose) {
           console.log(
             `${NAME}:`,
-            `Starting Lighthouse fetch attempt ${fetchIndex}.`
+            `Starting Lighthouse fetch attempt ${fetchIndex}.`,
           );
         }
 
         const result = await fetchLighthouseAudits({
           apiToken,
-          queueIds
+          queueIds,
         });
 
         // do we have the expected number of results
@@ -57,13 +57,13 @@ export default ({
             console.log(
               `${NAME}:`,
               'An unexpected error occurred:\n',
-              result.error
+              result.error,
             );
           }
           reject(result.error);
           return;
         } else if (areResultsExpected) {
-          const audits = result.data.map(current => ({
+          const audits = result.data.map((current) => ({
             emulatedFormFactor: current.device,
             id: current.pageId,
             name: current.name,
@@ -75,8 +75,8 @@ export default ({
               bestPractices: current.scoreBestPractices,
               performance: current.scorePerformance,
               progressiveWebApp: current.scoreProgressiveWebApp,
-              seo: current.scoreSeo
-            }
+              seo: current.scoreSeo,
+            },
           }));
 
           resolve(audits);
@@ -89,15 +89,15 @@ export default ({
 
           reject(
             new LighthouseCheckError(errorMessage, {
-              code: ERROR_TIMEOUT
-            })
+              code: ERROR_TIMEOUT,
+            }),
           );
           return;
         } else {
           if (verbose) {
             console.log(
               `${NAME}:`,
-              `Received ${resultLength} out of ${queueIds.length} results. Trying again in ${FETCH_POLL_INTERVAL_SECONDS} seconds.`
+              `Received ${resultLength} out of ${queueIds.length} results. Trying again in ${FETCH_POLL_INTERVAL_SECONDS} seconds.`,
             );
           }
 

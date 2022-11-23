@@ -2,7 +2,7 @@ import meow from 'meow';
 
 // we should note that these values are expected from the command
 // line and that they're always strings.
-export const convertOptionsFromArguments = options => {
+export const convertOptionsFromArguments = (options) => {
   const cli = meow();
 
   return Object.keys(options).reduce((accumulator, current) => {
@@ -53,7 +53,7 @@ export const convertOptionsFromArguments = options => {
 
     return {
       ...accumulator,
-      [current]: value
+      [current]: value,
     };
   }, {});
 };

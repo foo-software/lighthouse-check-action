@@ -11,8 +11,8 @@ describe('getLocalLighthouseResultsWithRetries', () => {
         auditConfig: {},
         localLighthousePromise,
         maxRetries: 3,
-        retries: 0
-      })
+        retries: 0,
+      }),
     ).rejects.toHaveProperty('message', 'uh ohhhhh');
 
     expect(localLighthousePromise).toHaveBeenCalledTimes(4);
@@ -36,8 +36,8 @@ describe('getLocalLighthouseResultsWithRetries', () => {
         auditConfig: {},
         localLighthousePromise,
         maxRetries: 3,
-        retries: 0
-      })
+        retries: 0,
+      }),
     ).resolves.toEqual({ data: true });
 
     expect(localLighthousePromise).toHaveBeenCalledTimes(3);
@@ -51,8 +51,8 @@ describe('getLocalLighthouseResultsWithRetries', () => {
     await expect(
       getLocalLighthouseResultsWithRetries({
         auditConfig: {},
-        localLighthousePromise
-      })
+        localLighthousePromise,
+      }),
     ).resolves.toEqual({ data: true });
 
     expect(localLighthousePromise).toHaveBeenCalledTimes(1);
@@ -66,8 +66,8 @@ describe('getLocalLighthouseResultsWithRetries', () => {
     await expect(
       getLocalLighthouseResultsWithRetries({
         auditConfig: {},
-        localLighthousePromise
-      })
+        localLighthousePromise,
+      }),
     ).rejects.toHaveProperty('message', 'uh ohhhhh');
 
     expect(localLighthousePromise).toHaveBeenCalledTimes(1);

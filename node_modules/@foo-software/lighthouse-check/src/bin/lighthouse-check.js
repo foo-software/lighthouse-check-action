@@ -1,145 +1,145 @@
 #! /usr/bin/env node
-import ora from 'ora';
 import fs from 'fs';
+import ora from 'ora';
 import path from 'path';
-import getHelpText from '../helpers/getHelpText';
-import lighthouseCheck from '../lighthouseCheck';
 import { NAME } from '../constants';
 import { convertOptionsFromArguments } from '../helpers/arguments';
+import getHelpText from '../helpers/getHelpText';
+import lighthouseCheck from '../lighthouseCheck';
 
 const defaultOptions = {
   author: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   apiToken: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   awsAccessKeyId: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   awsBucket: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   awsRegion: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   awsSecretAccessKey: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   branch: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   configFile: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   device: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   emulatedFormFactor: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   extraHeaders: {
     type: 'object',
-    value: undefined
+    value: undefined,
   },
   locale: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   help: {
     type: 'boolean',
-    value: undefined
+    value: undefined,
   },
   isGitHubAction: {
     type: 'boolean',
-    value: undefined
+    value: undefined,
   },
   isOrb: {
     type: 'boolean',
-    value: undefined
+    value: undefined,
   },
   maxRetries: {
     type: 'number',
-    value: 0
+    value: 0,
   },
   maxWaitForLoad: {
     type: 'number',
-    value: undefined
+    value: undefined,
   },
   outputDirectory: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   overridesJsonFile: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   pr: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   prCommentAccessToken: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   prCommentEnabled: {
     type: 'boolean',
-    value: true
+    value: true,
   },
   prCommentSaveOld: {
     type: 'boolean',
-    value: false
+    value: false,
   },
   prCommentUrl: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   sha: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   slackWebhookUrl: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   tag: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   timeout: {
     type: 'number',
-    value: undefined
+    value: undefined,
   },
   throttling: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   throttlingMethod: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   urls: {
     type: 'array',
-    value: undefined
+    value: undefined,
   },
   verbose: {
     type: 'boolean',
-    value: false
+    value: false,
   },
   wait: {
     type: 'boolean',
-    value: undefined
-  }
+    value: undefined,
+  },
 };
 
 // override options with any that are passed in as arguments
@@ -157,7 +157,7 @@ const init = async () => {
       // extend params with config json file contents
       params = {
         ...params,
-        ...configJson
+        ...configJson,
       };
     }
 
@@ -178,7 +178,7 @@ const init = async () => {
 
     console.log(
       '❌  Something went wrong while attempting to enqueue URLs for Lighthouse. See the error below.\n\n',
-      error
+      error,
     );
     console.log('\n');
     process.exit(1);

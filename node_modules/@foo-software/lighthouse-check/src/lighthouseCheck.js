@@ -1,14 +1,14 @@
 import path from 'path';
-import fetchAndWaitForLighthouseAudits from './fetchAndWaitForLighthouseAudits';
 import LighthouseCheckError from './LighthouseCheckError';
-import triggerLighthouse from './triggerLighthouse';
-import localLighthouse from './localLighthouse';
-import postPrComment from './postPrComment';
-import slackNotify from './slackNotify';
-import writeResults from './helpers/writeResults';
 import { NAME, SUCCESS_CODE_GENERIC } from './constants';
 import { ERROR_NO_RESULTS, ERROR_RUNTIME } from './errorCodes';
+import fetchAndWaitForLighthouseAudits from './fetchAndWaitForLighthouseAudits';
+import writeResults from './helpers/writeResults';
+import localLighthouse from './localLighthouse';
 import logResults from './logResults';
+import postPrComment from './postPrComment';
+import slackNotify from './slackNotify';
+import triggerLighthouse from './triggerLighthouse';
 
 export default ({
   apiToken,
@@ -48,7 +48,7 @@ export default ({
   urls,
   verbose = true,
   wait = true,
-  slackWebhookUrl
+  slackWebhookUrl,
 }) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -72,7 +72,7 @@ export default ({
           tag,
           timeout,
           urls,
-          verbose
+          verbose,
         });
 
         if (triggerResult.error) {
@@ -92,9 +92,9 @@ export default ({
           const queueIds = triggerResult.data.reduce(
             (accumulator, current) => [
               ...accumulator,
-              ...(!current.id ? [] : [current.id])
+              ...(!current.id ? [] : [current.id]),
             ],
-            []
+            [],
           );
 
           // if this condition doesn't pass - we got a problem
@@ -107,14 +107,14 @@ export default ({
               apiToken,
               queueIds,
               timeout,
-              verbose
+              verbose,
             });
 
             // if output directory is specified write the results to disk
             if (outputDirectoryPath) {
               writeResults({
                 outputDirectory: outputDirectoryPath,
-                results: auditResults
+                results: auditResults,
               });
             }
 
@@ -126,7 +126,7 @@ export default ({
                 results: auditResults,
                 sha,
                 slackWebhookUrl,
-                verbose
+                verbose,
               });
             }
 
@@ -139,7 +139,7 @@ export default ({
                 prCommentSaveOld,
                 prCommentUrl,
                 results: auditResults,
-                verbose
+                verbose,
               });
             }
 
@@ -147,13 +147,13 @@ export default ({
               isGitHubAction,
               isLocalAudit,
               isOrb,
-              results: auditResults
+              results: auditResults,
             });
 
             // success
             resolve({
               code: SUCCESS_CODE_GENERIC,
-              data: auditResults
+              data: auditResults,
             });
             return;
           }
@@ -166,8 +166,8 @@ export default ({
 
         reject(
           new LighthouseCheckError(errorMessage, {
-            code: ERROR_NO_RESULTS
-          })
+            code: ERROR_NO_RESULTS,
+          }),
         );
       } else {
         const lighthouseAudits = await localLighthouse({
@@ -186,14 +186,14 @@ export default ({
           throttling,
           throttlingMethod,
           urls,
-          verbose
+          verbose,
         });
 
         if (!lighthouseAudits.length) {
           reject(
             new LighthouseCheckError('Something went wrong - no results.', {
-              code: ERROR_NO_RESULTS
-            })
+              code: ERROR_NO_RESULTS,
+            }),
           );
         } else {
           if (slackWebhookUrl) {
@@ -204,7 +204,7 @@ export default ({
               results: lighthouseAudits,
               sha,
               slackWebhookUrl,
-              verbose
+              verbose,
             });
           }
 
@@ -217,7 +217,7 @@ export default ({
               prCommentSaveOld,
               prCommentUrl,
               results: lighthouseAudits,
-              verbose
+              verbose,
             });
           }
 
@@ -225,13 +225,13 @@ export default ({
             isGitHubAction,
             isLocalAudit,
             isOrb,
-            results: lighthouseAudits
+            results: lighthouseAudits,
           });
 
           // success
           resolve({
             code: SUCCESS_CODE_GENERIC,
-            data: lighthouseAudits
+            data: lighthouseAudits,
           });
         }
       }

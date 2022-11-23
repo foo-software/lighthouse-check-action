@@ -3,14 +3,14 @@ import triggerLighthouse from './triggerLighthouse';
 
 const mockResponse = {
   status: 200,
-  data: {}
+  data: {},
 };
 
 const mockPageResponse = {
   ...mockResponse,
   data: {
-    page: []
-  }
+    page: [],
+  },
 };
 
 const mockFetchPagesResponse = {
@@ -20,25 +20,25 @@ const mockFetchPagesResponse = {
       page: [
         {
           _id: 'abc',
-          apiToken: 'abc123'
+          apiToken: 'abc123',
         },
         {
           _id: 'def',
-          apiToken: 'def456'
-        }
-      ]
-    }
-  })
+          apiToken: 'def456',
+        },
+      ],
+    },
+  }),
 };
 
 const mockFetchPagesEmptyResponse = {
-  json: () => mockPageResponse
+  json: () => mockPageResponse,
 };
 
 const mockFetchPagesUnauthorizedResponse = {
   json: () => ({
-    status: 401
-  })
+    status: 401,
+  }),
 };
 
 const mockQueueItemsResponse = {
@@ -46,15 +46,15 @@ const mockQueueItemsResponse = {
   data: {
     queue: {
       results: [],
-      errors: 0
-    }
-  }
+      errors: 0,
+    },
+  },
 };
 
 const mockFetchQueueItemsEmptyResponse = {
   json: () => ({
-    ...mockQueueItemsResponse
-  })
+    ...mockQueueItemsResponse,
+  }),
 };
 
 const mockFetchQueueItemsSuccessResponse = {
@@ -66,16 +66,16 @@ const mockFetchQueueItemsSuccessResponse = {
         results: [
           {
             code: 'SUCCESS_QUEUE_ADD',
-            status: 200
+            status: 200,
           },
           {
             code: 'SUCCESS_QUEUE_ADD',
-            status: 200
-          }
-        ]
-      }
-    }
-  })
+            status: 200,
+          },
+        ],
+      },
+    },
+  }),
 };
 
 const mockFetchQueueItemsFailResponse = {
@@ -88,18 +88,18 @@ const mockFetchQueueItemsFailResponse = {
           {
             code: 'SOME_ERROR',
             message: 'some error message',
-            status: 401
+            status: 401,
           },
           {
             code: 'SOME_ERROR',
             message: 'some error message',
-            status: 401
-          }
+            status: 401,
+          },
         ],
-        errors: 2
-      }
-    }
-  })
+        errors: 2,
+      },
+    },
+  }),
 };
 
 const mockFetchQueueItemsFailMaxReachedResponse = {
@@ -112,18 +112,18 @@ const mockFetchQueueItemsFailMaxReachedResponse = {
           {
             code: 'ERROR_QUEUE_MAX_USED_DAY',
             message: 'Max limit of 5 triggers reached.',
-            status: 401
+            status: 401,
           },
           {
             code: 'ERROR_QUEUE_MAX_USED_DAY',
             message: 'Max limit of 5 triggers reached.',
-            status: 401
-          }
+            status: 401,
+          },
         ],
-        errors: 2
-      }
-    }
-  })
+        errors: 2,
+      },
+    },
+  }),
 };
 
 const mockFetchQueueItemsMixedResponse = {
@@ -136,31 +136,31 @@ const mockFetchQueueItemsMixedResponse = {
           {
             code: 'ERROR_QUEUE_MAX_USED_DAY',
             message: 'Max limit of 5 triggers reached.',
-            status: 401
+            status: 401,
           },
           {
             code: 'ERROR_QUEUE_MAX_USED_DAY',
             message: 'Max limit of 5 triggers reached.',
-            status: 401
+            status: 401,
           },
           {
             code: 'SUCCESS_QUEUE_ADD',
-            status: 200
-          }
+            status: 200,
+          },
         ],
-        errors: 2
-      }
-    }
-  })
+        errors: 2,
+      },
+    },
+  }),
 };
 
 const mockParams = {
-  apiToken: 'abc123'
+  apiToken: 'abc123',
 };
 
 jest.mock('node-fetch', () => ({
   __esModule: true,
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 describe('triggerLighthouse()', () => {

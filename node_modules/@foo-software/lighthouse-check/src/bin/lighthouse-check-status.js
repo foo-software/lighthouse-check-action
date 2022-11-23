@@ -1,44 +1,44 @@
 #! /usr/bin/env node
 import ora from 'ora';
+import { NAME, NAME_STATUS } from '../constants';
+import { ERROR_INVALID } from '../errorCodes';
+import { convertOptionsFromArguments } from '../helpers/arguments';
 import getHelpText from '../helpers/getHelpText';
 import validateStatus from '../validateStatus';
-import { NAME, NAME_STATUS } from '../constants';
-import { convertOptionsFromArguments } from '../helpers/arguments';
-import { ERROR_INVALID } from '../errorCodes';
 
 const defaultOptions = {
   minAccessibilityScore: {
     type: 'number',
-    value: undefined
+    value: undefined,
   },
   minBestPracticesScore: {
     type: 'number',
-    value: undefined
+    value: undefined,
   },
   minPerformanceScore: {
     type: 'number',
-    value: undefined
+    value: undefined,
   },
   minProgressiveWebAppScore: {
     type: 'number',
-    value: undefined
+    value: undefined,
   },
   minSeoScore: {
     type: 'number',
-    value: undefined
+    value: undefined,
   },
   help: {
     type: 'boolean',
-    value: undefined
+    value: undefined,
   },
   outputDirectory: {
     type: 'string',
-    value: undefined
+    value: undefined,
   },
   verbose: {
     type: 'boolean',
-    value: false
-  }
+    value: false,
+  },
 };
 
 // override options with any that are passed in as arguments
@@ -68,7 +68,7 @@ const init = async () => {
     } else {
       console.log(
         '❌  Something went wrong while attempting to enqueue URLs for Lighthouse. See the error below.\n\n',
-        error
+        error,
       );
     }
 

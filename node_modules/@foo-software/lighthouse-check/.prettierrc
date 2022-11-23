@@ -1,0 +1,19 @@
+{
+  "importOrder": [
+    "^react",
+    "<THIRD_PARTY_MODULES>",
+    "(?=^[.]+/)(?!.*.css$)",
+    "^.*.css$"
+  ],
+  "jsxSingleQuote": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "parser": "typescript"
+      }
+    }
+  ]
+}

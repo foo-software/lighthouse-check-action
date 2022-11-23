@@ -1,25 +1,25 @@
+import lighthousePersist from '@foo-software/lighthouse-persist';
 import fs from 'fs';
 import get from 'lodash.get';
-import lighthousePersist from '@foo-software/lighthouse-persist';
+import { NAME } from './constants';
+import writeResults from './helpers/writeResults';
 import { desktop, mobile, throttling } from './lighthouseConfig';
 import options from './lighthouseOptions';
-import writeResults from './helpers/writeResults';
-import { NAME } from './constants';
 
 const defaultLighthouseConfigs = {
   desktop,
-  mobile
+  mobile,
 };
 
-const getScoresFromFloat = scores =>
+const getScoresFromFloat = (scores) =>
   Object.keys(scores).reduce(
     (accumulator, current) => ({
       ...accumulator,
       ...(typeof scores[current] === 'number' && {
-        [current]: Math.floor(scores[current] * 100)
-      })
+        [current]: Math.floor(scores[current] * 100),
+      }),
     }),
-    {}
+    {},
   );
 
 export const localLighthouse = async ({
@@ -35,7 +35,7 @@ export const localLighthouse = async ({
   overrides,
   throttling: throttlingParam,
   throttlingMethod,
-  url
+  url,
 }) => {
   // if desktop device, and no throttling param specified, use the
   // appropriate throttling
@@ -54,41 +54,41 @@ export const localLighthouse = async ({
       ...(!maxWaitForLoad
         ? {}
         : {
-            maxWaitForLoad
+            maxWaitForLoad,
           }),
       ...(!throttlingMethod
         ? {}
         : {
-            throttlingMethod
+            throttlingMethod,
           }),
       ...(!throttlingOverride || !throttling[throttlingOverride]
         ? {}
         : {
-            throttling: throttling[throttlingOverride]
+            throttling: throttling[throttlingOverride],
           }),
       ...(!emulatedFormFactor
         ? {}
         : {
-            emulatedFormFactor
+            emulatedFormFactor,
           }),
       ...(!extraHeaders
         ? {}
         : {
-            extraHeaders
+            extraHeaders,
           }),
       // if we wanted translations (holy!)
       // locale: 'ja',
       ...(!locale
         ? {}
         : {
-            locale
-          })
+            locale,
+          }),
     },
     ...(!overrides || !overrides.config
       ? {}
       : {
-          ...overrides.config
-        })
+          ...overrides.config,
+        }),
   };
 
   const { localReport, report, result } = await lighthousePersist({
@@ -102,11 +102,11 @@ export const localLighthouse = async ({
       ...(!overrides || !overrides.options
         ? {}
         : {
-            ...overrides.options
-          })
+            ...overrides.options,
+          }),
     },
     outputDirectory,
-    url
+    url,
   });
 
   const scores = getScoresFromFloat({
@@ -114,7 +114,7 @@ export const localLighthouse = async ({
     bestPractices: get(result, 'categories["best-practices"].score'),
     performance: get(result, 'categories.performance.score'),
     progressiveWebApp: get(result, 'categories.pwa.score'),
-    seo: get(result, 'categories.seo.score')
+    seo: get(result, 'categories.seo.score'),
   });
 
   return {
@@ -123,7 +123,7 @@ export const localLighthouse = async ({
     report,
     emulatedFormFactor,
     runtimeError: get(result, 'runtimeError.message'),
-    scores
+    scores,
   };
 };
 
@@ -132,7 +132,7 @@ export const getLocalLighthouseResultsWithRetries = async ({
   localLighthousePromise = localLighthouse,
   maxRetries = 0,
   retries = 0,
-  verbose = false
+  verbose = false,
 }) => {
   let lighthouseAuditResult;
   try {
@@ -155,12 +155,12 @@ export const getLocalLighthouseResultsWithRetries = async ({
         console.log(
           `${NAME}: Error below caught on retry ${retries} of ${maxRetries}.`,
           error,
-          'Trying again...'
+          'Trying again...',
         );
       } else {
         console.log(
           `Error caught on retry ${retries} of ${maxRetries}.`,
-          'Trying again...'
+          'Trying again...',
         );
       }
 
@@ -168,7 +168,7 @@ export const getLocalLighthouseResultsWithRetries = async ({
         auditConfig,
         localLighthousePromise,
         maxRetries,
-        retries: retries + 1
+        retries: retries + 1,
       });
     }
   }
@@ -189,7 +189,7 @@ export default async ({
   throttling,
   throttlingMethod,
   urls,
-  verbose
+  verbose,
 }) => {
   // check for overrides config or options
   let overrides;
@@ -221,7 +221,7 @@ export default async ({
       throttling,
       throttlingMethod,
       url,
-      verbose
+      verbose,
     };
 
     if (options.emulatedFormFactor !== 'all') {
@@ -230,11 +230,11 @@ export default async ({
       // establish two audits for all device types
       auditConfigs.push({
         ...options,
-        emulatedFormFactor: 'desktop'
+        emulatedFormFactor: 'desktop',
       });
       auditConfigs.push({
         ...options,
-        emulatedFormFactor: 'mobile'
+        emulatedFormFactor: 'mobile',
       });
     }
   }
@@ -246,14 +246,14 @@ export default async ({
   for (const auditConfig of auditConfigs) {
     if (verbose) {
       console.log(
-        `${NAME}: Auditing ${auditConfig.emulatedFormFactor} (${index}/${auditConfigs.length}): ${auditConfig.url}`
+        `${NAME}: Auditing ${auditConfig.emulatedFormFactor} (${index}/${auditConfigs.length}): ${auditConfig.url}`,
       );
     }
     const lighthouseAuditResult = await getLocalLighthouseResultsWithRetries({
       auditConfig,
       maxRetries,
       retries: 0,
-      verbose
+      verbose,
     });
     auditResults.push(lighthouseAuditResult);
     index++;
@@ -263,7 +263,7 @@ export default async ({
   if (outputDirectory) {
     writeResults({
       outputDirectory,
-      results: auditResults
+      results: auditResults,
     });
   }
 

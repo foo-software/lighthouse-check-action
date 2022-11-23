@@ -19,7 +19,7 @@ export const throttling = {
     requestLatencyMs: 150 * DEVTOOLS_RTT_ADJUSTMENT_FACTOR,
     downloadThroughputKbps: 1.6 * 1024 * DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR,
     uploadThroughputKbps: 750 * DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR,
-    cpuSlowdownMultiplier: 4
+    cpuSlowdownMultiplier: 4,
   },
   // These values partially align with WebPageTest's definition of "Regular 3G".
   // These values are meant to roughly align with Chrome UX report's 3G definition which are based
@@ -30,7 +30,7 @@ export const throttling = {
     requestLatencyMs: 300 * DEVTOOLS_RTT_ADJUSTMENT_FACTOR,
     downloadThroughputKbps: 700 * DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR,
     uploadThroughputKbps: 700 * DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR,
-    cpuSlowdownMultiplier: 4
+    cpuSlowdownMultiplier: 4,
   },
   // Using a "broadband" connection type
   // Corresponds to "Dense 4G 25th percentile" in https://docs.google.com/document/d/1Ft1Bnq9-t4jK5egLSOc28IL4TvR-Tt0se_1faTA4KTY/edit#heading=h.bb7nfy2x9e5v
@@ -40,8 +40,8 @@ export const throttling = {
     cpuSlowdownMultiplier: 1,
     requestLatencyMs: 0, // 0 means unset
     downloadThroughputKbps: 0,
-    uploadThroughputKbps: 0
-  }
+    uploadThroughputKbps: 0,
+  },
 };
 
 /**
@@ -55,7 +55,7 @@ const MOTOG4_EMULATION_METRICS = {
   // our perf recommendations.
   // https://github.com/GoogleChrome/lighthouse/issues/10741#issuecomment-626903508
   deviceScaleFactor: 2.625,
-  disabled: false
+  disabled: false,
 };
 
 /**
@@ -67,12 +67,12 @@ const DESKTOP_EMULATION_METRICS = {
   width: 1350,
   height: 940,
   deviceScaleFactor: 1,
-  disabled: false
+  disabled: false,
 };
 
 const screenEmulationMetrics = {
   mobile: MOTOG4_EMULATION_METRICS,
-  desktop: DESKTOP_EMULATION_METRICS
+  desktop: DESKTOP_EMULATION_METRICS,
 };
 
 // eslint-disable-next-line max-len
@@ -84,7 +84,7 @@ const DESKTOP_USERAGENT =
 
 const userAgents = {
   mobile: MOTOG4_USERAGENT,
-  desktop: DESKTOP_USERAGENT
+  desktop: DESKTOP_USERAGENT,
 };
 
 // https://github.com/GoogleChrome/lighthouse/blob/master/lighthouse-core/config/lr-desktop-config.js
@@ -98,8 +98,8 @@ export const desktop = {
     screenEmulation: screenEmulationMetrics.desktop,
     emulatedUserAgent: userAgents.desktop,
     // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
-    skipAudits: ['uses-http2']
-  }
+    skipAudits: ['uses-http2'],
+  },
 };
 
 // https://github.com/GoogleChrome/lighthouse/blob/master/lighthouse-core/config/lr-mobile-config.js
@@ -110,6 +110,6 @@ export const mobile = {
     maxWaitForLoad: 35 * 1000,
     // lighthouse:default is mobile by default
     // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
-    skipAudits: ['uses-http2']
-  }
+    skipAudits: ['uses-http2'],
+  },
 };

@@ -3,7 +3,7 @@ import getLighthouseAuditTitlesByKey from './helpers/getLighthouseAuditTitlesByK
 
 // config for the `table` module (for console logging a table)
 const tableConfig = {
-  border: getBorderCharacters('ramac')
+  border: getBorderCharacters('ramac'),
 };
 
 export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
@@ -14,9 +14,9 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
     columns: {
       0: {
         paddingLeft: 29,
-        paddingRight: 29
-      }
-    }
+        paddingRight: 29,
+      },
+    },
   };
 
   // log the header
@@ -24,7 +24,7 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
   console.log(table(headerTable, headerTableConfig));
 
   // log results
-  results.forEach(result => {
+  results.forEach((result) => {
     console.log(`URL: ${result.url}`);
 
     if (result.emulatedFormFactor) {
@@ -41,7 +41,7 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
 
     const tableData = [
       getLighthouseAuditTitlesByKey(Object.keys(result.scores)),
-      Object.values(result.scores)
+      Object.values(result.scores),
     ];
     console.log('\n');
     if (result.runtimeError) {
@@ -77,7 +77,7 @@ export default ({ isGitHubAction, isLocalAudit, isOrb, results }) => {
     // plug
     const plugTable = [[message]];
     const plugTableConfig = {
-      ...tableConfig
+      ...tableConfig,
     };
 
     // log the plug

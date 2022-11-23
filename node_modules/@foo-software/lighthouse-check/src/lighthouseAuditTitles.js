@@ -3,5 +3,5 @@ export default {
   bestPractices: 'Best Practices',
   performance: 'Performance',
   progressiveWebApp: 'Progressive Web App',
-  seo: 'SEO'
+  seo: 'SEO',
 };

@@ -7,7 +7,7 @@ describe('getLighthouseAuditTitlesByKey', () => {
       'Best Practices',
       'Performance',
       'Progressive Web App',
-      'SEO'
+      'SEO',
     ];
 
     const actual = getLighthouseAuditTitlesByKey([
@@ -15,7 +15,7 @@ describe('getLighthouseAuditTitlesByKey', () => {
       'bestPractices',
       'performance',
       'progressiveWebApp',
-      'seo'
+      'seo',
     ]);
 
     expect(actual).toEqual(expected);

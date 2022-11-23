@@ -12,7 +12,7 @@ const getScoreFailMessage = ({ name, url, minScore, score }) => {
 
   if (Number(score) < Number(minScore)) {
     return [
-      `${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`
+      `${url}: ${name}: minimum score: ${minScore}, actual score: ${score}`,
     ];
   }
 
@@ -25,7 +25,7 @@ const getFailureMessages = ({
   minPerformanceScore,
   minProgressiveWebAppScore,
   minSeoScore,
-  results
+  results,
 }) =>
   results.reduce(
     (accumulator, current) => [
@@ -34,34 +34,34 @@ const getFailureMessages = ({
         name: 'Accessibility',
         minScore: minAccessibilityScore,
         score: current.scores.accessibility,
-        ...current
+        ...current,
       }),
       ...getScoreFailMessage({
         name: 'Best Practices',
         minScore: minBestPracticesScore,
         score: current.scores.bestPractices,
-        ...current
+        ...current,
       }),
       ...getScoreFailMessage({
         name: 'Performance',
         minScore: minPerformanceScore,
         score: current.scores.performance,
-        ...current
+        ...current,
       }),
       ...getScoreFailMessage({
         name: 'Progressive Web App',
         minScore: minProgressiveWebAppScore,
         score: current.scores.progressiveWebApp,
-        ...current
+        ...current,
       }),
       ...getScoreFailMessage({
         name: 'SEO',
         minScore: minSeoScore,
         score: current.scores.seo,
-        ...current
-      })
+        ...current,
+      }),
     ],
-    []
+    [],
   );
 
 export default async ({
@@ -72,7 +72,7 @@ export default async ({
   minSeoScore,
   outputDirectory,
   results,
-  verbose
+  verbose,
 }) => {
   let resultsJson = results;
 
@@ -89,7 +89,7 @@ export default async ({
     minPerformanceScore,
     minProgressiveWebAppScore,
     minSeoScore,
-    results: resultsJson
+    results: resultsJson,
   });
 
   // if we have scores that were below the minimum requirement
@@ -99,8 +99,8 @@ export default async ({
     throw new LighthouseCheckError(
       `Minimum score requirements failed:\n${failureMessage}`,
       {
-        code: ERROR_INVALID
-      }
+        code: ERROR_INVALID,
+      },
     );
   }
 

@@ -1,7 +1,7 @@
 import { IncomingWebhook } from '@slack/webhook';
+import { NAME } from './constants';
 import getLighthouseScoreColor from './helpers/getLighthouseScoreColor';
 import lighthouseAuditTitles from './lighthouseAuditTitles';
-import { NAME } from './constants';
 
 export default async ({
   author,
@@ -10,7 +10,7 @@ export default async ({
   results,
   sha,
   slackWebhookUrl,
-  verbose
+  verbose,
 }) => {
   try {
     const webhook = new IncomingWebhook(slackWebhookUrl);
@@ -51,8 +51,8 @@ export default async ({
             ...(!footer
               ? {}
               : {
-                  footer
-                })
+                  footer,
+                }),
           },
           ...(!result.runtimeError
             ? []
@@ -60,18 +60,18 @@ export default async ({
                 {
                   color: '#f74531',
                   text: `*Lighthouse runtime error*: ${result.runtimeError}`,
-                  short: true
-                }
+                  short: true,
+                },
               ]),
-          ...Object.keys(result.scores).map(current => ({
+          ...Object.keys(result.scores).map((current) => ({
             color: getLighthouseScoreColor({
               isHex: true,
-              score: result.scores[current]
+              score: result.scores[current],
             }),
             text: `*${lighthouseAuditTitles[current]}*: ${result.scores[current]}`,
-            short: true
-          }))
-        ]
+            short: true,
+          })),
+        ],
       });
     }
   } catch (error) {
