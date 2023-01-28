@@ -2,6 +2,7 @@ import lighthousePersist from '@foo-software/lighthouse-persist';
 import fs from 'fs';
 import get from 'lodash.get';
 import { NAME } from './constants';
+import { delay } from './helpers/utils';
 import writeResults from './helpers/writeResults';
 import { desktop, mobile, throttling } from './lighthouseConfig';
 import options from './lighthouseOptions';
@@ -249,6 +250,10 @@ export default async ({
         `${NAME}: Auditing ${auditConfig.emulatedFormFactor} (${index}/${auditConfigs.length}): ${auditConfig.url}`,
       );
     }
+
+    // 1 second delay to allow time of previous Chrome process end
+    await delay(1000);
+
     const lighthouseAuditResult = await getLocalLighthouseResultsWithRetries({
       auditConfig,
       maxRetries,
