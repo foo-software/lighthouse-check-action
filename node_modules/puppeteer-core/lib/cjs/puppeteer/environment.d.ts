@@ -13,5 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * @internal
+ */
 export declare const isNode: boolean;
+/**
+ * @internal
+ */
+export declare const DEFERRED_PROMISE_DEBUG_TIMEOUT: number;
 //# sourceMappingURL=environment.d.ts.map

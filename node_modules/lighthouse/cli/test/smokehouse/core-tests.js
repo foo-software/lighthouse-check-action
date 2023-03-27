@@ -1,0 +1,134 @@
+/**
+ * @license Copyright 2019 The Lighthouse Authors. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+import a11y from './test-definitions/a11y.js';
+import byteEfficiency from './test-definitions/byte-efficiency.js';
+import byteGzip from './test-definitions/byte-gzip.js';
+import cspAllowAll from './test-definitions/csp-allow-all.js';
+import cspBlockAll from './test-definitions/csp-block-all.js';
+import dbw from './test-definitions/dobetterweb.js';
+import errorsExpiredSsl from './test-definitions/errors-expired-ssl.js';
+import errorsIframeExpiredSsl from './test-definitions/errors-iframe-expired-ssl.js';
+import errorsInfiniteLoop from './test-definitions/errors-infinite-loop.js';
+import formsAutoComplete from './test-definitions/forms-autocomplete.js';
+import fpsMax from './test-definitions/fps-max.js';
+import fpsMaxPassive from './test-definitions/fps-max-passive.js';
+import fpsScaled from './test-definitions/fps-scaled.js';
+import issuesMixedContent from './test-definitions/issues-mixed-content.js';
+import lanternFetch from './test-definitions/lantern-fetch.js';
+import lanternIdleCallbackLong from './test-definitions/lantern-idle-callback-long.js';
+import lanternIdleCallbackShort from './test-definitions/lantern-idle-callback-short.js';
+import lanternOnline from './test-definitions/lantern-online.js';
+import lanternSetTimeout from './test-definitions/lantern-set-timeout.js';
+import lanternXhr from './test-definitions/lantern-xhr.js';
+import legacyJavascript from './test-definitions/legacy-javascript.js';
+import metricsDebugger from './test-definitions/metrics-debugger.js';
+import metricsDelayedFcp from './test-definitions/metrics-delayed-fcp.js';
+import metricsDelayedLcp from './test-definitions/metrics-delayed-lcp.js';
+import metricsTrickyTti from './test-definitions/metrics-tricky-tti.js';
+import metricsTrickyTtiLateFcp from './test-definitions/metrics-tricky-tti-late-fcp.js';
+import offlineOnlineOnly from './test-definitions/offline-online-only.js';
+import offlineReady from './test-definitions/offline-ready.js';
+import offlineSwBroken from './test-definitions/offline-sw-broken.js';
+import offlineSwSlow from './test-definitions/offline-sw-slow.js';
+import oopifRequests from './test-definitions/oopif-requests.js';
+import oopifScripts from './test-definitions/oopif-scripts.js';
+import perfBudgets from './test-definitions/perf-budgets.js';
+import perfDebug from './test-definitions/perf-debug.js';
+import perfDiagnosticsAnimations from './test-definitions/perf-diagnostics-animations.js';
+import perfDiagnosticsThirdParty from './test-definitions/perf-diagnostics-third-party.js';
+import perfDiagnosticsUnsizedImages from './test-definitions/perf-diagnostics-unsized-images.js';
+import perfFonts from './test-definitions/perf-fonts.js';
+import perfFrameMetrics from './test-definitions/perf-frame-metrics.js';
+import perfPreload from './test-definitions/perf-preload.js';
+import perfTraceElements from './test-definitions/perf-trace-elements.js';
+import pubads from './test-definitions/pubads.js';
+import pwaAirhorner from './test-definitions/pwa-airhorner.js';
+import pwaCaltrain from './test-definitions/pwa-caltrain.js';
+import pwaChromestatus from './test-definitions/pwa-chromestatus.js';
+import pwaRocks from './test-definitions/pwa-rocks.js';
+import pwaSvgomg from './test-definitions/pwa-svgomg.js';
+import redirectsClientPaintServer from './test-definitions/redirects-client-paint-server.js';
+import redirectsHistoryPushState from './test-definitions/redirects-history-push-state.js';
+import redirectsMultipleServer from './test-definitions/redirects-multiple-server.js';
+import redirectsScripts from './test-definitions/redirects-scripts.js';
+import redirectsSelf from './test-definitions/redirects-self.js';
+import redirectsSingleClient from './test-definitions/redirects-single-client.js';
+import redirectsSingleServer from './test-definitions/redirects-single-server.js';
+import screenshot from './test-definitions/screenshot.js';
+import seoFailing from './test-definitions/seo-failing.js';
+import seoPassing from './test-definitions/seo-passing.js';
+import seoStatus403 from './test-definitions/seo-status-403.js';
+import seoTapTargets from './test-definitions/seo-tap-targets.js';
+import sourceMaps from './test-definitions/source-maps.js';
+import timing from './test-definitions/timing.js';
+
+/** @type {ReadonlyArray<Smokehouse.TestDfn>} */
+const smokeTests = [
+  a11y,
+  byteEfficiency,
+  byteGzip,
+  cspAllowAll,
+  cspBlockAll,
+  dbw,
+  errorsExpiredSsl,
+  errorsIframeExpiredSsl,
+  errorsInfiniteLoop,
+  formsAutoComplete,
+  fpsMax,
+  fpsScaled,
+  fpsMaxPassive,
+  issuesMixedContent,
+  lanternFetch,
+  lanternIdleCallbackLong,
+  lanternIdleCallbackShort,
+  lanternOnline,
+  lanternSetTimeout,
+  lanternXhr,
+  legacyJavascript,
+  metricsDebugger,
+  metricsDelayedFcp,
+  metricsDelayedLcp,
+  metricsTrickyTti,
+  metricsTrickyTtiLateFcp,
+  offlineOnlineOnly,
+  offlineReady,
+  offlineSwBroken,
+  offlineSwSlow,
+  oopifRequests,
+  oopifScripts,
+  perfBudgets,
+  perfDebug,
+  perfDiagnosticsAnimations,
+  perfDiagnosticsThirdParty,
+  perfDiagnosticsUnsizedImages,
+  perfFonts,
+  perfFrameMetrics,
+  perfPreload,
+  perfTraceElements,
+  pubads,
+  pwaAirhorner,
+  pwaCaltrain,
+  pwaChromestatus,
+  pwaRocks,
+  pwaSvgomg,
+  redirectsClientPaintServer,
+  redirectsHistoryPushState,
+  redirectsMultipleServer,
+  redirectsScripts,
+  redirectsSelf,
+  redirectsSingleClient,
+  redirectsSingleServer,
+  screenshot,
+  seoFailing,
+  seoPassing,
+  seoStatus403,
+  seoTapTargets,
+  sourceMaps,
+  timing,
+];
+
+export default smokeTests;

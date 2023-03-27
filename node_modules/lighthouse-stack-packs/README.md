@@ -20,6 +20,7 @@ Many developers today use different technologies (backend/CMS/JavaScript framewo
 * Nuxt
 * React
 * WordPress
+* WP Rocket
 
 ## Contributing
 
