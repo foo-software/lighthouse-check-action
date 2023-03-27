@@ -1,0 +1,258 @@
+#!/usr/bin/env node
+/**
+ * @license Copyright 2019 The Lighthouse Authors. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+/**
+ * @fileoverview A smokehouse frontend for running from the command line. Parse
+ * flags, start fixture webservers, then run smokehouse.
+ */
+
+/* eslint-disable no-console */
+
+import path from 'path';
+import fs from 'fs';
+import url from 'url';
+
+import cloneDeep from 'lodash/cloneDeep.js';
+import yargs from 'yargs';
+import * as yargsHelpers from 'yargs/helpers';
+import log from 'lighthouse-logger';
+
+import {runSmokehouse, getShardedDefinitions} from '../smokehouse.js';
+import {updateTestDefnFormat} from './back-compat-util.js';
+import {LH_ROOT} from '../../../../root.js';
+import exclusions from '../config/exclusions.js';
+
+const coreTestDefnsPath =
+  path.join(LH_ROOT, 'cli/test/smokehouse/core-tests.js');
+
+/**
+ * Possible Lighthouse runners. Loaded dynamically so e.g. a CLI run isn't
+ * contingent on having built all the bundles.
+ */
+const runnerPaths = {
+  cli: '../lighthouse-runners/cli.js',
+  bundle: '../lighthouse-runners/bundle.js',
+  devtools: '../lighthouse-runners/devtools.js',
+};
+
+/**
+ * Determine batches of smoketests to run, based on the `requestedIds`.
+ * @param {Array<Smokehouse.TestDfn>} allTestDefns
+ * @param {Array<string>} requestedIds
+ * @param {Set<string>} excludedTests
+ * @return {Array<Smokehouse.TestDfn>}
+ */
+function getDefinitionsToRun(allTestDefns, requestedIds, excludedTests) {
+  let smokes = [];
+  const usage = `    ${log.dim}yarn smoke ${allTestDefns.map(t => t.id).join(' ')}${log.reset}\n`;
+
+  if (requestedIds.length === 0) {
+    smokes = [...allTestDefns];
+    console.log('Running ALL smoketests. Equivalent to:');
+    console.log(usage);
+  } else {
+    smokes = allTestDefns.filter(test => {
+      // Include all tests that *include* requested id.
+      // e.g. a requested 'pwa' will match 'pwa-airhorner', 'pwa-caltrain', etc
+      return requestedIds.some(requestedId => test.id.includes(requestedId));
+    });
+    console.log(`Running ONLY smoketests for: ${smokes.map(t => t.id).join(' ')}\n`);
+  }
+
+  const unmatchedIds = requestedIds.filter(requestedId => {
+    return !allTestDefns.map(t => t.id).some(id => id.includes(requestedId));
+  });
+  if (unmatchedIds.length) {
+    console.log(log.redify(`Smoketests not found for: ${unmatchedIds.join(' ')}`));
+    console.log(`Check test exclusions (${[...excludedTests].join(' ')})\n`);
+    console.log(usage);
+  }
+
+  if (!smokes.length) {
+    throw new Error('no smoketest found to run');
+  }
+
+  return smokes;
+}
+
+/**
+ * Prune the `networkRequests` from the test expectations when `takeNetworkRequestUrls`
+ * is not defined. Custom servers may not have this method available in-process.
+ * Also asserts that any expectation with `networkRequests` is run serially. For core
+ * tests, we don't currently have a good way to map requests to test definitions if
+ * the tests are run in parallel.
+ * @param {Array<Smokehouse.TestDfn>} testDefns
+ * @param {Function|undefined} takeNetworkRequestUrls
+ * @return {Array<Smokehouse.TestDfn>}
+ */
+function pruneExpectedNetworkRequests(testDefns, takeNetworkRequestUrls) {
+  const pruneNetworkRequests = !takeNetworkRequestUrls;
+
+  const clonedDefns = cloneDeep(testDefns);
+  for (const {id, expectations, runSerially} of clonedDefns) {
+    if (!runSerially && expectations.networkRequests) {
+      throw new Error(`'${id}' must be set to 'runSerially: true' to assert 'networkRequests'`);
+    }
+
+    if (pruneNetworkRequests && expectations.networkRequests) {
+      // eslint-disable-next-line max-len
+      const msg = `'networkRequests' cannot be asserted in test '${id}'. They should only be asserted on tests from an in-process server`;
+      if (process.env.CI) {
+        // If we're in CI, we require any networkRequests expectations to be asserted.
+        throw new Error(msg);
+      }
+
+      console.warn(log.redify('Warning:'),
+          `${msg}. Pruning expectation: ${JSON.stringify(expectations.networkRequests)}`);
+      expectations.networkRequests = undefined;
+    }
+  }
+
+  return clonedDefns;
+}
+
+/**
+ * CLI entry point.
+ */
+async function begin() {
+  const y = yargs(yargsHelpers.hideBin(process.argv));
+  const rawArgv = y
+    .help('help')
+    .usage('node $0 [<options>] <test-ids>')
+    .example('node $0 -j=1 pwa seo', 'run pwa and seo tests serially')
+    .option('_', {
+      array: true,
+      type: 'string',
+    })
+    .options({
+      'debug': {
+        type: 'boolean',
+        default: false,
+        describe: 'Save test artifacts and output verbose logs',
+      },
+      'legacy-navigation': {
+        type: 'boolean',
+        default: false,
+        describe: 'Use the legacy navigation runner',
+      },
+      'jobs': {
+        type: 'number',
+        alias: 'j',
+        describe: 'Manually set the number of jobs to run at once. `1` runs all tests serially',
+      },
+      'retries': {
+        type: 'number',
+        describe: 'The number of times to retry failing tests before accepting. Defaults to 0',
+      },
+      'runner': {
+        default: 'cli',
+        choices: ['cli', 'bundle', 'devtools'],
+        describe: 'The method of running Lighthouse',
+      },
+      'tests-path': {
+        type: 'string',
+        describe: 'The path to a set of test definitions to run. Defaults to core smoke tests.',
+      },
+      'shard': {
+        type: 'string',
+        // eslint-disable-next-line max-len
+        describe: 'A argument of the form "n/d", which divides the selected tests into d groups and runs the nth group. n and d must be positive integers with 1 ≤ n ≤ d.',
+      },
+      'ignore-exclusions': {
+        type: 'boolean',
+        default: false,
+        describe: 'Ignore any smoke test exclusions set.',
+      },
+    })
+    .wrap(y.terminalWidth())
+    .argv;
+
+  // Augmenting yargs type with auto-camelCasing breaks in tsc@4.1.2 and @types/yargs@15.0.11,
+  // so for now cast to add yarg's camelCase properties to type.
+  const argv =
+    /** @type {Awaited<typeof rawArgv> & LH.Util.CamelCasify<Awaited<typeof rawArgv>>} */ (rawArgv);
+
+  const jobs = Number.isFinite(argv.jobs) ? argv.jobs : undefined;
+  const retries = Number.isFinite(argv.retries) ? argv.retries : undefined;
+
+  const runnerPath = runnerPaths[/** @type {keyof typeof runnerPaths} */ (argv.runner)];
+  if (argv.runner === 'bundle') {
+    console.log('\n✨ Be sure to have recently run this: yarn build-all');
+  }
+  const {runLighthouse, setup} = await import(runnerPath);
+  runLighthouse.runnerName = argv.runner;
+
+  // Find test definition file and filter by requestedTestIds.
+  let testDefnPath = argv.testsPath || coreTestDefnsPath;
+  testDefnPath = path.resolve(process.cwd(), testDefnPath);
+  const requestedTestIds = argv._;
+  const {default: rawTestDefns} = await import(url.pathToFileURL(testDefnPath).href);
+  const allTestDefns = updateTestDefnFormat(rawTestDefns);
+  const excludedTests = new Set(exclusions[argv.runner] || []);
+  const filteredTestDefns = argv.ignoreExclusions ?
+    allTestDefns : allTestDefns.filter(test => !excludedTests.has(test.id));
+  const requestedTestDefns = getDefinitionsToRun(filteredTestDefns,
+      requestedTestIds, excludedTests);
+  const testDefns = getShardedDefinitions(requestedTestDefns, argv.shard);
+
+  let smokehouseResult;
+  let servers;
+  let takeNetworkRequestUrls = undefined;
+
+  try {
+    // If running the core tests, spin up the test server.
+    if (testDefnPath === coreTestDefnsPath) {
+      const {createServers} = await import('../../fixtures/static-server.js');
+      servers = await createServers();
+      takeNetworkRequestUrls = servers[0].takeRequestUrls.bind(servers[0]);
+    }
+
+    const prunedTestDefns = pruneExpectedNetworkRequests(testDefns, takeNetworkRequestUrls);
+    const options = {
+      jobs,
+      retries,
+      isDebug: argv.debug,
+      useLegacyNavigation: argv.legacyNavigation,
+      lighthouseRunner: runLighthouse,
+      takeNetworkRequestUrls,
+      setup,
+    };
+
+    smokehouseResult = (await runSmokehouse(prunedTestDefns, options));
+  } finally {
+    servers?.forEach(s => s.close());
+  }
+
+  if (!smokehouseResult.success) {
+    const failedTestResults = smokehouseResult.testResults.filter(r => r.failed);
+
+    // For CI, save failed runs to directory to be uploaded.
+    if (process.env.CI) {
+      const failuresDir = `${LH_ROOT}/.tmp/smokehouse-ci-failures`;
+      fs.mkdirSync(failuresDir, {recursive: true});
+
+      for (const testResult of failedTestResults) {
+        for (let i = 0; i < testResult.runs.length; i++) {
+          const run = testResult.runs[i];
+          fs.writeFileSync(`${failuresDir}/${testResult.id}-${i}.json`, JSON.stringify({
+            ...run,
+            lighthouseLog: run.lighthouseLog.split('\n'),
+            assertionLog: run.assertionLog.split('\n'),
+          }, null, 2));
+        }
+      }
+    }
+
+    const cmd = `yarn smoke ${failedTestResults.map(r => r.id).join(' ')}`;
+    console.log(`rerun failures: ${cmd}`);
+  }
+
+  const exitCode = smokehouseResult.success ? 0 : 1;
+  process.exit(exitCode);
+}
+
+await begin();
