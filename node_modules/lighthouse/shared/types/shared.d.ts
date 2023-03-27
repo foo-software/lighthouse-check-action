@@ -6,10 +6,10 @@
 
 import {IcuMessage as IcuMessage_} from '../../types/lhr/i18n';
 import LHResult from '../../types/lhr/lhr';
-import FlowResult_ from '../../types/lhr/flow';
+import FlowResult_ from '../../types/lhr/flow-result';
 
 import {Locale as Locale_} from '../../types/lhr/settings';
- 
+
 declare global {
   // Expose global types in LH namespace.
   module LH {

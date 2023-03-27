@@ -4,8 +4,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import {FormattedIcu} from './i18n';
-import AuditDetails from './audit-details';
+import {FormattedIcu} from './i18n.js';
+import AuditDetails from './audit-details.js';
 
 interface ScoreDisplayModes {
   /** Scores of 0-1 (map to displayed scores of 0-100). */

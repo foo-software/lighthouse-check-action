@@ -1,8 +1,6 @@
 {
   "extends": "../tsconfig-base.json",
   "compilerOptions": {
-    "outDir": "../.tmp/tsbuildinfo/report",
-
     // Limit to base JS and DOM defs.
     "lib": ["es2020", "dom", "dom.iterable"],
     // Don't include any types from node_modules/.
@@ -16,6 +14,7 @@
   "include": [
     "**/*.js",
     "types/**/*.d.ts",
+    "../core/lib/lighthouse-compatibility.js",
   ],
   "exclude": [
     "generator/**/*.js",

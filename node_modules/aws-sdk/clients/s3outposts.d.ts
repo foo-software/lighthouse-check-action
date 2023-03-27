@@ -36,6 +36,14 @@ declare class S3Outposts extends Service {
    */
   listEndpoints(callback?: (err: AWSError, data: S3Outposts.Types.ListEndpointsResult) => void): Request<S3Outposts.Types.ListEndpointsResult, AWSError>;
   /**
+   * Lists the Outposts with S3 on Outposts capacity for your Amazon Web Services account. Includes S3 on Outposts that you have access to as the Outposts owner, or as a shared user from Resource Access Manager (RAM). 
+   */
+  listOutpostsWithS3(params: S3Outposts.Types.ListOutpostsWithS3Request, callback?: (err: AWSError, data: S3Outposts.Types.ListOutpostsWithS3Result) => void): Request<S3Outposts.Types.ListOutpostsWithS3Result, AWSError>;
+  /**
+   * Lists the Outposts with S3 on Outposts capacity for your Amazon Web Services account. Includes S3 on Outposts that you have access to as the Outposts owner, or as a shared user from Resource Access Manager (RAM). 
+   */
+  listOutpostsWithS3(callback?: (err: AWSError, data: S3Outposts.Types.ListOutpostsWithS3Result) => void): Request<S3Outposts.Types.ListOutpostsWithS3Result, AWSError>;
+  /**
    * Lists all endpoints associated with an Outpost that has been shared by Amazon Web Services Resource Access Manager (RAM). Related actions include:    CreateEndpoint     DeleteEndpoint   
    */
   listSharedEndpoints(params: S3Outposts.Types.ListSharedEndpointsRequest, callback?: (err: AWSError, data: S3Outposts.Types.ListSharedEndpointsResult) => void): Request<S3Outposts.Types.ListSharedEndpointsResult, AWSError>;
@@ -45,6 +53,8 @@ declare class S3Outposts extends Service {
   listSharedEndpoints(callback?: (err: AWSError, data: S3Outposts.Types.ListSharedEndpointsResult) => void): Request<S3Outposts.Types.ListSharedEndpointsResult, AWSError>;
 }
 declare namespace S3Outposts {
+  export type AwsAccountId = string;
+  export type CapacityInBytes = number;
   export type CidrBlock = string;
   export interface CreateEndpointRequest {
     /**
@@ -131,12 +141,27 @@ declare namespace S3Outposts {
      * The ID of the customer-owned IPv4 address pool used for the endpoint.
      */
     CustomerOwnedIpv4Pool?: CustomerOwnedIpv4Pool;
+    /**
+     * The failure reason, if any, for a create or delete endpoint operation.
+     */
+    FailedReason?: FailedReason;
   }
   export type EndpointAccessType = "Private"|"CustomerOwnedIp"|string;
   export type EndpointArn = string;
   export type EndpointId = string;
-  export type EndpointStatus = "Pending"|"Available"|"Deleting"|string;
+  export type EndpointStatus = "Pending"|"Available"|"Deleting"|"Create_Failed"|"Delete_Failed"|string;
   export type Endpoints = Endpoint[];
+  export type ErrorCode = string;
+  export interface FailedReason {
+    /**
+     * The failure code, if any, for a create or delete endpoint operation.
+     */
+    ErrorCode?: ErrorCode;
+    /**
+     * Additional error details describing the endpoint failure and recommended action.
+     */
+    Message?: Message;
+  }
   export interface ListEndpointsRequest {
     /**
      * If a previous response from this operation included a NextToken value, provide that value here to retrieve the next page of results.
@@ -154,6 +179,26 @@ declare namespace S3Outposts {
     Endpoints?: Endpoints;
     /**
      * If the number of endpoints associated with the specified Outpost exceeds MaxResults, you can include this value in subsequent calls to this operation to retrieve more results.
+     */
+    NextToken?: NextToken;
+  }
+  export interface ListOutpostsWithS3Request {
+    /**
+     * When you can get additional results from the ListOutpostsWithS3 call, a NextToken parameter is returned in the output. You can then pass in a subsequent command to the NextToken parameter to continue listing additional Outposts.
+     */
+    NextToken?: NextToken;
+    /**
+     * The maximum number of Outposts to return. The limit is 100.
+     */
+    MaxResults?: MaxResults;
+  }
+  export interface ListOutpostsWithS3Result {
+    /**
+     * Returns the list of Outposts that have the following characteristics:   outposts that have S3 provisioned   outposts that are Active (not pending any provisioning nor decommissioned)   outposts to which the the calling Amazon Web Services account has access  
+     */
+    Outposts?: Outposts;
+    /**
+     * Returns a token that you can use to call ListOutpostsWithS3 again and receive additional results, if there are any.
      */
     NextToken?: NextToken;
   }
@@ -182,6 +227,7 @@ declare namespace S3Outposts {
     NextToken?: NextToken;
   }
   export type MaxResults = number;
+  export type Message = string;
   export interface NetworkInterface {
     /**
      * The ID for the network interface.
@@ -191,7 +237,27 @@ declare namespace S3Outposts {
   export type NetworkInterfaceId = string;
   export type NetworkInterfaces = NetworkInterface[];
   export type NextToken = string;
+  export interface Outpost {
+    /**
+     * Specifies the unique Amazon Resource Name (ARN) for the outpost.
+     */
+    OutpostArn?: OutpostArn;
+    /**
+     * Specifies the unique identifier for the outpost.
+     */
+    OutpostId?: OutpostId;
+    /**
+     * Returns the Amazon Web Services account ID of the outpost owner. Useful for comparing owned versus shared outposts.
+     */
+    OwnerId?: AwsAccountId;
+    /**
+     * The Amazon S3 capacity of the outpost in bytes.
+     */
+    CapacityInBytes?: CapacityInBytes;
+  }
+  export type OutpostArn = string;
   export type OutpostId = string;
+  export type Outposts = Outpost[];
   export type SecurityGroupId = string;
   export type SubnetId = string;
   export type VpcId = string;

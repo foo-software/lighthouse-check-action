@@ -6,3 +6,4 @@ Some minor patches on top from the Lighthouse Authors:
 
 * deleting code we don't need
 * changing output path
+* --resolve-executable-path

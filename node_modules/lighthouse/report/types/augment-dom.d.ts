@@ -10,7 +10,7 @@
  */
 
 // Import to augment querySelector/querySelectorAll with stricter type checking.
-import '../../types/query-selector';
+import '../../types/internal/query-selector';
 
 declare global {
   var CompressionStream: {

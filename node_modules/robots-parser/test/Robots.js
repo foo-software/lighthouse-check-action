@@ -791,4 +791,74 @@ describe('Robots', function () {
 		// machines running the test, should normally be much less)
 		expect(end - start).to.be.lessThan(500);
 	});
+
+	it('should honor given port number', function () {
+		var contents = [
+			'User-agent: *',
+			'Disallow: /fish/',
+			'Disallow: /test.html'
+		].join('\n');
+
+		var allowed = [
+			'http://www.example.com:8080/fish',
+			'http://www.example.com:8080/Test.html'
+		];
+
+		var disallowed = [
+			'http://www.example.com/fish',
+			'http://www.example.com/Test.html',
+			'http://www.example.com:80/fish',
+			'http://www.example.com:80/Test.html'
+		];
+
+		testRobots('http://www.example.com:8080/robots.txt', contents, allowed, disallowed);
+	});
+
+	it('should default to port 80 for http: if no port given', function () {
+		var contents = [
+			'User-agent: *',
+			'Disallow: /fish/',
+			'Disallow: /test.html'
+		].join('\n');
+
+		var allowed = [
+			'http://www.example.com:80/fish',
+			'http://www.example.com:80/Test.html'
+		];
+
+		var disallowed = [
+			'http://www.example.com:443/fish',
+			'http://www.example.com:443/Test.html',
+			'http://www.example.com:80/fish/index.php',
+			'http://www.example.com:80/fish/',
+			'http://www.example.com:80/test.html'
+		];
+
+		testRobots('http://www.example.com/robots.txt', contents, allowed, disallowed);
+	});
+
+	it('should default to port 443 for https: if no port given', function () {
+		var contents = [
+			'User-agent: *',
+			'Disallow: /fish/',
+			'Disallow: /test.html'
+		].join('\n');
+
+		var allowed = [
+			'https://www.example.com:443/fish',
+			'https://www.example.com:443/Test.html',
+			'https://www.example.com/fish',
+			'https://www.example.com/Test.html'
+		];
+
+		var disallowed = [
+			'http://www.example.com:80/fish',
+			'http://www.example.com:80/Test.html',
+			'http://www.example.com:443/fish/index.php',
+			'http://www.example.com:443/fish/',
+			'http://www.example.com:443/test.html'
+		];
+
+		testRobots('https://www.example.com/robots.txt', contents, allowed, disallowed);
+	});
 });

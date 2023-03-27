@@ -4,7 +4,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import FlowResult_ from '../../types/lhr/flow';
+import FlowResult_ from '../../types/lhr/flow-result';
 import * as Settings from '../../types/lhr/settings';
 
 // Import to augment querySelector/querySelectorAll with stricter type checking.
@@ -20,9 +20,16 @@ declare global {
   // Expose global types in LH namespace.
   module LH {
     export type ConfigSettings = Settings.ConfigSettings;
+
     export interface FlowReportOptions {
       getReportHtml?: (flowResult: FlowResult_) => string;
       saveAsGist?: (flowResult: FlowResult_) => void;
+    }
+
+    export interface HashState {
+      currentLhr: Result;
+      index: number;
+      anchor: string|null;
     }
 
     export import FlowResult = FlowResult_;

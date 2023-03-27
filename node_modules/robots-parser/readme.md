@@ -94,6 +94,17 @@ Returns the preferred host name specified by the `host:` directive or null if th
 
 # Changes
 
+### Version 3.0.1
+
+-   Fixed bug with `https:` URLs defaulting to port `80` instead of `443` if no port is specified.
+    Thanks to @dskvr for reporting
+
+    This affects comparing URLs with the default HTTPs port to URLs without it. 
+    For example, comparing `https://example.com/` to `https://example.com:443/` or vice versa.
+
+    They should be treated as equivalent but weren't due to the incorrect port
+    being used for `https:`.
+
 ### Version 3.0.0
 
 -   Changed to using global URL object instead of importing. &ndash; Thanks to @brendankenny
