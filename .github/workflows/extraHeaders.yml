@@ -8,6 +8,10 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
       - uses: actions/checkout@master
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
       - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
       - uses: amondnet/vercel-action@master
         id: vercelAction
