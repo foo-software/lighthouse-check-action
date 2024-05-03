@@ -6,10 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Setup Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: '18.x'
     - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
     - name: Run Lighthouse
       uses: ./
