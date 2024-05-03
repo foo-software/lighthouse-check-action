@@ -1,7 +1,7 @@
 /**
- * @license Copyright 2019 The Lighthouse Authors. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
@@ -20,7 +20,7 @@ import log from 'lighthouse-logger';
 import * as assetSaver from '../../../../core/lib/asset-saver.js';
 import {LocalConsole} from '../lib/local-console.js';
 import {ChildProcessError} from '../lib/child-process-error.js';
-import {LH_ROOT} from '../../../../root.js';
+import {LH_ROOT} from '../../../../shared/root.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -28,7 +28,7 @@ const execFileAsync = promisify(execFile);
  * Launch Chrome and do a full Lighthouse run via the Lighthouse CLI.
  * @param {string} url
  * @param {LH.Config=} config
- * @param {{isDebug?: boolean, useFraggleRock?: boolean}=} testRunnerOptions
+ * @param {Smokehouse.SmokehouseOptions['testRunnerOptions']=} testRunnerOptions
  * @return {Promise<{lhr: LH.Result, artifacts: LH.Artifacts, log: string}>}
  */
 async function runLighthouse(url, config, testRunnerOptions = {}) {
@@ -46,11 +46,11 @@ async function runLighthouse(url, config, testRunnerOptions = {}) {
  * @param {string} url
  * @param {string} tmpPath
  * @param {LH.Config=} config
- * @param {{isDebug?: boolean, useLegacyNavigation?: boolean}=} options
+ * @param {Smokehouse.SmokehouseOptions['testRunnerOptions']=} options
  * @return {Promise<{lhr: LH.Result, artifacts: LH.Artifacts, log: string}>}
  */
 async function internalRun(url, tmpPath, config, options) {
-  const {isDebug = false, useLegacyNavigation = false} = options || {};
+  const {isDebug, headless} = options || {};
   const localConsole = new LocalConsole();
 
   const outputPath = `${tmpPath}/smokehouse.report.json`;
@@ -67,9 +67,7 @@ async function internalRun(url, tmpPath, config, options) {
     '--quiet',
   ];
 
-  if (useLegacyNavigation) {
-    args.push('--legacy-navigation');
-  }
+  if (headless) args.push('--chrome-flags="--headless=new"');
 
   // Config can be optionally provided.
   if (config) {

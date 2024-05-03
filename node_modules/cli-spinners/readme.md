@@ -15,8 +15,8 @@ You probably want to use one of these spinners through the [`ora`](https://githu
 
 ## Install
 
-```
-$ npm install cli-spinners
+```sh
+npm install cli-spinners
 ```
 
 ## Usage
@@ -51,3 +51,4 @@ The `random` spinner will return a random spinner each time it's called.
 - [CLISpinner](https://github.com/kiliankoe/CLISpinner) - Terminal spinners for Swift
 - [py-spinners](https://github.com/ManrajGrover/py-spinners) - Python port
 - [spinners](https://github.com/FGRibreau/spinners) - Terminal spinners for Rust
+- [go-spinners](https://github.com/gabe565/go-spinners) - Go port

@@ -5,17 +5,19 @@ jobs:
   lighthouse:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Setup Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: "16.x"
-    - run: npm install
-    - run: npm run build
-    - name: Run Lighthouse Check
-      run: |
-        node ./dist/bin/lighthouse-check.js --verbose --prCommentEnabled \
-        --emulatedFormFactor "all" \
-        --urls "https://www.foo.software,https://www.automated-lighthouse-check.com/" \
-        --prCommentAccessToken "${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}" \
-        --prCommentUrl "https://api.github.com/repos/foo-software/lighthouse-check/pulls/$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')/reviews"
+      - uses: actions/checkout@master
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+      - run: npm install
+      - run: npm run build
+      - name: Unit tests
+        run: npm run test
+      - name: Run Lighthouse Check
+        run: |
+          node ./dist/bin/lighthouse-check.js --verbose --prCommentEnabled \
+          --emulatedFormFactor "all" \
+          --urls "https://www.foo.software,https://www.foo.software/about" \
+          --prCommentAccessToken "${{ secrets.GITHUB_TOKEN }}" \
+          --prCommentUrl "https://api.github.com/repos/foo-software/lighthouse-check/pulls/$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')/reviews"

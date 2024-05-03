@@ -1,7 +1,7 @@
 /**
- * @license Copyright 2018 The Lighthouse Authors. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import * as i18n from './i18n/i18n.js';
@@ -76,13 +76,13 @@ const UIStrings = {
   criTimeout: 'Timeout waiting for initial Debugger Protocol connection.',
   /**
    * @description Error message explaining that a resource that was required for testing was never collected. "artifactName" will be replaced with the name of the resource that wasn't collected.
-   * @example {WebAppManifest} artifactName
+   * @example {MainDocumentContent} artifactName
    * */
   missingRequiredArtifact: 'Required {artifactName} gatherer did not run.',
   /**
    * @description Error message explaining that there was an error while trying to collect a resource that was required for testing. "artifactName" will be replaced with the name of the resource that wasn't collected; "errorMessage" will be replaced with a string description of the error that occurred.
-   * @example {WebAppManifest} artifactName
-   * @example {Manifest invalid} errorMessage
+   * @example {MainDocumentContent} artifactName
+   * @example {Could not find main document} errorMessage
    * */
   erroredRequiredArtifact: 'Required {artifactName} gatherer encountered an error: {errorMessage}',
 
@@ -91,6 +91,9 @@ const UIStrings = {
    * @example {Largest Contentful Paint} featureName
    * */
   oldChromeDoesNotSupportFeature: 'This version of Chrome is too old to support \'{featureName}\'. Use a newer version to see full results.',
+
+  /** Error message explaining that the browser tab that Lighthouse is inspecting has crashed. */
+  targetCrashed: 'Browser tab has unexpectedly crashed.',
 };
 
 const str_ = i18n.createIcuMessageFn(import.meta.url, UIStrings);
@@ -107,17 +110,24 @@ const str_ = i18n.createIcuMessageFn(import.meta.url, UIStrings);
 const LHERROR_SENTINEL = '__LighthouseErrorSentinel';
 const ERROR_SENTINEL = '__ErrorSentinel';
 /**
- * @typedef {{sentinel: '__LighthouseErrorSentinel', code: string, stack?: string, [p: string]: string|undefined}} SerializedLighthouseError
- * @typedef {{sentinel: '__ErrorSentinel', message: string, code?: string, stack?: string}} SerializedBaseError
+ * @typedef {{sentinel: '__LighthouseErrorSentinel', code: string, stack?: string, cause?: unknown, properties?: {[p: string]: string|undefined}}} SerializedLighthouseError
+ * @typedef {{sentinel: '__ErrorSentinel', message: string, code?: string, stack?: string, cause?: unknown}} SerializedBaseError
+ */
+
+/**
+ * The {@link ErrorOptions} type wasn't added until es2022 (Node 16), so we recreate it here to support ts targets before es2022.
+ * TODO: Just use `ErrorOptions` if we can't support targets before es2022 in the docs test.
+ * @typedef {{cause: unknown}} LHErrorOptions
  */
 
 class LighthouseError extends Error {
   /**
    * @param {LighthouseErrorDefinition} errorDefinition
    * @param {Record<string, string|undefined>=} properties
+   * @param {LHErrorOptions=} options
    */
-  constructor(errorDefinition, properties) {
-    super(errorDefinition.code);
+  constructor(errorDefinition, properties, options) {
+    super(errorDefinition.code, options);
     this.name = 'LighthouseError';
     this.code = errorDefinition.code;
     // Add additional properties to be ICU replacements in the error string.
@@ -163,19 +173,20 @@ class LighthouseError extends Error {
     if (err instanceof LighthouseError) {
       // Remove class props so that remaining values were what was passed in as `properties`.
       // eslint-disable-next-line no-unused-vars
-      const {name, code, message, friendlyMessage, lhrRuntimeError, stack, ...properties} = err;
+      const {name, code, message, friendlyMessage, lhrRuntimeError, stack, cause, ...properties} = err;
 
       return {
         sentinel: LHERROR_SENTINEL,
         code,
         stack,
-        ...properties,
+        cause,
+        properties: /** @type {{ [p: string]: string | undefined }} */ (properties),
       };
     }
 
     // Unexpected errors won't be LighthouseErrors, but we want them serialized as well.
     if (err instanceof Error) {
-      const {message, stack} = err;
+      const {message, stack, cause} = err;
       // @ts-expect-error - code can be helpful for e.g. node errors, so preserve it if it's present.
       const code = err.code;
       return {
@@ -183,6 +194,7 @@ class LighthouseError extends Error {
         message,
         code,
         stack,
+        cause,
       };
     }
 
@@ -203,17 +215,18 @@ class LighthouseError extends Error {
       if (possibleError.sentinel === LHERROR_SENTINEL) {
         // Include sentinel in destructuring so it doesn't end up in `properties`.
         // eslint-disable-next-line no-unused-vars
-        const {sentinel, code, stack, ...properties} = /** @type {SerializedLighthouseError} */ (possibleError);
+        const {code, stack, cause, properties} = /** @type {SerializedLighthouseError} */ (possibleError);
         const errorDefinition = LighthouseError.errors[/** @type {keyof typeof ERRORS} */ (code)];
-        const lhError = new LighthouseError(errorDefinition, properties);
+        const lhError = new LighthouseError(errorDefinition, properties, {cause});
         lhError.stack = stack;
 
         return lhError;
       }
 
       if (possibleError.sentinel === ERROR_SENTINEL) {
-        const {message, code, stack} = /** @type {SerializedBaseError} */ (possibleError);
-        const error = new Error(message);
+        const {message, code, stack, cause} = /** @type {SerializedBaseError} */ (possibleError);
+        const opts = cause ? {cause} : undefined;
+        const error = new Error(message, opts);
         Object.assign(error, {code, stack});
         return error;
       }
@@ -411,6 +424,13 @@ const ERRORS = {
   ERRORED_REQUIRED_ARTIFACT: {
     code: 'ERRORED_REQUIRED_ARTIFACT',
     message: UIStrings.erroredRequiredArtifact,
+  },
+
+  /** The page has crashed and will no longer respond to 99% of CDP commmands. */
+  TARGET_CRASHED: {
+    code: 'TARGET_CRASHED',
+    message: UIStrings.targetCrashed,
+    lhrRuntimeError: true,
   },
 
   // Hey! When adding a new error type, update lighthouse-result.proto too.

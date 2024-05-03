@@ -14,6 +14,6 @@ jobs:
       with:
         device: all
         fooApiToken: ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }}
-        gitHubAccessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+        gitHubAccessToken: ${{ secrets.GITHUB_TOKEN }}
         tag: GitHub Action (Foo API Test)
         urls: ${{ secrets.LIGHTHOUSE_CHECK_URLS }}

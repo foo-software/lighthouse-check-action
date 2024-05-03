@@ -20,19 +20,19 @@ declare class Health extends Service {
    */
   describeAffectedAccountsForOrganization(callback?: (err: AWSError, data: Health.Types.DescribeAffectedAccountsForOrganizationResponse) => void): Request<Health.Types.DescribeAffectedAccountsForOrganizationResponse, AWSError>;
   /**
-   * Returns a list of entities that have been affected by the specified events, based on the specified filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the Amazon Web Services service. Events that have impact beyond that of the affected entities, or where the extent of impact is unknown, include at least one entity indicating this. At least one event ARN is required.    This API operation uses pagination. Specify the nextToken parameter in the next request to return more results.   This operation supports resource-level permissions. You can use this operation to allow or deny access to specific Health events. For more information, see Resource- and action-based conditions in the Health User Guide.   
+   * Returns a list of entities that have been affected by the specified events, based on the specified filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the Amazon Web Service. Events that have impact beyond that of the affected entities, or where the extent of impact is unknown, include at least one entity indicating this. At least one event ARN is required.    This API operation uses pagination. Specify the nextToken parameter in the next request to return more results.   This operation supports resource-level permissions. You can use this operation to allow or deny access to specific Health events. For more information, see Resource- and action-based conditions in the Health User Guide.   
    */
   describeAffectedEntities(params: Health.Types.DescribeAffectedEntitiesRequest, callback?: (err: AWSError, data: Health.Types.DescribeAffectedEntitiesResponse) => void): Request<Health.Types.DescribeAffectedEntitiesResponse, AWSError>;
   /**
-   * Returns a list of entities that have been affected by the specified events, based on the specified filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the Amazon Web Services service. Events that have impact beyond that of the affected entities, or where the extent of impact is unknown, include at least one entity indicating this. At least one event ARN is required.    This API operation uses pagination. Specify the nextToken parameter in the next request to return more results.   This operation supports resource-level permissions. You can use this operation to allow or deny access to specific Health events. For more information, see Resource- and action-based conditions in the Health User Guide.   
+   * Returns a list of entities that have been affected by the specified events, based on the specified filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the Amazon Web Service. Events that have impact beyond that of the affected entities, or where the extent of impact is unknown, include at least one entity indicating this. At least one event ARN is required.    This API operation uses pagination. Specify the nextToken parameter in the next request to return more results.   This operation supports resource-level permissions. You can use this operation to allow or deny access to specific Health events. For more information, see Resource- and action-based conditions in the Health User Guide.   
    */
   describeAffectedEntities(callback?: (err: AWSError, data: Health.Types.DescribeAffectedEntitiesResponse) => void): Request<Health.Types.DescribeAffectedEntitiesResponse, AWSError>;
   /**
-   * Returns a list of entities that have been affected by one or more events for one or more accounts in your organization in Organizations, based on the filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the Amazon Web Services service. At least one event Amazon Resource Name (ARN) and account ID are required. Before you can call this operation, you must first enable Health to work with Organizations. To do this, call the EnableHealthServiceAccessForOrganization operation from your organization's management account.    This API operation uses pagination. Specify the nextToken parameter in the next request to return more results.   This operation doesn't support resource-level permissions. You can't use this operation to allow or deny access to specific Health events. For more information, see Resource- and action-based conditions in the Health User Guide.   
+   * Returns a list of entities that have been affected by one or more events for one or more accounts in your organization in Organizations, based on the filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the Amazon Web Service. At least one event Amazon Resource Name (ARN) and account ID are required. Before you can call this operation, you must first enable Health to work with Organizations. To do this, call the EnableHealthServiceAccessForOrganization operation from your organization's management account.    This API operation uses pagination. Specify the nextToken parameter in the next request to return more results.   This operation doesn't support resource-level permissions. You can't use this operation to allow or deny access to specific Health events. For more information, see Resource- and action-based conditions in the Health User Guide.   
    */
   describeAffectedEntitiesForOrganization(params: Health.Types.DescribeAffectedEntitiesForOrganizationRequest, callback?: (err: AWSError, data: Health.Types.DescribeAffectedEntitiesForOrganizationResponse) => void): Request<Health.Types.DescribeAffectedEntitiesForOrganizationResponse, AWSError>;
   /**
-   * Returns a list of entities that have been affected by one or more events for one or more accounts in your organization in Organizations, based on the filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the Amazon Web Services service. At least one event Amazon Resource Name (ARN) and account ID are required. Before you can call this operation, you must first enable Health to work with Organizations. To do this, call the EnableHealthServiceAccessForOrganization operation from your organization's management account.    This API operation uses pagination. Specify the nextToken parameter in the next request to return more results.   This operation doesn't support resource-level permissions. You can't use this operation to allow or deny access to specific Health events. For more information, see Resource- and action-based conditions in the Health User Guide.   
+   * Returns a list of entities that have been affected by one or more events for one or more accounts in your organization in Organizations, based on the filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the Amazon Web Service. At least one event Amazon Resource Name (ARN) and account ID are required. Before you can call this operation, you must first enable Health to work with Organizations. To do this, call the EnableHealthServiceAccessForOrganization operation from your organization's management account.    This API operation uses pagination. Specify the nextToken parameter in the next request to return more results.   This operation doesn't support resource-level permissions. You can't use this operation to allow or deny access to specific Health events. For more information, see Resource- and action-based conditions in the Health User Guide.   
    */
   describeAffectedEntitiesForOrganization(callback?: (err: AWSError, data: Health.Types.DescribeAffectedEntitiesForOrganizationResponse) => void): Request<Health.Types.DescribeAffectedEntitiesForOrganizationResponse, AWSError>;
   /**
@@ -43,6 +43,14 @@ declare class Health extends Service {
    * Returns the number of entities that are affected by each of the specified events.
    */
   describeEntityAggregates(callback?: (err: AWSError, data: Health.Types.DescribeEntityAggregatesResponse) => void): Request<Health.Types.DescribeEntityAggregatesResponse, AWSError>;
+  /**
+   * Returns a list of entity aggregates for your Organizations that are affected by each of the specified events.
+   */
+  describeEntityAggregatesForOrganization(params: Health.Types.DescribeEntityAggregatesForOrganizationRequest, callback?: (err: AWSError, data: Health.Types.DescribeEntityAggregatesForOrganizationResponse) => void): Request<Health.Types.DescribeEntityAggregatesForOrganizationResponse, AWSError>;
+  /**
+   * Returns a list of entity aggregates for your Organizations that are affected by each of the specified events.
+   */
+  describeEntityAggregatesForOrganization(callback?: (err: AWSError, data: Health.Types.DescribeEntityAggregatesForOrganizationResponse) => void): Request<Health.Types.DescribeEntityAggregatesForOrganizationResponse, AWSError>;
   /**
    * Returns the number of events of each event type (issue, scheduled change, and account notification). If no filter is specified, the counts of all events in each category are returned.  This API operation uses pagination. Specify the nextToken parameter in the next request to return more results. 
    */
@@ -68,11 +76,11 @@ declare class Health extends Service {
    */
   describeEventDetailsForOrganization(callback?: (err: AWSError, data: Health.Types.DescribeEventDetailsForOrganizationResponse) => void): Request<Health.Types.DescribeEventDetailsForOrganizationResponse, AWSError>;
   /**
-   * Returns the event types that meet the specified filter criteria. You can use this API operation to find information about the Health event, such as the category, Amazon Web Services service, and event code. The metadata for each event appears in the EventType object.  If you don't specify a filter criteria, the API operation returns all event types, in no particular order.   This API operation uses pagination. Specify the nextToken parameter in the next request to return more results. 
+   * Returns the event types that meet the specified filter criteria. You can use this API operation to find information about the Health event, such as the category, Amazon Web Service, and event code. The metadata for each event appears in the EventType object.  If you don't specify a filter criteria, the API operation returns all event types, in no particular order.   This API operation uses pagination. Specify the nextToken parameter in the next request to return more results. 
    */
   describeEventTypes(params: Health.Types.DescribeEventTypesRequest, callback?: (err: AWSError, data: Health.Types.DescribeEventTypesResponse) => void): Request<Health.Types.DescribeEventTypesResponse, AWSError>;
   /**
-   * Returns the event types that meet the specified filter criteria. You can use this API operation to find information about the Health event, such as the category, Amazon Web Services service, and event code. The metadata for each event appears in the EventType object.  If you don't specify a filter criteria, the API operation returns all event types, in no particular order.   This API operation uses pagination. Specify the nextToken parameter in the next request to return more results. 
+   * Returns the event types that meet the specified filter criteria. You can use this API operation to find information about the Health event, such as the category, Amazon Web Service, and event code. The metadata for each event appears in the EventType object.  If you don't specify a filter criteria, the API operation returns all event types, in no particular order.   This API operation uses pagination. Specify the nextToken parameter in the next request to return more results. 
    */
   describeEventTypes(callback?: (err: AWSError, data: Health.Types.DescribeEventTypesResponse) => void): Request<Health.Types.DescribeEventTypesResponse, AWSError>;
   /**
@@ -92,11 +100,11 @@ declare class Health extends Service {
    */
   describeEventsForOrganization(callback?: (err: AWSError, data: Health.Types.DescribeEventsForOrganizationResponse) => void): Request<Health.Types.DescribeEventsForOrganizationResponse, AWSError>;
   /**
-   * This operation provides status information on enabling or disabling Health to work with your organization. To call this operation, you must sign in as an IAM user, assume an IAM role, or sign in as the root user (not recommended) in the organization's management account.
+   * This operation provides status information on enabling or disabling Health to work with your organization. To call this operation, you must use the organization's management account.
    */
   describeHealthServiceStatusForOrganization(callback?: (err: AWSError, data: Health.Types.DescribeHealthServiceStatusForOrganizationResponse) => void): Request<Health.Types.DescribeHealthServiceStatusForOrganizationResponse, AWSError>;
   /**
-   * Disables Health from working with Organizations. To call this operation, you must sign in as an Identity and Access Management (IAM) user, assume an IAM role, or sign in as the root user (not recommended) in the organization's management account. For more information, see Aggregating Health events in the Health User Guide. This operation doesn't remove the service-linked role from the management account in your organization. You must use the IAM console, API, or Command Line Interface (CLI) to remove the service-linked role. For more information, see Deleting a Service-Linked Role in the IAM User Guide.  You can also disable the organizational feature by using the Organizations DisableAWSServiceAccess API operation. After you call this operation, Health stops aggregating events for all other Amazon Web Services accounts in your organization. If you call the Health API operations for organizational view, Health returns an error. Health continues to aggregate health events for your Amazon Web Services account. 
+   * Disables Health from working with Organizations. To call this operation, you must sign in to the organization's management account. For more information, see Aggregating Health events in the Health User Guide. This operation doesn't remove the service-linked role from the management account in your organization. You must use the IAM console, API, or Command Line Interface (CLI) to remove the service-linked role. For more information, see Deleting a Service-Linked Role in the IAM User Guide.  You can also disable the organizational feature by using the Organizations DisableAWSServiceAccess API operation. After you call this operation, Health stops aggregating events for all other Amazon Web Services accounts in your organization. If you call the Health API operations for organizational view, Health returns an error. Health continues to aggregate health events for your Amazon Web Services account. 
    */
   disableHealthServiceAccessForOrganization(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
   /**
@@ -105,6 +113,21 @@ declare class Health extends Service {
   enableHealthServiceAccessForOrganization(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
 }
 declare namespace Health {
+  export interface AccountEntityAggregate {
+    /**
+     * The 12-digit Amazon Web Services account numbers that contains the affected entities.
+     */
+    accountId?: eventArn;
+    /**
+     * The number of entities that match the filter criteria for the specified events.
+     */
+    count?: count;
+    /**
+     * The number of affected entities aggregated by the entity status codes.
+     */
+    statuses?: entityStatuses;
+  }
+  export type AccountEntityAggregatesList = AccountEntityAggregate[];
   export interface AffectedEntity {
     /**
      * The unique identifier for the entity. Format: arn:aws:health:entity-region:aws-account:entity/entity-id . Example: arn:aws:health:us-east-1:111222333444:entity/AVh5GGT7ul1arKr1sE1K 
@@ -169,7 +192,7 @@ declare namespace Health {
      */
     affectedAccounts?: affectedAccountsList;
     /**
-     * This parameter specifies if the Health event is a public Amazon Web Services service event or an account-specific event.   If the eventScopeCode value is PUBLIC, then the affectedAccounts value is always empty.   If the eventScopeCode value is ACCOUNT_SPECIFIC, then the affectedAccounts value lists the affected Amazon Web Services accounts in your organization. For example, if an event affects a service such as Amazon Elastic Compute Cloud and you have Amazon Web Services accounts that use that service, those account IDs appear in the response.   If the eventScopeCode value is NONE, then the eventArn that you specified in the request is invalid or doesn't exist.  
+     * This parameter specifies if the Health event is a public Amazon Web Service event or an account-specific event.   If the eventScopeCode value is PUBLIC, then the affectedAccounts value is always empty.   If the eventScopeCode value is ACCOUNT_SPECIFIC, then the affectedAccounts value lists the affected Amazon Web Services accounts in your organization. For example, if an event affects a service such as Amazon Elastic Compute Cloud and you have Amazon Web Services accounts that use that service, those account IDs appear in the response.   If the eventScopeCode value is NONE, then the eventArn that you specified in the request is invalid or doesn't exist.  
      */
     eventScopeCode?: eventScopeCode;
     /**
@@ -182,7 +205,7 @@ declare namespace Health {
     /**
      * A JSON set of elements including the awsAccountId and the eventArn.
      */
-    organizationEntityFilters: OrganizationEntityFiltersList;
+    organizationEntityFilters?: OrganizationEntityFiltersList;
     /**
      * The locale (language) to return information in. English (en) is the default and the only supported value at this time.
      */
@@ -195,6 +218,10 @@ declare namespace Health {
      * The maximum number of items to return in one batch, between 10 and 100, inclusive.
      */
     maxResults?: maxResultsLowerRange;
+    /**
+     * A JSON set of elements including the awsAccountId, eventArn and a set of statusCodes.
+     */
+    organizationEntityAccountFilters?: OrganizationEntityAccountFiltersList;
   }
   export interface DescribeAffectedEntitiesForOrganizationResponse {
     /**
@@ -237,6 +264,22 @@ declare namespace Health {
      * If the results of a search are large, only a portion of the results are returned, and a nextToken pagination token is returned in the response. To retrieve the next batch of results, reissue the search request and include the returned token. When all results have been returned, the response does not contain a pagination token value.
      */
     nextToken?: nextToken;
+  }
+  export interface DescribeEntityAggregatesForOrganizationRequest {
+    /**
+     * A list of event ARNs (unique identifiers). For example: "arn:aws:health:us-east-1::event/EC2/EC2_INSTANCE_RETIREMENT_SCHEDULED/EC2_INSTANCE_RETIREMENT_SCHEDULED_ABC123-CDE456", "arn:aws:health:us-west-1::event/EBS/AWS_EBS_LOST_VOLUME/AWS_EBS_LOST_VOLUME_CHI789_JKL101" 
+     */
+    eventArns: OrganizationEventArnsList;
+    /**
+     * A list of 12-digit Amazon Web Services account numbers that contains the affected entities.
+     */
+    awsAccountIds?: OrganizationAccountIdsList;
+  }
+  export interface DescribeEntityAggregatesForOrganizationResponse {
+    /**
+     * The list of entity aggregates for each of the specified accounts that are affected by each of the specified events.
+     */
+    organizationEntityAggregates?: OrganizationEntityAggregatesList;
   }
   export interface DescribeEntityAggregatesRequest {
     /**
@@ -336,7 +379,7 @@ declare namespace Health {
      */
     nextToken?: nextToken;
     /**
-     * The maximum number of items to return in one batch, between 10 and 100, inclusive.
+     * The maximum number of items to return in one batch, between 10 and 100, inclusive.  If you don't specify the maxResults parameter, this operation returns a maximum of 30 items by default. 
      */
     maxResults?: maxResults;
   }
@@ -412,6 +455,20 @@ declare namespace Health {
      */
     healthServiceAccessStatusForOrganization?: healthServiceAccessStatusForOrganization;
   }
+  export interface EntityAccountFilter {
+    /**
+     * The unique identifier for the event. The event ARN has the arn:aws:health:event-region::event/SERVICE/EVENT_TYPE_CODE/EVENT_TYPE_PLUS_ID  format. For example, an event ARN might look like the following:  arn:aws:health:us-east-1::event/EC2/EC2_INSTANCE_RETIREMENT_SCHEDULED/EC2_INSTANCE_RETIREMENT_SCHEDULED_ABC123-DEF456 
+     */
+    eventArn: eventArn;
+    /**
+     * The 12-digit Amazon Web Services account numbers that contains the affected entities.
+     */
+    awsAccountId?: accountId;
+    /**
+     * A list of entity status codes.
+     */
+    statusCodes?: entityStatusCodeList;
+  }
   export interface EntityAggregate {
     /**
      * The unique identifier for the event. The event ARN has the arn:aws:health:event-region::event/SERVICE/EVENT_TYPE_CODE/EVENT_TYPE_PLUS_ID  format. For example, an event ARN might look like the following:  arn:aws:health:us-east-1::event/EC2/EC2_INSTANCE_RETIREMENT_SCHEDULED/EC2_INSTANCE_RETIREMENT_SCHEDULED_ABC123-DEF456 
@@ -421,6 +478,10 @@ declare namespace Health {
      * The number of entities that match the criteria for the specified events.
      */
     count?: count;
+    /**
+     * The number of affected entities aggregated by the entity status codes.
+     */
+    statuses?: entityStatuses;
   }
   export type EntityAggregateList = EntityAggregate[];
   export interface EntityFilter {
@@ -456,7 +517,7 @@ declare namespace Health {
      */
     arn?: eventArn;
     /**
-     * The Amazon Web Services service that is affected by the event. For example, EC2, RDS.
+     * The Amazon Web Service that is affected by the event. For example, EC2, RDS.
      */
     service?: service;
     /**
@@ -492,7 +553,7 @@ declare namespace Health {
      */
     statusCode?: eventStatusCode;
     /**
-     * This parameter specifies if the Health event is a public Amazon Web Services service event or an account-specific event.   If the eventScopeCode value is PUBLIC, then the affectedAccounts value is always empty.   If the eventScopeCode value is ACCOUNT_SPECIFIC, then the affectedAccounts value lists the affected Amazon Web Services accounts in your organization. For example, if an event affects a service such as Amazon Elastic Compute Cloud and you have Amazon Web Services accounts that use that service, those account IDs appear in the response.   If the eventScopeCode value is NONE, then the eventArn that you specified in the request is invalid or doesn't exist.  
+     * This parameter specifies if the Health event is a public Amazon Web Service event or an account-specific event.   If the eventScopeCode value is PUBLIC, then the affectedAccounts value is always empty.   If the eventScopeCode value is ACCOUNT_SPECIFIC, then the affectedAccounts value lists the affected Amazon Web Services accounts in your organization. For example, if an event affects a service such as Amazon Elastic Compute Cloud and you have Amazon Web Services accounts that use that service, those account IDs appear in the response.   If the eventScopeCode value is NONE, then the eventArn that you specified in the request is invalid or doesn't exist.  
      */
     eventScopeCode?: eventScopeCode;
   }
@@ -562,7 +623,7 @@ declare namespace Health {
      */
     eventTypeCodes?: eventTypeList;
     /**
-     * The Amazon Web Services services associated with the event. For example, EC2, RDS.
+     * The Amazon Web Services associated with the event. For example, EC2, RDS.
      */
     services?: serviceList;
     /**
@@ -609,7 +670,7 @@ declare namespace Health {
   export type EventList = Event[];
   export interface EventType {
     /**
-     * The Amazon Web Services service that is affected by the event. For example, EC2, RDS.
+     * The Amazon Web Service that is affected by the event. For example, EC2, RDS.
      */
     service?: service;
     /**
@@ -629,7 +690,7 @@ declare namespace Health {
      */
     eventTypeCodes?: EventTypeCodeList;
     /**
-     * The Amazon Web Services services associated with the event. For example, EC2, RDS.
+     * The Amazon Web Services associated with the event. For example, EC2, RDS.
      */
     services?: serviceList;
     /**
@@ -638,6 +699,7 @@ declare namespace Health {
     eventTypeCategories?: EventTypeCategoryList;
   }
   export type EventTypeList = EventType[];
+  export type OrganizationAccountIdsList = accountId[];
   export interface OrganizationAffectedEntitiesErrorItem {
     /**
      * The 12-digit Amazon Web Services account numbers that contains the affected entities.
@@ -652,10 +714,30 @@ declare namespace Health {
      */
     errorName?: string;
     /**
-     * The unique identifier for the event type. The format is AWS_SERVICE_DESCRIPTION. For example, AWS_EC2_SYSTEM_MAINTENANCE_EVENT.
+     * A message that describes the error. Follow the error message and retry your request. For example, the InvalidAccountInputError error message appears if you call the DescribeAffectedEntitiesForOrganization operation and specify the AccountSpecific value for the EventScopeCode parameter, but don't specify an Amazon Web Services account.
      */
     errorMessage?: string;
   }
+  export type OrganizationEntityAccountFiltersList = EntityAccountFilter[];
+  export interface OrganizationEntityAggregate {
+    /**
+     * A list of event ARNs (unique identifiers). For example: "arn:aws:health:us-east-1::event/EC2/EC2_INSTANCE_RETIREMENT_SCHEDULED/EC2_INSTANCE_RETIREMENT_SCHEDULED_ABC123-CDE456", "arn:aws:health:us-west-1::event/EBS/AWS_EBS_LOST_VOLUME/AWS_EBS_LOST_VOLUME_CHI789_JKL101" 
+     */
+    eventArn?: eventArn;
+    /**
+     * The number of entities for the organization that match the filter criteria for the specified events.
+     */
+    count?: count;
+    /**
+     * The number of affected entities aggregated by the entitiy status codes.
+     */
+    statuses?: entityStatuses;
+    /**
+     * A list of entity aggregates for each of the specified accounts in your organization that are affected by a specific event. If there are no awsAccountIds provided in the request, this field will be empty in the response.
+     */
+    accounts?: AccountEntityAggregatesList;
+  }
+  export type OrganizationEntityAggregatesList = OrganizationEntityAggregate[];
   export type OrganizationEntityFiltersList = EventAccountFilter[];
   export interface OrganizationEvent {
     /**
@@ -663,7 +745,7 @@ declare namespace Health {
      */
     arn?: eventArn;
     /**
-     * The Amazon Web Services service that is affected by the event, such as EC2 and RDS.
+     * The Amazon Web Service that is affected by the event, such as EC2 and RDS.
      */
     service?: service;
     /**
@@ -675,7 +757,7 @@ declare namespace Health {
      */
     eventTypeCategory?: eventTypeCategory;
     /**
-     * This parameter specifies if the Health event is a public Amazon Web Services service event or an account-specific event.   If the eventScopeCode value is PUBLIC, then the affectedAccounts value is always empty.   If the eventScopeCode value is ACCOUNT_SPECIFIC, then the affectedAccounts value lists the affected Amazon Web Services accounts in your organization. For example, if an event affects a service such as Amazon Elastic Compute Cloud and you have Amazon Web Services accounts that use that service, those account IDs appear in the response.   If the eventScopeCode value is NONE, then the eventArn that you specified in the request is invalid or doesn't exist.  
+     * This parameter specifies if the Health event is a public Amazon Web Service event or an account-specific event.   If the eventScopeCode value is PUBLIC, then the affectedAccounts value is always empty.   If the eventScopeCode value is ACCOUNT_SPECIFIC, then the affectedAccounts value lists the affected Amazon Web Services accounts in your organization. For example, if an event affects a service such as Amazon Elastic Compute Cloud and you have Amazon Web Services accounts that use that service, those account IDs appear in the response.   If the eventScopeCode value is NONE, then the eventArn that you specified in the request is invalid or doesn't exist.  
      */
     eventScopeCode?: eventScopeCode;
     /**
@@ -699,6 +781,7 @@ declare namespace Health {
      */
     statusCode?: eventStatusCode;
   }
+  export type OrganizationEventArnsList = eventArn[];
   export type OrganizationEventDetailFiltersList = EventAccountFilter[];
   export interface OrganizationEventDetails {
     /**
@@ -740,7 +823,7 @@ declare namespace Health {
      */
     awsAccountIds?: awsAccountIdsList;
     /**
-     * The Amazon Web Services services associated with the event. For example, EC2, RDS.
+     * The Amazon Web Services associated with the event. For example, EC2, RDS.
      */
     services?: serviceList;
     /**
@@ -778,8 +861,9 @@ declare namespace Health {
   export type dateTimeRangeList = DateTimeRange[];
   export type entityArn = string;
   export type entityArnList = entityArn[];
-  export type entityStatusCode = "IMPAIRED"|"UNIMPAIRED"|"UNKNOWN"|string;
+  export type entityStatusCode = "IMPAIRED"|"UNIMPAIRED"|"UNKNOWN"|"PENDING"|"RESOLVED"|string;
   export type entityStatusCodeList = entityStatusCode[];
+  export type entityStatuses = {[key: string]: count};
   export type entityUrl = string;
   export type entityValue = string;
   export type entityValueList = entityValue[];

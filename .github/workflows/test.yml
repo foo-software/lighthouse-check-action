@@ -17,7 +17,7 @@ jobs:
         device: all
         gitAuthor: ${{ github.actor }}
         gitBranch: ${{ github.ref }}
-        gitHubAccessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+        gitHubAccessToken: ${{ secrets.GITHUB_TOKEN }}
         maxRetries: 1
         outputDirectory: ${{ github.workspace }}/tmp/artifacts
         urls: 'https://www.foo.software,https://www.foo.software/tag/articles/'

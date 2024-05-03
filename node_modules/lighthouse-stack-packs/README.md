@@ -15,6 +15,7 @@ Many developers today use different technologies (backend/CMS/JavaScript framewo
 * AMP
 * Angular
 * Drupal
+* Gatsby
 * Magento
 * Next.js
 * Nuxt

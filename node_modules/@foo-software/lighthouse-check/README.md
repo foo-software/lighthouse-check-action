@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/foo-software/lighthouse-check.svg?style=svg)](https://circleci.com/gh/foo-software/lighthouse-check)
-
 # `@foo-software/lighthouse-check`
 
 > An NPM module and CLI to run Lighthouse audits programmatically. This project aims to add bells and whistles to automated Lighthouse testing for DevOps workflows. Easily implement in your Continuous Integration or Continuous Delivery pipeline.
@@ -60,8 +58,8 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
   const response = await lighthouseCheck({
     urls: [
       'https://www.foo.software/lighthouse',
-      'https://www.foo.software/contact'
-    ]
+      'https://www.foo.software/contact',
+    ],
   });
 
   console.log('response', response);
@@ -133,8 +131,8 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
     outputDirectory: '../artifacts',
     urls: [
       'https://www.foo.software/lighthouse',
-      'https://www.foo.software/contact'
-    ]
+      'https://www.foo.software/contact',
+    ],
   });
 
   console.log('response', response);
@@ -161,8 +159,8 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
     awsSecretAccessKey: 'def456',
     urls: [
       'https://www.foo.software/lighthouse',
-      'https://www.foo.software/contact'
-    ]
+      'https://www.foo.software/contact',
+    ],
   });
 
   console.log('response', response);
@@ -191,8 +189,8 @@ import { lighthouseCheck } from '@foo-software/lighthouse-check';
     slackWebhookUrl: 'https://www.my-slack-webhook-url.com',
     urls: [
       'https://www.foo.software/lighthouse',
-      'https://www.foo.software/contact'
-    ]
+      'https://www.foo.software/contact',
+    ],
   });
 
   console.log('response', response);
@@ -221,7 +219,10 @@ Populate [`prCommentAccessToken` and `prCommentUrl` options](#options) to enable
 You can use `validateStatus` to enforce minimum scores. This could be handy in a DevOps workflow for example.
 
 ```javascript
-import { lighthouseCheck, validateStatus } from '@foo-software/lighthouse-check';
+import {
+  lighthouseCheck,
+  validateStatus,
+} from '@foo-software/lighthouse-check';
 
 (async () => {
   try {
@@ -232,8 +233,8 @@ import { lighthouseCheck, validateStatus } from '@foo-software/lighthouse-check'
       awsSecretAccessKey: 'def456',
       urls: [
         'https://www.foo.software/lighthouse',
-        'https://www.foo.software/contact'
-      ]
+        'https://www.foo.software/contact',
+      ],
     });
 
     const status = await validateStatus({
@@ -242,7 +243,7 @@ import { lighthouseCheck, validateStatus } from '@foo-software/lighthouse-check'
       minPerformanceScore: 70,
       minProgressiveWebAppScore: 70,
       minSeoScore: 80,
-      results: response
+      results: response,
     });
 
     console.log('all good?', status); // 'all good? true'
@@ -283,7 +284,7 @@ orbs:
   lighthouse-check: foo-software/lighthouse-check@0.0.6 # ideally later :)
 
 jobs:
-  test: 
+  test:
     executor: lighthouse-check/default
     steps:
       - lighthouse-check/audit:
@@ -367,9 +368,7 @@ You can override default config and options by specifying `overridesJsonFile` op
     }
   },
   "options": {
-    "chromeFlags": [
-      "--disable-dev-shm-usage"
-    ]
+    "chromeFlags": ["--disable-dev-shm-usage"]
   }
 }
 ```
