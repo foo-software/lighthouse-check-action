@@ -68,7 +68,7 @@ inputs:
   wait:
     description: 'If "true", waits for all audit results to be returned, otherwise URLs are only enqueued.'
 runs:
-  using: 'node18'
+  using: 'node20'
   main: 'dist/index.js'
 branding:
   icon: 'zap'  
