@@ -57,7 +57,6 @@ const formatInput = (input: string) => {
       awsRegion: formatInput(core.getInput('awsRegion')),
       awsSecretAccessKey: formatInput(core.getInput('awsSecretAccessKey')),
       branch: gitBranch || legacyGitBranch,
-      configFile: formatInput(core.getInput('configFile')),
       device: device || legacyDevice,
       extraHeaders: !extraHeaders ? undefined : JSON.parse(extraHeaders),
       locale: formatInput(core.getInput('locale')),
