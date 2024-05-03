@@ -7,7 +7,7 @@ LABEL maintainer "Foo <hello@foo.software>"
 # install node
 RUN apt-get update \
   && apt-get -y install curl gnupg build-essential \
-  && curl -sL https://deb.nodesource.com/setup_14.x  | bash - \
+  && curl -sL https://deb.nodesource.com/setup_16.x  | bash - \
   && apt-get -y install nodejs
 
 RUN node -v
@@ -28,6 +28,6 @@ RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add
 
 RUN google-chrome-stable --version
 
-RUN npm install @foo-software/lighthouse-check@8 -g
+RUN npm install @foo-software/lighthouse-check@9 -g
 
 CMD ["lighthouse-check"]

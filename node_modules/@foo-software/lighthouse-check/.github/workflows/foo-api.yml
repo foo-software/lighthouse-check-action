@@ -5,21 +5,21 @@ jobs:
   lighthouse-foo-api:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Setup Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: "16.x"
-    - run: npm install
-    - run: npm run build
-    - name: Run Lighthouse Check
-      run: |
-        node ./dist/bin/lighthouse-check.js --verbose \
-        --apiToken ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }} \
-        --emulatedFormFactor all \
-        --isGitHubAction true \
-        --tag lighthouse-check \
-        --urls ${{ secrets.LIGHTHOUSE_CHECK_URLS }} \
-        --prCommentAccessToken "${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}" \
-        --prCommentEnabled \
-        --prCommentUrl "https://api.github.com/repos/foo-software/lighthouse-check/pulls/$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')/reviews"
+      - uses: actions/checkout@master
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+      - run: npm install
+      - run: npm run build
+      - name: Run Lighthouse Check
+        run: |
+          node ./dist/bin/lighthouse-check.js --verbose \
+          --apiToken ${{ secrets.LIGHTHOUSE_CHECK_API_TOKEN }} \
+          --emulatedFormFactor all \
+          --isGitHubAction true \
+          --tag lighthouse-check \
+          --urls ${{ secrets.LIGHTHOUSE_CHECK_URLS }} \
+          --prCommentAccessToken "${{ secrets.GITHUB_TOKEN }}" \
+          --prCommentEnabled \
+          --prCommentUrl "https://api.github.com/repos/foo-software/lighthouse-check/pulls/$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')/reviews"

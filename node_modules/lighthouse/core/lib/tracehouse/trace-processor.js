@@ -1,7 +1,7 @@
 /**
- * @license Copyright 2017 The Lighthouse Authors. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
@@ -403,6 +403,9 @@ class TraceProcessor {
    */
   static getMainThreadTopLevelEvents(trace, startTime = 0, endTime = Infinity) {
     const topLevelEvents = [];
+    /** @type {ToplevelEvent|undefined} */
+    let prevToplevel = undefined;
+
     // note: mainThreadEvents is already sorted by event start
     for (const event of trace.mainThreadEvents) {
       if (!this.isScheduleableTask(event) || !event.dur) continue;
@@ -411,11 +414,21 @@ class TraceProcessor {
       const end = (event.ts + event.dur - trace.timeOriginEvt.ts) / 1000;
       if (start > endTime || end < startTime) continue;
 
-      topLevelEvents.push({
+      // Temporary fix for a Chrome bug where some RunTask events can be overlapping.
+      // We correct that here be ensuring each RunTask ends at least 1 microsecond before the next
+      // https://github.com/GoogleChrome/lighthouse/issues/15896
+      // https://issues.chromium.org/issues/329678173
+      if (prevToplevel && start < prevToplevel.end) {
+        prevToplevel.end = start - 0.001;
+      }
+
+      prevToplevel = {
         start,
         end,
         duration: event.dur / 1000,
-      });
+      };
+
+      topLevelEvents.push(prevToplevel);
     }
 
     return topLevelEvents;
@@ -705,7 +718,7 @@ class TraceProcessor {
         return Boolean(
           evt.name === 'FrameCommittedInBrowser' &&
           evt.args.data?.frame &&
-          evt.args.data.url
+          evt.args.data.url !== undefined
         );
       }).forEach(evt => {
         framesById.set(evt.args.data.frame, {

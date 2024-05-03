@@ -993,7 +993,7 @@ declare namespace XRay {
      */
     EndTime: Timestamp;
     /**
-     * A parameter to indicate whether to query trace summaries by TraceId or Event time.
+     * A parameter to indicate whether to query trace summaries by TraceId, Event (trace update time), or Service (segment end time).
      */
     TimeRangeType?: TimeRangeType;
     /**
@@ -1879,7 +1879,7 @@ declare namespace XRay {
     BackendConnectionErrors?: BackendConnectionErrors;
   }
   export type TelemetryRecordList = TelemetryRecord[];
-  export type TimeRangeType = "TraceId"|"Event"|string;
+  export type TimeRangeType = "TraceId"|"Event"|"Service"|string;
   export interface TimeSeriesServiceStatistics {
     /**
      * Timestamp of the window for which statistics are aggregated.
@@ -1930,6 +1930,10 @@ declare namespace XRay {
      * The unique identifier for the request that generated the trace's segments and subsegments.
      */
     Id?: TraceId;
+    /**
+     * The start time of a trace, based on the earliest trace segment start time.
+     */
+    StartTime?: Timestamp;
     /**
      * The length of time in seconds between the start time of the root segment and the end time of the last segment that completed.
      */

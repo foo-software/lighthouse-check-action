@@ -1,5 +1,10 @@
 {
   "pagination": {
+    "GetConsolidatedReport": {
+      "input_token": "NextToken",
+      "output_token": "NextToken",
+      "limit_key": "MaxResults"
+    },
     "ListAnswers": {
       "input_token": "NextToken",
       "output_token": "NextToken",
@@ -45,7 +50,37 @@
       "output_token": "NextToken",
       "limit_key": "MaxResults"
     },
+    "ListProfileNotifications": {
+      "input_token": "NextToken",
+      "output_token": "NextToken",
+      "limit_key": "MaxResults"
+    },
+    "ListProfileShares": {
+      "input_token": "NextToken",
+      "output_token": "NextToken",
+      "limit_key": "MaxResults"
+    },
+    "ListProfiles": {
+      "input_token": "NextToken",
+      "output_token": "NextToken",
+      "limit_key": "MaxResults"
+    },
+    "ListReviewTemplateAnswers": {
+      "input_token": "NextToken",
+      "output_token": "NextToken",
+      "limit_key": "MaxResults"
+    },
+    "ListReviewTemplates": {
+      "input_token": "NextToken",
+      "output_token": "NextToken",
+      "limit_key": "MaxResults"
+    },
     "ListShareInvitations": {
+      "input_token": "NextToken",
+      "output_token": "NextToken",
+      "limit_key": "MaxResults"
+    },
+    "ListTemplateShares": {
       "input_token": "NextToken",
       "output_token": "NextToken",
       "limit_key": "MaxResults"

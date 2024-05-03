@@ -13,7 +13,6 @@
   "include": [
     "**/*.js",
     "types/**/*.d.ts",
-    "../esm-utils.js",
   ],
   "exclude": [
     "test/**/*.js",

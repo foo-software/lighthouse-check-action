@@ -53,11 +53,11 @@ declare class ECR extends Service {
    */
   completeLayerUpload(callback?: (err: AWSError, data: ECR.Types.CompleteLayerUploadResponse) => void): Request<ECR.Types.CompleteLayerUploadResponse, AWSError>;
   /**
-   * Creates a pull through cache rule. A pull through cache rule provides a way to cache images from an external public registry in your Amazon ECR private registry.
+   * Creates a pull through cache rule. A pull through cache rule provides a way to cache images from an upstream registry source in your Amazon ECR private registry. For more information, see Using pull through cache rules in the Amazon Elastic Container Registry User Guide.
    */
   createPullThroughCacheRule(params: ECR.Types.CreatePullThroughCacheRuleRequest, callback?: (err: AWSError, data: ECR.Types.CreatePullThroughCacheRuleResponse) => void): Request<ECR.Types.CreatePullThroughCacheRuleResponse, AWSError>;
   /**
-   * Creates a pull through cache rule. A pull through cache rule provides a way to cache images from an external public registry in your Amazon ECR private registry.
+   * Creates a pull through cache rule. A pull through cache rule provides a way to cache images from an upstream registry source in your Amazon ECR private registry. For more information, see Using pull through cache rules in the Amazon Elastic Container Registry User Guide.
    */
   createPullThroughCacheRule(callback?: (err: AWSError, data: ECR.Types.CreatePullThroughCacheRuleResponse) => void): Request<ECR.Types.CreatePullThroughCacheRuleResponse, AWSError>;
   /**
@@ -93,11 +93,11 @@ declare class ECR extends Service {
    */
   deleteRegistryPolicy(callback?: (err: AWSError, data: ECR.Types.DeleteRegistryPolicyResponse) => void): Request<ECR.Types.DeleteRegistryPolicyResponse, AWSError>;
   /**
-   * Deletes a repository. If the repository contains images, you must either delete all images in the repository or use the force option to delete the repository.
+   * Deletes a repository. If the repository isn't empty, you must either delete the contents of the repository or use the force option to delete the repository and have Amazon ECR delete all of its contents on your behalf.
    */
   deleteRepository(params: ECR.Types.DeleteRepositoryRequest, callback?: (err: AWSError, data: ECR.Types.DeleteRepositoryResponse) => void): Request<ECR.Types.DeleteRepositoryResponse, AWSError>;
   /**
-   * Deletes a repository. If the repository contains images, you must either delete all images in the repository or use the force option to delete the repository.
+   * Deletes a repository. If the repository isn't empty, you must either delete the contents of the repository or use the force option to delete the repository and have Amazon ECR delete all of its contents on your behalf.
    */
   deleteRepository(callback?: (err: AWSError, data: ECR.Types.DeleteRepositoryResponse) => void): Request<ECR.Types.DeleteRepositoryResponse, AWSError>;
   /**
@@ -333,6 +333,14 @@ declare class ECR extends Service {
    */
   untagResource(callback?: (err: AWSError, data: ECR.Types.UntagResourceResponse) => void): Request<ECR.Types.UntagResourceResponse, AWSError>;
   /**
+   * Updates an existing pull through cache rule.
+   */
+  updatePullThroughCacheRule(params: ECR.Types.UpdatePullThroughCacheRuleRequest, callback?: (err: AWSError, data: ECR.Types.UpdatePullThroughCacheRuleResponse) => void): Request<ECR.Types.UpdatePullThroughCacheRuleResponse, AWSError>;
+  /**
+   * Updates an existing pull through cache rule.
+   */
+  updatePullThroughCacheRule(callback?: (err: AWSError, data: ECR.Types.UpdatePullThroughCacheRuleResponse) => void): Request<ECR.Types.UpdatePullThroughCacheRuleResponse, AWSError>;
+  /**
    * Uploads an image layer part to Amazon ECR. When an image is pushed, each new image layer is uploaded in parts. The maximum size of each image layer part can be 20971520 bytes (or about 20MB). The UploadLayerPart API is called once per each new image layer part.  This operation is used by the Amazon ECR proxy and is not generally used by customers for pulling and pushing images. In most cases, you should use the docker CLI to pull, tag, and push images. 
    */
   uploadLayerPart(params: ECR.Types.UploadLayerPartRequest, callback?: (err: AWSError, data: ECR.Types.UploadLayerPartResponse) => void): Request<ECR.Types.UploadLayerPartResponse, AWSError>;
@@ -340,6 +348,14 @@ declare class ECR extends Service {
    * Uploads an image layer part to Amazon ECR. When an image is pushed, each new image layer is uploaded in parts. The maximum size of each image layer part can be 20971520 bytes (or about 20MB). The UploadLayerPart API is called once per each new image layer part.  This operation is used by the Amazon ECR proxy and is not generally used by customers for pulling and pushing images. In most cases, you should use the docker CLI to pull, tag, and push images. 
    */
   uploadLayerPart(callback?: (err: AWSError, data: ECR.Types.UploadLayerPartResponse) => void): Request<ECR.Types.UploadLayerPartResponse, AWSError>;
+  /**
+   * Validates an existing pull through cache rule for an upstream registry that requires authentication. This will retrieve the contents of the Amazon Web Services Secrets Manager secret, verify the syntax, and then validate that authentication to the upstream registry is successful.
+   */
+  validatePullThroughCacheRule(params: ECR.Types.ValidatePullThroughCacheRuleRequest, callback?: (err: AWSError, data: ECR.Types.ValidatePullThroughCacheRuleResponse) => void): Request<ECR.Types.ValidatePullThroughCacheRuleResponse, AWSError>;
+  /**
+   * Validates an existing pull through cache rule for an upstream registry that requires authentication. This will retrieve the contents of the Amazon Web Services Secrets Manager secret, verify the syntax, and then validate that authentication to the upstream registry is successful.
+   */
+  validatePullThroughCacheRule(callback?: (err: AWSError, data: ECR.Types.ValidatePullThroughCacheRuleResponse) => void): Request<ECR.Types.ValidatePullThroughCacheRuleResponse, AWSError>;
   /**
    * Waits for the imageScanComplete state by periodically calling the underlying ECR.describeImageScanFindingsoperation every 5 seconds (at most 60 times). Wait until an image scan is complete and findings can be accessed
    */
@@ -561,13 +577,21 @@ declare namespace ECR {
      */
     ecrRepositoryPrefix: PullThroughCacheRuleRepositoryPrefix;
     /**
-     * The registry URL of the upstream public registry to use as the source for the pull through cache rule.
+     * The registry URL of the upstream public registry to use as the source for the pull through cache rule. The following is the syntax to use for each supported upstream registry.   Amazon ECR Public (ecr-public) - public.ecr.aws    Docker Hub (docker-hub) - registry-1.docker.io    Quay (quay) - quay.io    Kubernetes (k8s) - registry.k8s.io    GitHub Container Registry (github-container-registry) - ghcr.io    Microsoft Azure Container Registry (azure-container-registry) - &lt;custom&gt;.azurecr.io   
      */
     upstreamRegistryUrl: Url;
     /**
      * The Amazon Web Services account ID associated with the registry to create the pull through cache rule for. If you do not specify a registry, the default registry is assumed.
      */
     registryId?: RegistryId;
+    /**
+     * The name of the upstream registry.
+     */
+    upstreamRegistry?: UpstreamRegistry;
+    /**
+     * The Amazon Resource Name (ARN) of the Amazon Web Services Secrets Manager secret that identifies the credentials to authenticate to the upstream registry.
+     */
+    credentialArn?: CredentialArn;
   }
   export interface CreatePullThroughCacheRuleResponse {
     /**
@@ -586,6 +610,14 @@ declare namespace ECR {
      * The registry ID associated with the request.
      */
     registryId?: RegistryId;
+    /**
+     * The name of the upstream registry associated with the pull through cache rule.
+     */
+    upstreamRegistry?: UpstreamRegistry;
+    /**
+     * The Amazon Resource Name (ARN) of the Amazon Web Services Secrets Manager secret associated with the pull through cache rule.
+     */
+    credentialArn?: CredentialArn;
   }
   export interface CreateRepositoryRequest {
     /**
@@ -593,7 +625,7 @@ declare namespace ECR {
      */
     registryId?: RegistryId;
     /**
-     * The name to use for the repository. The repository name may be specified on its own (such as nginx-web-app) or it can be prepended with a namespace to group the repository into a category (such as project-a/nginx-web-app).
+     * The name to use for the repository. The repository name may be specified on its own (such as nginx-web-app) or it can be prepended with a namespace to group the repository into a category (such as project-a/nginx-web-app). The repository name must start with a letter and can only contain lowercase letters, numbers, hyphens, underscores, and forward slashes.
      */
     repositoryName: RepositoryName;
     /**
@@ -620,6 +652,7 @@ declare namespace ECR {
     repository?: Repository;
   }
   export type CreationTimestamp = Date;
+  export type CredentialArn = string;
   export interface CvssScore {
     /**
      * The base CVSS score used for the finding.
@@ -728,6 +761,10 @@ declare namespace ECR {
      * The registry ID associated with the request.
      */
     registryId?: RegistryId;
+    /**
+     * The Amazon Resource Name (ARN) of the Amazon Web Services Secrets Manager secret associated with the pull through cache rule.
+     */
+    credentialArn?: CredentialArn;
   }
   export interface DeleteRegistryPolicyRequest {
   }
@@ -775,7 +812,7 @@ declare namespace ECR {
      */
     repositoryName: RepositoryName;
     /**
-     *  If a repository contains images, forces the deletion.
+     * If true, deleting the repository force deletes the contents of the repository. If false, the repository must be empty before attempting to delete it.
      */
     force?: ForceFlag;
   }
@@ -1298,7 +1335,7 @@ declare namespace ECR {
      */
     failureReason?: ImageFailureReason;
   }
-  export type ImageFailureCode = "InvalidImageDigest"|"InvalidImageTag"|"ImageTagDoesNotMatchDigest"|"ImageNotFound"|"MissingDigestAndTag"|"ImageReferencedByManifestList"|"KmsError"|string;
+  export type ImageFailureCode = "InvalidImageDigest"|"InvalidImageTag"|"ImageTagDoesNotMatchDigest"|"ImageNotFound"|"MissingDigestAndTag"|"ImageReferencedByManifestList"|"KmsError"|"UpstreamAccessDenied"|"UpstreamTooManyRequests"|"UpstreamUnavailable"|string;
   export type ImageFailureList = ImageFailure[];
   export type ImageFailureReason = string;
   export interface ImageIdentifier {
@@ -1433,6 +1470,7 @@ declare namespace ECR {
      */
     partSize?: PartSize;
   }
+  export type IsPTCRuleValid = boolean;
   export type KmsKey = string;
   export interface Layer {
     /**
@@ -1575,6 +1613,7 @@ declare namespace ECR {
   export type MediaTypeList = MediaType[];
   export type Metric = string;
   export type NextToken = string;
+  export type PTCValidateFailure = string;
   export type PackageManager = string;
   export interface PackageVulnerabilityDetails {
     /**
@@ -1638,6 +1677,18 @@ declare namespace ECR {
      * The Amazon Web Services account ID associated with the registry the pull through cache rule is associated with.
      */
     registryId?: RegistryId;
+    /**
+     * The ARN of the Secrets Manager secret associated with the pull through cache rule.
+     */
+    credentialArn?: CredentialArn;
+    /**
+     * The name of the upstream source registry associated with the pull through cache rule.
+     */
+    upstreamRegistry?: UpstreamRegistry;
+    /**
+     * The date and time, in JavaScript date format, when the pull through cache rule was last updated.
+     */
+    updatedAt?: UpdatedTimestamp;
   }
   export type PullThroughCacheRuleList = PullThroughCacheRule[];
   export type PullThroughCacheRuleRepositoryPrefix = string;
@@ -1832,7 +1883,7 @@ declare namespace ECR {
   }
   export interface RegistryScanningRule {
     /**
-     * The frequency that scans are performed at for a private registry. When the ENHANCED scan type is specified, the supported scan frequencies are CONTINUOUS_SCAN and SCAN_ON_PUSH. When the BASIC scan type is specified, the SCAN_ON_PUSH and MANUAL scan frequencies are supported.
+     * The frequency that scans are performed at for a private registry. When the ENHANCED scan type is specified, the supported scan frequencies are CONTINUOUS_SCAN and SCAN_ON_PUSH. When the BASIC scan type is specified, the SCAN_ON_PUSH scan frequency is supported. If scan on push is not specified, then the MANUAL scan frequency is set by default.
      */
     scanFrequency: ScanFrequency;
     /**
@@ -1882,7 +1933,7 @@ declare namespace ECR {
   export type ReplicationStatus = "IN_PROGRESS"|"COMPLETE"|"FAILED"|string;
   export interface Repository {
     /**
-     * The Amazon Resource Name (ARN) that identifies the repository. The ARN contains the arn:aws:ecr namespace, followed by the region of the repository, Amazon Web Services account ID of the repository owner, repository namespace, and repository name. For example, arn:aws:ecr:region:012345678910:repository/test.
+     * The Amazon Resource Name (ARN) that identifies the repository. The ARN contains the arn:aws:ecr namespace, followed by the region of the repository, Amazon Web Services account ID of the repository owner, repository namespace, and repository name. For example, arn:aws:ecr:region:012345678910:repository-namespace/repository-name.
      */
     repositoryArn?: Arn;
     /**
@@ -2121,11 +2172,11 @@ declare namespace ECR {
     /**
      * One part of a key-value pair that make up a tag. A key is a general label that acts like a category for more specific tag values.
      */
-    Key?: TagKey;
+    Key: TagKey;
     /**
      * A value acts as a descriptor within a tag category (key).
      */
-    Value?: TagValue;
+    Value: TagValue;
   }
   export type TagKey = string;
   export type TagKeyList = TagKey[];
@@ -2159,6 +2210,39 @@ declare namespace ECR {
   }
   export interface UntagResourceResponse {
   }
+  export interface UpdatePullThroughCacheRuleRequest {
+    /**
+     * The Amazon Web Services account ID associated with the registry associated with the pull through cache rule. If you do not specify a registry, the default registry is assumed.
+     */
+    registryId?: RegistryId;
+    /**
+     * The repository name prefix to use when caching images from the source registry.
+     */
+    ecrRepositoryPrefix: PullThroughCacheRuleRepositoryPrefix;
+    /**
+     * The Amazon Resource Name (ARN) of the Amazon Web Services Secrets Manager secret that identifies the credentials to authenticate to the upstream registry.
+     */
+    credentialArn: CredentialArn;
+  }
+  export interface UpdatePullThroughCacheRuleResponse {
+    /**
+     * The Amazon ECR repository prefix associated with the pull through cache rule.
+     */
+    ecrRepositoryPrefix?: PullThroughCacheRuleRepositoryPrefix;
+    /**
+     * The registry ID associated with the request.
+     */
+    registryId?: RegistryId;
+    /**
+     * The date and time, in JavaScript date format, when the pull through cache rule was updated.
+     */
+    updatedAt?: UpdatedTimestamp;
+    /**
+     * The Amazon Resource Name (ARN) of the Amazon Web Services Secrets Manager secret associated with the pull through cache rule.
+     */
+    credentialArn?: CredentialArn;
+  }
+  export type UpdatedTimestamp = Date;
   export type UploadId = string;
   export interface UploadLayerPartRequest {
     /**
@@ -2204,7 +2288,44 @@ declare namespace ECR {
      */
     lastByteReceived?: PartSize;
   }
+  export type UpstreamRegistry = "ecr-public"|"quay"|"k8s"|"docker-hub"|"github-container-registry"|"azure-container-registry"|string;
   export type Url = string;
+  export interface ValidatePullThroughCacheRuleRequest {
+    /**
+     * The repository name prefix associated with the pull through cache rule.
+     */
+    ecrRepositoryPrefix: PullThroughCacheRuleRepositoryPrefix;
+    /**
+     * The registry ID associated with the pull through cache rule. If you do not specify a registry, the default registry is assumed.
+     */
+    registryId?: RegistryId;
+  }
+  export interface ValidatePullThroughCacheRuleResponse {
+    /**
+     * The Amazon ECR repository prefix associated with the pull through cache rule.
+     */
+    ecrRepositoryPrefix?: PullThroughCacheRuleRepositoryPrefix;
+    /**
+     * The registry ID associated with the request.
+     */
+    registryId?: RegistryId;
+    /**
+     * The upstream registry URL associated with the pull through cache rule.
+     */
+    upstreamRegistryUrl?: Url;
+    /**
+     * The Amazon Resource Name (ARN) of the Amazon Web Services Secrets Manager secret associated with the pull through cache rule.
+     */
+    credentialArn?: CredentialArn;
+    /**
+     * Whether or not the pull through cache rule was validated. If true, Amazon ECR was able to reach the upstream registry and authentication was successful. If false, there was an issue and validation failed. The failure reason indicates the cause.
+     */
+    isValid?: IsPTCRuleValid;
+    /**
+     * The reason the validation failed. For more details about possible causes and how to address them, see Using pull through cache rules in the Amazon Elastic Container Registry User Guide.
+     */
+    failure?: PTCValidateFailure;
+  }
   export type Version = string;
   export type VulnerabilityId = string;
   export type VulnerabilitySourceUpdateTimestamp = Date;

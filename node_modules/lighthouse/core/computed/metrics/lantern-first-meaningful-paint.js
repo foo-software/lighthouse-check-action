@@ -1,66 +1,26 @@
 /**
- * @license Copyright 2018 The Lighthouse Authors. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import {makeComputedArtifact} from '../computed-artifact.js';
-import {LanternMetric} from './lantern-metric.js';
-import {LighthouseError} from '../../lib/lh-error.js';
+import {getComputationDataParams, lanternErrorAdapter} from './lantern-metric.js';
+import {FirstMeaningfulPaint} from '../../lib/lantern/metrics/first-meaningful-paint.js';
 import {LanternFirstContentfulPaint} from './lantern-first-contentful-paint.js';
 
-/** @typedef {import('../../lib/dependency-graph/base-node.js').Node} Node */
+/** @typedef {import('../../lib/lantern/metric.js').Extras} Extras */
 
-class LanternFirstMeaningfulPaint extends LanternMetric {
+class LanternFirstMeaningfulPaint extends FirstMeaningfulPaint {
   /**
-   * @return {LH.Gatherer.Simulation.MetricCoefficients}
+   * @param {LH.Artifacts.MetricComputationDataInput} data
+   * @param {LH.Artifacts.ComputedContext} context
+   * @param {Omit<Extras, 'optimistic'>=} extras
+   * @return {Promise<LH.Artifacts.LanternMetric>}
    */
-  static get COEFFICIENTS() {
-    return {
-      intercept: 0,
-      optimistic: 0.5,
-      pessimistic: 0.5,
-    };
-  }
-
-  /**
-   * @param {Node} dependencyGraph
-   * @param {LH.Artifacts.ProcessedNavigation} processedNavigation
-   * @return {Node}
-   */
-  static getOptimisticGraph(dependencyGraph, processedNavigation) {
-    const fmp = processedNavigation.timestamps.firstMeaningfulPaint;
-    if (!fmp) {
-      throw new LighthouseError(LighthouseError.errors.NO_FMP);
-    }
-
-    return LanternFirstContentfulPaint.getFirstPaintBasedGraph(
-      dependencyGraph,
-      fmp,
-      // See LanternFirstContentfulPaint's getOptimisticGraph implementation for a longer description
-      // of why we exclude script initiated resources here.
-      node => node.hasRenderBlockingPriority() && node.initiatorType !== 'script'
-    );
-  }
-
-  /**
-   * @param {Node} dependencyGraph
-   * @param {LH.Artifacts.ProcessedNavigation} processedNavigation
-   * @return {Node}
-   */
-  static getPessimisticGraph(dependencyGraph, processedNavigation) {
-    const fmp = processedNavigation.timestamps.firstMeaningfulPaint;
-    if (!fmp) {
-      throw new LighthouseError(LighthouseError.errors.NO_FMP);
-    }
-
-    return LanternFirstContentfulPaint.getFirstPaintBasedGraph(
-      dependencyGraph,
-      fmp,
-      node => node.hasRenderBlockingPriority(),
-      // For pessimistic FMP we'll include *all* layout nodes
-      node => node.didPerformLayout()
-    );
+  static async computeMetricWithGraphs(data, context, extras) {
+    return this.compute(await getComputationDataParams(data, context), extras)
+      .catch(lanternErrorAdapter);
   }
 
   /**

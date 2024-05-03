@@ -126,6 +126,7 @@ declare class IotDeviceAdvisor extends Service {
 }
 declare namespace IotDeviceAdvisor {
   export type AmazonResourceName = string;
+  export type AuthenticationMethod = "X509ClientCertificate"|"SignatureVersion4"|string;
   export interface CreateSuiteDefinitionRequest {
     /**
      * Creates a Device Advisor test suite with suite definition configuration.
@@ -164,13 +165,17 @@ declare namespace IotDeviceAdvisor {
   }
   export interface DeviceUnderTest {
     /**
-     * Lists devices thing ARN.
+     * Lists device's thing ARN.
      */
     thingArn?: AmazonResourceName;
     /**
-     * Lists devices certificate ARN.
+     * Lists device's certificate ARN.
      */
     certificateArn?: AmazonResourceName;
+    /**
+     * Lists device's role ARN.
+     */
+    deviceRoleArn?: AmazonResourceName;
   }
   export type DeviceUnderTestList = DeviceUnderTest[];
   export type Endpoint = string;
@@ -185,6 +190,14 @@ declare namespace IotDeviceAdvisor {
      * The certificate ARN of the device. This is an optional parameter.
      */
     certificateArn?: AmazonResourceName;
+    /**
+     * The device role ARN of the device. This is an optional parameter.
+     */
+    deviceRoleArn?: AmazonResourceName;
+    /**
+     * The authentication method used during the device connection.
+     */
+    authenticationMethod?: AuthenticationMethod;
   }
   export interface GetEndpointResponse {
     /**
@@ -389,7 +402,7 @@ declare namespace IotDeviceAdvisor {
   export type LogUrl = string;
   export type MaxResults = number;
   export type ParallelRun = boolean;
-  export type Protocol = "MqttV3_1_1"|"MqttV5"|string;
+  export type Protocol = "MqttV3_1_1"|"MqttV5"|"MqttV3_1_1_OverWebSocket"|"MqttV5_OverWebSocket"|string;
   export type QualificationReportDownloadUrl = string;
   export type RootGroup = string;
   export type SelectedTestList = UUID[];
@@ -462,7 +475,7 @@ declare namespace IotDeviceAdvisor {
      */
     isLongDurationTest?: IsLongDurationTestBoolean;
     /**
-     * Gets the test suite root group. This is a required parameter.
+     * Gets the test suite root group. This is a required parameter. For updating or creating the latest qualification suite, if intendedForQualification is set to true, rootGroup can be an empty string. If intendedForQualification is false, rootGroup cannot be an empty string. If rootGroup is empty, and intendedForQualification is set to true, all the qualification tests are included, and the configuration is default.  For a qualification suite, the minimum length is 0, and the maximum is 2048. For a non-qualification suite, the minimum length is 1, and the maximum is 2048. 
      */
     rootGroup: RootGroup;
     /**
@@ -643,7 +656,7 @@ declare namespace IotDeviceAdvisor {
      */
     failure?: Failure;
     /**
-     *  
+     * Provides test case scenario system messages if any.
      */
     systemMessage?: SystemMessage;
   }
